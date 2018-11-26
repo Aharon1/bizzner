@@ -31,7 +31,7 @@ const MainStyles = StyleSheet.create({
         fontSize:18,
         color:'#416bb9',
         marginTop : 10,
-        fontFamily:'Robot-Light',
+        //fontFamily:'RobotoLight',
         alignItems: 'center',
         justifyContent: 'center',
     }
