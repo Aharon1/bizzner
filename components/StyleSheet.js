@@ -16,6 +16,10 @@ const MainStyles = StyleSheet.create({
         textAlign: 'center',
         width:'100%'
     },
+    normalContainer:{
+        backgroundColor:'#FFF',
+        flex:1
+    },
     btn:{
         width:'100%',
         marginTop:10,
@@ -26,12 +30,11 @@ const MainStyles = StyleSheet.create({
         /*backgroundColor:'#0077b5',
         marginBottom: 20,
         color : '#fff',*/
-        //shadowColor: '#000',
-        
-        /*shadowRadius: 15,
-        shadowOffset: {width:10,height:10},*/
+        shadowColor: '#000',
+        shadowRadius: 7,
+        shadowOffset: {width:0,height:0},
         marginTop:30,
-        shadowOpacity: 1,
+        shadowOpacity: 0.4,
     },
     linBtnImg:{
         shadowOpacity: 1,
@@ -84,7 +87,128 @@ const MainStyles = StyleSheet.create({
     saperator:{
         color:'#8da6d5'
     },
-
+    profileHeader:{
+        backgroundColor:'#2e4d85',
+        height:100,
+        paddingTop: 20,
+        overflow: 'visible',
+        paddingLeft:30,
+        flexDirection:'row'
+    },
+    pHeadPicWrapper:{
+        position:'relative'
+    },
+    pHeadPic:{
+        width:130,
+        height:130,
+        borderWidth: 5,
+        borderColor: '#FFF',
+        borderRadius: 70,
+        marginBottom:20,
+        overflow: 'hidden',
+        alignItems:'center',
+        justifyContent:'center'
+    },
+    pHeadPicEditBtnWrapper:{
+        position:'absolute',
+        top:5,
+        left:100,
+    },
+    pHeadPicEditBtn:{
+        backgroundColor:'#8da6d4',
+        color:'rgba(255,255,255,0.8)',
+        width:33,
+        height:33,
+        borderRadius:50,
+        alignItems:'center',
+        textAlign:'center',
+        justifyContent:'center',
+        padding:0
+    },
+    pHeadPicEditBtnI:{
+        color:'rgba(255,255,255,0.8)',
+        fontSize:18
+    },
+    profileTextWrapper:{
+        paddingLeft:20,
+        width:150
+    },
+    pTWText:{
+        color:'#8da6d5',
+        fontFamily:'RobotMedium',
+        fontSize:13,
+    },
+    pTWNameText:{
+        fontFamily:'RobotLight',
+        fontSize:16,
+        color:'#fff',
+        marginTop:10
+    },
+    profileBody:{
+        marginTop:60,
+        backgroundColor:'#fff',
+        paddingLeft:40,
+        paddingRight:40
+    },
+    inputFieldWithIcon:{
+        borderBottomColor:'#8da6d4',
+        borderBottomWidth: 1,
+        paddingBottom: 5,
+        flex:1,
+        flexDirection:'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom:40,
+        position:'relative',
+        overflow:'visible'
+    },
+    iFWIIcon:{
+        color:'#416bb9',
+        fontSize:18,
+        paddingTop: 13,
+        paddingRight: 0,
+        paddingBottom: 0,
+        width:35,
+        height:40
+    },
+    ifWITI:{
+        height:40,
+        flex: 1,
+        flexDirection:'row',
+        paddingTop: 10,
+        paddingRight: 10,
+        paddingBottom: 10,
+        paddingLeft: 0,
+        fontSize:18,
+        fontFamily:'RobotoLight'
+    },
+    iFWIPlus:{
+        width:40,
+        height:40,
+        alignItems:'center',
+        justifyContent: 'center',
+        textAlign:'center',
+        borderRadius:50,
+    },
+    ifWIPlusIcon:{
+        color:'rgba(9,71,185,0.5)',
+        fontSize:23,
+        paddingTop: 10,
+    },
+    btnSave:{
+        backgroundColor:'#0947b9',
+        paddingTop:20,
+        paddingBottom:20,
+        paddingLeft:40,
+        paddingRight:40,
+        borderRadius:100,
+        marginBottom:20
+    },
+    btnSaveText:{
+        color:'#FFF',
+        fontFamily:'RobotoRegular',
+        fontSize:20
+    }
 });
 
 export default MainStyles;
