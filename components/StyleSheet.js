@@ -78,7 +78,7 @@ const MainStyles = StyleSheet.create({
         fontSize:17,
         color:'#416bb9',
         marginTop : 10,
-        fontFamily:'RobotoLight',
+        fontFamily:'Roboto-Light',
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
@@ -135,11 +135,11 @@ const MainStyles = StyleSheet.create({
     },
     pTWText:{
         color:'#8da6d5',
-        fontFamily:'RobotMedium',
+        fontFamily:'Roboto-Medium',
         fontSize:13,
     },
     pTWNameText:{
-        fontFamily:'RobotLight',
+        fontFamily:'Roboto-Light',
         fontSize:16,
         color:'#fff',
         marginTop:10
@@ -180,7 +180,7 @@ const MainStyles = StyleSheet.create({
         paddingBottom: 10,
         paddingLeft: 0,
         fontSize:18,
-        fontFamily:'RobotoLight'
+        fontFamily:'Roboto-Light'
     },
     iFWIPlus:{
         width:40,
@@ -206,8 +206,33 @@ const MainStyles = StyleSheet.create({
     },
     btnSaveText:{
         color:'#FFF',
-        fontFamily:'RobotoRegular',
+        fontFamily:'Roboto-Regular',
         fontSize:20
+    },
+    confirmPopup:{
+        padding:0
+    },
+    confirmPopupHeader:{
+        height:50,
+        backgroundColor:'#2e4d85',
+        padding:10,
+        width:'100%',
+        flexDirection:'row',
+    },
+    cPCOption1:{
+        alignItems:'center',
+        justifyContent:'space-between',
+        flexDirection:'row',
+        paddingBottom:30,
+        borderBottomColor:'#8da6d4',
+        borderBottomWidth:1
+    },
+    cPCOption2:{
+        alignItems:'center',
+        justifyContent:'space-between',
+        flexDirection:'row',
+        paddingBottom:20,
+        paddingTop:30,
     }
 });
 

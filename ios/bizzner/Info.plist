@@ -55,7 +55,12 @@
 	</dict>
 	<key>UIAppFonts</key>
 	<array>
+		<string>RobotoLight.otf</string>
 		<string>RobotoLight.ttf</string>
+		<string>RobotoMedium.otf</string>
+		<string>RobotoMedium.ttf</string>
+		<string>RobotoRegular.otf</string>
+		<string>RobotoRegular.ttf</string>
 		<string>AntDesign.ttf</string>
 		<string>Entypo.ttf</string>
 		<string>EvilIcons.ttf</string>
@@ -71,8 +76,6 @@
 		<string>Octicons.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
-		<string>RobotoMedium.ttf</string>
-		<string>RobotoRegular.ttf</string>
 	</array>
 </dict>
 </plist>
