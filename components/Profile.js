@@ -8,8 +8,11 @@ class ProfileScreen extends Component{
     state = {
         visible: false
       };
+    GoToNextScreen(){
+      this.setState({visible:false});
+      this.props.navigation.navigate('Events');
+    }
     render() {
-        const {navigate} = this.props.navigation;
       return (
         <View style={MainStyles.normalContainer}>
           {/*Header Section*/}
@@ -121,7 +124,7 @@ class ProfileScreen extends Component{
                             </View>
                         </View>
                         <View style={[MainStyles.btnWrapper,{justifyContent:'center',flexDirection: 'row'}]}>
-                            <TouchableOpacity style={[MainStyles.btnSave,{marginBottom:0}]} onPress={()=>{navigate('Events')}}>
+                            <TouchableOpacity style={[MainStyles.btnSave,{marginBottom:0}]} onPress={()=>{this.GoToNextScreen()}}>
                                 <Text style={MainStyles.btnSaveText}>Continue</Text>
                             </TouchableOpacity>
                         </View>

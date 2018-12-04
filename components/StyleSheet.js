@@ -233,7 +233,30 @@ const MainStyles = StyleSheet.create({
         flexDirection:'row',
         paddingBottom:20,
         paddingTop:30,
-    }
+    },
+    eventsHeader:{
+        height:60,
+        backgroundColor:'#2e4d85',
+
+    },
+    TabBar:{
+        backgroundColor:'#FFF',
+        color:'#8da6d5',
+        fontFamily:'RobotMedium'
+    },
+    tabContainer: {
+        flexDirection: 'row',
+        height: 48,
+    },
+    tab: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: 4,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 4,
+    },
 });
 
 export default MainStyles;
