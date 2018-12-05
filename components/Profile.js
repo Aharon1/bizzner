@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, Image, TouchableOpacity, ScrollView,TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
-import Dialog, { DialogContent,ScaleAnimation } from 'react-native-popup-dialog';
+import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog';
 import ToggleSwitch from 'toggle-switch-react-native'
 class ProfileScreen extends Component{
     state = {
@@ -10,9 +10,28 @@ class ProfileScreen extends Component{
       };
     GoToNextScreen(){
       this.setState({visible:false});
-      this.props.navigation.navigate('Events');
+      navigator.geolocation.getCurrentPosition(positions=>{
+        console.log('Positions',positions);
+        this.props.navigation.navigate('Events',{latitude:positions.coords.latitude,longitude:positions.coords.longitude});
+      },error=>{
+        console.log('Error',error);
+      })
+      
     }
+    getDetail(key){
+      /*try{
+        let value = await AsyncStorage.getItem('userDetails');
+        return JSON.parse(value);
+      }catch(error){
+        alert(error);
+      }*/
+      const { navigation } = this.props;
+      return navigation.getParam(key);
+    }
+    
     render() {
+      /*const userDetails = this.getDetail();
+      console.log(userDetails);*/
       return (
         <View style={MainStyles.normalContainer}>
           {/*Header Section*/}
@@ -31,26 +50,26 @@ class ProfileScreen extends Component{
           {/*Header Profile Name Section*/}
           <View style={MainStyles.profileTextWrapper}>
             <Text style={MainStyles.pTWText}>PROFILE</Text>
-            <Text style={MainStyles.pTWNameText}>John Yanushpolski</Text>
+            <Text style={MainStyles.pTWNameText}>{this.getDetail('firstName')} {this.getDetail('lastName')}</Text>
           </View>
          </View>
           {/*Body Section*/}
           <ScrollView style={MainStyles.profileBody}>
             <View style={MainStyles.inputFieldWithIcon}>
               <Icon name="envelope" style={MainStyles.iFWIIcon}/>
-              <TextInput style={MainStyles.ifWITI} placeholder="Email" keyboardType="email-address" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+              <TextInput style={MainStyles.ifWITI} placeholder="Email" keyboardType="email-address" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.getDetail('emailAddress')}/>
             </View>
             <View style={MainStyles.inputFieldWithIcon}>
               <Icon name="map-marker" style={MainStyles.iFWIIcon}/>
-              <TextInput style={MainStyles.ifWITI} placeholder="Country" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+              <TextInput style={MainStyles.ifWITI} placeholder="Country" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.getDetail('location')}/>
             </View>
             <View style={MainStyles.inputFieldWithIcon}>
               <Icon name="adn" style={MainStyles.iFWIIcon}/>
-              <TextInput style={MainStyles.ifWITI} placeholder="Occupation" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+              <TextInput style={MainStyles.ifWITI} placeholder="Occupation" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.getDetail('headline')}/>
             </View>
             <View style={MainStyles.inputFieldWithIcon}>
               <Icon name="briefcase" style={MainStyles.iFWIIcon}/>
-              <TextInput style={MainStyles.ifWITI} placeholder="Current position" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+              <TextInput style={MainStyles.ifWITI} placeholder="Current position" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.getDetail('position')}/>
             </View>
             <View style={MainStyles.inputFieldWithIcon}>
               <Icon name="camera-retro" style={MainStyles.iFWIIcon}/>
@@ -68,7 +87,7 @@ class ProfileScreen extends Component{
           <Dialog
                 visible={this.state.visible}
                 dialogStyle={MainStyles.confirmPopup}
-                dialogAnimation={new ScaleAnimation()}
+                dialogAnimation={new SlideAnimation()}
                 dialogStyle={{width:300,padding:0}} 
                 containerStyle={{zIndex: 10}}
                 rounded={false}

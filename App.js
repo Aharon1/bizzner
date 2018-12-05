@@ -26,6 +26,7 @@ const NavigateScreens = createStackNavigator ({
     }
   }
   },{
+    //initialRouteName:'Events',
   
 });
 const AppContainer = createAppContainer(NavigateScreens);

@@ -239,24 +239,85 @@ const MainStyles = StyleSheet.create({
         backgroundColor:'#2e4d85',
 
     },
-    TabBar:{
-        backgroundColor:'#FFF',
+    tabContainer:{
+        backgroundColor:'#fff',
+        paddingLeft:15,
+        paddingRight:15,
+        shadowRadius:2,
+        shadowOpacity:0.3,
+        shadowOffset:{width:3,height:3},
+        elevation:5,
+        shadowColor:'#000'
+    },
+    tabItem:{
+        height:45,
+        flexDirection:'row',
+        justifyContent:'center',
+        alignItems:'center',
+    },
+    tabItemIcon:{
         color:'#8da6d5',
-        fontFamily:'RobotMedium'
+        fontSize:16,
+        marginRight: 6,
     },
-    tabContainer: {
-        flexDirection: 'row',
-        height: 48,
+    tabItemText:{
+        color:'#8da6d5',
+        fontFamily:'Roboto-Medium',
+        fontSize:16
     },
-    tab: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        margin: 4,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 4,
+    tabItemActive:{
+        borderBottomColor:'#05296c',
+        borderBottomWidth:4
     },
+    tabItemActiveIcon:{color:'#05296c',},
+    tabItemActiveText:{color:'#05296c',},
+    EventItem:{
+        padding:15,
+        borderBottomColor:'#8da6d4',
+        borderBottomWidth:1,
+        flexDirection:'row'
+    },
+
+    EIOnline:{
+        backgroundColor:'#e8edf6',
+    },
+    EIOffline:{
+        backgroundColor:'#d1dbed',
+    },
+    EventItemImageWrapper:{
+        overflow:'hidden',
+        width:70,
+        height:70,
+        alignItems:'center',
+        justifyContent:'center'
+    },
+    EventItemTextWrapper:{marginLeft:15},
+    EITWName:{
+        fontFamily:'Roboto-Regular',
+        fontSize:15,
+        color:'#03163a'
+    },
+    EITWAddress:{
+        fontFamily:'Roboto-Light',
+        fontSize:14,
+        color:'#03163a'
+    },
+    EITWAction:{
+        flexDirection:'row',
+        marginTop:10,
+        alignItems:'center'
+    },
+    EITWActionIcon:{
+        marginRight:5,
+    },
+    EITWActionText:{
+        fontSize:16,
+        fontFamily:'Robot-Medium'
+    },
+    EITWAIOnline:{color:'#39b549'},
+    EITWATOnline:{color:'#39b549'},
+    EITWAIOffline:{color:'#8da6d5'},
+    EITWATOffline:{color:'#2f4d85'}
 });
 
 export default MainStyles;

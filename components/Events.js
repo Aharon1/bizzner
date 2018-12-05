@@ -1,66 +1,119 @@
 import React, { Component } from 'react';
-import { Text, View, Image, TouchableOpacity, SectionList} from 'react-native';
+import { View,Text,TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { createMaterialTopTabNavigator,createAppContainer} from 'react-navigation';
 import MainStyles from './StyleSheet';
-
-import EventsList from './EventsList';
-import CreateEvent from './CreateEvent';
-const CustomTabBar = ({
-    navigation,
-    navigationState,
-    getLabel,
-    renderIcon,
-    activeTintColor,
-    inactiveTintColor
-  }) => (
-    <View style={MainStyles.tabContainer}>
-      {navigationState.routes.map((route, idx) => {
-        const color = navigationState.index === idx ? activeTintColor : inactiveTintColor;
+import TabContainer from './TabContainer';
+class EventsScreen extends Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            TabComponent : 'EL'
+        }
+    }
+    changeTab(Screen){
+        this.setState({TabComponent:Screen});
+    }
+    render(){
         return (
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate(route.routeName);
-            }}
-            style={MainStyles.tab}
-            key={route.routeName}
-          >
-            <Text style={{ color }}>
-              {renderIcon({ route })}
-              {getLabel({ route })}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
-    </View>
-  );
-EventsScreen = createAppContainer(createMaterialTopTabNavigator({
+            <View style={MainStyles.normalContainer}>
+                <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
+                    <TouchableOpacity style={{paddingLeft:12}}>
+                        <Icon name="bars" style={{fontSize:24,color:'#8da6d5'}}/>
+                    </TouchableOpacity>
+                    <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>Events near me</Text>
+                </View>
+                <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
+                    <TouchableOpacity style={[
+                        MainStyles.tabItem,
+                         (this.state.TabComponent == 'EL') ? MainStyles.tabItemActive : null
+                        ]} onPress={()=>this.changeTab('EL')}>
+                        <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,
+                         (this.state.TabComponent == 'EL') ? MainStyles.tabItemActiveIcon : null
+                        ]}/>
+                        <Text style={[MainStyles.tabItemIcon,
+                         (this.state.TabComponent == 'EL') ? MainStyles.tabItemActiveText : null
+                        ]}>List</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[
+                        MainStyles.tabItem,
+                        (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
+                    ]} onPress={()=>this.changeTab('map')}>
+                        <Icon name="globe" style={[MainStyles.tabItemIcon,
+                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActiveIcon : null
+                        ]}/>
+                        <Text style={[MainStyles.tabItemIcon,
+                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActiveText : null
+                        ]}>Map</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[MainStyles.tabItem,
+                        (this.state.TabComponent == 'CE') ? MainStyles.tabItemActive : null
+                        ]} onPress={()=>this.changeTab('CE')}>
+                        <Icon name="calendar-o" style={[MainStyles.tabItemIcon,
+                         (this.state.TabComponent == 'CE') ? MainStyles.tabItemActiveIcon : null
+                        ]}/>
+                        <Text style={[MainStyles.tabItemIcon,
+                         (this.state.TabComponent == 'CE') ? MainStyles.tabItemActiveText : null
+                        ]}>Create Event</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={MainStyles.tabItem}>
+                        <Icon name="search" style={MainStyles.tabItemIcon}/>
+                        <Text style={MainStyles.tabItemText}>Search</Text>
+                    </TouchableOpacity>
+                </View>
+                <TabContainer showContainer={{TabComponent:this.state.TabComponent,latitude:this.props.navigation.getParam('latitude'),longitude:this.props.navigation.getParam('longitude')}} />
+            </View>
+        )
+    }
+}
+/*EventsScreen = createAppContainer(createMaterialTopTabNavigator({
     List: {
         screen:EventsList,
         navigationOptions:{
-            tabBarLabel: 'Create Event',
-            tabBarIcon: ({ tintColor }) => <Icon name="ellipsis-v" size={35} color={tintColor} />,
+            title:'List',
             tabBarOptions:{
-                style: MainStyles.TabBar,
+                labelStyle: {
+                    fontSize: 16,
+                    fontFamily: "Roboto-Light"
+                },
+                activeTintColor: "#6200EE",
+                inactiveTintColor: "#858585",
+                tabBarIcon: ({ tintColor }) => <Icon name="ellipsis-v" size={16} color={tintColor} />,
+                //style: MainStyles.TabBar,
+                tabBarPosition: "top",
+                animationEnabled: true,
+                swipeEnabled: true,
+                showIcon:true
             }
-        }
+            
+        },
+        
     },
     CreateEvent: {
         screen:CreateEvent,
         navigationOptions:{
-            tabBarLabel: 'Create Event',
-            tabBarIcon: ({ tintColor }) => <Icon name="calendar-o" size={35} color={tintColor} />,
+            title:'Create Event',
             tabBarOptions:{
                 labelStyle: {
-                fontSize: 12,
+                    fontSize: 16,
+                    fontFamily: "Roboto-Light"
                 },
-            }
-        }
+                activeTintColor: "#6200EE",
+                inactiveTintColor: "#858585",
+                iconStyle:{
+                    fontSize: 16
+                },
+                tabBarIcon: ({ tintColor }) => <Icon name="calendar" size={16} color={tintColor} />,
+                //style: MainStyles.TabBar,
+                tabBarPosition: "top",
+                animationEnabled: true,
+                swipeEnabled: true,
+                showIcon:true
+            },
+            
+        },
+        
     }
 },{
-    navigationOptions:{
-        barStyle:MainStyles.TabBar
-    },
-    tabBarComponent: CustomTabBar
-}));
+    
+}));*/
 export default EventsScreen
