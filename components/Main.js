@@ -66,6 +66,7 @@ class MainScreen extends Component {
       profilePicture:profilePicture.data.values[0]
     }
     //this.saveDetails('userDetails',JSON.stringify(userDetails));
+    await AsyncStorage.setItem('isUserLoggedin','true');
     console.log(token, profile);
     this.setState({loading:false})
     this.props.navigation.navigate('Profile',userDetails);
@@ -73,10 +74,44 @@ class MainScreen extends Component {
   async checkUser(){
     let isUserLoggedIn = await AsyncStorage.getItem('isUserLoggedin');
     if(isUserLoggedIn == 'true'){
-      /*this.setState({
+      this.setState({
         loading: true
-      });*/
-      this.props.navigation.navigate('Profile');
+      });
+      navigator.geolocation.getCurrentPosition(positions=>{
+        console.log('Positions',positions);
+        let Latitude = positions.coords.latitude;
+        let Longitude = positions.coords.longitude;
+        var fetchData = 'http://dissdemo.biz/bizzler?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
+        fetch(fetchData,{
+            method:'POST',
+            body:JSON.stringify({
+                action:'search_location_db',
+                latitude:Latitude,//22.7150822,
+                longitude:Longitude//75.8707448
+            })
+        })
+        .then(response=>{
+            var bodyText = JSON.parse(response._bodyText);
+            const placesArray = [];
+            for (const bodyKey in bodyText){
+                placesArray.push({
+                    name:bodyText[bodyKey].group_name,
+                    address:bodyText[bodyKey].group_address,
+                    isStarted:bodyText[bodyKey].group_status,
+                    photoUrl:bodyText[bodyKey].photoUrl,
+                    key:bodyKey
+                });
+            }
+            this.setState({loading:false})
+            this.props.navigation.navigate('Events',{locationList:placesArray});
+        }).catch(err => {
+            console.log('Error What is this',err);
+        })
+        
+      },error=>{
+        console.log('Error',error);
+      })
+      
     }
   }
   render() {
