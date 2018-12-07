@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Image, TouchableOpacity, ScrollView,TextInput } from 'react-native';
+import { Text, View, Image, TouchableOpacity, ScrollView,TextInput,KeyboardAvoidingView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
 import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog';
@@ -39,7 +39,7 @@ class ProfileScreen extends Component{
           {/*Header Profile Picture Section*/}
           <View style={MainStyles.pHeadPicWrapper}>
             <View style={MainStyles.pHeadPic}>
-              <Image source={require('../assets/profile-pic.png')} style={{width:130,height:130}}/>
+              <Image source={{uri:this.getDetail('profilePicture')}} style={{width:130,height:130}}/>
             </View>
             <View style={MainStyles.pHeadPicEditBtnWrapper}>
               <TouchableOpacity  style={MainStyles.pHeadPicEditBtn}>
@@ -55,29 +55,31 @@ class ProfileScreen extends Component{
          </View>
           {/*Body Section*/}
           <ScrollView style={MainStyles.profileBody}>
-            <View style={MainStyles.inputFieldWithIcon}>
-              <Icon name="envelope" style={MainStyles.iFWIIcon}/>
-              <TextInput style={MainStyles.ifWITI} placeholder="Email" keyboardType="email-address" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.getDetail('emailAddress')}/>
-            </View>
-            <View style={MainStyles.inputFieldWithIcon}>
-              <Icon name="map-marker" style={MainStyles.iFWIIcon}/>
-              <TextInput style={MainStyles.ifWITI} placeholder="Country" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.getDetail('location')}/>
-            </View>
-            <View style={MainStyles.inputFieldWithIcon}>
-              <Icon name="adn" style={MainStyles.iFWIIcon}/>
-              <TextInput style={MainStyles.ifWITI} placeholder="Occupation" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.getDetail('headline')}/>
-            </View>
-            <View style={MainStyles.inputFieldWithIcon}>
-              <Icon name="briefcase" style={MainStyles.iFWIIcon}/>
-              <TextInput style={MainStyles.ifWITI} placeholder="Current position" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.getDetail('position')}/>
-            </View>
-            <View style={MainStyles.inputFieldWithIcon}>
-              <Icon name="camera-retro" style={MainStyles.iFWIIcon}/>
-              <TextInput style={MainStyles.ifWITI} placeholder="Interests" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
-              <TouchableOpacity style={MainStyles.iFWIPlus}>
-                <Icon name="plus-circle" style={MainStyles.ifWIPlusIcon}/>
-              </TouchableOpacity>
-            </View>
+            <KeyboardAvoidingView>
+                <View style={MainStyles.inputFieldWithIcon}>
+                  <Icon name="envelope" style={MainStyles.iFWIIcon}/>
+                  <TextInput style={MainStyles.ifWITI} placeholder="Email" keyboardType="email-address" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.getDetail('emailAddress')}/>
+                </View>
+                <View style={MainStyles.inputFieldWithIcon}>
+                  <Icon name="map-marker" style={MainStyles.iFWIIcon}/>
+                  <TextInput style={MainStyles.ifWITI} placeholder="Country" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.getDetail('location')}/>
+                </View>
+                <View style={MainStyles.inputFieldWithIcon}>
+                  <Icon name="adn" style={MainStyles.iFWIIcon}/>
+                  <TextInput style={MainStyles.ifWITI} placeholder="Occupation" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.getDetail('headline')}/>
+                </View>
+                <View style={MainStyles.inputFieldWithIcon}>
+                  <Icon name="briefcase" style={MainStyles.iFWIIcon}/>
+                  <TextInput style={MainStyles.ifWITI} placeholder="Current position" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.getDetail('position')}/>
+                </View>
+              <View style={MainStyles.inputFieldWithIcon}>
+                <Icon name="camera-retro" style={MainStyles.iFWIIcon}/>
+                <TextInput style={MainStyles.ifWITI} placeholder="Interests" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                <TouchableOpacity style={MainStyles.iFWIPlus}>
+                  <Icon name="plus-circle" style={MainStyles.ifWIPlusIcon}/>
+                </TouchableOpacity>
+              </View>
+            </KeyboardAvoidingView>
             <View style={[MainStyles.btnWrapper,{flex:1,justifyContent:'flex-end',flexDirection: 'row'}]}>
               <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.setState({ visible: true });}}>
                 <Text style={MainStyles.btnSaveText}>SAVE</Text>

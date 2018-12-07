@@ -39,6 +39,7 @@ class MainScreen extends Component {
     });
     //
     const profile = await LinkedInSDK.getRequest('https://api.linkedin.com/v1/people/~:(first-name,last-name,email-address,headline,summary,location:(name),positions:(title,is-current))?format=json');
+    const profilePicture = await LinkedInSDK.getRequest('https://api.linkedin.com/v1/people/~/picture-urls::(original)?format=json');
     // this.saveDetails('firstName',profile.data.firstName);
     // this.saveDetails('lastName',profile.data.lastName);
     // this.saveDetails('emailAddress',profile.data.emailAddress);
@@ -52,12 +53,18 @@ class MainScreen extends Component {
       headline:profile.data.headline,
       location:profile.data.location.name,
       position:profile.data.positions.values[0].title,
+      profilePicture:profilePicture.data.values[0]
     }
     //this.saveDetails('userDetails',JSON.stringify(userDetails));
     console.log(token, profile);
     this.props.navigation.navigate('Profile',userDetails);
   }
-  
+  async checkUser(){
+    let isUserLoggedIn = await AsyncStorage.getItem('isUserLoggedin');
+    if(isUserLoggedInawait == 'true'){
+      this.props.navigation.navigate('Profile');
+    }
+  }
   render() {
     const {navigate} = this.props.navigation;
     

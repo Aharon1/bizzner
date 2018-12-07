@@ -7,23 +7,38 @@ class EventsList extends Component{
         super(props);
         this.state = {
             data:[
-                {name: 'Cafe “Arcafe”', key: 'item1',address:'5 Shalom Aleichem St., Tel Aviv',isStarted:true},
-                {name: 'Cafe “Arcafe”', key: 'item2',address:'5 Shalom Aleichem St., Tel Aviv',isStarted:true},
-                {name: 'Cafe “Arcafe”', key: 'item3',address:'5 Shalom Aleichem St., Tel Aviv',isStarted:false},
-                {name: 'Cafe “Arcafe”', key: 'item4',address:'5 Shalom Aleichem St., Tel Aviv',isStarted:false},
-                {name: 'Cafe “Arcafe”', key: 'item5',address:'5 Shalom Aleichem St., Tel Aviv',isStarted:false},
-                {name: 'Cafe “Arcafe”', key: 'item6',address:'5 Shalom Aleichem St., Tel Aviv',isStarted:false}
+                //{name: 'Cafe “Arcafe”', key: 'item1',address:'5 Shalom Aleichem St., Tel Aviv',isStarted:true},
             ]
         }
     }
     fecthDetails = ()=>{
-        let Latitude = this.props.latitude;
-        let Longitude = this.props.longitude;
-        let urlToFetch = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location='+Latitude+','+Longitude+'&radius=1500&key=AIzaSyBmJ9czcD75arR-hezXnEq2pvoMzFNATSc&types=restaurant,cafe';
-        fetch(urlToFetch, response=>{
-            console.log('Response',response);
-        },error => {
-            console.log(error);
+        let Latitude = this.props.coords.latitude;
+        let Longitude = this.props.coords.longitude;
+        //let urlToFetch = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location='+Latitude+','+Longitude+'&radius=1500&key=AIzaSyBSXKgQnJWjgEJDru0DFiG188-Nc_ry6w8&types=restaurant,cafe';
+        var fetchData = 'http://dissdemo.biz/bizzler?action=search_location_db&latitude=22.7150822&longitude=75.8707448';
+        fetch(fetchData,{
+            method:'POST',
+            body:JSON.stringify({
+                action:'search_location_db',
+                latitude:Latitude,//22.7150822,
+                longitude:Longitude//75.8707448
+            })
+        })
+        .then(response=>{
+            var bodyText = JSON.parse(response._bodyText);
+            const placesArray = [];
+            for (const bodyKey in bodyText){
+                placesArray.push({
+                    name:bodyText[bodyKey].group_name,
+                    address:bodyText[bodyKey].group_address,
+                    isStarted:bodyText[bodyKey].group_status,
+                    key:bodyKey
+                });
+            }
+            this.setState({data:placesArray});
+            console.log('Response',placesArray);
+        }).catch(err => {
+            console.log('Error What is this',err);
         })
     }
     
