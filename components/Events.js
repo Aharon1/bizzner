@@ -60,7 +60,7 @@ class EventsScreen extends Component{
                         <Text style={MainStyles.tabItemText}>Search</Text>
                     </TouchableOpacity>
                 </View>
-                <TabContainer showContainer={{TabComponent:this.state.TabComponent,latitude:this.props.navigation.getParam('latitude'),longitude:this.props.navigation.getParam('longitude')}} />
+                <TabContainer showContainer={{TabComponent:this.state.TabComponent,locationList:this.props.navigation.getParam('locationList')}} />
             </View>
         )
     }

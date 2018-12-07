@@ -291,7 +291,7 @@ const MainStyles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center'
     },
-    EventItemTextWrapper:{marginLeft:15},
+    EventItemTextWrapper:{marginLeft:15,flexGrow: 1,width: 0,},
     EITWName:{
         fontFamily:'Roboto-Regular',
         fontSize:15,
@@ -300,7 +300,10 @@ const MainStyles = StyleSheet.create({
     EITWAddress:{
         fontFamily:'Roboto-Light',
         fontSize:14,
-        color:'#03163a'
+        color:'#03163a',
+        paddingRight:5,
+        flexWrap: 'wrap',
+        
     },
     EITWAction:{
         flexDirection:'row',

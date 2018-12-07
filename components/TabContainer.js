@@ -11,7 +11,7 @@ class TabContianer extends Component  {
     render(){
         console.log('Latitude',this.props.showContainer.latitude);
         const TagName = this.TC[this.props.showContainer.TabComponent];
-        return <TagName coords={{latitude:this.props.showContainer.latitude,longitude:this.props.showContainer.longitude}}/>
+        return <TagName locationList={this.props.showContainer.locationList}/>
     }
     
 }

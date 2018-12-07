@@ -2,9 +2,16 @@ import React, { Component } from 'react';
 import { Text, View, Image, TouchableOpacity, AsyncStorage} from 'react-native';
 import MainStyles from './StyleSheet';
 import LinkedInSDK from 'react-native-linkedin-sdk';
+import Loader from './Loader';
 class MainScreen extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      loading:false
+    };
+  }
   static navigationOptions =
-  {
+  { 
     header:null
     //title: 'Home',
   };
@@ -12,6 +19,9 @@ class MainScreen extends Component {
     await AsyncStorage.setItem(key,value);
   }
   async Login() {
+    this.setState({
+      loading: true
+    });
     const token = await LinkedInSDK.signIn({
       // https://developer.linkedin.com/docs/oauth2
    
@@ -57,11 +67,15 @@ class MainScreen extends Component {
     }
     //this.saveDetails('userDetails',JSON.stringify(userDetails));
     console.log(token, profile);
+    this.setState({loading:false})
     this.props.navigation.navigate('Profile',userDetails);
   }
   async checkUser(){
     let isUserLoggedIn = await AsyncStorage.getItem('isUserLoggedin');
-    if(isUserLoggedInawait == 'true'){
+    if(isUserLoggedIn == 'true'){
+      /*this.setState({
+        loading: true
+      });*/
       this.props.navigation.navigate('Profile');
     }
   }
@@ -70,6 +84,7 @@ class MainScreen extends Component {
     
     return ( 
       <View style = { MainStyles.container } >
+        <Loader loading={this.state.loading} />
         <View style = {[MainStyles.minContainer,{width:250}]} >
           <Image source={require('../assets/bizzner-logo.png')} style={{width:213,height:55}}/>
           <Text style={MainStyles.mPHeading}> Your daily dose of inspiring people to meet </Text> 

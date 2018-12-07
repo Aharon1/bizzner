@@ -4,15 +4,49 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
 import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog';
 import ToggleSwitch from 'toggle-switch-react-native'
+import Loader from './Loader';
 class ProfileScreen extends Component{
-    state = {
-        visible: false
-      };
+  constructor(props){
+    super(props);
+    this.state = {
+      loading:false,
+      visible: false
+    };
+  }
+    
     GoToNextScreen(){
-      this.setState({visible:false});
+      this.setState({visible:false,loading:true});
       navigator.geolocation.getCurrentPosition(positions=>{
         console.log('Positions',positions);
-        this.props.navigation.navigate('Events',{latitude:positions.coords.latitude,longitude:positions.coords.longitude});
+        let Latitude = positions.coords.latitude;
+        let Longitude = positions.coords.longitude;
+        var fetchData = 'http://dissdemo.biz/bizzler?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
+        fetch(fetchData,{
+            method:'POST',
+            body:JSON.stringify({
+                action:'search_location_db',
+                latitude:Latitude,//22.7150822,
+                longitude:Longitude//75.8707448
+            })
+        })
+        .then(response=>{
+            var bodyText = JSON.parse(response._bodyText);
+            const placesArray = [];
+            for (const bodyKey in bodyText){
+                placesArray.push({
+                    name:bodyText[bodyKey].group_name,
+                    address:bodyText[bodyKey].group_address,
+                    isStarted:bodyText[bodyKey].group_status,
+                    photoUrl:bodyText[bodyKey].photoUrl,
+                    key:bodyKey
+                });
+            }
+            this.setState({loading:false})
+            this.props.navigation.navigate('Events',{locationList:placesArray});
+        }).catch(err => {
+            console.log('Error What is this',err);
+        })
+        
       },error=>{
         console.log('Error',error);
       })
@@ -34,6 +68,7 @@ class ProfileScreen extends Component{
       console.log(userDetails);*/
       return (
         <View style={MainStyles.normalContainer}>
+          <Loader loading={this.state.loading} />
           {/*Header Section*/}
           <View style={MainStyles.profileHeader}>
           {/*Header Profile Picture Section*/}
