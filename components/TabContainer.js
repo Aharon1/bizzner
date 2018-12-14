@@ -9,9 +9,8 @@ class TabContianer extends Component  {
         map : MapScreen
     }
     render(){
-        console.log('Latitude',this.props.showContainer.latitude);
         const TagName = this.TC[this.props.showContainer.TabComponent];
-        return <TagName locationList={this.props.showContainer.locationList}/>
+        return <TagName locationList={this.props.showContainer.locationList} fetchDetails={this.props.showContainer.fetchDetails}/>
     }
     
 }

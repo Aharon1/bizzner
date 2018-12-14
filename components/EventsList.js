@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import { View,Text,FlatList,ScrollView,Image,TouchableOpacity} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import MainStyles from './StyleSheet';
-import Loader from './Loader';
+import {FlatList,ActivityIndicator,View} from 'react-native';
 import ListItem from './ListItem';
 class EventsList extends Component{
     constructor(props){
         super(props);
+        this.fetchMore = this._fetchMore.bind(this);
         this.state = {
             data:this.props.locationList,
-            loading:false
-
+            loading:false,
+            isLoading: true,
+            isLoadingMore: false,
+            _data: null,
+            _dataAfter: ""
         }
     }
     fecthDetails = ()=>{
@@ -45,20 +46,40 @@ class EventsList extends Component{
         //     console.log('Error What is this',err);
         // })
     }
-    
+    _fetchMore() {
+        /*this.fetchData(responseJson => {
+            const data = this.state._data.concat(responseJson.data.children);
+            this.setState({
+            isLoadingMore: false,
+            _data: data,
+            _dataAfter: responseJson.data.after
+            });
+        });*/
+        this.setState({
+            isLoadingMore: false,
+        });
+    }
     render(){
         //let PushArray = [];
         //this.fecthDetails(PushArray);
         //console.log('Response',this.state.data);
         return (
-            <ScrollView>
-                <Loader loading={this.state.loading} />
-                <FlatList data={this.state.data}
-                    renderItem={({item}) => (
-                        <ListItem item={item} />
-                      )}
-                />
-            </ScrollView>
+            <FlatList data={this.state.data}
+                renderItem={({item}) => (
+                    <ListItem item={item} fetchDetails={this.props.fetchDetails}/>
+                    )}
+                onEndReached={()=>{this.setState({ isLoadingMore: true }, () => this.fetchMore())}
+                }
+                keyExtractor={(item) => item.key}
+                ListFooterComponent={() => { // replaces renderFooter={() => {
+                    return (
+                    this.state.isLoadingMore &&
+                    <View style={{ flex: 1, padding: 10 }}>
+                        <ActivityIndicator size="large" />
+                    </View>
+                    );
+                }}
+            />
         );
     }
 }
