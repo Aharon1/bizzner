@@ -7,6 +7,7 @@ import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog'
 import DatePicker from 'react-native-datepicker';
 import PlacesAutocomplete from './AsyncModules/PlacesAutocomplete';
 import ProgressiveImage from './ImageComponent';
+import { HeaderButton } from './Navigation/HeaderButton';
 class EventsScreen extends Component{
     constructor(props){
         super(props);
@@ -19,8 +20,8 @@ class EventsScreen extends Component{
             curLocation:{}
         }
     }
-    changeTab(Screen){
-        this.setState({TabComponent:Screen});
+    changeTab(Screen) {
+        this.setState({ TabComponent: Screen });
     }
     fetchDetails = (curItem)=>{
         
@@ -47,33 +48,31 @@ class EventsScreen extends Component{
     render(){
         return (
             <View style={MainStyles.normalContainer}>
-                <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                    <TouchableOpacity style={{paddingLeft:12}}>
-                        <Icon name="bars" style={{fontSize:24,color:'#8da6d5'}}/>
-                    </TouchableOpacity>
-                    <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>Events near me</Text>
+                <View style={[MainStyles.eventsHeader, { alignItems: 'center', flexDirection: 'row' }]}>
+                    <HeaderButton onPress={this.props.navigation.openDrawer} />
+                    <Text style={{ fontSize: 20, color: '#8da6d5', marginLeft: 20 }}>Events near me</Text>
                 </View>
-                <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
+                <View style={[MainStyles.tabContainer, { justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }]}>
                     <TouchableOpacity style={[
                         MainStyles.tabItem,
-                         (this.state.TabComponent == 'EL') ? MainStyles.tabItemActive : null
-                        ]} onPress={()=>this.changeTab('EL')}>
+                        (this.state.TabComponent == 'EL') ? MainStyles.tabItemActive : null
+                    ]} onPress={() => this.changeTab('EL')}>
                         <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,
-                         (this.state.TabComponent == 'EL') ? MainStyles.tabItemActiveIcon : null
-                        ]}/>
+                        (this.state.TabComponent == 'EL') ? MainStyles.tabItemActiveIcon : null
+                        ]} />
                         <Text style={[MainStyles.tabItemIcon,
-                         (this.state.TabComponent == 'EL') ? MainStyles.tabItemActiveText : null
+                        (this.state.TabComponent == 'EL') ? MainStyles.tabItemActiveText : null
                         ]}>List</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[
                         MainStyles.tabItem,
                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
-                        ]} onPress={()=>this.changeTab('map')}>
+                    ]} onPress={() => this.changeTab('map')}>
                         <Icon name="globe" style={[MainStyles.tabItemIcon,
-                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActiveIcon : null
-                        ]}/>
+                        (this.state.TabComponent == 'map') ? MainStyles.tabItemActiveIcon : null
+                        ]} />
                         <Text style={[MainStyles.tabItemIcon,
-                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActiveText : null
+                        (this.state.TabComponent == 'map') ? MainStyles.tabItemActiveText : null
                         ]}>Map</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[MainStyles.tabItem,
@@ -83,7 +82,7 @@ class EventsScreen extends Component{
                         <Text style={MainStyles.tabItemIcon}>Create Event</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.tabItem}>
-                        <Icon name="search" style={MainStyles.tabItemIcon}/>
+                        <Icon name="search" style={MainStyles.tabItemIcon} />
                         <Text style={MainStyles.tabItemText}>Search</Text>
                     </TouchableOpacity>
                 </View>

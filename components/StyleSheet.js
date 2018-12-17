@@ -93,7 +93,7 @@ const MainStyles = StyleSheet.create({
         paddingTop: 20,
         overflow: 'visible',
         paddingLeft:30,
-        flexDirection:'row'
+        flexDirection:'row',
     },
     pHeadPicWrapper:{
         position:'relative'

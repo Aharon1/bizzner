@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { Text, View, Image, TouchableOpacity, ScrollView,TextInput,KeyboardAvoidingView,Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
-import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog';
+import Dialog, { DialogContent, SlideAnimation } from 'react-native-popup-dialog';
 import ToggleSwitch from 'toggle-switch-react-native'
 import Loader from './Loader';
+import { HeaderButton } from './Navigation/HeaderButton';
 import RequestPermssions from './AsyncModules/Permission';
 import Camera from 'react-native-camera';
 
@@ -123,6 +124,7 @@ class ProfileScreen extends Component{
           {/*Header Section*/}
           <View style={MainStyles.profileHeader}>
             {/*Header Profile Picture Section*/}
+            <HeaderButton onPress={this.props.navigation.openDrawer} />
             <View style={MainStyles.pHeadPicWrapper}>
               <View style={MainStyles.pHeadPic}>
                 <Image source={{uri:this.state.profilePicture}} style={{width:130,height:130}}/>
@@ -174,18 +176,12 @@ class ProfileScreen extends Component{
                   <Icon name="briefcase" style={MainStyles.iFWIIcon}/>
                   <TextInput style={MainStyles.ifWITI} placeholder="Current position" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.position}/>
                 </View>
-              <View style={MainStyles.inputFieldWithIcon}>
-                <Icon name="camera-retro" style={MainStyles.iFWIIcon}/>
-                <TextInput style={MainStyles.ifWITI} placeholder="Interests" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
-                <TouchableOpacity style={MainStyles.iFWIPlus}>
-                  <Icon name="plus-circle" style={MainStyles.ifWIPlusIcon}/>
+              </View>
+              <View style={[MainStyles.btnWrapper, { justifyContent: 'center', flexDirection: 'row' }]}>
+                <TouchableOpacity style={[MainStyles.btnSave, { marginBottom: 0 }]} onPress={() => { this.GoToNextScreen() }}>
+                  <Text style={MainStyles.btnSaveText}>Continue</Text>
                 </TouchableOpacity>
               </View>
-            </KeyboardAvoidingView>
-            <View style={[MainStyles.btnWrapper,{flex:1,justifyContent:'flex-end',flexDirection: 'row'}]}>
-              <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.setState({ visible: true });}}>
-                <Text style={MainStyles.btnSaveText}>SAVE</Text>
-              </TouchableOpacity>
             </View>
           </ScrollView>
           <Dialog
@@ -258,4 +254,5 @@ class ProfileScreen extends Component{
       );
     }
   }
-  export default ProfileScreen
+}
+export default ProfileScreen
