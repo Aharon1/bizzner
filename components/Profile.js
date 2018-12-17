@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, Image, TouchableOpacity, ScrollView,TextInput,KeyboardAvoidingView,Animated } from 'react-native';
+import { Text, View, Image, TouchableOpacity, ScrollView,TextInput,KeyboardAvoidingView,Animated} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
 import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog';
 import ToggleSwitch from 'toggle-switch-react-native'
 import Loader from './Loader';
 import RequestPermssions from './AsyncModules/Permission';
-import Camera from 'react-native-camera';
 
 class ProfileScreen extends Component{
   constructor(props){
@@ -36,7 +35,7 @@ class ProfileScreen extends Component{
         navigator.geolocation.getCurrentPosition(positions=>{
           let Latitude = positions.coords.latitude;
           let Longitude = positions.coords.longitude;
-          var fetchData = 'http://dissdemo.biz/bizzler?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
+          var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
           fetch(fetchData,{
               method:'POST',
               body:JSON.stringify({
@@ -47,19 +46,23 @@ class ProfileScreen extends Component{
           })
           .then(response=>{
               var bodyText = JSON.parse(response._bodyText);
+              var results = bodyText.results
               console.log(bodyText);
               const placesArray = [];
-              for (const bodyKey in bodyText.results){
+              for (const bodyKey in results){
                   placesArray.push({
-                      name:bodyText.results[bodyKey].group_name,
-                      address:bodyText.results[bodyKey].group_address,
-                      isStarted:bodyText.results[bodyKey].group_status,
-                      photoUrl:bodyText.results[bodyKey].photoUrl,
-                      key:bodyKey
+                    name:results[bodyKey].group_name,
+                    address:results[bodyKey].group_address,
+                    isStarted:results[bodyKey].group_status,
+                    photoUrl:results[bodyKey].photoUrl,
+                    key:'key-'+bodyKey,
+                    place_id:results[bodyKey].place_id,
+                    latitude:results[bodyKey].latitude,
+                    longitude:results[bodyKey].longitude
                   });
               }
               this.setState({loading:false})
-              this.props.navigation.navigate('Events',{locationList:placesArray,nextPageToken:bodyText.nex_page_token});
+              this.props.navigation.navigate('Events',{locationList:placesArray,nextPageToken:bodyText.next_page_token});
           }).catch(err => {
               console.log('Error What is this',err);
           })
@@ -105,6 +108,7 @@ class ProfileScreen extends Component{
       }
     };
     togglePicOption = () => {
+      
       this.setState((prevState) => {
         Animated.spring(this.state.animation, {
           toValue: prevState.isModalVisible ? 0 : 1,

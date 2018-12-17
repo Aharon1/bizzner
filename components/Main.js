@@ -22,7 +22,7 @@ class MainScreen extends Component {
     this.setState({
       loading: true
     });
-    /*const token = await LinkedInSDK.signIn({
+    const token = await LinkedInSDK.signIn({
       // https://developer.linkedin.com/docs/oauth2
    
       // iOS (Required)
@@ -68,8 +68,8 @@ class MainScreen extends Component {
     //this.saveDetails('userDetails',JSON.stringify(userDetails));
     await AsyncStorage.setItem('isUserLoggedin','true');
     this.setState({loading:false})
-    this.props.navigation.navigate('Profile',userDetails);*/
-    navigator.geolocation.getCurrentPosition(positions=>{
+    this.props.navigation.navigate('Profile',userDetails);
+    /*navigator.geolocation.getCurrentPosition(positions=>{
       let Latitude = positions.coords.latitude;
       let Longitude = positions.coords.longitude;
       var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
@@ -109,7 +109,7 @@ class MainScreen extends Component {
     },error=>{
       this.setState({loading:false});
       console.log('Error',error);
-    })
+    })*/
   }
   async checkUser(){
     let isUserLoggedIn = await AsyncStorage.getItem('isUserLoggedin');

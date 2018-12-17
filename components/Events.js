@@ -6,7 +6,6 @@ import TabContainer from './TabContainer';
 import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog';
 import DatePicker from 'react-native-datepicker';
 import PlacesAutocomplete from './AsyncModules/PlacesAutocomplete';
-import ProgressiveImage from './ImageComponent';
 class EventsScreen extends Component{
     constructor(props){
         super(props);
@@ -87,7 +86,12 @@ class EventsScreen extends Component{
                         <Text style={MainStyles.tabItemText}>Search</Text>
                     </TouchableOpacity>
                 </View>
-                <TabContainer showContainer={{TabComponent:this.state.TabComponent,locationList:this.props.navigation.getParam('locationList'),fetchDetails:this.fetchDetails}} />
+                <TabContainer showContainer={{
+                    TabComponent:this.state.TabComponent,
+                    locationList:this.props.navigation.getParam('locationList'),
+                    fetchDetails:this.fetchDetails,
+                    npt:this.props.navigation.getParam('nextPageToken')
+                    }} />
                 <Dialog
                     visible={this.state.CreateEventVisible}
                     dialogStyle={MainStyles.confirmPopup}
@@ -107,7 +111,10 @@ class EventsScreen extends Component{
                         (<View style={{width:'100%',marginTop:0, height:200,marginBottom:20,}}>
                             <ImageBackground source={{uri:this.state.curLocation.picUrl}} style={{width: '100%', height: 200}} resizeMode="cover"
                                 style={{flex:1,resizeMode:'center'}}
-                            >
+                            >   
+                                <TouchableOpacity style={{position:'absolute',right:10,top:10}} onPress={()=>{this.setState({isLocationSet:false,curLocation:{}})}}>
+                                    <Icon name="pencil" size={20} color="#FFF" />
+                                </TouchableOpacity>
                                 <View style={{
                                         
                                         color: 'white',
@@ -132,66 +139,6 @@ class EventsScreen extends Component{
                                     this.state.isLocationSet == false && 
                                     <PlacesAutocomplete style={{overflow: 'visible',zIndex:40}} fetchDetails={this.fetchDetails}/>
                                 }
-                                
-                                {/*<GoogleAutoComplete apiKey="AIzaSyASrUOtfMI34ZKtw4CFKl0XzN9zNEo3yS0" debounce={500} minLength={3} queryTypes="address">
-                                    {({
-                                        handleTextChange,
-                                        locationResults,
-                                        fetchDetails,
-                                        isSearching,
-                                        inputValue,
-                                        clearSearchs
-                                    }) => (
-                                        
-                                        <React.Fragment>
-                                            <View style={[MainStyles.createEventFWI,]}>
-                                                <Icon name="search" style={MainStyles.cEFWIIcon}/>
-                                                <TextInput style={MainStyles.cEFWITF} 
-                                                placeholder="Search Location" 
-                                                placeholderTextColor="#03163a" 
-                                                underlineColorAndroid="transparent"
-                                                
-                                                onChangeText={handleTextChange}
-                                                placeholder="Search Location"
-                                                value={inputValue}
-                                                />
-                                            </View>
-                                            isSearching && <ActivityIndicator size="large" color="#416bb9"/>
-                                            {
-                                                inputValue != '' && 
-                                                <ScrollView style={{ 
-                                                    width:'100%',
-                                                    left:5,
-                                                    maxHeight: 500,
-                                                    position:'absolute',
-                                                    backgroundColor:'#FFF',
-                                                    flex:1,
-                                                    flexDirection:'column',
-                                                    zIndex: 20,
-                                                    borderColor:'#8da6d4',
-                                                    borderWidth:1,
-                                                    paddingHorizontal:10,
-                                                    paddingVertical:10,
-                                                    top:20,
-                                                    elevation:3,
-                                                    borderBottomLeftRadius:10,
-                                                    borderBottomRightRadius:10
-                                                    }}>
-                                                    {locationResults.map((el, i) => (
-                                                        
-                                                    <LocationItem
-                                                        {...el}
-                                                        fetchDetails={fetchDetails}
-                                                        key={String(i)}
-                                                    />
-                                                    ))}
-                                                </ScrollView>
-                                            }
-                                            
-                                        </React.Fragment>
-                                    )}
-                                </GoogleAutoComplete>*/}
-                                
                                 <View style={[MainStyles.createEventFWI]}>
                                     <Icon name="thumb-tack" style={MainStyles.cEFWIIcon}/>
                                     <TextInput style={MainStyles.cEFWITF} placeholder="Subject" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
@@ -272,55 +219,4 @@ class EventsScreen extends Component{
         )
     }
 }
-/*EventsScreen = createAppContainer(createMaterialTopTabNavigator({
-    List: {
-        screen:EventsList,
-        navigationOptions:{
-            title:'List',
-            tabBarOptions:{
-                labelStyle: {
-                    fontSize: 16,
-                    fontFamily: "Roboto-Light"
-                },
-                activeTintColor: "#6200EE",
-                inactiveTintColor: "#858585",
-                tabBarIcon: ({ tintColor }) => <Icon name="ellipsis-v" size={16} color={tintColor} />,
-                //style: MainStyles.TabBar,
-                tabBarPosition: "top",
-                animationEnabled: true,
-                swipeEnabled: true,
-                showIcon:true
-            }
-            
-        },
-        
-    },
-    CreateEvent: {
-        screen:CreateEvent,
-        navigationOptions:{
-            title:'Create Event',
-            tabBarOptions:{
-                labelStyle: {
-                    fontSize: 16,
-                    fontFamily: "Roboto-Light"
-                },
-                activeTintColor: "#6200EE",
-                inactiveTintColor: "#858585",
-                iconStyle:{
-                    fontSize: 16
-                },
-                tabBarIcon: ({ tintColor }) => <Icon name="calendar" size={16} color={tintColor} />,
-                //style: MainStyles.TabBar,
-                tabBarPosition: "top",
-                animationEnabled: true,
-                swipeEnabled: true,
-                showIcon:true
-            },
-            
-        },
-        
-    }
-},{
-    
-}));*/
 export default EventsScreen
