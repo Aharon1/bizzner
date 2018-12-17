@@ -129,6 +129,24 @@ const MainStyles = StyleSheet.create({
         color:'rgba(255,255,255,0.8)',
         fontSize:18
     },
+    pHeadPicOptions:{
+        position:"absolute",
+        width: 120,
+        top: 40,
+        backgroundColor:'#FFF',
+        borderRadius:5,
+        elevation:3,
+        borderWidth:1,
+        borderColor:'#dedede'
+    },
+    pHPOBtn:{
+        width:'100%',
+        padding:10,
+        textAlign:'center',
+        justifyContent:'center',
+        alignItems:'center',
+        fontFamily:'Roboto-Medium',
+    },
     profileTextWrapper:{
         paddingLeft:20,
         width:150
@@ -158,7 +176,7 @@ const MainStyles = StyleSheet.create({
         flexDirection:'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom:40,
+        marginBottom:20,
         position:'relative',
         overflow:'visible'
     },
@@ -288,14 +306,16 @@ const MainStyles = StyleSheet.create({
         overflow:'hidden',
         width:70,
         height:70,
-        alignItems:'center',
-        justifyContent:'center'
+        backgroundColor:'#8da6d4'
+        //alignItems:'center',
+        //justifyContent:'center'
     },
-    EventItemTextWrapper:{marginLeft:15,flexGrow: 1,width: 0,},
+    EventItemTextWrapper:{marginLeft:15,flexGrow: 1,width: 0,alignItems:'flex-start'},
     EITWName:{
         fontFamily:'Roboto-Regular',
         fontSize:15,
-        color:'#03163a'
+        color:'#03163a',
+        alignItems:'flex-start'
     },
     EITWAddress:{
         fontFamily:'Roboto-Light',
@@ -303,7 +323,7 @@ const MainStyles = StyleSheet.create({
         color:'#03163a',
         paddingRight:5,
         flexWrap: 'wrap',
-        
+        alignItems:'flex-start'
     },
     EITWAction:{
         flexDirection:'row',
@@ -320,7 +340,60 @@ const MainStyles = StyleSheet.create({
     EITWAIOnline:{color:'#39b549'},
     EITWATOnline:{color:'#39b549'},
     EITWAIOffline:{color:'#8da6d5'},
-    EITWATOffline:{color:'#2f4d85'}
+    EITWATOffline:{color:'#2f4d85'},
+    createEventFWI:{
+        borderBottomColor:'#8da6d4',
+        borderBottomWidth: 1,
+        paddingBottom: 15,
+        flex:1,
+        flexDirection:'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom:60,
+        position:'relative',
+        overflow:'visible'
+    },
+    cEFWIIcon:{
+        color:'#7590c8',
+        fontSize:18,
+        paddingTop: 13,
+        paddingRight: 0,
+        paddingBottom: 0,
+        width:35,
+        height:45
+    },
+    cEFWITF:{
+        height:60,
+        flex: 1,
+        flexDirection:'row',
+        paddingTop: 10,
+        paddingRight: 10,
+        paddingBottom: 10,
+        paddingLeft: 0,
+        fontSize:18,
+        fontFamily:'RobotoLight'
+    },
+    locationItemBtn:{
+       borderBottomColor:'#8da6d4',
+       borderBottomWidth:1,
+       paddingHorizontal:10,
+       paddingVertical:10,
+    },
+    locationItemWrapper:{
+        width:'100%',
+        left:0,
+        maxHeight: 250,
+        position:'absolute',
+        backgroundColor:'#FFF',
+        zIndex: 4000,
+        borderColor:'#8da6d4',
+        borderWidth:1,
+        top:15,
+        elevation:3,
+        borderBottomLeftRadius:10,
+        borderBottomRightRadius:10,
+        overflow:'hidden'
+    }
 });
 
 export default MainStyles;

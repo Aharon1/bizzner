@@ -22,7 +22,7 @@ class MainScreen extends Component {
     this.setState({
       loading: true
     });
-    const token = await LinkedInSDK.signIn({
+    /*const token = await LinkedInSDK.signIn({
       // https://developer.linkedin.com/docs/oauth2
    
       // iOS (Required)
@@ -67,9 +67,49 @@ class MainScreen extends Component {
     }
     //this.saveDetails('userDetails',JSON.stringify(userDetails));
     await AsyncStorage.setItem('isUserLoggedin','true');
-    console.log(token, profile);
     this.setState({loading:false})
-    this.props.navigation.navigate('Profile',userDetails);
+    this.props.navigation.navigate('Profile',userDetails);*/
+    navigator.geolocation.getCurrentPosition(positions=>{
+      let Latitude = positions.coords.latitude;
+      let Longitude = positions.coords.longitude;
+      var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
+      this.saveDetails('Latitude',''+Latitude+'');
+      this.saveDetails('Longitude',''+Longitude+'');
+      fetch(fetchData,{
+          method:'POST',
+          body:JSON.stringify({
+              action:'search_location_db',
+              latitude:Latitude,//22.7150822,
+              longitude:Longitude//75.8707448
+          })
+      })
+      .then(response=>{
+          var bodyText = JSON.parse(response._bodyText);
+          var results = bodyText.results
+          const placesArray = [];
+          for (const bodyKey in results){
+              placesArray.push({
+                  name:results[bodyKey].group_name,
+                  address:results[bodyKey].group_address,
+                  isStarted:results[bodyKey].group_status,
+                  photoUrl:results[bodyKey].photoUrl,
+                  key:'key-'+bodyKey,
+                  place_id:results[bodyKey].place_id,
+                  latitude:results[bodyKey].latitude,
+                  longitude:results[bodyKey].longitude
+              });
+          }            
+          this.props.navigation.navigate('Events',{locationList:placesArray});
+          this.setState({loading:false});
+      }).catch(err => {
+        this.setState({loading:false});
+        console.log('Error What is this',err);
+      })
+      
+    },error=>{
+      this.setState({loading:false});
+      console.log('Error',error);
+    })
   }
   async checkUser(){
     let isUserLoggedIn = await AsyncStorage.getItem('isUserLoggedin');
@@ -78,7 +118,6 @@ class MainScreen extends Component {
         loading: true
       });
       navigator.geolocation.getCurrentPosition(positions=>{
-        console.log('Positions',positions);
         let Latitude = positions.coords.latitude;
         let Longitude = positions.coords.longitude;
         var fetchData = 'http://dissdemo.biz/bizzler?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
@@ -101,14 +140,16 @@ class MainScreen extends Component {
                     photoUrl:bodyText[bodyKey].photoUrl,
                     key:bodyKey
                 });
-            }
-            this.setState({loading:false})
+            }            
             this.props.navigation.navigate('Events',{locationList:placesArray});
+            this.setState({loading:false});
         }).catch(err => {
-            console.log('Error What is this',err);
+          this.setState({loading:false});
+          console.log('Error What is this',err);
         })
         
       },error=>{
+        this.setState({loading:false});
         console.log('Error',error);
       })
       
@@ -116,7 +157,7 @@ class MainScreen extends Component {
   }
   render() {
     const {navigate} = this.props.navigation;
-    
+    //this.checkUser();
     return ( 
       <View style = { MainStyles.container } >
         <Loader loading={this.state.loading} />
