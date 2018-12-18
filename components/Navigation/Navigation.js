@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { createDrawerNavigator, ScrollView, DrawerItems, createStackNavigator } from 'react-navigation';
 import { SettingsScreen, ComplainScreen, CurrentEventsScreen, HistoryScreen, EditProfileScreen, MessagesScreen } from './Screens';
 import MainScreen from '../Main';
-
+import SplashScreen from '../Splash';
 const drawerItemStyle = { borderBottomWidth: 1, borderBottomColor: '#f3f3f3', height: 60, textAlign: 'left' };
 const drawerLabelStyle = { margin: 0, fontSize: 16, fontFamily: 'Roboto-Medium' };
 
@@ -62,23 +62,31 @@ const shadow = {
     }
 }
 
-
-export default createStackNavigator({
+const Navigation = createStackNavigator({
     Auth: {
         screen: MainScreen
     },
     Home: {
         screen: Drawer,
-        navigationOptions: {
-            header: null
-        }
+    },
+    Profile:{
+        screen:EditProfileScreen,
+    },
+    Events:{
+        screen:CurrentEventsScreen,
+    },
+    Splash:{
+        screen:SplashScreen
     }
 }, {
-        containerOptions: {
-            style: {
-                backgroundColor: '#f00',
-                flex: 1
+    headerMode: 'none',
+    initialRouteName: 'Splash',
+    containerOptions: {
+        style: {
+            backgroundColor: '#f00',
+            flex: 1
 
-            }
         }
-    });
+    }
+});
+export default  Navigation

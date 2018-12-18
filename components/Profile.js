@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, Image, TouchableOpacity, ScrollView,TextInput,KeyboardAvoidingView,Animated } from 'react-native';
+import { Text, View, Image, TouchableOpacity, ScrollView,TextInput,KeyboardAvoidingView,Animated} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
-import Dialog, { DialogContent, SlideAnimation } from 'react-native-popup-dialog';
+import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog';
 import ToggleSwitch from 'toggle-switch-react-native'
 import Loader from './Loader';
-import { HeaderButton } from './Navigation/HeaderButton';
 import RequestPermssions from './AsyncModules/Permission';
-import Camera from 'react-native-camera';
 
 class ProfileScreen extends Component{
   constructor(props){
@@ -37,7 +35,7 @@ class ProfileScreen extends Component{
         navigator.geolocation.getCurrentPosition(positions=>{
           let Latitude = positions.coords.latitude;
           let Longitude = positions.coords.longitude;
-          var fetchData = 'http://dissdemo.biz/bizzler?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
+          var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
           fetch(fetchData,{
               method:'POST',
               body:JSON.stringify({
@@ -48,19 +46,23 @@ class ProfileScreen extends Component{
           })
           .then(response=>{
               var bodyText = JSON.parse(response._bodyText);
+              var results = bodyText.results
               console.log(bodyText);
               const placesArray = [];
-              for (const bodyKey in bodyText.results){
+              for (const bodyKey in results){
                   placesArray.push({
-                      name:bodyText.results[bodyKey].group_name,
-                      address:bodyText.results[bodyKey].group_address,
-                      isStarted:bodyText.results[bodyKey].group_status,
-                      photoUrl:bodyText.results[bodyKey].photoUrl,
-                      key:bodyKey
+                    name:results[bodyKey].group_name,
+                    address:results[bodyKey].group_address,
+                    isStarted:results[bodyKey].group_status,
+                    photoUrl:results[bodyKey].photoUrl,
+                    key:'key-'+bodyKey,
+                    place_id:results[bodyKey].place_id,
+                    latitude:results[bodyKey].latitude,
+                    longitude:results[bodyKey].longitude
                   });
               }
               this.setState({loading:false})
-              this.props.navigation.navigate('Events',{locationList:placesArray,nextPageToken:bodyText.nex_page_token});
+              this.props.navigation.navigate('Events',{locationList:placesArray,nextPageToken:bodyText.next_page_token});
           }).catch(err => {
               console.log('Error What is this',err);
           })
@@ -106,6 +108,7 @@ class ProfileScreen extends Component{
       }
     };
     togglePicOption = () => {
+      
       this.setState((prevState) => {
         Animated.spring(this.state.animation, {
           toValue: prevState.isModalVisible ? 0 : 1,
@@ -124,7 +127,6 @@ class ProfileScreen extends Component{
           {/*Header Section*/}
           <View style={MainStyles.profileHeader}>
             {/*Header Profile Picture Section*/}
-            <HeaderButton onPress={this.props.navigation.openDrawer} />
             <View style={MainStyles.pHeadPicWrapper}>
               <View style={MainStyles.pHeadPic}>
                 <Image source={{uri:this.state.profilePicture}} style={{width:130,height:130}}/>
@@ -176,12 +178,18 @@ class ProfileScreen extends Component{
                   <Icon name="briefcase" style={MainStyles.iFWIIcon}/>
                   <TextInput style={MainStyles.ifWITI} placeholder="Current position" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.position}/>
                 </View>
-              </View>
-              <View style={[MainStyles.btnWrapper, { justifyContent: 'center', flexDirection: 'row' }]}>
-                <TouchableOpacity style={[MainStyles.btnSave, { marginBottom: 0 }]} onPress={() => { this.GoToNextScreen() }}>
-                  <Text style={MainStyles.btnSaveText}>Continue</Text>
+              <View style={MainStyles.inputFieldWithIcon}>
+                <Icon name="camera-retro" style={MainStyles.iFWIIcon}/>
+                <TextInput style={MainStyles.ifWITI} placeholder="Interests" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                <TouchableOpacity style={MainStyles.iFWIPlus}>
+                  <Icon name="plus-circle" style={MainStyles.ifWIPlusIcon}/>
                 </TouchableOpacity>
               </View>
+            </KeyboardAvoidingView>
+            <View style={[MainStyles.btnWrapper,{flex:1,justifyContent:'flex-end',flexDirection: 'row'}]}>
+              <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.setState({ visible: true });}}>
+                <Text style={MainStyles.btnSaveText}>SAVE</Text>
+              </TouchableOpacity>
             </View>
           </ScrollView>
           <Dialog
@@ -254,5 +262,4 @@ class ProfileScreen extends Component{
       );
     }
   }
-}
-export default ProfileScreen
+  export default ProfileScreen

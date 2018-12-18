@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {View,TextInput,ScrollView,ActivityIndicator,FlatList} from 'react-native';
+import {View,TextInput,ScrollView,ActivityIndicator} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LocationItem from './LocationItem';
 import MainStyles from '../StyleSheet';
@@ -36,7 +36,7 @@ export default class PlacesAutocomplete extends Component{
     render (){
         return (
             <View style={{zIndex:40}}>
-                <View style={[MainStyles.createEventFWI]}>
+                <View style={[MainStyles.createEventFWI,{marginTop:0}]}>
                     <Icon name="search" style={MainStyles.cEFWIIcon}/>
                     <TextInput style={MainStyles.cEFWITF} 
                         placeholder="Search Location" 
@@ -44,7 +44,6 @@ export default class PlacesAutocomplete extends Component{
                         underlineColorAndroid="transparent"
                         onChangeText={this.onChangeTextDelayed}
                     />
-                    
                 </View>
                 {
                     this.state.textingValue &&  
@@ -59,12 +58,6 @@ export default class PlacesAutocomplete extends Component{
                                     fecthDetails={this.props.fetchDetails}
                                 />
                             ))
-                            // <FlatList data={this.state.locationItems}
-                            //     renderItem={({item}) => (
-                            //         <LocationItem item={item} />
-                            //     )}
-                            //     keyExtractor={(item) => item.id}
-                            // />
                         }
                     </ScrollView> 
                 }

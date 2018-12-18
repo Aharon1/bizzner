@@ -93,7 +93,7 @@ const MainStyles = StyleSheet.create({
         paddingTop: 20,
         overflow: 'visible',
         paddingLeft:30,
-        flexDirection:'row',
+        flexDirection:'row'
     },
     pHeadPicWrapper:{
         position:'relative'
@@ -349,7 +349,7 @@ const MainStyles = StyleSheet.create({
         flexDirection:'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom:60,
+        marginTop:60,
         position:'relative',
         overflow:'visible'
     },
@@ -378,20 +378,22 @@ const MainStyles = StyleSheet.create({
        borderBottomWidth:1,
        paddingHorizontal:10,
        paddingVertical:10,
+       textAlign:'left',
+       justifyContent:'flex-start'
     },
     locationItemWrapper:{
         width:'100%',
         left:0,
         maxHeight: 250,
-        position:'absolute',
+        //position:'absolute',
         backgroundColor:'#FFF',
         zIndex: 4000,
         borderColor:'#8da6d4',
         borderWidth:1,
-        top:15,
+        //top:15,
+        marginBottom:30,
+        borderTopWidth: 0,
         elevation:3,
-        borderBottomLeftRadius:10,
-        borderBottomRightRadius:10,
         overflow:'hidden'
     }
 });
