@@ -69,14 +69,8 @@ const Navigation = createStackNavigator({
     Home: {
         screen: Drawer,
     },
-    Profile:{
-        screen:EditProfileScreen,
-    },
-    Events:{
-        screen:CurrentEventsScreen,
-    },
     Splash:{
-        screen:SplashScreen
+        screen: SplashScreen
     }
 }, {
     headerMode: 'none',

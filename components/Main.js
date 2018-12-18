@@ -118,7 +118,7 @@ class MainScreen extends Component {
                     key:bodyKey
                 });
             }            
-            this.props.navigation.navigate('Events',{locationList:placesArray});
+            this.props.navigation.navigate('Home',{locationList:placesArray});
             this.setState({loading:false});
         }).catch(err => {
           this.setState({loading:false});

@@ -6,6 +6,7 @@ import TabContainer from './TabContainer';
 import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog';
 import DatePicker from 'react-native-datepicker';
 import PlacesAutocomplete from './AsyncModules/PlacesAutocomplete';
+import { HeaderButton } from './Navigation/HeaderButton';
 class EventsScreen extends Component{
     constructor(props){
         super(props);
@@ -47,9 +48,7 @@ class EventsScreen extends Component{
         return (
             <View style={MainStyles.normalContainer}>
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                    <TouchableOpacity style={{paddingLeft:12}}>
-                        <Icon name="bars" style={{fontSize:24,color:'#8da6d5'}}/>
-                    </TouchableOpacity>
+                    <HeaderButton onPress={this.props.navigation.openDrawer} />
                     <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>Events near me</Text>
                 </View>
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
