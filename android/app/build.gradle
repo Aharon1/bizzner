@@ -137,6 +137,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-push-notification')
     implementation project(':react-native-camera')
     implementation project(':linkedin-sdk')
     implementation project(':react-native-vector-icons')

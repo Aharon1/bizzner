@@ -7,37 +7,41 @@
  */
 
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { createDrawerNavigator, ScrollView, DrawerItems, createStackNavigator } from 'react-navigation';
-import { SettingsScreen, ComplainScreen, CurrentEventsScreen, HistoryScreen, EditProfileScreen, MessagesScreen } from './Screens';
+import { createDrawerNavigator, DrawerItems, createStackNavigator } from 'react-navigation';
+import { SettingsScreen, ComplainScreen, CurrentEventsScreen, HistoryScreen, EditProfileScreen, MessagesScreen, LogoutScreen } from './Screens';
 import MainScreen from '../Main';
 import SplashScreen from '../Splash';
 const drawerItemStyle = { borderBottomWidth: 1, borderBottomColor: '#f3f3f3', height: 60, textAlign: 'left' };
 const drawerLabelStyle = { margin: 0, fontSize: 16, fontFamily: 'Roboto-Medium' };
 
 const Drawer = createDrawerNavigator({
-    ['CURRENT EVENTS']: {
-        screen: CurrentEventsScreen
+        ['CURRENT EVENTS']: {
+            screen: CurrentEventsScreen
+        },
+        ['MESSAGES']: {
+            screen: MessagesScreen
+        },
+        ['PROFILE']: {
+            screen: EditProfileScreen,
+        },
+        ['HISTORY']: {
+            screen: HistoryScreen
+        },
+        [`COMPLAIN`]: {
+            screen: ComplainScreen,
+        },
+        [`SETTINGS`]: {
+            screen: SettingsScreen,
+        },
+        [`LOGOUT`]: {
+            screen:LogoutScreen
+        },
     },
-    ['MESSAGES']: {
-        screen: MessagesScreen
-    },
-    ['PROFILE']: {
-        screen: EditProfileScreen,
-    },
-    ['HISTORY']: {
-        screen: HistoryScreen
-    },
-    [`COMPLAIN`]: {
-        screen: ComplainScreen,
-    },
-    [`SETTINGS`]: {
-        screen: SettingsScreen,
-    },
-},
     {
         overlayColor: 'rgba(0, 0, 0, 0.2)',
+        drawerWidth: 300,
         contentComponent: props =>
             <ScrollView>
                 <TouchableOpacity style={{ paddingLeft: 12 }} onPress={props.navigation.closeDrawer}>
@@ -66,18 +70,15 @@ const Navigation = createStackNavigator({
     Auth: {
         screen: MainScreen
     },
-    Home: {
+     Home: {
         screen: Drawer,
     },
     Profile:{
         screen:EditProfileScreen,
     },
-    Events:{
-        screen:CurrentEventsScreen,
-    },
     Splash:{
         screen:SplashScreen
-    }
+    },
 }, {
     headerMode: 'none',
     initialRouteName: 'Splash',
@@ -89,4 +90,4 @@ const Navigation = createStackNavigator({
         }
     }
 });
-export default  Navigation
+export default Navigation;

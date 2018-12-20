@@ -33,22 +33,25 @@ class SplashScreen extends Component{
             .then(response=>{
                 var bodyText = JSON.parse(response._bodyText);
                 var results = bodyText.results
-                console.log(bodyText);
                 const placesArray = [];
                 for (const bodyKey in results){
                     placesArray.push({
-                      name:results[bodyKey].group_name,
-                      address:results[bodyKey].group_address,
-                      isStarted:results[bodyKey].group_status,
-                      photoUrl:results[bodyKey].photoUrl,
-                      key:'key-'+bodyKey,
-                      place_id:results[bodyKey].place_id,
-                      latitude:results[bodyKey].latitude,
-                      longitude:results[bodyKey].longitude
+                        name:results[bodyKey].group_name,
+                        address:results[bodyKey].group_address,
+                        isStarted:results[bodyKey].group_status,
+                        photoUrl:results[bodyKey].photoUrl,
+                        key:results[bodyKey].place_id,
+                        event_date:results[bodyKey].event_date,
+                        event_time:results[bodyKey].event_time,
+                        event_subject:results[bodyKey].event_subject,
+                        event_note:results[bodyKey].event_note,
+                        latitude:results[bodyKey].latitude,
+                        longitude:results[bodyKey].longitude,
+                        place_id:results[bodyKey].place_id
                     });
                 }
-                this.setState({loading:false})
-                navigation.navigate('Events',{locationList:placesArray,nextPageToken:bodyText.next_page_token});
+                this.setState({loading:false});
+                navigation.navigate('Home',{locationList:placesArray,nextPageToken:bodyText.next_page_token});
             }).catch(err => {
                 console.log('Error What is this',err);
             })

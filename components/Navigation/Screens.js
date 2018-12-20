@@ -13,6 +13,7 @@ import { createStackNavigator } from 'react-navigation';
 import MainScreen from '../Main';
 import ProfileScreen from '../Profile';
 import EventsScreen from '../Events';
+import Logout from '../AsyncModules/Logout';
 
 
 function createEmptyScreen(label, icon) {
@@ -49,3 +50,4 @@ export const HistoryScreen = createEmptyScreen('EVENTS HISTORY', 'history')
 export const EditProfileScreen = createScreen('EDIT PROFILE', 'user', ProfileScreen);
 export const MessagesScreen = createEmptyScreen('PRIVATE MESSAGES', 'comment');
 export const CurrentEventsScreen = createScreen('CURRENT EVENTS', 'calendar-check', EventsScreen);
+export const LogoutScreen = createScreen('LOGOUT', 'sign-out-alt', Logout);

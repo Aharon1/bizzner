@@ -115,7 +115,11 @@ class MainScreen extends Component {
                     address:bodyText[bodyKey].group_address,
                     isStarted:bodyText[bodyKey].group_status,
                     photoUrl:bodyText[bodyKey].photoUrl,
-                    key:bodyKey
+                    key:bodyText[bodyKey].place_id,
+                    event_date:bodyText[bodyKey].event_date,
+                    event_time:bodyText[bodyKey].event_time,
+                    event_subject:bodyText[bodyKey].event_subject,
+                    event_note:bodyText[bodyKey].event_note
                 });
             }            
             this.props.navigation.navigate('Events',{locationList:placesArray});
@@ -129,7 +133,6 @@ class MainScreen extends Component {
         this.setState({loading:false});
         console.log('Error',error);
       })
-      
     }
   }
   render() {

@@ -19,11 +19,12 @@ export default class PlacesAutocomplete extends Component{
         if(text.length > 2){
             this.setState({isLoading:true,textingValue:true})
             navigator.geolocation.getCurrentPosition(positions=>{
-                let Latitude = positions.coords.latitude;
-                let Longitude = positions.coords.longitude;
+                let Latitude = positions.coords.latitude;//;32.079394
+                let Longitude = positions.coords.longitude;//;34.8438209
                 fetch("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+Latitude+","+Longitude+"&type=cafe&keyword="+text+"&rankby=distance&key=AIzaSyASrUOtfMI34ZKtw4CFKl0XzN9zNEo3yS0")
                 .then(res=>{
                     var bodyText = JSON.parse(res._bodyText);
+                    console.log(bodyText);
                     this.setState({locationItems:bodyText.results})
                     this.setState({isLoading:false})
                 })
@@ -36,7 +37,7 @@ export default class PlacesAutocomplete extends Component{
     render (){
         return (
             <View style={{zIndex:40}}>
-                <View style={[MainStyles.createEventFWI,{marginTop:0}]}>
+                <View style={[MainStyles.createEventFWI,{marginTop:30}]}>
                     <Icon name="search" style={MainStyles.cEFWIIcon}/>
                     <TextInput style={MainStyles.cEFWITF} 
                         placeholder="Search Location" 

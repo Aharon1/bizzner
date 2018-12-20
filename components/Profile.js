@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {SERVER_URL} from '../Constants';
 import { Text, View, Image, TouchableOpacity, ScrollView,TextInput,KeyboardAvoidingView,Animated} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
@@ -6,26 +7,43 @@ import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog'
 import ToggleSwitch from 'toggle-switch-react-native'
 import Loader from './Loader';
 import RequestPermssions from './AsyncModules/Permission';
-
+import PushNotification from 'react-native-push-notification';
 class ProfileScreen extends Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      loading:false,
-      visible: false,
-      emailAddress : this.getDetail('emailAddress'),
-      location : this.getDetail('location'),
-      headline : this.getDetail('headline'),
-      position : this.getDetail('position'),
-      profilePicture : this.getDetail('profilePicture'),
-      animation: new Animated.Value(30),
-      gpsOn:true,
-      pushOn:true
-    };
-  }
+    constructor(props){
+      super(props);
+      this.state = {
+        loading:false,
+        visible: false,
+        emailAddress : this.getDetail('emailAddress'),
+        location : this.getDetail('location'),
+        headline : this.getDetail('headline'),
+        position : this.getDetail('position'),
+        profilePicture : this.getDetail('profilePicture'),
+        animation: new Animated.Value(30),
+        gpsOn:true,
+        pushOn:true
+      };
+    }
     GoToNextScreen(){
       this.setState({visible:false,loading:true});
-      var fetchData = 'http://dissdemo.biz/bizzler?action=save_profile'
+      var fetchData = SERVER_URL+'?action=save_profile';
+      /*PushNotification.configure({
+          onRegister: function(token) {
+              console.log( 'TOKEN:', token );
+          },
+          onNotification: function(notification) {
+              console.log( 'NOTIFICATION:', notification );
+              notification.finish(PushNotificationIOS.FetchResult.NoData);
+          },
+          senderID: "71450108131",
+          permissions: {
+              alert: true,
+              badge: true,
+              sound: true
+          },
+          popInitialNotification: true,
+          requestPermissions: true,
+      });*/
       fetch(fetchData,{
         method:'POST',
         body:JSON.stringify({
@@ -47,7 +65,6 @@ class ProfileScreen extends Component{
           .then(response=>{
               var bodyText = JSON.parse(response._bodyText);
               var results = bodyText.results
-              console.log(bodyText);
               const placesArray = [];
               for (const bodyKey in results){
                   placesArray.push({
@@ -55,14 +72,18 @@ class ProfileScreen extends Component{
                     address:results[bodyKey].group_address,
                     isStarted:results[bodyKey].group_status,
                     photoUrl:results[bodyKey].photoUrl,
-                    key:'key-'+bodyKey,
-                    place_id:results[bodyKey].place_id,
+                    key:results[bodyKey].place_id,
+                    event_date:results[bodyKey].event_date,
+                    event_time:results[bodyKey].event_time,
+                    event_subject:results[bodyKey].event_subject,
+                    event_note:results[bodyKey].event_note,
                     latitude:results[bodyKey].latitude,
-                    longitude:results[bodyKey].longitude
+                    longitude:results[bodyKey].longitude,
+                    place_id:results[bodyKey].place_id
                   });
               }
               this.setState({loading:false})
-              this.props.navigation.navigate('Events',{locationList:placesArray,nextPageToken:bodyText.next_page_token});
+              this.props.navigation.navigate('Home',{locationList:placesArray,nextPageToken:bodyText.next_page_token});
           }).catch(err => {
               console.log('Error What is this',err);
           })
@@ -71,8 +92,6 @@ class ProfileScreen extends Component{
           console.log('Error',error);
         })
       })
-      
-      
     }
     getDetail(key){
       /*try{
@@ -95,14 +114,6 @@ class ProfileScreen extends Component{
     }
     picPhoto = async function(){
       if(RequestPermssions.Camera()){
-        /*const options = {
-          quality: 1.0,
-          maxWidth: 500,
-          maxHeight: 500,
-          storageOptions: {
-            skipBackup: true
-          }
-        };*/
         
 
       }
@@ -161,7 +172,7 @@ class ProfileScreen extends Component{
           
           {/*Body Section*/}
           <ScrollView style={MainStyles.profileBody}>
-            <KeyboardAvoidingView>
+            <KeyboardAvoidingView  style={{flex:1}}>
                 <View style={MainStyles.inputFieldWithIcon}>
                   <Icon name="envelope" style={MainStyles.iFWIIcon}/>
                   <TextInput style={MainStyles.ifWITI} placeholder="Email" keyboardType="email-address" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.emailAddress}/>
