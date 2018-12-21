@@ -381,13 +381,9 @@ const MainStyles = StyleSheet.create({
        paddingHorizontal:10,
        paddingVertical:10,
        textAlign:'left',
-<<<<<<< HEAD
-       justifyContent:'flex-start'
-=======
        alignItems:'flex-start',
        justifyContent:'flex-start',
        alignContent: 'flex-start',
->>>>>>> MustafaCode
     },
     locationItemWrapper:{
         width:'100%',
@@ -399,11 +395,7 @@ const MainStyles = StyleSheet.create({
         borderColor:'#8da6d4',
         borderWidth:1,
         //top:15,
-<<<<<<< HEAD
-        marginBottom:30,
-=======
         marginBottom:0,
->>>>>>> MustafaCode
         borderTopWidth: 0,
         elevation:3,
         overflow:'hidden'

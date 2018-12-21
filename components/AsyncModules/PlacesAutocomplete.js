@@ -37,11 +37,7 @@ export default class PlacesAutocomplete extends Component{
     render (){
         return (
             <View style={{zIndex:40}}>
-<<<<<<< HEAD
-                <View style={[MainStyles.createEventFWI,{marginBottom:0}]}>
-=======
                 <View style={[MainStyles.createEventFWI,{marginTop:30}]}>
->>>>>>> MustafaCode
                     <Icon name="search" style={MainStyles.cEFWIIcon}/>
                     <TextInput style={MainStyles.cEFWITF} 
                         placeholder="Search Location" 

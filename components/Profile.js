@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-<<<<<<< HEAD
-=======
 import {SERVER_URL} from '../Constants';
->>>>>>> MustafaCode
 import { Text, View, Image, TouchableOpacity, ScrollView,TextInput,KeyboardAvoidingView,Animated} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
@@ -10,11 +7,7 @@ import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog'
 import ToggleSwitch from 'toggle-switch-react-native'
 import Loader from './Loader';
 import RequestPermssions from './AsyncModules/Permission';
-<<<<<<< HEAD
-
-=======
 import PushNotification from 'react-native-push-notification';
->>>>>>> MustafaCode
 class ProfileScreen extends Component{
     constructor(props){
       super(props);
@@ -72,10 +65,6 @@ class ProfileScreen extends Component{
           .then(response=>{
               var bodyText = JSON.parse(response._bodyText);
               var results = bodyText.results
-<<<<<<< HEAD
-              console.log(bodyText);
-=======
->>>>>>> MustafaCode
               const placesArray = [];
               for (const bodyKey in results){
                   placesArray.push({
@@ -83,16 +72,6 @@ class ProfileScreen extends Component{
                     address:results[bodyKey].group_address,
                     isStarted:results[bodyKey].group_status,
                     photoUrl:results[bodyKey].photoUrl,
-<<<<<<< HEAD
-                    key:'key-'+bodyKey,
-                    place_id:results[bodyKey].place_id,
-                    latitude:results[bodyKey].latitude,
-                    longitude:results[bodyKey].longitude
-                  });
-              }
-              this.setState({loading:false})
-              this.props.navigation.navigate('Events',{locationList:placesArray,nextPageToken:bodyText.next_page_token});
-=======
                     key:results[bodyKey].place_id,
                     event_date:results[bodyKey].event_date,
                     event_time:results[bodyKey].event_time,
@@ -105,7 +84,6 @@ class ProfileScreen extends Component{
               }
               this.setState({loading:false})
               this.props.navigation.navigate('Home',{locationList:placesArray,nextPageToken:bodyText.next_page_token});
->>>>>>> MustafaCode
           }).catch(err => {
               console.log('Error What is this',err);
           })

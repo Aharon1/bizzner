@@ -10,11 +10,7 @@ class TabContianer extends Component  {
     }
     render(){
         const TagName = this.TC[this.props.showContainer.TabComponent];
-<<<<<<< HEAD
-        return <TagName locationList={this.props.showContainer.locationList} npt={this.props.showContainer.npt} fetchDetails={this.props.showContainer.fetchDetails}/>
-=======
         return <TagName locationList={this.props.showContainer.locationList} fetchDetails={this.props.showContainer.fetchDetails} npt={this.props.showContainer.npt}/>
->>>>>>> MustafaCode
     }
     
 }

@@ -22,13 +22,6 @@ class MainScreen extends Component {
       loading: true
     });
     const token = await LinkedInSDK.signIn({
-<<<<<<< HEAD
-      // https://developer.linkedin.com/docs/oauth2
-   
-      // iOS (Required)
-      // The "API Key" value generated when you registered your application.
-=======
->>>>>>> MustafaCode
       clientID: '81fcixszrwwavz',
       clientSecret: 'm3sWUS3DpPoHZdZk',
       state: 'mvdeisred',
@@ -51,7 +44,6 @@ class MainScreen extends Component {
       profilePicture:profilePicture.data.values[0]
     }
     await AsyncStorage.setItem('isUserLoggedin','true');
-<<<<<<< HEAD
     this.setState({loading:false})
     this.props.navigation.navigate('Profile',userDetails);
     /*navigator.geolocation.getCurrentPosition(positions=>{
@@ -139,11 +131,9 @@ class MainScreen extends Component {
       })
       
     }
-=======
     this.setState({loading:false});
     console.log(userDetails);
     this.props.navigation.navigate('Profile',userDetails);
->>>>>>> MustafaCode
   }
   render() {
     const {navigate} = this.props.navigation;
