@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View,Text,TouchableOpacity, TextInput,KeyboardAvoidingView,ImageBackground, Platform,FlatList,ActivityIndicator} from 'react-native';
+import { View,Text,TouchableOpacity, TextInput,KeyboardAvoidingView,ImageBackground, Platform,FlatList,ActivityIndicator,ToastAndroid} from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
@@ -20,8 +20,8 @@ class EventsScreen extends Component{
             CreateEventVisible:false,
             NES:'',
             NEN:'',
-            NED:'',
-            NET:'',
+            NED:new Date(),
+            NET:new Date(),
             locationList:this.props.navigation.getParam('locationList'),
             isLocationSet:false,
             curLocation:{},
@@ -130,49 +130,60 @@ class EventsScreen extends Component{
             }
             locList.unshift(eventAdded);
             console.log(response.body);
-            this.setState({locationList:locList,loading:false,CreateEventVisible:false});
+            this.setState({
+                locationList:locList,
+                loading:false,
+                CreateEventVisible:false,
+                NES:'',
+                NEN:'',
+                NED:new Date(),
+                NET:new Date(),
+            });
         })
     }
     _fetchMore() {
         let npt = (this.state.npt == '' && this.state.resultsLost==false)?this.props.navigation.getParam('nextPageToken'):this.state.npt;
-        var fetchData = 'http://bizzner.com/app?action=loadMoreLocations&npt='+npt;
-        fetch(fetchData,{
-            method:'POST',
-        })
-        .then(response=>{
-            var count = this.state.locationList.length
-            var bodyText = JSON.parse(response._bodyText);
-            var results = bodyText.results
-            const placesArray = [];
-            for (const bodyKey in results){
-                var currentR = results[bodyKey];
-                placesArray.push({
-                    name:currentR.group_name,
-                    address:results[bodyKey].group_address,
-                    isStarted:results[bodyKey].group_status,
-                    photoUrl:results[bodyKey].photoUrl,
-                    key:results[bodyKey].place_id,
-                    event_date:results[bodyKey].event_date,
-                    event_time:results[bodyKey].event_time,
-                    event_subject:results[bodyKey].event_subject,
-                    event_note:results[bodyKey].event_note,
-                    latitude:results[bodyKey].latitude,
-                    longitude:results[bodyKey].longitude,
-                    place_id:results[bodyKey].place_id,
-                });
-            }
-            
-            if(bodyText.next_page_token == ''){
-                this.setState({resultsLost:true});
-            }
-            this.setState({ isLoadingMore: false,npt:bodyText.next_page_token,locationList:this.state.locationList.concat(placesArray) });
-        }).catch(err => {
-            console.log('Error What is this',err);
-        })
+        if(npt != ''){
+            this.setState({ isLoadingMore: true });
+            var fetchData = 'http://bizzner.com/app?action=loadMoreLocations&npt='+npt;
+            fetch(fetchData,{
+                method:'POST',
+            })
+            .then(response=>{
+                var count = this.state.locationList.length
+                var bodyText = JSON.parse(response._bodyText);
+                var results = bodyText.results
+                const placesArray = [];
+                for (const bodyKey in results){
+                    var currentR = results[bodyKey];
+                    placesArray.push({
+                        name:currentR.group_name,
+                        address:results[bodyKey].group_address,
+                        isStarted:results[bodyKey].group_status,
+                        photoUrl:results[bodyKey].photoUrl,
+                        key:results[bodyKey].place_id,
+                        event_date:results[bodyKey].event_date,
+                        event_time:results[bodyKey].event_time,
+                        event_subject:results[bodyKey].event_subject,
+                        event_note:results[bodyKey].event_note,
+                        latitude:results[bodyKey].latitude,
+                        longitude:results[bodyKey].longitude,
+                        place_id:results[bodyKey].place_id,
+                    });
+                }
+                if(bodyText.next_page_token == ''){
+                    this.setState({resultsLost:true});
+                }
+                this.setState({ isLoadingMore: false,npt:bodyText.next_page_token,locationList:this.state.locationList.concat(placesArray) });
+            }).catch(err => {
+                console.log('Error What is this',err);
+            })
+        }
     }
     render(){
         return (
             <View style={MainStyles.normalContainer}>
+                {this.props.navigation.getParam('nextPageToken') == '' && ToastAndroid.show('Over Query Limit', ToastAndroid.SHORT)}
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     {/* <TouchableOpacity style={{paddingLeft:12}}>
@@ -225,9 +236,7 @@ class EventsScreen extends Component{
                     renderItem={({item}) => (
                         <ListItem item={item} fetchDetails={this.fetchDetails}/>
                         )}
-                    onEndReached={()=>{
-                                this.setState({ isLoadingMore: true }, () => this.fetchMore())
-                        }
+                    onEndReached={()=>{this.fetchMore()}
                     }
                     keyExtractor={(item) => item.key}
                     ListFooterComponent={() => {

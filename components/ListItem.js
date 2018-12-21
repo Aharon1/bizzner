@@ -27,16 +27,15 @@ export default class ListItem extends Component{
     }
     render(){
         const Item = this.props.item
+        console.log(Item);
         return (
         <TouchableOpacity style={[
                 (Item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
                 MainStyles.EventItem,
             ]} onPress={this.checkEvent}>
-            {/* require('../assets/profile-pic.png') "http://dissdemo.biz/bizzler/assets/images/default.jpg"*/}
             <View style={MainStyles.EventItemImageWrapper}>
                 <ProgressiveImage source={{uri:Item.photoUrl}} style={{ width: 70, height: 70 }}
           resizeMode="cover"/>
-                {/* <Image source={{uri:Item.photoUrl}} style={{width:70,height:70}}/> */}
             </View>
             <View style={MainStyles.EventItemTextWrapper}>
                 <Text style={MainStyles.EITWName}>{Item.name}</Text>
@@ -53,7 +52,6 @@ export default class ListItem extends Component{
                         <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOffline]}>Create new event</Text>
                     </View>
                 }
-                
             </View>
         </TouchableOpacity>
         )

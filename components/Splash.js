@@ -32,6 +32,7 @@ class SplashScreen extends Component{
             })
             .then(response=>{
                 var bodyText = JSON.parse(response._bodyText);
+                console.log(bodyText);
                 var results = bodyText.results
                 const placesArray = [];
                 for (const bodyKey in results){
