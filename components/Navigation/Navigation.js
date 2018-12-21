@@ -13,6 +13,7 @@ import { createDrawerNavigator, DrawerItems, createStackNavigator } from 'react-
 import { SettingsScreen, ComplainScreen, CurrentEventsScreen, HistoryScreen, EditProfileScreen, MessagesScreen, LogoutScreen } from './Screens';
 import MainScreen from '../Main';
 import SplashScreen from '../Splash';
+import EventDetail from '../singleScreens/EventDetail';
 const drawerItemStyle = { borderBottomWidth: 1, borderBottomColor: '#f3f3f3', height: 60, textAlign: 'left' };
 const drawerLabelStyle = { margin: 0, fontSize: 16, fontFamily: 'Roboto-Medium' };
 
@@ -68,9 +69,7 @@ const shadow = {
 }
 
 const Navigation = createStackNavigator({
-    Splash:{
-        screen:SplashScreen
-    },
+    
     Auth: {
         screen: MainScreen
     },
@@ -80,10 +79,15 @@ const Navigation = createStackNavigator({
     Profile:{
         screen:EditProfileScreen,
     },
-    
+    Splash:{
+        screen:SplashScreen
+    },
+    EventDetail:{
+        screen:EventDetail
+    }
 }, {
     headerMode: 'none',
-    //initialRouteName: 'Splash',
+    initialRouteName: 'Splash',
     containerOptions: {
         style: {
             backgroundColor: '#f00',

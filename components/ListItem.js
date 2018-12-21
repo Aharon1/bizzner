@@ -22,7 +22,7 @@ export default class ListItem extends Component{
             await this.props.fetchDetails(locItem);
         }
         else{
-            alert('Is Started');
+            this.props.navigate('EventDetail',{place_id:curItem.place_id});
         }
     }
     render(){

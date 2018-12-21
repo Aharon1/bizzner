@@ -44,7 +44,8 @@ class MainScreen extends Component {
       profilePicture:profilePicture.data.values[0]
     }
     await AsyncStorage.setItem('isUserLoggedin','true');
-    this.setState({loading:false})
+    this.setState({loading:false});
+    console.log(userDetails);
     this.props.navigation.navigate('Profile',userDetails);
   }
   render() {

@@ -50,7 +50,7 @@ class EventsScreen extends Component{
         var curPic = 'http://bizzner.com/app/assets/images/default.jpg';
         if(typeof(curItem.photos) !== 'undefined'){
             if(typeof(curItem.photos[0].photo_reference) !== 'undefined'){
-                curPic = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=600&photoreference='+curItem.photos[0].photo_reference+'&key=AIzaSyASrUOtfMI34ZKtw4CFKl0XzN9zNEo3yS0'
+                curPic = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=600&photoreference='+curItem.photos[0].photo_reference+'&key=AIzaSyCJRgtLQrTsiDSPvz0hzKlEXisjf2UsBbM'
             }
             else{
                 curPic = curItem.photos;
@@ -222,7 +222,7 @@ class EventsScreen extends Component{
                     }} /> */}
                 <FlatList data={this.state.locationList}
                     renderItem={({item}) => (
-                        <ListItem item={item} fetchDetails={this.fetchDetails}/>
+                        <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
                         )}
                     onEndReached={()=>{this.fetchMore()}
                     }

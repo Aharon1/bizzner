@@ -21,7 +21,7 @@ export default class PlacesAutocomplete extends Component{
             navigator.geolocation.getCurrentPosition(positions=>{
                 let Latitude = positions.coords.latitude;//;32.079394
                 let Longitude = positions.coords.longitude;//;34.8438209
-                fetch("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+Latitude+","+Longitude+"&type=cafe&keyword="+text+"&rankby=distance&key=AIzaSyASrUOtfMI34ZKtw4CFKl0XzN9zNEo3yS0")
+                fetch("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+Latitude+","+Longitude+"&type=cafe&keyword="+text+"&rankby=distance&key=AIzaSyCJRgtLQrTsiDSPvz0hzKlEXisjf2UsBbM")
                 .then(res=>{
                     var bodyText = JSON.parse(res._bodyText);
                     console.log(bodyText);
