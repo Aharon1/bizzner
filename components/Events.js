@@ -6,13 +6,10 @@ import MainStyles from './StyleSheet';
 import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog';
 import DatePicker from 'react-native-datepicker';
 import PlacesAutocomplete from './AsyncModules/PlacesAutocomplete';
-<<<<<<< HEAD
-=======
 import { HeaderButton } from './Navigation/HeaderButton';
 import {SERVER_URL} from '../Constants';
 import Loader from './Loader';
 import ListItem from './ListItem';
->>>>>>> MustafaCode
 class EventsScreen extends Component{
     constructor(props){
         super(props);
@@ -226,14 +223,6 @@ class EventsScreen extends Component{
                         <Text style={MainStyles.tabItemText}>Search</Text>
                     </TouchableOpacity>
                 </View>
-<<<<<<< HEAD
-                <TabContainer showContainer={{
-                    TabComponent:this.state.TabComponent,
-                    locationList:this.props.navigation.getParam('locationList'),
-                    fetchDetails:this.fetchDetails,
-                    npt:this.props.navigation.getParam('nextPageToken')
-                    }} />
-=======
                 {/* <TabContainer showContainer={{
                     TabComponent:this.state.TabComponent,
                     locationList:this.state.locationList,
@@ -256,7 +245,6 @@ class EventsScreen extends Component{
                         );
                     }}
                 />
->>>>>>> MustafaCode
                 <Dialog
                     visible={this.state.CreateEventVisible}
                     dialogStyle={[MainStyles.confirmPopup,{width:'95%',padding:0,maxHeight:'95%'}]}

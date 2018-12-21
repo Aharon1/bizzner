@@ -16,41 +16,6 @@ class EventsList extends Component{
             resultsLost:false
         }
     }
-<<<<<<< HEAD
-    /*fecthDetails = ()=>{
-        let Latitude = this.props.coords.latitude;
-        let Longitude = this.props.coords.longitude;
-        //let urlToFetch = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location='+Latitude+','+Longitude+'&radius=1500&key=AIzaSyBSXKgQnJWjgEJDru0DFiG188-Nc_ry6w8&types=restaurant,cafe';
-        // var fetchData = 'http://dissdemo.biz/bizzler?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
-        // fetch(fetchData,{
-        //     method:'POST',
-        //     body:JSON.stringify({
-        //         action:'search_location_db',
-        //         latitude:Latitude,//22.7150822,
-        //         longitude:Longitude//75.8707448
-        //     })
-        // })
-        // .then(response=>{
-        //     var bodyText = JSON.parse(response._bodyText);
-        //     //console.log('Response',bodyText);
-        //     const placesArray = [];
-        //     for (const bodyKey in bodyText){
-        //         placesArray.push({
-        //             name:bodyText[bodyKey].group_name,
-        //             address:bodyText[bodyKey].group_address,
-        //             isStarted:bodyText[bodyKey].group_status,
-        //             key:bodyKey
-        //         });
-        //     }
-        //     PushArray = placesArray;
-        //     //this.setState({data:placesArray});
-        //     console.log('Response',PushArray);
-        // }).catch(err => {
-        //     console.log('Error What is this',err);
-        // })
-    }*/
-=======
->>>>>>> MustafaCode
     _fetchMore() {
         let npt = (this.state.npt == '' && this.state.resultsLost==false)?this.props.npt:this.state.npt;
         var fetchData = 'http://bizzner.com/app?action=loadMoreLocations&npt='+npt;
@@ -83,45 +48,15 @@ class EventsList extends Component{
         }).catch(err => {
             console.log('Error What is this',err);
         })
-<<<<<<< HEAD
-        /*this.fetchData(responseJson => {
-            const data = this.state._data.concat(responseJson.data.children);
-            this.setState({
-            isLoadingMore: false,
-            _data: data,
-            _dataAfter: responseJson.data.after
-            });
-        });*/
     }
     render(){
-        
-        //let PushArray = [];
-        //this.fecthDetails(PushArray);
-        //console.log('Response',this.state.data);
-=======
-    }
-    render(){
->>>>>>> MustafaCode
         return (
             <FlatList data={this.state.data}
                 renderItem={({item}) => (
                     <ListItem item={item} fetchDetails={this.props.fetchDetails}/>
                     )}
                 onEndReached={()=>{
-<<<<<<< HEAD
-                        //if(this.state.isLoadingMore == false && this.state.resultsLost == false){
                             this.setState({ isLoadingMore: true }, () => this.fetchMore())
-                        /*}
-                        else{
-                            ToastAndroid.show(
-                                'No more results found',
-                                ToastAndroid.SHORT,
-                                ToastAndroid.BOTTOM,
-                              );
-                        }*/
-=======
-                            this.setState({ isLoadingMore: true }, () => this.fetchMore())
->>>>>>> MustafaCode
                     }
                 }
                 keyExtractor={(item) => item.key}
