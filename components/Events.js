@@ -142,43 +142,52 @@ class EventsScreen extends Component{
         })
     }
     _fetchMore() {
-        let npt = (this.state.npt == '' && this.state.resultsLost==false)?this.props.navigation.getParam('nextPageToken'):this.state.npt;
-        if(npt != ''){
-            this.setState({ isLoadingMore: true });
-            var fetchData = 'http://bizzner.com/app?action=loadMoreLocations&npt='+npt;
-            fetch(fetchData,{
-                method:'POST',
-            })
-            .then(response=>{
-                var count = this.state.locationList.length
-                var bodyText = JSON.parse(response._bodyText);
-                var results = bodyText.results
-                const placesArray = [];
-                for (const bodyKey in results){
-                    var currentR = results[bodyKey];
-                    placesArray.push({
-                        name:currentR.group_name,
-                        address:results[bodyKey].group_address,
-                        isStarted:results[bodyKey].group_status,
-                        photoUrl:results[bodyKey].photoUrl,
-                        key:results[bodyKey].place_id,
-                        event_date:results[bodyKey].event_date,
-                        event_time:results[bodyKey].event_time,
-                        event_subject:results[bodyKey].event_subject,
-                        event_note:results[bodyKey].event_note,
-                        latitude:results[bodyKey].latitude,
-                        longitude:results[bodyKey].longitude,
-                        place_id:results[bodyKey].place_id,
-                    });
+        if(this.state.isLoadingMore == false){
+            if(this.state.resultsLost==false){
+                let npt = (this.state.npt == '' && this.state.resultsLost==false)?this.props.navigation.getParam('nextPageToken'):this.state.npt;
+                if(npt != ''){
+                    this.setState({ isLoadingMore: true });
+                    var fetchData = 'http://bizzner.com/app?action=loadMoreLocations&npt='+npt;
+                    fetch(fetchData,{
+                        method:'POST',
+                    })
+                    .then(response=>{
+                        var count = this.state.locationList.length
+                        var bodyText = JSON.parse(response._bodyText);
+                        var results = bodyText.results
+                        const placesArray = [];
+                        console.log(bodyText);
+                        for (const bodyKey in results){
+                            var currentR = results[bodyKey];
+                            placesArray.push({
+                                name:currentR.group_name,
+                                address:results[bodyKey].group_address,
+                                isStarted:results[bodyKey].group_status,
+                                photoUrl:results[bodyKey].photoUrl,
+                                key:results[bodyKey].place_id,
+                                event_date:results[bodyKey].event_date,
+                                event_time:results[bodyKey].event_time,
+                                event_subject:results[bodyKey].event_subject,
+                                event_note:results[bodyKey].event_note,
+                                latitude:results[bodyKey].latitude,
+                                longitude:results[bodyKey].longitude,
+                                place_id:results[bodyKey].place_id,
+                            });
+                        }
+                        if(bodyText.next_page_token == ''){
+                            this.setState({resultsLost:true});
+                        }
+                        this.setState({ isLoadingMore: false,npt:bodyText.next_page_token,locationList:this.state.locationList.concat(placesArray) });
+                    }).catch(err => {
+                        console.log('Error What is this',err);
+                    })
                 }
-                if(bodyText.next_page_token == ''){
-                    this.setState({resultsLost:true});
-                }
-                this.setState({ isLoadingMore: false,npt:bodyText.next_page_token,locationList:this.state.locationList.concat(placesArray) });
-            }).catch(err => {
-                console.log('Error What is this',err);
-            })
+            }
+            else{
+                ToastAndroid.show('No More Data', ToastAndroid.SHORT)
+            }
         }
+        
     }
     render(){
         return (

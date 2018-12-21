@@ -39,6 +39,9 @@ const Drawer = createDrawerNavigator({
         [`LOGOUT`]: {
             screen:LogoutScreen
         },
+        ['EventDetail']:{
+            screen:EventDetail
+        }
     },
     {
         initialRouteName: 'CURRENT EVENTS',
@@ -82,9 +85,7 @@ const Navigation = createStackNavigator({
     Splash:{
         screen:SplashScreen
     },
-    EventDetail:{
-        screen:EventDetail
-    }
+    
 }, {
     headerMode: 'none',
     initialRouteName: 'Splash',
