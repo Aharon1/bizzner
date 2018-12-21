@@ -22,25 +22,30 @@ export default class ListItem extends Component{
             await this.props.fetchDetails(locItem);
         }
         else{
-            alert('Is Started');
+            this.props.navigate('EventDetail',{place_id:curItem.place_id});
         }
     }
     render(){
-        const Item = this.props.item
+        var d1 = new Date ();
+        var d2 = new Date ( d1 );
+        d2.setHours ( d1.getHours() + 24 );
+        const Item = this.props.item;
+        var date = Item.event_date+' '+Item.event_time;
+        var eventDate = new Date(date);
         return (
         <TouchableOpacity style={[
                 (Item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
                 MainStyles.EventItem,
+                (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#dff9ec'}:''
             ]} onPress={this.checkEvent}>
-            {/* require('../assets/profile-pic.png') "http://dissdemo.biz/bizzler/assets/images/default.jpg"*/}
             <View style={MainStyles.EventItemImageWrapper}>
                 <ProgressiveImage source={{uri:Item.photoUrl}} style={{ width: 70, height: 70 }}
           resizeMode="cover"/>
-                {/* <Image source={{uri:Item.photoUrl}} style={{width:70,height:70}}/> */}
             </View>
             <View style={MainStyles.EventItemTextWrapper}>
                 <Text style={MainStyles.EITWName}>{Item.name}</Text>
                 <Text style={MainStyles.EITWAddress}>{Item.address}</Text>
+                <Text style={MainStyles.EITWAddress}>{Item.event_date} {Item.event_time}</Text>
                 {
                     Item.isStarted === true?
                         <View style={MainStyles.EITWAction}>
@@ -53,7 +58,6 @@ export default class ListItem extends Component{
                         <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOffline]}>Create new event</Text>
                     </View>
                 }
-                
             </View>
         </TouchableOpacity>
         )

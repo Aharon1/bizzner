@@ -16,6 +16,7 @@ class EventsList extends Component{
             resultsLost:false
         }
     }
+<<<<<<< HEAD
     /*fecthDetails = ()=>{
         let Latitude = this.props.coords.latitude;
         let Longitude = this.props.coords.longitude;
@@ -48,6 +49,8 @@ class EventsList extends Component{
         //     console.log('Error What is this',err);
         // })
     }*/
+=======
+>>>>>>> MustafaCode
     _fetchMore() {
         let npt = (this.state.npt == '' && this.state.resultsLost==false)?this.props.npt:this.state.npt;
         var fetchData = 'http://bizzner.com/app?action=loadMoreLocations&npt='+npt;
@@ -80,6 +83,7 @@ class EventsList extends Component{
         }).catch(err => {
             console.log('Error What is this',err);
         })
+<<<<<<< HEAD
         /*this.fetchData(responseJson => {
             const data = this.state._data.concat(responseJson.data.children);
             this.setState({
@@ -94,12 +98,17 @@ class EventsList extends Component{
         //let PushArray = [];
         //this.fecthDetails(PushArray);
         //console.log('Response',this.state.data);
+=======
+    }
+    render(){
+>>>>>>> MustafaCode
         return (
             <FlatList data={this.state.data}
                 renderItem={({item}) => (
                     <ListItem item={item} fetchDetails={this.props.fetchDetails}/>
                     )}
                 onEndReached={()=>{
+<<<<<<< HEAD
                         //if(this.state.isLoadingMore == false && this.state.resultsLost == false){
                             this.setState({ isLoadingMore: true }, () => this.fetchMore())
                         /*}
@@ -110,14 +119,17 @@ class EventsList extends Component{
                                 ToastAndroid.BOTTOM,
                               );
                         }*/
+=======
+                            this.setState({ isLoadingMore: true }, () => this.fetchMore())
+>>>>>>> MustafaCode
                     }
                 }
                 keyExtractor={(item) => item.key}
-                ListFooterComponent={() => { // replaces renderFooter={() => {
+                ListFooterComponent={() => {
                     return (
                     this.state.isLoadingMore &&
                     <View style={{ flex: 1, padding: 10 }}>
-                        <ActivityIndicator size="large" />
+                        <ActivityIndicator size="large" color="#416bb9"/>
                     </View>
                     );
                 }}

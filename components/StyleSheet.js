@@ -163,10 +163,10 @@ const MainStyles = StyleSheet.create({
         marginTop:10
     },
     profileBody:{
+        flex:1,
         marginTop:60,
         backgroundColor:'#fff',
-        paddingLeft:40,
-        paddingRight:40
+        paddingHorizontal:30,
     },
     inputFieldWithIcon:{
         borderBottomColor:'#8da6d4',
@@ -174,8 +174,9 @@ const MainStyles = StyleSheet.create({
         paddingBottom: 5,
         flex:1,
         flexDirection:'row',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
+        alignContent:'flex-start',
         marginBottom:20,
         position:'relative',
         overflow:'visible'
@@ -184,43 +185,44 @@ const MainStyles = StyleSheet.create({
         color:'#416bb9',
         fontSize:18,
         paddingTop: 13,
-        paddingRight: 0,
-        paddingBottom: 0,
         width:35,
-        height:40
+        height:40,
     },
     ifWITI:{
-        height:40,
-        flex: 1,
-        flexDirection:'row',
-        paddingTop: 10,
+        height:50,
+        flex: 2,
+        //flexDirection:'row',
+        //paddingTop: 10,
         paddingRight: 10,
-        paddingBottom: 10,
+        //paddingBottom: 10,
+        textAlign:'left',
         paddingLeft: 0,
         fontSize:18,
         fontFamily:'Roboto-Light'
     },
     iFWIPlus:{
+        flex:2,
         width:40,
         height:40,
-        alignItems:'center',
-        justifyContent: 'center',
-        textAlign:'center',
+        alignItems:'flex-end',
+        justifyContent: 'flex-end',
+        textAlign:'left',
         borderRadius:50,
     },
     ifWIPlusIcon:{
+        flex:2,
         color:'rgba(9,71,185,0.5)',
         fontSize:23,
         paddingTop: 10,
     },
     btnSave:{
         backgroundColor:'#0947b9',
-        paddingTop:20,
-        paddingBottom:20,
-        paddingLeft:40,
-        paddingRight:40,
-        borderRadius:100,
-        marginBottom:20
+        paddingTop:16,
+        paddingBottom:16,
+        paddingLeft:32,
+        paddingRight:32,
+        borderRadius:80,
+        marginBottom:16
     },
     btnSaveText:{
         color:'#FFF',
@@ -349,7 +351,7 @@ const MainStyles = StyleSheet.create({
         flexDirection:'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom:60,
+        marginTop:60,
         position:'relative',
         overflow:'visible'
     },
@@ -379,7 +381,13 @@ const MainStyles = StyleSheet.create({
        paddingHorizontal:10,
        paddingVertical:10,
        textAlign:'left',
+<<<<<<< HEAD
        justifyContent:'flex-start'
+=======
+       alignItems:'flex-start',
+       justifyContent:'flex-start',
+       alignContent: 'flex-start',
+>>>>>>> MustafaCode
     },
     locationItemWrapper:{
         width:'100%',
@@ -391,11 +399,13 @@ const MainStyles = StyleSheet.create({
         borderColor:'#8da6d4',
         borderWidth:1,
         //top:15,
+<<<<<<< HEAD
         marginBottom:30,
+=======
+        marginBottom:0,
+>>>>>>> MustafaCode
         borderTopWidth: 0,
         elevation:3,
-        borderBottomLeftRadius:10,
-        borderBottomRightRadius:10,
         overflow:'hidden'
     }
 });

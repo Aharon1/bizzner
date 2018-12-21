@@ -13,7 +13,6 @@ class MainScreen extends Component {
   static navigationOptions =
   { 
     header:null
-    //title: 'Home',
   };
    async saveDetails(key,value){
     await AsyncStorage.setItem(key,value);
@@ -23,39 +22,25 @@ class MainScreen extends Component {
       loading: true
     });
     const token = await LinkedInSDK.signIn({
+<<<<<<< HEAD
       // https://developer.linkedin.com/docs/oauth2
    
       // iOS (Required)
       // The "API Key" value generated when you registered your application.
+=======
+>>>>>>> MustafaCode
       clientID: '81fcixszrwwavz',
-   
-      // iOS (Required)
       clientSecret: 'm3sWUS3DpPoHZdZk',
-   
-      // iOS (Required)
-      // A unique string value of your choice that is hard to guess. Used to prevent CSRF.
       state: 'mvdeisred',
-   
-      // iOS, Android (Required)
       scopes: [
         'r_basicprofile',
         'r_emailaddress',
       ],
-   
-      // iOS (Required)
-      // The URI your users will be sent back to after authorization.  This value must match one of the defined OAuth 2.0 Redirect URLs in your application configuration.
-      // e.g. https://www.example.com/auth/linkedin
       redirectUri: 'https://github.com/joonhocho/react-native-linkedin-sdk/oauth2callback',
     });
     //
     const profile = await LinkedInSDK.getRequest('https://api.linkedin.com/v1/people/~:(first-name,last-name,email-address,headline,summary,location:(name),positions:(title,is-current))?format=json');
     const profilePicture = await LinkedInSDK.getRequest('https://api.linkedin.com/v1/people/~/picture-urls::(original)?format=json');
-    // this.saveDetails('firstName',profile.data.firstName);
-    // this.saveDetails('lastName',profile.data.lastName);
-    // this.saveDetails('emailAddress',profile.data.emailAddress);
-    // this.saveDetails('headline',profile.data.headline);
-    // this.saveDetails('location',profile.data.location.name);
-    // this.saveDetails('position',profile.data.positions.values[0].title);
     let userDetails = {
       firstName:profile.data.firstName,
       lastName:profile.data.lastName,
@@ -65,8 +50,8 @@ class MainScreen extends Component {
       position:profile.data.positions.values[0].title,
       profilePicture:profilePicture.data.values[0]
     }
-    //this.saveDetails('userDetails',JSON.stringify(userDetails));
     await AsyncStorage.setItem('isUserLoggedin','true');
+<<<<<<< HEAD
     this.setState({loading:false})
     this.props.navigation.navigate('Profile',userDetails);
     /*navigator.geolocation.getCurrentPosition(positions=>{
@@ -154,10 +139,14 @@ class MainScreen extends Component {
       })
       
     }
+=======
+    this.setState({loading:false});
+    console.log(userDetails);
+    this.props.navigation.navigate('Profile',userDetails);
+>>>>>>> MustafaCode
   }
   render() {
     const {navigate} = this.props.navigation;
-    //this.checkUser();
     return ( 
       <View style = { MainStyles.container } >
         <Loader loading={this.state.loading} />

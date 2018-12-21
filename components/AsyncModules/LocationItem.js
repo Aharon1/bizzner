@@ -7,8 +7,8 @@ class LocationItem extends PureComponent{
     }
     render(){
         return (
-            <TouchableOpacity onPress={this._handlePress} style={MainStyles.locationItemBtn}>
-                <Text>{this.props.name}</Text>
+            <TouchableOpacity onPress={this._handlePress} style={[MainStyles.locationItemBtn]}>
+                <Text style={{writingDirection:'ltr',textAlign:'left'}}>{this.props.name} ({this.props.vicinity}) </Text>
             </TouchableOpacity>
         );
     }
