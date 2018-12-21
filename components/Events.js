@@ -194,30 +194,18 @@ class EventsScreen extends Component{
                 </View>
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[
-                        MainStyles.tabItem,
-                         (this.state.TabComponent == 'EL') ? MainStyles.tabItemActive : null
-                        ]} onPress={()=>this.changeTab('EL')}>
-                        <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,
-                         (this.state.TabComponent == 'EL') ? MainStyles.tabItemActiveIcon : null
-                        ]}/>
-                        <Text style={[MainStyles.tabItemIcon,
-                         (this.state.TabComponent == 'EL') ? MainStyles.tabItemActiveText : null
-                        ]}>List</Text>
+                        MainStyles.tabItem,MainStyles.tabItemActive]} onPress={()=>this.props.navigation.navigate('Home')}>
+                        <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveIcon]}/>
+                        <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText]}>List</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[
                         MainStyles.tabItem,
                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
                         ]} onPress={()=>this.changeTab('map')}>
-                        <Icon name="globe" style={[MainStyles.tabItemIcon,
-                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActiveIcon : null
-                        ]}/>
-                        <Text style={[MainStyles.tabItemIcon,
-                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActiveText : null
-                        ]}>Map</Text>
+                        <Icon name="globe" style={MainStyles.tabItemIcon}/>
+                        <Text style={MainStyles.tabItemIcon}>Map</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[MainStyles.tabItem,
-                        (this.state.TabComponent == 'CE') ? MainStyles.tabItemActive : null
-                        ]} onPress={()=>this.setState({CreateEventVisible:true})}>
+                    <TouchableOpacity style={MainStyles.tabItem} onPress={()=>this.setState({CreateEventVisible:true})}>
                         <Icon name="calendar-o" style={MainStyles.tabItemIcon}/>
                         <Text style={MainStyles.tabItemIcon}>Create Event</Text>
                     </TouchableOpacity>

@@ -40,6 +40,7 @@ const Drawer = createDrawerNavigator({
         },
     },
     {
+        initialRouteName: 'CURRENT EVENTS',
         overlayColor: 'rgba(0, 0, 0, 0.2)',
         drawerWidth: 300,
         contentComponent: props =>
@@ -67,6 +68,9 @@ const shadow = {
 }
 
 const Navigation = createStackNavigator({
+    Splash:{
+        screen:SplashScreen
+    },
     Auth: {
         screen: MainScreen
     },
@@ -76,12 +80,10 @@ const Navigation = createStackNavigator({
     Profile:{
         screen:EditProfileScreen,
     },
-    Splash:{
-        screen:SplashScreen
-    },
+    
 }, {
     headerMode: 'none',
-    initialRouteName: 'Splash',
+    //initialRouteName: 'Splash',
     containerOptions: {
         style: {
             backgroundColor: '#f00',
