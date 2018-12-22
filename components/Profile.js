@@ -79,7 +79,8 @@ class ProfileScreen extends Component{
                     event_note:results[bodyKey].event_note,
                     latitude:results[bodyKey].latitude,
                     longitude:results[bodyKey].longitude,
-                    place_id:results[bodyKey].place_id
+                    place_id:results[bodyKey].place_id,
+                    group_id:results[bodyKey].group_id
                   });
               }
               this.setState({loading:false})

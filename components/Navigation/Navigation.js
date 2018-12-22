@@ -1,11 +1,10 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * Bizzner App
+ * http://bizzner.com
  *
  * @format
  * @flow
  */
-
 import React from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -14,9 +13,9 @@ import { SettingsScreen, ComplainScreen, CurrentEventsScreen, HistoryScreen, Edi
 import MainScreen from '../Main';
 import SplashScreen from '../Splash';
 import EventDetail from '../singleScreens/EventDetail';
+import EventChatScreen from '../singleScreens/EventChatScreen';
 const drawerItemStyle = { borderBottomWidth: 1, borderBottomColor: '#f3f3f3', height: 60, textAlign: 'left' };
 const drawerLabelStyle = { margin: 0, fontSize: 16, fontFamily: 'Roboto-Medium' };
-
 const Drawer = createDrawerNavigator({
         ['CURRENT EVENTS']: {
             screen: CurrentEventsScreen
@@ -41,10 +40,13 @@ const Drawer = createDrawerNavigator({
         },
         ['EventDetail']:{
             screen:EventDetail
+        },
+        ['Event Chat']:{
+            screen:EventChatScreen
         }
     },
     {
-        initialRouteName: 'CURRENT EVENTS',
+        initialRouteName: 'Event Chat',
         overlayColor: 'rgba(0, 0, 0, 0.2)',
         drawerWidth: 300,
         contentComponent: props =>
@@ -63,16 +65,13 @@ const Drawer = createDrawerNavigator({
                 />
 
             </ScrollView>
-    });
-
+});
 const shadow = {
     shadowColor: '#000', shadowRadius: 5, shadowOpacity: 0.6, shadowOffset: {
         width: 5, height: 0
     }
 }
-
 const Navigation = createStackNavigator({
-    
     Auth: {
         screen: MainScreen
     },
@@ -88,7 +87,7 @@ const Navigation = createStackNavigator({
     
 }, {
     headerMode: 'none',
-    initialRouteName: 'Splash',
+    initialRouteName: 'Home',
     containerOptions: {
         style: {
             backgroundColor: '#f00',
