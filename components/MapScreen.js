@@ -1,12 +1,24 @@
 import React, { Component } from 'react';
-import { View,Text,TouchableOpacity} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import MainStyles from './StyleSheet';
-class MapScreen extends Component{
-    render(){
+import { View, StyleSheet, Dimensions } from 'react-native';
+import GoogleMapView from './Maps/MapView';
+const  {height, width} = Dimensions.get('window');
+const TOP_BAR_HEIGHT = 110;
+const styles = StyleSheet.create({
+    container: {
+        height: height - TOP_BAR_HEIGHT,
+        width,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    map: {
+        ...StyleSheet.absoluteFillObject,
+    },
+});
+class MapScreen extends Component {
+    render() {
         return (
-            <View>
-                <Text>Map Screen</Text>
+            <View style={styles.container}>
+                <GoogleMapView />
             </View>
         );
     }

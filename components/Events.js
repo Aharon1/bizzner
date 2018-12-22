@@ -10,6 +10,7 @@ import { HeaderButton } from './Navigation/HeaderButton';
 import {SERVER_URL} from '../Constants';
 import Loader from './Loader';
 import ListItem from './ListItem';
+import TabContainer from './TabContainer';
 class EventsScreen extends Component{
     constructor(props){
         super(props);
@@ -223,12 +224,12 @@ class EventsScreen extends Component{
                         <Text style={MainStyles.tabItemText}>Search</Text>
                     </TouchableOpacity>
                 </View>
-                {/* <TabContainer showContainer={{
+                <TabContainer showContainer={{
                     TabComponent:this.state.TabComponent,
                     locationList:this.state.locationList,
                     fetchDetails:this.fetchDetails,
                     npt:this.props.navigation.getParam('nextPageToken')
-                    }} /> */}
+                    }} />
                 <FlatList data={this.state.locationList}
                     renderItem={({item}) => (
                         <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
