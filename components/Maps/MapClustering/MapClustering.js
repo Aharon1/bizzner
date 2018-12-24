@@ -198,11 +198,11 @@ const totalSize = num => (Math.sqrt((h(100) * h(100)) + (w(100) * w(100))) * num
 
 MapClustering.defaultProps = {
     clustering: true,
-    radius: w(5),
-    clusterColor: '#F5F5F5',
-    clusterTextColor: '#FF5252',
-    clusterBorderColor: '#FF5252',
-    clusterBorderWidth: 1,
+    radius: w(3),
+    clusterColor: '#5ac268',
+    clusterTextColor: '#ffffff',
+    clusterBorderColor: '#ffffff',
+    clusterBorderWidth: 4,
     clusterTextSize: totalSize(2.4),
     onClusterPress: () => { },
 };
