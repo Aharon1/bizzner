@@ -1,38 +1,30 @@
 import React,{Component} from 'react';
-import { View,Text,TouchableOpacity,FlatList,Image} from 'react-native';
+import { View,Text,TouchableOpacity,FlatList} from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { HeaderButton } from '../Navigation/HeaderButton';
 import MainStyles from '../StyleSheet';
 import {SERVER_URL} from '../../Constants';
 import Loader from '../Loader';
+import ProgressiveImage from '../../components/AsyncModules/ImageComponent';
 export default class EventDetail extends Component{
     constructor(props){
         super(props);
         this.state = {
-            loading:false,
-            userList:[{
-                name:'',
-                picUrl:'',
-                title:'',
-                status:'',
-                userId:1
-            },
-            {
-                name:'',
-                picUrl:'',
-                title:'',
-                status:'',
-                userId:2
-            }]
+            loading:true,
+            event_id:this.props.navigation.getParam('event_id'),
+            userList:{}
         }
         this.getEventUsers();
     }
-    static navigationOptions = {
-        drawerLabel: 'Event Details',
-      };
     getEventUsers(){
-
+        var eventId = this.props.navigation.getParam('event_id');
+        fetch(SERVER_URL+'?action=getEventUsers&event_id='+eventId)
+        .then(response=>response.json())
+        .then(res=>{
+            console.log(res);
+            this.setState({loading:false,userList:res});
+        })
     }
     render(){
         return(
@@ -44,7 +36,7 @@ export default class EventDetail extends Component{
                 </View>
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[
-                        MainStyles.tabItem,MainStyles.tabItemActive]} onPress={()=>this.props.navigation.navigate('EventDetail')}>
+                        MainStyles.tabItem,MainStyles.tabItemActive]} onPress={()=>this.props.navigation.navigate('EventDetail',{event_id:this.state.event_id})}>
                         <Icon name="user-plus" style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveIcon]}/>
                         <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText]}>INVITED TO EVENT</Text>
                     </TouchableOpacity>
@@ -55,32 +47,51 @@ export default class EventDetail extends Component{
                         <Icon name="share-alt" style={MainStyles.tabItemIcon}/>
                         <Text style={MainStyles.tabItemIcon}>SHARE</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={MainStyles.tabItem} onPress={()=>this.setState({CreateEventVisible:true})}>
+                    <TouchableOpacity style={MainStyles.tabItem}>
                         <Icon name="comments" style={MainStyles.tabItemIcon}/>
                         <Text style={MainStyles.tabItemIcon}>EVENT CHAT</Text>
                     </TouchableOpacity>
                 </View>
-                <FlatList 
-                     data={this.state.userList}
-                     renderItem={({item}) => (
-                        <View style={{flex:1,flexDirection:'row',justifyContent:'space-between'}}>
-                            <View style={{flex:2}}>
-                                <Image source={require('../../assets/profile-pic.png')} width={60} height={60}/>
-                            </View>
-                            <View>
-                                <Text>Name</Text>
-                                <View>
-                                    <Icon name="check"/> 
-                                    <Text>Accepted</Text>
+                {
+                    this.state.userList.length > 0 && 
+                    <FlatList 
+                        data={this.state.userList}
+                        renderItem={({item}) => (
+                            <View style={[MainStyles.UserListItem,
+                                (item.status == "1")?{backgroundColor:'#d1dbed'}:''
+                            ]}>
+                                <View style={MainStyles.userListItemImageWrapper}>
+                                    <ProgressiveImage source={{uri:item.picUrl}} style={MainStyles.userListItemIWImage} resizeMode="cover"/>
                                 </View>
+                                <View style={MainStyles.userListItemTextWrapper}>
+                                    <Text style={MainStyles.ULITWName}>{item.name}</Text>
+                                    <Text style={MainStyles.ULITWTitle}>{item.title}</Text>
+                                    {
+                                        item.status=="1"
+                                        && 
+                                        <View style={[MainStyles.ULITWAction,{backgroundColor:'#8da6d5'}]}>
+                                            <Icon name="star" style={MainStyles.ULITWActionIcon}/> 
+                                            <Text style={MainStyles.ULITWActionText}>INTRESTED</Text>
+                                        </View>
+                                    }
+                                    {
+                                        item.status=="2"
+                                        && 
+                                        <View style={MainStyles.ULITWAction}>
+                                            <Icon name="check" style={MainStyles.ULITWActionIcon}/> 
+                                            <Text style={MainStyles.ULITWActionText}>ACCEPTED</Text>
+                                        </View>
+                                    }
+                                </View>
+                                <TouchableOpacity style={MainStyles.ChatIconWrapper} onPress={()=>{alert('Alerting')}}>
+                                    <Icon name="comments"style={MainStyles.ChatIcon}/>
+                                </TouchableOpacity>
                             </View>
-                            <TouchableOpacity>
-                                <Icon name="comments"/>
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                     keyExtractor={(item) => item.userId}
-                />
+                        )}
+                        keyExtractor={(item) => item.key}
+                    />
+                }
+                
             </View>
         );
     }

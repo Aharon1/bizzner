@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View,Text,Image,TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
-import ProgressiveImage from './ImageComponent';
+import ProgressiveImage from './AsyncModules/ImageComponent';
 export default class ListItem extends Component{
     checkEvent = async ()=>{
         var curItem = await this.props.item;
@@ -22,7 +22,7 @@ export default class ListItem extends Component{
             await this.props.fetchDetails(locItem);
         }
         else{
-            this.props.navigate('EventDetail',{place_id:curItem.place_id});
+            this.props.navigate('EventDetail',{event_id:curItem.group_id});
         }
     }
     render(){

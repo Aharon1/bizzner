@@ -337,7 +337,7 @@ const MainStyles = StyleSheet.create({
     },
     EITWActionText:{
         fontSize:16,
-        fontFamily:'Robot-Medium'
+        fontFamily:'Roboto-Medium'
     },
     EITWAIOnline:{color:'#39b549'},
     EITWATOnline:{color:'#39b549'},
@@ -399,6 +399,73 @@ const MainStyles = StyleSheet.create({
         borderTopWidth: 0,
         elevation:3,
         overflow:'hidden'
+    },
+    UserListItem:{
+        padding:15,
+        borderBottomColor:'#8da6d4',
+        borderBottomWidth:1,
+        flexDirection:'row',
+        backgroundColor:'#e8edf6'
+    },
+    userListItemImageWrapper:{
+        overflow:'hidden',
+        width:90,
+        height:90,
+    },
+    userListItemIWImage:{
+        width: 90, 
+        height: 90,
+        borderRadius:100,
+        borderWidth: 3,
+        borderColor: '#FFF'
+    },
+    userListItemTextWrapper:{
+        marginLeft:15,
+        flexGrow: 1,
+        width: 0,
+        alignItems:'flex-start'
+    },
+    ULITWName:{
+        fontFamily:'Roboto-Regular',
+        fontSize:16,
+        marginTop:5,
+        color:'#03163a',
+        alignItems:'flex-start'
+    },
+    ULITWTitle:{
+        fontFamily:'Roboto-Light',
+        fontSize:14,
+        color:'#03163a',
+        paddingRight:5,
+        flexWrap: 'wrap',
+        alignItems:'flex-start'
+    },
+    ULITWAction : {
+        flexDirection:'row',
+        marginTop:20,
+        paddingVertical:2,
+        paddingHorizontal:8,
+        alignItems:'center',
+        borderRadius:15,
+        backgroundColor:'#88d392',
+    },
+    ULITWActionIcon:{
+        fontSize:11,
+        color:'#FFF',
+        marginRight:5
+    },
+    ULITWActionText:{
+        fontSize:11,
+        color:'#FFF',
+        fontFamily:'Roboto-Medium'
+    },
+    ChatIconWrapper:{
+        justifyContent:'center',
+        alignItems: 'center',
+    },
+    ChatIcon:{
+        fontSize:35,
+        color:'#8da6d5'
     }
 });
 

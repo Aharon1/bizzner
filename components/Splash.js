@@ -15,7 +15,7 @@ class SplashScreen extends Component{
         const { navigation } = this.props;
         let isUserLoggedIn = await AsyncStorage.getItem('isUserLoggedin');
         if(isUserLoggedIn == 'true'){
-          this.setState({
+          /*this.setState({
             loading: true
           });
           navigator.geolocation.getCurrentPosition(positions=>{
@@ -32,7 +32,6 @@ class SplashScreen extends Component{
             })
             .then(response=>{
                 var bodyText = JSON.parse(response._bodyText);
-                console.log(bodyText);
                 var results = bodyText.results
                 const placesArray = [];
                 for (const bodyKey in results){
@@ -48,7 +47,8 @@ class SplashScreen extends Component{
                         event_note:results[bodyKey].event_note,
                         latitude:results[bodyKey].latitude,
                         longitude:results[bodyKey].longitude,
-                        place_id:results[bodyKey].place_id
+                        place_id:results[bodyKey].place_id,
+                        group_id:results[bodyKey].group_id
                     });
                 }
                 this.setState({loading:false});
@@ -59,7 +59,8 @@ class SplashScreen extends Component{
             
           },error=>{
             console.log('Error',error);
-          })
+          })*/
+          navigation.navigate('Home');
         }
         else{
             navigation.navigate('Auth');
