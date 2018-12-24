@@ -18,31 +18,31 @@ const drawerItemStyle = { borderBottomWidth: 1, borderBottomColor: '#f3f3f3', he
 const drawerLabelStyle = { margin: 0, fontSize: 16, fontFamily: 'Roboto-Medium' };
 
 const Drawer = createDrawerNavigator({
-        ['CURRENT EVENTS']: {
-            screen: CurrentEventsScreen
-        },
-        ['MESSAGES']: {
-            screen: MessagesScreen
-        },
-        ['PROFILE']: {
-            screen: EditProfileScreen,
-        },
-        ['HISTORY']: {
-            screen: HistoryScreen
-        },
-        [`COMPLAIN`]: {
-            screen: ComplainScreen,
-        },
-        [`SETTINGS`]: {
-            screen: SettingsScreen,
-        },
-        [`LOGOUT`]: {
-            screen:LogoutScreen
-        },
-        ['EventDetail']:{
-            screen:EventDetail
-        }
+    ['CURRENT EVENTS']: {
+        screen: CurrentEventsScreen
     },
+    ['MESSAGES']: {
+        screen: MessagesScreen
+    },
+    ['PROFILE']: {
+        screen: EditProfileScreen,
+    },
+    ['HISTORY']: {
+        screen: HistoryScreen
+    },
+    [`COMPLAIN`]: {
+        screen: ComplainScreen,
+    },
+    [`SETTINGS`]: {
+        screen: SettingsScreen,
+    },
+    [`LOGOUT`]: {
+        screen: LogoutScreen
+    },
+    ['EventDetail']: {
+        screen: EventDetail
+    }
+},
     {
         initialRouteName: 'CURRENT EVENTS',
         overlayColor: 'rgba(0, 0, 0, 0.2)',
@@ -72,29 +72,29 @@ const shadow = {
 }
 
 const Navigation = createStackNavigator({
-    
+
     Auth: {
         screen: MainScreen
     },
-     Home: {
+    Home: {
         screen: Drawer,
     },
-    Profile:{
-        screen:EditProfileScreen,
+    Profile: {
+        screen: EditProfileScreen,
     },
-    Splash:{
-        screen:SplashScreen
+    Splash: {
+        screen: SplashScreen
     },
-    
-}, {
-    headerMode: 'none',
-    initialRouteName: 'Home',
-    containerOptions: {
-        style: {
-            backgroundColor: '#f00',
-            flex: 1
 
+}, {
+        headerMode: 'none',
+        initialRouteName: 'Home',
+        containerOptions: {
+            style: {
+                backgroundColor: '#f00',
+                flex: 1
+
+            }
         }
-    }
-});
+    });
 export default Navigation;

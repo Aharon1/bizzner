@@ -9,8 +9,6 @@
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Text, View } from 'react-native';
-import { createStackNavigator } from 'react-navigation';
-import MainScreen from '../Main';
 import ProfileScreen from '../Profile';
 import EventsScreen from '../Events';
 import Logout from '../AsyncModules/Logout';

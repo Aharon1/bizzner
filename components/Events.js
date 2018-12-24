@@ -229,7 +229,9 @@ class EventsScreen extends Component{
                     locationList:this.state.locationList,
                     fetchDetails:this.fetchDetails,
                     npt:this.props.navigation.getParam('nextPageToken')
-                    }} />
+                    }} 
+                    navigation={this.props.navigation}
+                    />
                 <FlatList data={this.state.locationList}
                     renderItem={({item}) => (
                         <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
