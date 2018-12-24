@@ -7,6 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "moment": "^2.23.0",
     "react": "^16.6.1",
     "react-dom": "^16.6.3",
     "react-lifecycles-compat": "^3.0.4",
@@ -16,6 +17,7 @@
     "react-native-gesture-handler": "^1.0.10",
     "react-native-lazyload": "^1.1.0",
     "react-native-linkedin-sdk": "0.0.9",
+    "react-native-maps": "^0.22.1",
     "react-native-popup-dialog": "^0.16.6",
     "react-native-push-notification": "^3.1.2",
     "react-native-vector-icons": "^6.1.0",
