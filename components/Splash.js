@@ -15,7 +15,7 @@ class SplashScreen extends Component{
         const { navigation } = this.props;
         let isUserLoggedIn = await AsyncStorage.getItem('isUserLoggedin');
         if(isUserLoggedIn == 'true'){
-          this.setState({
+          /*this.setState({
             loading: true
           });
           navigator.geolocation.getCurrentPosition(positions=>{
@@ -59,7 +59,8 @@ class SplashScreen extends Component{
             
           },error=>{
             console.log('Error',error);
-          })
+          })*/
+          navigation.navigate('Home');
         }
         else{
             navigation.navigate('Auth');

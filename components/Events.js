@@ -16,20 +16,21 @@ class EventsScreen extends Component{
         super(props);
         this.fetchMore = this._fetchMore.bind(this);
         this.state = {
-            loading:false,
+            loading:true,
             TabComponent : 'EL',
             CreateEventVisible:false,
             NES:'',
             NEN:'',
             NED:new Date(),
             NET:new Date(),
-            locationList:this.props.navigation.getParam('locationList'),
+            locationList:{},//this.props.navigation.getParam('locationList'),
             isLocationSet:false,
             curLocation:{},
             isLoadingMore: false,
             npt:'',
             resultsLost:false
         }
+        this.getLocationList();
     }
     changeTab(Screen){
         this.setState({TabComponent:Screen});
@@ -145,7 +146,7 @@ class EventsScreen extends Component{
     _fetchMore() {
         if(this.state.isLoadingMore == false){
             if(this.state.resultsLost==false){
-                let npt = (this.state.npt == '' && this.state.resultsLost==false)?this.props.navigation.getParam('nextPageToken'):this.state.npt;
+                let npt = (this.state.resultsLost==false)?this.state.npt:'';
                 if(npt != ''){
                     this.setState({ isLoadingMore: true });
                     var fetchData = 'http://bizzner.com/app?action=loadMoreLocations&npt='+npt;
@@ -190,15 +191,53 @@ class EventsScreen extends Component{
         }
         
     }
+    getLocationList(){
+        navigator.geolocation.getCurrentPosition(positions=>{
+            let Latitude = positions.coords.latitude;
+            let Longitude = positions.coords.longitude;
+            var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
+            fetch(fetchData,{
+                method:'POST',
+                body:JSON.stringify({
+                    action:'search_location_db',
+                    latitude:Latitude,//22.7150822,
+                    longitude:Longitude//75.8707448
+                })
+            })
+            .then(response=>{
+                var bodyText = JSON.parse(response._bodyText);
+                var results = bodyText.results
+                const placesArray = [];
+                for (const bodyKey in results){
+                    placesArray.push({
+                        name:results[bodyKey].group_name,
+                        address:results[bodyKey].group_address,
+                        isStarted:results[bodyKey].group_status,
+                        photoUrl:results[bodyKey].photoUrl,
+                        key:results[bodyKey].place_id,
+                        event_date:results[bodyKey].event_date,
+                        event_time:results[bodyKey].event_time,
+                        event_subject:results[bodyKey].event_subject,
+                        event_note:results[bodyKey].event_note,
+                        latitude:results[bodyKey].latitude,
+                        longitude:results[bodyKey].longitude,
+                        place_id:results[bodyKey].place_id,
+                        group_id:results[bodyKey].group_id
+                    });
+                }
+                this.setState({loading:false,locationList:placesArray,npt:bodyText.next_page_token});
+            }).catch(err => {
+                console.log('Error What is this',err);
+            })
+        },error=>{
+            console.log('Error',error);
+        })
+    }
     render(){
         return (
             <View style={MainStyles.normalContainer}>
-                {this.props.navigation.getParam('nextPageToken') == '' && ToastAndroid.show('Over Query Limit', ToastAndroid.SHORT)}
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                    {/* <TouchableOpacity style={{paddingLeft:12}}>
-                        <Icon name="bars" style={{fontSize:24,color:'#8da6d5'}}/>
-                    </TouchableOpacity> */}
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
                     <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>Events near me</Text>
                 </View>
@@ -224,28 +263,31 @@ class EventsScreen extends Component{
                         <Text style={MainStyles.tabItemText}>Search</Text>
                     </TouchableOpacity>
                 </View>
-                <TabContainer showContainer={{
+                {/* <TabContainer showContainer={{
                     TabComponent:this.state.TabComponent,
                     locationList:this.state.locationList,
                     fetchDetails:this.fetchDetails,
                     npt:this.props.navigation.getParam('nextPageToken')
-                    }} />
-                <FlatList data={this.state.locationList}
-                    renderItem={({item}) => (
-                        <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
-                        )}
-                    onEndReached={()=>{this.fetchMore()}
+                    }} /> */}
+                    {
+                        this.state.locationList.length > 0 && 
+                        <FlatList data={this.state.locationList}
+                            renderItem={({item}) => (
+                                <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
+                                )}
+                            onEndReached={()=>{this.fetchMore()}
+                            }
+                            keyExtractor={(item) => item.key}
+                            ListFooterComponent={() => {
+                                return (
+                                this.state.isLoadingMore &&
+                                <View style={{ flex: 1, padding: 10 }}>
+                                    <ActivityIndicator size="large" color="#416bb9"/>
+                                </View>
+                                );
+                            }}
+                        />
                     }
-                    keyExtractor={(item) => item.key}
-                    ListFooterComponent={() => {
-                        return (
-                        this.state.isLoadingMore &&
-                        <View style={{ flex: 1, padding: 10 }}>
-                            <ActivityIndicator size="large" color="#416bb9"/>
-                        </View>
-                        );
-                    }}
-                />
                 <Dialog
                     visible={this.state.CreateEventVisible}
                     dialogStyle={[MainStyles.confirmPopup,{width:'95%',padding:0,maxHeight:'95%'}]}
