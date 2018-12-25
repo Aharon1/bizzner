@@ -9,12 +9,7 @@ export default class GoogleMapView extends PureComponent {
         return (
             <MapClustering
                 style={styles.map}
-                region={{
-                    latitude: 32.0677475,
-                    longitude: 34.8442303,
-                    latitudeDelta: 0.01,
-                    longitudeDelta: 0.2,
-                }}>
+                region={this.props.currentPosition}>
                 {MOCKED_EVENTS.map((marker, id) => <MarkerItem {...marker} key={id} cluster={true} onNavigate={this.props.onNavigate} />)}
             </MapClustering>
         );
