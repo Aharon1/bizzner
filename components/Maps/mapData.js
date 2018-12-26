@@ -7,9 +7,11 @@ export const fetchEvents = async () => {
             const markers= res.body;
             return markers.map(el => ({
                 ...el,
+                group_lat: +el.group_lat,
+                group_lng: +el.group_lng,
                 coordinate: {
-                    latitude: el.group_lat,
-                    longitude: el.group_lng
+                    latitude: +el.group_lat,
+                    longitude: +el.group_lng
                 }
             }))
         }
