@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Dimensions, ActivityIndicator, Text } from 'react-native';
 import GoogleMapView from './Maps/MapView';
+import { fetchEvents } from './Maps/mapData';
 const { height, width } = Dimensions.get('window');
 const TOP_BAR_HEIGHT = 110;
 
@@ -11,6 +12,7 @@ const IS_ERROR = "IS_ERROR";
 class MapScreen extends Component {
     state = {
         markers: [],
+        events: [],
         appState: IS_LOADING
     };
     componentDidMount() {
@@ -24,11 +26,11 @@ class MapScreen extends Component {
         );
     }
     renderView = appState => {
-        const { currentPosition } = this.state;
+        const { currentPosition, events } = this.state;
         const render = {
             [IS_ERROR]: <Text>Something was wrong</Text>,
             [IS_LOADING]: <ActivityIndicator size="large" />,
-            [OK]: <GoogleMapView currentPosition={currentPosition} onNavigate={this._onNavigate} />
+            [OK]: <GoogleMapView currentPosition={currentPosition} events={events} onNavigate={this._onNavigate} />
         };
         return render[appState];
     }
@@ -51,8 +53,10 @@ class MapScreen extends Component {
                 latitudeDelta: 0.05,
                 longitudeDelta: 0.02
             };
+            const events = await fetchEvents();
             this.setState({
                 currentPosition,
+                events,
                 appState: OK
             });
         } catch (e) {

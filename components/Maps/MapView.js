@@ -1,24 +1,24 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, ImageBackground } from "react-native";
 import { MarkerItem } from "./MarkerItem";
-import { MOCKED_EVENTS } from './mapData';
 import { MapClustering } from './MapClustering';
 const dummyImage = require('../../assets/dummy.jpg');
 
 export default class GoogleMapView extends PureComponent {
     state = {
         isModalOpen: false,
-        modalName: ''
+        modalName: '',
+        subject: ''
     }
     render() {
-        const { isModalOpen, modalName } = this.state;
+        const { isModalOpen, modalName, backgroundImage, subject } = this.state;
         return (
             <View style={styles.container}>
                 <MapClustering
                     onPress={this.onCloseModal}
                     style={styles.map}
                     region={this.props.currentPosition}>
-                    {MOCKED_EVENTS.map((marker, id) => (<MarkerItem {...marker}
+                    {this.props.events.map((marker, id) => (<MarkerItem {...marker}
                         key={id} onOpenModal={this.onOpenModal} cluster={true}
                         onNavigate={this.props.onNavigate} />))
                     }
@@ -28,7 +28,10 @@ export default class GoogleMapView extends PureComponent {
                     <TouchableOpacity
                         onPress={this.onCloseModal}
                         style={styles.modalContainer}>
-                        <ImageBackground style={styles.image} source={dummyImage} >
+                        <ImageBackground style={styles.image} source={{ uri: backgroundImage }} >
+                            <Text style={styles.textStyle}>
+                                {subject}
+                            </Text>
                             <Text style={styles.textStyle}>
                                 {modalName}
                             </Text>
@@ -39,17 +42,21 @@ export default class GoogleMapView extends PureComponent {
         );
     }
 
-    onOpenModal = (modalName) => {
+    onOpenModal = (modalName, backgroundImage, subject) => {
         this.setState({
             isModalOpen: true,
             modalName,
+            backgroundImage,
+            subject
         })
     }
 
     onCloseModal = () => {
         this.setState({
             isModalOpen: false,
-            modalName: ''
+            modalName: '',
+            subject: '',
+            backgroundImage: null
         })
     }
 }
@@ -67,7 +74,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         alignSelf: 'flex-start',
         flexDirection: 'row',
-        padding: 5
+        padding: 5,
+        color: '#000'
     },
     modalContainer: {
         backgroundColor: '#fff',
