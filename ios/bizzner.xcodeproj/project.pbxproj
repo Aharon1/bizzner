@@ -50,7 +50,6 @@
 		446B726D9BDD467EB2207A74 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9E4632B34FE6417AA65A0F37 /* Foundation.ttf */; };
 		5E61BECFE0A7401F9E1F3A8B /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CD6ED339116D4CFB9EDB7F95 /* FontAwesome.ttf */; };
 		64B553E0869D475DB8F11E46 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A61BAE4377FC485CBE4051A9 /* libRNVectorIcons.a */; };
-		667B5623BD4C4117A5C6AF9E /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FFBD69E6CFB54C1D86C6D38C /* libRNGestureHandler.a */; };
 		66BDB12640574DEF91623CAE /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0B834E1AEFD24F03B582C698 /* Entypo.ttf */; };
 		708DA2903D70487D988DCA1A /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6A16D6C7AE6743798E91AB59 /* MaterialCommunityIcons.ttf */; };
 		7934DA76CC5F4CB1BE62A264 /* RobotoLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B004FF730914C388E9230D9 /* RobotoLight.ttf */; };
@@ -68,6 +67,7 @@
 		D6D322DA8C8F3C6B768E0683 /* libPods-bizzner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4A5C9E8E7F52D1E31BED3EC /* libPods-bizzner.a */; };
 		EAC130CE5B584ACA9B86CF64 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 75ADB2E669394A59A0172154 /* AntDesign.ttf */; };
 		EEE58EC18085475FB24C840D /* RobotoLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = A3F2559FF8BB402BB7F0284A /* RobotoLight.otf */; };
+		FA01261721D3815700846F1B /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA8E230421C2BD0500FEFEC3 /* libRNGestureHandler.a */; };
 		FABDBA1D21D125A000D7808A /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FABDBA1A21D1258900D7808A /* libRCTPushNotification.a */; };
 		FAC3D4AE062243019F95360C /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 21747DC2592D441FA2CEEEC6 /* FontAwesome5_Regular.ttf */; };
 /* End PBXBuildFile section */
@@ -463,6 +463,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA01261721D3815700846F1B /* libRNGestureHandler.a in Frameworks */,
 				FABDBA1D21D125A000D7808A /* libRCTPushNotification.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */,
@@ -476,7 +477,6 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
-				667B5623BD4C4117A5C6AF9E /* libRNGestureHandler.a in Frameworks */,
 				64B553E0869D475DB8F11E46 /* libRNVectorIcons.a in Frameworks */,
 				D6D322DA8C8F3C6B768E0683 /* libPods-bizzner.a in Frameworks */,
 			);

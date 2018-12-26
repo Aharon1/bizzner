@@ -13,17 +13,17 @@ export class MarkerItem extends PureComponent {
           latitude: group_lat,
           longitude: group_lng
         }}
-        title={group_name}
-        onPress={this.onNavigate}
+        title=""
+        onPress={this.onMarkerPress}
+        stopPropagation={true}
       >
         <Icon name="map-marker" size={40} color={this.isToday() ? "#5ac268" : "#0645ba"} />
       </Marker>
     );
   }
 
-  onNavigate = () => {
-    const { id } = this.props;
-    this.props.onNavigate({ event_id: id })
+  onMarkerPress = () => {
+    this.props.onOpenModal(this.props.group_name);
   };
 
   isToday = () => {
