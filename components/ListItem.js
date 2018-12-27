@@ -11,29 +11,10 @@ export default class ListItem extends Component{
         this.state={
             userStatus:''
         }
-        
     }
     checkEvent = async ()=>{
         var curItem = await this.props.item;
-        /*if(curItem.isStarted === false){
-            var locItem = {
-                name:curItem.name,
-                geometry:{
-                    location:{
-                        latitude:curItem.latitude,
-                        longitude:curItem.longitude
-                    }
-                },
-                vicinity:curItem.address,
-                photos:curItem.photoUrl,
-                place_id:curItem.place_id
-            }
-            await this.props.fetchDetails(locItem);
-        }
-        else{*/
-            console.log(curItem);
-            //this.props.navigate('EventDetail',{event_id:curItem.group_id});
-        //}
+        this.props.navigate('EventDetail',{event_id:curItem.group_id});
     }
     setUserEventStatus =  async (statusValue)=>{
         var curItem = await this.props.item;
@@ -81,8 +62,6 @@ export default class ListItem extends Component{
         var N = 5;
         var Address = Item.address.split(" ").splice(0,N).join(" ");
         var eventTime = this.formatAMPM(eventDate);
-        userId = 29;
-        
         return (
             <View
             style={[

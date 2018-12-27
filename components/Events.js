@@ -244,31 +244,23 @@ class EventsScreen extends Component{
                 </View>
                 { 
                     this.state.isCurrentTab == 'all-events' && 
-                    <View>
-                        {
-                            this.state.locationList.length > 0 && 
-                            <FlatList data={this.state.locationList}
-                                renderItem={({item}) => (
-                                    <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
-                                    )}
-                                keyExtractor={(item) => item.key}
-                            />
-                        }
-                    </View>
+                    this.state.locationList.length > 0 && 
+                    <FlatList data={this.state.locationList}
+                        renderItem={({item}) => (
+                            <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
+                            )}
+                        keyExtractor={(item) => item.key}
+                    />
                 }
                 {
                     this.state.isCurrentTab == 'my-events' && 
-                    <View>
-                        {
-                            this.state.MyEvents.length > 0 && 
-                            <FlatList data={this.state.MyEvents}
-                                renderItem={({item}) => (
-                                    <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
-                                    )}
-                                keyExtractor={(item) => item.key}
-                            />
-                        } 
-                    </View>
+                    this.state.MyEvents.length > 0 && 
+                    <FlatList data={this.state.MyEvents}
+                        renderItem={({item}) => (
+                            <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
+                            )}
+                        keyExtractor={(item) => item.key}
+                    />
                 }
                 <Dialog
                     visible={this.state.CreateEventVisible}

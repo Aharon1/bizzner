@@ -23,7 +23,7 @@ export default class EventDetail extends Component{
         .then(response=>response.json())
         .then(res=>{
             console.log(res);
-            this.setState({loading:false,userList:res});
+            this.setState({loading:false,userList:res.users,eventData:res.event_data});
         })
     }
     render(){
@@ -51,6 +51,46 @@ export default class EventDetail extends Component{
                         <Icon name="comments" style={MainStyles.tabItemIcon}/>
                         <Text style={MainStyles.tabItemIcon}>EVENT CHAT</Text>
                     </TouchableOpacity>
+                </View>
+                <View style={MainStyles.EventScreenTabWrapper}>
+                <TouchableOpacity style={[
+                        MainStyles.EIAButtons,
+                        (this.state.userStatus == 2)?{backgroundColor:'#87d292'}:''
+                        ]}
+                        onPress={()=>this.setUserEventStatus(2)}
+                        >
+                            <Icon name="check" size={15} style={{color:'#FFF',marginRight:5,}}/>
+                            <Text style={{
+                                color:'#FFF',
+                                fontFamily:'Roboto-Medium',
+                                fontSize:14
+                            }}>JOIN</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[
+                        MainStyles.EIAButtons,{marginHorizontal:5},
+                        (this.state.userStatus == 1)?{backgroundColor:'#8da6d5'}:''
+                        ]}
+                            onPress={()=>this.setUserEventStatus(1)}
+                        >
+                            <Icon name="star" size={15} style={{color:'#FFF',marginRight:5,}}/>
+                            <Text style={{
+                                color:'#FFF',
+                                fontFamily:'Roboto-Medium',
+                                fontSize:14
+                            }}>INTERESTED</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[
+                        MainStyles.EIAButtons       
+                        ]}
+                            onPress={()=>this.setUserEventStatus(3)}
+                            >
+                            <Icon name="ban" size={15} style={{color:'#FFF',marginRight:5,}}/>
+                            <Text style={{
+                                color:'#FFF',
+                                fontFamily:'Roboto-Medium',
+                                fontSize:14
+                            }}>IGNORE</Text>
+                        </TouchableOpacity>
                 </View>
                 {
                     this.state.userList.length > 0 && 
