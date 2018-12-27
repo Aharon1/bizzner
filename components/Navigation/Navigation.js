@@ -46,7 +46,7 @@ const Drawer = createDrawerNavigator({
         }
     },
     {
-        initialRouteName: 'Event Chat',
+        initialRouteName: 'CURRENT EVENTS',
         overlayColor: 'rgba(0, 0, 0, 0.2)',
         drawerWidth: 300,
         contentComponent: props =>
@@ -87,7 +87,7 @@ const Navigation = createStackNavigator({
     
 }, {
     headerMode: 'none',
-    initialRouteName: 'Home',
+    initialRouteName: 'Splash',
     containerOptions: {
         style: {
             backgroundColor: '#f00',

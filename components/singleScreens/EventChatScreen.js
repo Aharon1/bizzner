@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import { View,Text,TouchableOpacity,FlatList} from 'react-native';
+import { View,Text,TouchableOpacity,FlatList,TextInput} from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { HeaderButton } from '../Navigation/HeaderButton';
@@ -24,6 +24,12 @@ class EventChatScreen extends Component{
                 </View>
                 <View style={[MainStyles.tabContainer,{justifyContent:'flex-start',paddingHorizontal:15,paddingVertical:15}]}>
                     <Text style={{fontSize:16,fontFamily:'Roboto-Medium',color:'#05296d'}}>Note: pls came from the front green door</Text>
+                </View>
+                <View style={MainStyles.MessageContainer}>
+                    <View style={MainStyles.MessageContainerView}></View>
+                    <View style={MainStyles.MessageContainerTextInput}>
+
+                    </View>
                 </View>
             </View>
         );

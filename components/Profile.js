@@ -50,7 +50,7 @@ class ProfileScreen extends Component{
 
         })
       }).then(postResponse=>{
-        navigator.geolocation.getCurrentPosition(positions=>{
+        /*navigator.geolocation.getCurrentPosition(positions=>{
           let Latitude = positions.coords.latitude;
           let Longitude = positions.coords.longitude;
           var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
@@ -91,7 +91,9 @@ class ProfileScreen extends Component{
           
         },error=>{
           console.log('Error',error);
-        })
+        })*/
+        this.setState({loading:false})
+        this.props.navigation.navigate('Home');
       })
     }
     getDetail(key){

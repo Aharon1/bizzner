@@ -293,11 +293,9 @@ const MainStyles = StyleSheet.create({
     tabItemActiveText:{color:'#05296c',},
     EventItem:{
         padding:15,
-        borderBottomColor:'#8da6d4',
-        borderBottomWidth:1,
+        
         flexDirection:'row'
     },
-
     EIOnline:{
         backgroundColor:'#e8edf6',
     },
@@ -343,15 +341,23 @@ const MainStyles = StyleSheet.create({
     EITWATOnline:{color:'#39b549'},
     EITWAIOffline:{color:'#8da6d5'},
     EITWATOffline:{color:'#2f4d85'},
+    EIAButtons:{
+        flex:1,
+        flexDirection:'row',
+        paddingHorizontal:15,
+        paddingVertical:10,
+        backgroundColor:'#c9d5eb',
+        justifyContent:'center'
+    },
     createEventFWI:{
         borderBottomColor:'#8da6d4',
         borderBottomWidth: 1,
-        paddingBottom: 15,
+        paddingBottom: 0,
         flex:1,
         flexDirection:'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop:60,
+        marginTop:30,
         position:'relative',
         overflow:'visible'
     },
@@ -368,12 +374,34 @@ const MainStyles = StyleSheet.create({
         height:60,
         flex: 1,
         flexDirection:'row',
-        paddingTop: 10,
-        paddingRight: 10,
-        paddingBottom: 10,
+        paddingTop: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
         paddingLeft: 0,
         fontSize:18,
-        fontFamily:'RobotoLight'
+        fontFamily:'Roboto-Light'
+    },
+    cEFWIPF:{
+        height:60,
+        flex: 1,
+        flexDirection:'row',
+        paddingTop: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
+        paddingLeft: 0,
+    },
+    cEFWIDF:{
+        borderWidth: 0,
+        paddingTop:0,
+        paddingBottom: 0,
+        paddingRight: 0,
+        paddingLeft: 0,
+        marginLeft:0,
+        height:'auto',
+        flex:1,
+        flexDirection:'row',
+        justifyContent:'flex-start',
+        color:'#03163a'
     },
     locationItemBtn:{
        borderBottomColor:'#8da6d4',
@@ -387,18 +415,19 @@ const MainStyles = StyleSheet.create({
     },
     locationItemWrapper:{
         width:'100%',
-        left:0,
+        marginHorizontal: 'auto',
+        justifyContent:'center',
+        left:15,
         maxHeight: 250,
-        //position:'absolute',
+        position:'absolute',
         backgroundColor:'#FFF',
         zIndex: 4000,
         borderColor:'#8da6d4',
         borderWidth:1,
-        //top:15,
+        top:72,
         marginBottom:0,
         borderTopWidth: 0,
         elevation:3,
-        overflow:'hidden'
     },
     UserListItem:{
         padding:15,
