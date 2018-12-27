@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { View,Text,TouchableOpacity, TextInput,KeyboardAvoidingView,ImageBackground, Platform,FlatList,ActivityIndicator,ToastAndroid,Picker,ScrollView} from 'react-native';
+import { View,Text,TouchableOpacity, TextInput,ImageBackground, Platform,FlatList,ActivityIndicator,ToastAndroid,Picker,ScrollView} from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
-import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog';
+import Dialog, { SlideAnimation } from 'react-native-popup-dialog';
 import DatePicker from 'react-native-datepicker';
 import { HeaderButton } from './Navigation/HeaderButton';
 import {SERVER_URL,MAPKEY} from '../Constants';
@@ -15,7 +15,6 @@ import TabContainer from './TabContainer';
 class EventsScreen extends Component{
     constructor(props){
         super(props);
-        this.fetchMore = this._fetchMore.bind(this);
         this.state = {
             loading:false,
             TabComponent : 'EL',
@@ -24,17 +23,15 @@ class EventsScreen extends Component{
             NEN:'',
             NED:new Date(),
             NET:new Date(),
-            locationList:{},//this.props.navigation.getParam('locationList'),
+            locationList:{},
             isLocationSet:false,
             curLocation:{},
-            isLoadingMore: false,
-            npt:'',
-            resultsLost:false,
             textingValue:false,
             isLoading:false,
             locationItems:{},
             enableScrollViewScroll: true,
-            isFocusedSL:false
+            isFocusedSL:false,
+            isCurrentTab:'all-events'
         }
         this.getLocationList();
         this.hTC = this.handleTextChange.bind(this);
@@ -43,18 +40,6 @@ class EventsScreen extends Component{
     changeTab(Screen){
         this.setState({TabComponent:Screen});
     }
-    getCircularReplacer = () => {
-        const seen = new WeakSet();
-        return (key, value) => {
-          if (typeof value === "object" && value !== null) {
-            if (seen.has(value)) {
-              return;
-            }
-            seen.add(value);
-          }
-          return value;
-        };
-    };
     fetchDetails = (curItem)=>{
         
         var curPic = 'http://bizzner.com/app/assets/images/default.jpg';
@@ -141,54 +126,6 @@ class EventsScreen extends Component{
             });
         })
     }
-    _fetchMore() {
-        if(this.state.isLoadingMore == false){
-            if(this.state.resultsLost==false){
-                let npt = (this.state.resultsLost==false)?this.state.npt:'';
-                if(npt != ''){
-                    this.setState({ isLoadingMore: true });
-                    var fetchData = 'http://bizzner.com/app?action=loadMoreLocations&npt='+npt;
-                    fetch(fetchData,{
-                        method:'POST',
-                    })
-                    .then(response=>{
-                        var count = this.state.locationList.length
-                        var bodyText = JSON.parse(response._bodyText);
-                        var results = bodyText.results
-                        const placesArray = [];
-                        console.log(bodyText);
-                        for (const bodyKey in results){
-                            var currentR = results[bodyKey];
-                            placesArray.push({
-                                name:currentR.group_name,
-                                address:results[bodyKey].group_address,
-                                isStarted:results[bodyKey].group_status,
-                                photoUrl:results[bodyKey].photoUrl,
-                                key:results[bodyKey].place_id,
-                                event_date:results[bodyKey].event_date,
-                                event_time:results[bodyKey].event_time,
-                                event_subject:results[bodyKey].event_subject,
-                                event_note:results[bodyKey].event_note,
-                                latitude:results[bodyKey].latitude,
-                                longitude:results[bodyKey].longitude,
-                                place_id:results[bodyKey].place_id,
-                            });
-                        }
-                        if(bodyText.next_page_token == ''){
-                            this.setState({resultsLost:true});
-                        }
-                        this.setState({ isLoadingMore: false,npt:bodyText.next_page_token,locationList:this.state.locationList.concat(placesArray) });
-                    }).catch(err => {
-                        console.log('Error What is this',err);
-                    })
-                }
-            }
-            else{
-                ToastAndroid.show('No More Data', ToastAndroid.SHORT)
-            }
-        }
-        
-    }
     getLocationList(){
         navigator.geolocation.getCurrentPosition(positions=>{
             let Latitude = positions.coords.latitude;
@@ -260,8 +197,9 @@ class EventsScreen extends Component{
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
-                    <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>Events</Text>
+                    <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>EVENTS</Text>
                 </View>
+                
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[
                         MainStyles.tabItem,MainStyles.tabItemActive]} onPress={()=>this.props.navigation.navigate('Home')}>
@@ -284,25 +222,23 @@ class EventsScreen extends Component{
                         <Text style={MainStyles.tabItemText}>Search</Text>
                     </TouchableOpacity>
                 </View>
-                    {
-                        this.state.locationList.length > 0 && 
-                        <FlatList data={this.state.locationList}
-                            renderItem={({item}) => (
-                                <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
-                                )}
-                            onEndReached={()=>{this.fetchMore()}
-                            }
-                            keyExtractor={(item) => item.key}
-                            ListFooterComponent={() => {
-                                return (
-                                this.state.isLoadingMore &&
-                                <View style={{ flex: 1, padding: 10 }}>
-                                    <ActivityIndicator size="large" color="#416bb9"/>
-                                </View>
-                                );
-                            }}
-                        />
-                    }
+                <View style={MainStyles.EventScreenTabWrapper}>
+                    <TouchableOpacity style={MainStyles.ESTWItem}>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>ALL EVENTS</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={MainStyles.ESTWItem}>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>MY EVENTS</Text>
+                    </TouchableOpacity>
+                </View>
+                {
+                    this.state.locationList.length > 0 && 
+                    <FlatList data={this.state.locationList}
+                        renderItem={({item}) => (
+                            <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
+                            )}
+                        keyExtractor={(item) => item.key}
+                    />
+                }
                 <Dialog
                     visible={this.state.CreateEventVisible}
                     dialogStyle={[MainStyles.confirmPopup,{width:'95%',padding:0,maxHeight:'95%'}]}

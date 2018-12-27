@@ -50,11 +50,12 @@ export default class ListItem extends Component{
         var Address = Item.address.split(" ").splice(0,N).join(" ");
         var eventTime = this.formatAMPM(eventDate);
         return (
-            <View style={{borderBottomColor:'#8da6d4',borderBottomWidth:1,}}>
+            <View style={[
+                {borderBottomColor:'#8da6d4',borderBottomWidth:1},
+                (Item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
+                (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#dff9ec'}:'']}>
                 <TouchableOpacity style={[
-                    (Item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
                     MainStyles.EventItem,
-                    (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#dff9ec'}:''
                 ]} onPress={this.checkEvent}>
                     <View style={MainStyles.EventItemImageWrapper}>
                         <ProgressiveImage source={{uri:Item.photoUrl}} style={{ width: 70, height: 70 }} resizeMode="cover"/>
@@ -69,7 +70,8 @@ export default class ListItem extends Component{
                             Item.isStarted === true?
                                 <View style={MainStyles.EITWAction}>
                                 <Image source={require('../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
-                                <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({Item.usersCount})  Details</Text>
+                                <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({Item.usersCount}) </Text>
+                                <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>Info</Text>
                                 </View>
                             :
                             <View style={MainStyles.EITWAction}>
@@ -86,55 +88,41 @@ export default class ListItem extends Component{
                         <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{eventTime}</Text>
                     </View>
                 </TouchableOpacity>
-                <View style={{
-                    flex:1,
-                    flexDirection:'row',
-                    justifyContent:'space-evenly'
-                }}>
+                <View style={MainStyles.EIAButtonsWrapper}>
                     <TouchableOpacity style={[
-                     MainStyles.EIAButtons       
+                    MainStyles.EIAButtons       
                     ]}
                     onPress={()=>this.setUserEventStatus(2)}
                     >
-                        <Icon name="check" size={18} style={{color:'#FFF',marginRight:7,}}/>
+                        <Icon name="check" size={15} style={{color:'#FFF',marginRight:5,}}/>
                         <Text style={{
                             color:'#FFF',
                             fontFamily:'Roboto-Medium',
-                            fontSize:15
+                            fontSize:14
                         }}>JOIN</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{
-                            flex:1,
-                            flexDirection:'row',
-                            paddingHorizontal:15,
-                            paddingVertical:10,
-                            backgroundColor:'#c9d5eb',
-                            justifyContent:'center'
-                        }}
+                    <TouchableOpacity style={[
+                    MainStyles.EIAButtons,{marginHorizontal:5}
+                    ]}
                         onPress={()=>this.setUserEventStatus(1)}
                     >
-                        <Icon name="star" size={18} style={{color:'#FFF',marginRight:7,}}/>
+                        <Icon name="star" size={15} style={{color:'#FFF',marginRight:5,}}/>
                         <Text style={{
                             color:'#FFF',
                             fontFamily:'Roboto-Medium',
-                            fontSize:15
+                            fontSize:14
                         }}>INTERESTED</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{
-                            flex:1,
-                            flexDirection:'row',
-                            paddingHorizontal:15,
-                            paddingVertical:10,
-                            backgroundColor:'#c9d5eb',
-                            justifyContent:'center'
-                        }}
+                    <TouchableOpacity style={[
+                    MainStyles.EIAButtons       
+                    ]}
                         onPress={()=>this.setUserEventStatus(0)}
                         >
-                        <Icon name="ban" size={18} style={{color:'#FFF',marginRight:7,}}/>
+                        <Icon name="ban" size={15} style={{color:'#FFF',marginRight:5,}}/>
                         <Text style={{
                             color:'#FFF',
                             fontFamily:'Roboto-Medium',
-                            fontSize:15
+                            fontSize:14
                         }}>IGNORE</Text>
                     </TouchableOpacity>
                 </View>

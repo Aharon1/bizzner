@@ -291,6 +291,27 @@ const MainStyles = StyleSheet.create({
     },
     tabItemActiveIcon:{color:'#05296c',},
     tabItemActiveText:{color:'#05296c',},
+    EventScreenTabWrapper:{
+        backgroundColor:'#d1dbed',
+        paddingHorizontal:10,
+        paddingVertical:5,
+        flexDirection:'row',
+        justifyContent:'space-evenly',
+        alignItems:'center'
+    },
+    ESTWItem:{
+        width:'48%',
+        alignItems:'center',
+        backgroundColor:'#2e4d85',
+        paddingHorizontal:15,
+        paddingVertical:5,
+        borderRadius:10
+    },
+    ESTWIText:{
+        fontFamily:'Roboto-Medium',
+        fontSize:16,
+        
+    },
     EventItem:{
         padding:15,
         
@@ -341,13 +362,22 @@ const MainStyles = StyleSheet.create({
     EITWATOnline:{color:'#39b549'},
     EITWAIOffline:{color:'#8da6d5'},
     EITWATOffline:{color:'#2f4d85'},
+    EIAButtonsWrapper:{
+        flex:1,
+        flexDirection:'row',
+        justifyContent:'space-between',
+        marginBottom:10,
+        paddingHorizontal:10
+    },
     EIAButtons:{
         flex:1,
         flexDirection:'row',
-        paddingHorizontal:15,
-        paddingVertical:10,
+        paddingHorizontal:10,
+        paddingVertical:5,
         backgroundColor:'#c9d5eb',
-        justifyContent:'center'
+        justifyContent:'center',
+        alignItems:'center',
+        borderRadius:7,
     },
     createEventFWI:{
         borderBottomColor:'#8da6d4',
