@@ -24,6 +24,7 @@ class EventsScreen extends Component{
             NED:new Date(),
             NET:new Date(),
             locationList:{},
+            MyEvents:{},
             isLocationSet:false,
             curLocation:{},
             textingValue:false,
@@ -162,7 +163,15 @@ class EventsScreen extends Component{
                         userIds:results[bodyKey].usersIds,
                     });
                 }
-                this.setState({loading:false,locationList:placesArray,npt:bodyText.next_page_token});
+                var MyEvents = placesArray.filter((item)=>{
+                    console.log(item);
+                    for(const uid in item.userIds){
+                        if(item.userIds[uid].user_id = "29"){
+                            return true;
+                        }
+                    }
+                })
+                this.setState({loading:false,locationList:placesArray,MyEvents:MyEvents});
             }).catch(err => {
                 console.log('Error What is this',err);
             })
@@ -190,6 +199,9 @@ class EventsScreen extends Component{
         else{
             this.setState({textingValue:false})
         }
+    }
+    switchEventTabs(tab){
+        this.setState({isCurrentTab:tab});
     }
     render(){
         return (
@@ -223,21 +235,40 @@ class EventsScreen extends Component{
                     </TouchableOpacity>
                 </View>
                 <View style={MainStyles.EventScreenTabWrapper}>
-                    <TouchableOpacity style={MainStyles.ESTWItem}>
+                    <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('all-events')}>
                         <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>ALL EVENTS</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={MainStyles.ESTWItem}>
+                    <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('my-events')}>
                         <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>MY EVENTS</Text>
                     </TouchableOpacity>
                 </View>
+                { 
+                    this.state.isCurrentTab == 'all-events' && 
+                    <View>
+                        {
+                            this.state.locationList.length > 0 && 
+                            <FlatList data={this.state.locationList}
+                                renderItem={({item}) => (
+                                    <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
+                                    )}
+                                keyExtractor={(item) => item.key}
+                            />
+                        }
+                    </View>
+                }
                 {
-                    this.state.locationList.length > 0 && 
-                    <FlatList data={this.state.locationList}
-                        renderItem={({item}) => (
-                            <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
-                            )}
-                        keyExtractor={(item) => item.key}
-                    />
+                    this.state.isCurrentTab == 'my-events' && 
+                    <View>
+                        {
+                            this.state.MyEvents.length > 0 && 
+                            <FlatList data={this.state.MyEvents}
+                                renderItem={({item}) => (
+                                    <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
+                                    )}
+                                keyExtractor={(item) => item.key}
+                            />
+                        } 
+                    </View>
                 }
                 <Dialog
                     visible={this.state.CreateEventVisible}

@@ -1,12 +1,21 @@
 import React, { Component } from 'react';
-import { View,Text,Image,TouchableOpacity} from 'react-native';
+import { View,Text,Image,TouchableOpacity,ToastAndroid} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
 import ProgressiveImage from './AsyncModules/ImageComponent';
+import { SERVER_URL } from '../Constants';
+let userStatus = '';
 export default class ListItem extends Component{
+    constructor(props){
+        super(props);
+        this.state={
+            userStatus:''
+        }
+        
+    }
     checkEvent = async ()=>{
         var curItem = await this.props.item;
-        if(curItem.isStarted === false){
+        /*if(curItem.isStarted === false){
             var locItem = {
                 name:curItem.name,
                 geometry:{
@@ -21,13 +30,28 @@ export default class ListItem extends Component{
             }
             await this.props.fetchDetails(locItem);
         }
-        else{
-            this.props.navigate('EventDetail',{event_id:curItem.group_id});
-        }
+        else{*/
+            console.log(curItem);
+            //this.props.navigate('EventDetail',{event_id:curItem.group_id});
+        //}
     }
     setUserEventStatus =  async (statusValue)=>{
         var curItem = await this.props.item;
-        console.log(statusValue,curItem);
+        var user_id = 29;
+        fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
+        .then(response=>{
+            userStatus = statusValue;
+            this.setState({userStatus:statusValue});
+            if(statusValue == 1){
+                ToastAndroid.showWithGravity('You are interested to this event',ToastAndroid.SHORT,ToastAndroid.CENTER);
+            }
+            else if(statusValue == 2){
+                ToastAndroid.showWithGravity('You are joined to this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+            }
+            else if(statusValue ==3){
+                ToastAndroid.showWithGravity('You have ignored this event',ToastAndroid.SHORT,ToastAndroid.CENTER);
+            }
+        })
     }
     formatAMPM(date) {
         var hours = date.getHours();
@@ -38,7 +62,15 @@ export default class ListItem extends Component{
         minutes = minutes < 10 ? '0'+minutes : minutes;
         var strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
-      }
+    }
+    componentWillMount(){
+        for(const uid in this.props.item.userIds){
+            if(this.props.item.userIds[uid].user_id == "29"){
+                userStatus=this.props.item.userIds[uid].status;
+                this.setState({userStatus:this.props.item.userIds[uid].status});
+            }
+        }
+    }
     render(){
         var d1 = new Date ();
         var d2 = new Date ( d1 );
@@ -49,8 +81,12 @@ export default class ListItem extends Component{
         var N = 5;
         var Address = Item.address.split(" ").splice(0,N).join(" ");
         var eventTime = this.formatAMPM(eventDate);
+        userId = 29;
+        
         return (
-            <View style={[
+            <View
+            style={[
+                (this.state.userStatus == 3)?{opacity:0.5}:'',
                 {borderBottomColor:'#8da6d4',borderBottomWidth:1},
                 (Item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
                 (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#dff9ec'}:'']}>
@@ -88,44 +124,50 @@ export default class ListItem extends Component{
                         <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{eventTime}</Text>
                     </View>
                 </TouchableOpacity>
-                <View style={MainStyles.EIAButtonsWrapper}>
-                    <TouchableOpacity style={[
-                    MainStyles.EIAButtons       
-                    ]}
-                    onPress={()=>this.setUserEventStatus(2)}
-                    >
-                        <Icon name="check" size={15} style={{color:'#FFF',marginRight:5,}}/>
-                        <Text style={{
-                            color:'#FFF',
-                            fontFamily:'Roboto-Medium',
-                            fontSize:14
-                        }}>JOIN</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[
-                    MainStyles.EIAButtons,{marginHorizontal:5}
-                    ]}
-                        onPress={()=>this.setUserEventStatus(1)}
-                    >
-                        <Icon name="star" size={15} style={{color:'#FFF',marginRight:5,}}/>
-                        <Text style={{
-                            color:'#FFF',
-                            fontFamily:'Roboto-Medium',
-                            fontSize:14
-                        }}>INTERESTED</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[
-                    MainStyles.EIAButtons       
-                    ]}
-                        onPress={()=>this.setUserEventStatus(0)}
+                { 
+                    this.state.userStatus != 3 && 
+                    <View style={MainStyles.EIAButtonsWrapper}>
+                        <TouchableOpacity style={[
+                        MainStyles.EIAButtons,
+                        (this.state.userStatus == 2)?{backgroundColor:'#87d292'}:''
+                        ]}
+                        onPress={()=>this.setUserEventStatus(2)}
                         >
-                        <Icon name="ban" size={15} style={{color:'#FFF',marginRight:5,}}/>
-                        <Text style={{
-                            color:'#FFF',
-                            fontFamily:'Roboto-Medium',
-                            fontSize:14
-                        }}>IGNORE</Text>
-                    </TouchableOpacity>
-                </View>
+                            <Icon name="check" size={15} style={{color:'#FFF',marginRight:5,}}/>
+                            <Text style={{
+                                color:'#FFF',
+                                fontFamily:'Roboto-Medium',
+                                fontSize:14
+                            }}>JOIN</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[
+                        MainStyles.EIAButtons,{marginHorizontal:5},
+                        (this.state.userStatus == 1)?{backgroundColor:'#8da6d5'}:''
+                        ]}
+                            onPress={()=>this.setUserEventStatus(1)}
+                        >
+                            <Icon name="star" size={15} style={{color:'#FFF',marginRight:5,}}/>
+                            <Text style={{
+                                color:'#FFF',
+                                fontFamily:'Roboto-Medium',
+                                fontSize:14
+                            }}>INTERESTED</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[
+                        MainStyles.EIAButtons       
+                        ]}
+                            onPress={()=>this.setUserEventStatus(3)}
+                            >
+                            <Icon name="ban" size={15} style={{color:'#FFF',marginRight:5,}}/>
+                            <Text style={{
+                                color:'#FFF',
+                                fontFamily:'Roboto-Medium',
+                                fontSize:14
+                            }}>IGNORE</Text>
+                        </TouchableOpacity>
+                    </View>
+                }
+                
             </View>
         )
     }
