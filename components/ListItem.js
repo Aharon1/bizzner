@@ -24,13 +24,13 @@ export default class ListItem extends Component{
             userStatus = statusValue;
             this.setState({userStatus:statusValue});
             if(statusValue == 1){
-                ToastAndroid.showWithGravity('You are interested to this event',ToastAndroid.SHORT,ToastAndroid.CENTER);
+                ToastAndroid.showWithGravity('You are interested in this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
             }
             else if(statusValue == 2){
-                ToastAndroid.showWithGravity('You are joined to this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+                ToastAndroid.showWithGravity('You have joined this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
             }
             else if(statusValue ==3){
-                ToastAndroid.showWithGravity('You have ignored this event',ToastAndroid.SHORT,ToastAndroid.CENTER);
+                ToastAndroid.showWithGravity('You have ignored this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
             }
         })
     }
