@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import { View,Text,TouchableOpacity,FlatList} from 'react-native';
+import { View,Text,TouchableOpacity,FlatList,ToastAndroid} from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { HeaderButton } from '../Navigation/HeaderButton';
@@ -13,17 +13,38 @@ export default class EventDetail extends Component{
         this.state = {
             loading:true,
             event_id:this.props.navigation.getParam('event_id'),
-            userList:{}
+            userList:{},
+            curStatus:'',
+            eventData:{}
         }
         this.getEventUsers();
     }
     getEventUsers(){
+        var user_id = 29;
         var eventId = this.props.navigation.getParam('event_id');
-        fetch(SERVER_URL+'?action=getEventUsers&event_id='+eventId)
+        fetch(SERVER_URL+'?action=getEventUsers&event_id='+eventId+'&user_id='+user_id)
         .then(response=>response.json())
         .then(res=>{
             console.log(res);
-            this.setState({loading:false,userList:res.users,eventData:res.event_data});
+            this.setState({loading:false,userList:res.users,eventData:res.event_data,curStatus:res.curStatus});
+        })
+    }
+    setUserEventStatus =  async (statusValue)=>{
+        var curItem = this.state.eventData;
+        var user_id = 29;
+        fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
+        .then(response=>{
+            curStatus = statusValue;
+            this.setState({curStatus:statusValue});
+            if(statusValue == 1){
+                ToastAndroid.showWithGravity('You are interested to this event',ToastAndroid.SHORT,ToastAndroid.CENTER);
+            }
+            else if(statusValue == 2){
+                ToastAndroid.showWithGravity('You are joined to this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+            }
+            else if(statusValue ==3){
+                ToastAndroid.showWithGravity('You have ignored this event',ToastAndroid.SHORT,ToastAndroid.CENTER);
+            }
         })
     }
     render(){
@@ -55,7 +76,7 @@ export default class EventDetail extends Component{
                 <View style={MainStyles.EventScreenTabWrapper}>
                 <TouchableOpacity style={[
                         MainStyles.EIAButtons,
-                        (this.state.userStatus == 2)?{backgroundColor:'#87d292'}:''
+                        (this.state.curStatus == 2)?{backgroundColor:'#87d292'}:''
                         ]}
                         onPress={()=>this.setUserEventStatus(2)}
                         >
@@ -68,7 +89,7 @@ export default class EventDetail extends Component{
                         </TouchableOpacity>
                         <TouchableOpacity style={[
                         MainStyles.EIAButtons,{marginHorizontal:5},
-                        (this.state.userStatus == 1)?{backgroundColor:'#8da6d5'}:''
+                        (this.state.curStatus == 1)?{backgroundColor:'#8da6d5'}:''
                         ]}
                             onPress={()=>this.setUserEventStatus(1)}
                         >
