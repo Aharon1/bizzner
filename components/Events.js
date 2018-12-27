@@ -17,7 +17,7 @@ class EventsScreen extends Component{
         super(props);
         this.state = {
             loading:false,
-            TabComponent : 'EL',
+            TabComponent : '',
             CreateEventVisible:false,
             NES:'',
             NEN:'',
@@ -203,6 +203,10 @@ class EventsScreen extends Component{
     switchEventTabs(tab){
         this.setState({isCurrentTab:tab});
     }
+    gotEventsList(){
+        this.setState({TabComponent:''});
+        this.props.navigation.navigate('Home');
+    }
     render(){
         return (
             <View style={MainStyles.normalContainer}>
@@ -214,16 +218,16 @@ class EventsScreen extends Component{
                 
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[
-                        MainStyles.tabItem,MainStyles.tabItemActive]} onPress={()=>this.props.navigation.navigate('Home')}>
-                        <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveIcon]}/>
-                        <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText]}>List</Text>
+                        MainStyles.tabItem,(this.state.TabComponent == '') ? MainStyles.tabItemActive : null]} onPress={()=>this.gotEventsList()}>
+                        <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveIcon : null]}/>
+                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveText : null]}>List</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[
                         MainStyles.tabItem,
                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
                         ]} onPress={()=>this.changeTab('map')}>
-                        <Icon name="globe" style={MainStyles.tabItemIcon}/>
-                        <Text style={MainStyles.tabItemIcon}>Map</Text>
+                        <Icon name="globe" style={[MainStyles.tabItemIcon,(this.state.TabComponent == 'map') ? MainStyles.tabItemActiveIcon : null]}/>
+                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == 'map') ? MainStyles.tabItemActiveText : null]}>Map</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.tabItem} onPress={()=>this.setState({CreateEventVisible:true})}>
                         <Icon name="calendar-o" style={MainStyles.tabItemIcon}/>
@@ -234,6 +238,14 @@ class EventsScreen extends Component{
                         <Text style={MainStyles.tabItemText}>Search</Text>
                     </TouchableOpacity>
                 </View>
+                {
+                    this.state.TabComponent != '' &&
+                    <TabContainer showContainer={{
+                    TabComponent:this.state.TabComponent,
+                    }} 
+                    navigation={this.props.navigation}
+                    />
+                }
                 <View style={MainStyles.EventScreenTabWrapper}>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('all-events')}>
                         <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>ALL EVENTS</Text>
