@@ -16,7 +16,7 @@ class EventsScreen extends Component{
     constructor(props){
         super(props);
         this.state = {
-            loading:false,
+            loading:true,
             TabComponent : '',
             CreateEventVisible:false,
             NES:'',
@@ -54,13 +54,13 @@ class EventsScreen extends Component{
         }
         let locItem = {
             name:curItem.name,
-            latitude:curItem.geometry.location.latitude,
-            longitude:curItem.geometry.location.longitude,
+            latitude:curItem.geometry.location.lat,
+            longitude:curItem.geometry.location.lng,
             address:curItem.formatted_address,
             picUrl:curPic,
             place_id:curItem.place_id
         };
-        this.setState({isLocationSet:true,curLocation:locItem,CreateEventVisible:true,textingValue:false});
+        this.setState({isLocationSet:true,curLocation:locItem,CreateEventVisible:true,textingValue:false,enableScrollViewScroll:true});
     }
     createNewEvent = () => {
         this.setState({loading:true});
@@ -94,44 +94,58 @@ class EventsScreen extends Component{
         })
         .then(response=>response.json())
         .then(response=>{
-            var locList = this.state.locationList;
-            //locList.splice(locList.findIndex(v => v.key === response.body.key),1);
-            locList = locList.filter(function( obj ) {
-                return obj.key !== response.body.key;
-            });
-            var rBody = response.body;
-            var eventAdded = {
-                name:rBody.group_name,
-                address:rBody.group_address,
-                isStarted:rBody.group_status,
-                photoUrl:rBody.group_pic,
-                key:rBody.place_id,
-                event_date:rBody.event_date,
-                event_time:rBody.event_time,
-                event_subject:rBody.event_subject,
-                event_note:rBody.event_note,
-                latitude:rBody.latitude,
-                longitude:rBody.longitude,
-                place_id:rBody.place_id
+            if(response.code == 300){
+                var locList = this.state.locationList;
+                var rBody = response.body;
+                var eventAdded = {
+                    name:rBody.group_name,
+                    address:rBody.group_address,
+                    isStarted:rBody.group_status,
+                    photoUrl:rBody.group_pic,
+                    key:rBody.key,
+                    event_date:rBody.event_date,
+                    event_time:rBody.event_time,
+                    event_subject:rBody.event_subject,
+                    event_note:rBody.event_note,
+                    latitude:rBody.latitude,
+                    longitude:rBody.longitude,
+                    place_id:rBody.place_id,
+                    group_id:rBody.group_id,
+                    usersCount:rBody.usersCount,
+                    userIds:rBody.usersIds,
+                }
+                locList.unshift(eventAdded);
+                
+                this.setState({
+                    locationList:locList,
+                    loading:false,
+                    CreateEventVisible:false,
+                    NES:'',
+                    NEN:'',
+                    NED:new Date(),
+                    NET:new Date(),
+                });
             }
-            locList.unshift(eventAdded);
-            console.log(response.body);
-            this.setState({
-                locationList:locList,
-                loading:false,
-                CreateEventVisible:false,
-                NES:'',
-                NEN:'',
-                NED:new Date(),
-                NET:new Date(),
-            });
+            else{
+                ToastAndroid.showWithGravity('Event not created',ToastAndroid.BOTTOM);
+                this.setState({
+                    loading:false,
+                    CreateEventVisible:false,
+                    NES:'',
+                    NEN:'',
+                    NED:new Date(),
+                    NET:new Date(),
+                });
+            }
         })
     }
     getLocationList(){
         navigator.geolocation.getCurrentPosition(positions=>{
             let Latitude = positions.coords.latitude;
             let Longitude = positions.coords.longitude;
-            var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
+            var dateNow = new Date();
+            var curDate = dateNow.getFullYear()+'-'+(dateNow.getMonth()+1)+'-'+dateNow.getDate();
+            var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate;
             fetch(fetchData,{
                 method:'POST',
                 body:JSON.stringify({
@@ -142,6 +156,7 @@ class EventsScreen extends Component{
             })
             .then(response=>{
                 var bodyText = JSON.parse(response._bodyText);
+                console.log(bodyText);
                 var results = bodyText.results
                 const placesArray = [];
                 for (const bodyKey in results){
@@ -164,7 +179,6 @@ class EventsScreen extends Component{
                     });
                 }
                 var MyEvents = placesArray.filter((item)=>{
-                    console.log(item);
                     for(const uid in item.userIds){
                         if(item.userIds[uid].user_id = "29"){
                             return true;
@@ -186,7 +200,6 @@ class EventsScreen extends Component{
             fetch(fetchUrl)
             .then(response=>response.json())
             .then(res=>{
-                console.log(res);
                 if(res.status == 'ZERO_RESULTS'){
                     this.setState({locationItems:{}})
                 }
@@ -287,28 +300,6 @@ class EventsScreen extends Component{
                         </TouchableOpacity>
                         <Text style={{color:'#FFF',fontFamily: 'RobotoMedium',fontSize:17,marginLeft:20}}>CREATE NEW EVENT</Text>
                     </View>
-                    {
-                        this.state.isLocationSet == true &&
-                        (<View style={{width:'100%',marginTop:0,marginBottom:0, height:200,}}>
-                            <ImageBackground source={{uri:this.state.curLocation.picUrl}} style={{width: '100%', height: 200,flex:1,resizeMode:'center'}} resizeMode="cover">   
-                                <TouchableOpacity style={{position:'absolute',right:10,top:10}} onPress={()=>{this.setState({isLocationSet:false,curLocation:{}})}}>
-                                    <Icon name="pencil" size={20} color="#FFF" />
-                                </TouchableOpacity>
-                                <View style={{
-                                        color: 'white',
-                                        position: 'absolute', // child
-                                        bottom: 0, // position where you want
-                                        left: 0,
-                                        paddingLeft:20,
-                                        paddingRight:40,
-                                        paddingBottom:20
-                                    }}>
-                                    <Text style={{textAlign:'left', color:'#FFF',fontFamily:'Roboto-Regular',fontSize:18}}>{this.state.curLocation.name}</Text>
-                                    <Text style={{textAlign:'left',color:'#FFF',fontFamily:'Roboto-Light',fontSize:16}}>{this.state.curLocation.address}</Text>
-                                </View>
-                            </ImageBackground>
-                        </View>)
-                    }
                     <View style={{padding:0,borderWidth: 0,backgroundColor:'#FFF',overflow:'visible'}} 
                     onStartShouldSetResponderCapture={() => {
                         this.setState({ enableScrollViewScroll: true });
@@ -316,14 +307,36 @@ class EventsScreen extends Component{
                     >
                         <ScrollView 
                         contentContainerStyle={{
-                            paddingHorizontal:15,
+                            paddingHorizontal:0,
                         }}
                         scrollEnabled={this.state.enableScrollViewScroll} 
                         ref={myScroll => (this._myScroll = myScroll)}
                         >
                             {
+                                this.state.isLocationSet == true &&
+                                <View style={{width:'100%',marginTop:0,marginBottom:0, height:200,}}>
+                                    <ImageBackground source={{uri:this.state.curLocation.picUrl}} style={{width: '100%', height: 200,flex:1,resizeMode:'center'}} resizeMode="cover">   
+                                        <TouchableOpacity style={{position:'absolute',right:10,top:10}} onPress={()=>{this.setState({isLocationSet:false,curLocation:{}})}}>
+                                            <Icon name="pencil" size={20} color="#FFF" />
+                                        </TouchableOpacity>
+                                        <View style={{
+                                                color: 'white',
+                                                position: 'absolute', // child
+                                                bottom: 0, // position where you want
+                                                left: 0,
+                                                paddingLeft:20,
+                                                paddingRight:40,
+                                                paddingBottom:20
+                                            }}>
+                                            <Text style={{textAlign:'left', color:'#FFF',fontFamily:'Roboto-Regular',fontSize:18}}>{this.state.curLocation.name}</Text>
+                                            <Text style={{textAlign:'left',color:'#FFF',fontFamily:'Roboto-Light',fontSize:16}}>{this.state.curLocation.address}</Text>
+                                        </View>
+                                    </ImageBackground>
+                                </View>
+                            }
+                            {
                                 this.state.isLocationSet == false && 
-                                <View style={{zIndex:40}}>
+                                <View style={{zIndex:40,paddingHorizontal:15}}>
                                     <View style={[
                                         MainStyles.createEventFWI,
                                         {
@@ -342,11 +355,14 @@ class EventsScreen extends Component{
                                             onBlur={()=>this.setState({isFocusedSL:false})}
                                         />
                                     </View>
+                                    <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
+                                    <Text style={{color:'#0947b9',fontFamily:'Roboto-Medium'}}>Add location</Text>
+                                    </View>
                                 </View>
                             }
                             {
                                 this.state.textingValue &&  
-                                <View style={MainStyles.locationItemWrapper} onStartShouldSetResponderCapture={() => {
+                                <View style={[MainStyles.locationItemWrapper,{marginRight:15}]} onStartShouldSetResponderCapture={() => {
                                     this.setState({ enableScrollViewScroll: false });
                                     if (this._myScroll.contentOffset === 0
                                         && this.state.enableScrollViewScroll === false) {
@@ -368,66 +384,69 @@ class EventsScreen extends Component{
                                     }
                                 </View> 
                             }
-                            <View style={[MainStyles.createEventFWI]}>
-                                <Icon name="thumb-tack" style={MainStyles.cEFWIIcon}/>
-                                <TextInput style={MainStyles.cEFWITF} placeholder="Subject" onChangeText={(text)=>{this.setState({NES:text})}} placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
-                            </View>
-                            <View style={MainStyles.createEventFWI}>
-                                <Icon name="bell" style={MainStyles.cEFWIIcon}/>
-                                <TextInput style={MainStyles.cEFWITF} placeholder="Note" onChangeText={(text)=>{this.setState({NEN:text})}} placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
-                            </View>
-                            <View style={MainStyles.createEventFWI}>
-                                <Icon name="users" style={MainStyles.cEFWIIcon}/>
-                                <Picker
-                                    selectedValue={this.state.userCount}
-                                    style={MainStyles.cEFWIPF}
-                                    onValueChange={(itemValue, itemIndex) => this.setState({userCount: itemValue})}>
-                                    <Picker.Item label="5-10" value="10" />
-                                    <Picker.Item label="10-15" value="15" />
-                                    <Picker.Item label="15-20" value="20" />
-                                </Picker>
-                            </View>
-                            <View style={{flexDirection:'row',flex:1,justifyContent:'flex-end',marginBottom:30}}>
-                                <View style={MainStyles.createEventFWI}>
-                                    <Icon name="calendar" style={MainStyles.cEFWIIcon}/>
-                                    <DatePicker
-                                        style={{width: '75%'}}
-                                        date={this.state.NED}
-                                        mode="date"
-                                        placeholder="Select Date"
-                                        format="DD/MM/YYYY"
-                                        confirmBtnText="Confirm"
-                                        cancelBtnText="Cancel"
-                                        showIcon={false} 
-                                        onDateChange={(date) => {this.setState({NED: date})}}
-                                        customStyles={{
-                                            dateInput:MainStyles.cEFWIDF
-                                        }}
-                                    />
-                                </View>
+                            <View style={{paddingHorizontal:15,marginBottom:15}}>
                                 <View style={[MainStyles.createEventFWI]}>
-                                    <Icon name="clock-o" style={MainStyles.cEFWIIcon}/>
-                                    <DatePicker
-                                        style={{width: '75%'}}
-                                        date={this.state.NET}
-                                        mode="time"
-                                        placeholder="Select Time"
-                                        format="hh:mm"
-                                        confirmBtnText="Confirm"
-                                        cancelBtnText="Cancel"
-                                        showIcon={false} 
-                                        onDateChange={(time) => {this.setState({NET: time})}}
-                                        customStyles={{
-                                            dateInput:MainStyles.cEFWIDF
-                                        }}
-                                    />
+                                    <Icon name="thumb-tack" style={MainStyles.cEFWIIcon}/>
+                                    <TextInput style={MainStyles.cEFWITF} placeholder="Subject" onChangeText={(text)=>{this.setState({NES:text})}} placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                                </View>
+                                <View style={MainStyles.createEventFWI}>
+                                    <Icon name="bell" style={MainStyles.cEFWIIcon}/>
+                                    <TextInput style={MainStyles.cEFWITF} placeholder="Note" onChangeText={(text)=>{this.setState({NEN:text})}} placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                                </View>
+                                <View style={MainStyles.createEventFWI}>
+                                    <Icon name="users" style={MainStyles.cEFWIIcon}/>
+                                    <Picker
+                                        selectedValue={this.state.NEUsersCount}
+                                        style={MainStyles.cEFWIPF}
+                                        onValueChange={(itemValue, itemIndex) => this.setState({NEUsersCount: itemValue})}>
+                                        <Picker.Item label="5-10" value="10" />
+                                        <Picker.Item label="10-15" value="15" />
+                                        <Picker.Item label="15-20" value="20" />
+                                    </Picker>
+                                </View>
+                                <View style={{flexDirection:'row',flex:1,justifyContent:'flex-end',marginBottom:30}}>
+                                    <View style={MainStyles.createEventFWI}>
+                                        <Icon name="calendar" style={MainStyles.cEFWIIcon}/>
+                                        <DatePicker
+                                            style={{width: '75%'}}
+                                            date={this.state.NED}
+                                            mode="date"
+                                            placeholder="Select Date"
+                                            format="DD/MM/YYYY"
+                                            confirmBtnText="Confirm"
+                                            cancelBtnText="Cancel"
+                                            showIcon={false} 
+                                            onDateChange={(date) => {this.setState({NED: date})}}
+                                            customStyles={{
+                                                dateInput:MainStyles.cEFWIDF
+                                            }}
+                                        />
+                                    </View>
+                                    <View style={[MainStyles.createEventFWI]}>
+                                        <Icon name="clock-o" style={MainStyles.cEFWIIcon}/>
+                                        <DatePicker
+                                            style={{width: '75%'}}
+                                            date={this.state.NET}
+                                            mode="time"
+                                            placeholder="Select Time"
+                                            format="hh:mm"
+                                            confirmBtnText="Confirm"
+                                            cancelBtnText="Cancel"
+                                            showIcon={false} 
+                                            onDateChange={(time) => {this.setState({NET: time})}}
+                                            customStyles={{
+                                                dateInput:MainStyles.cEFWIDF
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+                                <View style={[MainStyles.btnWrapper,{marginBottom:30}]}>
+                                    <TouchableOpacity style={[MainStyles.btnSave]} onPress={this.createNewEvent}>
+                                        <Text style={MainStyles.btnSaveText}>Create Event</Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
-                            <View style={[MainStyles.btnWrapper,{justifyContent:'center',flex:1,alignItems:'center',marginBottom:10}]}>
-                                <TouchableOpacity style={[MainStyles.btnSave,{marginBottom:0,flex:1}]} onPress={this.createNewEvent}>
-                                    <Text style={MainStyles.btnSaveText}>Create Event</Text>
-                                </TouchableOpacity>
-                            </View>
+                            
                         </ScrollView>
                     </View>
                 </Dialog>

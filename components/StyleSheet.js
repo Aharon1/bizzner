@@ -401,7 +401,7 @@ const MainStyles = StyleSheet.create({
         height:45
     },
     cEFWITF:{
-        height:60,
+        height:50,
         flex: 1,
         flexDirection:'row',
         paddingTop: 0,
@@ -412,7 +412,7 @@ const MainStyles = StyleSheet.create({
         fontFamily:'Roboto-Light'
     },
     cEFWIPF:{
-        height:60,
+        height:50,
         flex: 1,
         flexDirection:'row',
         paddingTop: 0,
@@ -444,7 +444,7 @@ const MainStyles = StyleSheet.create({
        alignContent: 'flex-start',
     },
     locationItemWrapper:{
-        width:'100%',
+        width:'91%',
         marginHorizontal: 'auto',
         justifyContent:'center',
         left:15,

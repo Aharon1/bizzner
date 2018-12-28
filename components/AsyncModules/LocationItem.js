@@ -12,11 +12,11 @@ class LocationItem extends PureComponent{
             <TouchableOpacity onPress={this._handlePress} style={[MainStyles.locationItemBtn,{flexDirection:'row'}]}>
                 <View style={{ width: 50, height: 70,alignItems:'flex-start',paddingRight:5}}>
                     {
-                        this.props.photos != "" && 
+                        typeof(this.props.photos) != "undefined" && 
                         <ProgressiveImage source={{uri:'https://maps.googleapis.com/maps/api/place/photo?maxwidth=100&photoreference='+this.props.photos[0].photo_reference+'&key='+MAPKEY}} style={{ width: 50, height: 70}} resizeMode="cover"/>
                     }
                     {
-                        this.props.photos == "" && 
+                        typeof(this.props.photos) == "undefined" && 
                         <ProgressiveImage source={{uri:'http://bizzner.com/app/assets/images/default.jpg'}} style={{width:50,height:70}} resizeMode="cover"/>
                     }
                 </View>
