@@ -34,7 +34,7 @@ class EventsScreen extends Component{
             isFocusedSL:false,
             isCurrentTab:'all-events'
         }
-        this.getLocationList();
+        //this.getLocationList();
         this.hTC = this.handleTextChange.bind(this);
         this.onChangeTextDelayed = _.debounce(this.hTC, 600);
     }
@@ -139,7 +139,7 @@ class EventsScreen extends Component{
             }
         })
     }
-    getLocationList(){
+    componentDidMount(){
         navigator.geolocation.getCurrentPosition(positions=>{
             let Latitude = positions.coords.latitude;
             let Longitude = positions.coords.longitude;
@@ -154,10 +154,9 @@ class EventsScreen extends Component{
                     longitude:Longitude//75.8707448
                 })
             })
+            .then(res=>res.json())
             .then(response=>{
-                var bodyText = JSON.parse(response._bodyText);
-                console.log(bodyText);
-                var results = bodyText.results
+                var results = response.results
                 const placesArray = [];
                 for (const bodyKey in results){
                     placesArray.push({
@@ -194,7 +193,7 @@ class EventsScreen extends Component{
         })
     }
     handleTextChange(text){
-        if(text.length > 9){
+        if(text.length > 3){
             this.setState({isLoading:true,textingValue:true,locationItems:{}});
             var fetchUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+text+"&fields=photos,formatted_address,name,rating,place_id,geometry&key="+MAPKEY
             fetch(fetchUrl)
@@ -269,6 +268,7 @@ class EventsScreen extends Component{
                 </View>
                 { 
                     this.state.isCurrentTab == 'all-events' && 
+                    this.state.locationList && 
                     this.state.locationList.length > 0 && 
                     <FlatList data={this.state.locationList}
                         renderItem={({item}) => (
@@ -279,6 +279,7 @@ class EventsScreen extends Component{
                 }
                 {
                     this.state.isCurrentTab == 'my-events' && 
+                    this.state.MyEvents &&
                     this.state.MyEvents.length > 0 && 
                     <FlatList data={this.state.MyEvents}
                         renderItem={({item}) => (
@@ -362,7 +363,7 @@ class EventsScreen extends Component{
                             }
                             {
                                 this.state.textingValue &&  
-                                <View style={[MainStyles.locationItemWrapper,{marginRight:15}]} onStartShouldSetResponderCapture={() => {
+                                <View style={[MainStyles.locationItemWrapper]} onStartShouldSetResponderCapture={() => {
                                     this.setState({ enableScrollViewScroll: false });
                                     if (this._myScroll.contentOffset === 0
                                         && this.state.enableScrollViewScroll === false) {

@@ -23,7 +23,15 @@ export class MarkerItem extends PureComponent {
   }
 
   onMarkerPress = () => {
-    this.props.onOpenModal(this.props.group_name, this.props.event_photo, this.props.event_subject);
+    this.props.onOpenModal({
+      group_name: this.props.group_name,
+      event_photo:this.props.event_photo,
+      event_subject:this.props.event_subject,
+      event_date:this.props.event_date,
+      event_time:this.props.event_time,
+      group_address:this.props.group_address,
+      event_id:this.props.id,
+    });
   };
 
   isToday = () => {

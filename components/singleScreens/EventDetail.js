@@ -15,7 +15,7 @@ export default class EventDetail extends Component{
             event_id:this.props.navigation.getParam('event_id'),
             userList:{},
             curStatus:'',
-            eventData:{}
+            eventData:''
         }
         //this.getEventUsers();
     }
@@ -57,7 +57,7 @@ export default class EventDetail extends Component{
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
                     <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>EVENT DETAILS</Text>
                 </View>
-                <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
+                <View style={[MainStyles.tabContainer,{elevation:0,justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[
                         MainStyles.tabItem,MainStyles.tabItemActive]} onPress={()=>this.props.navigation.navigate('EventDetail',{event_id:this.state.event_id})}>
                         <Icon name="user-plus" style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveIcon]}/>
@@ -75,7 +75,7 @@ export default class EventDetail extends Component{
                         <Text style={MainStyles.tabItemIcon}>EVENT CHAT</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={MainStyles.EventScreenTabWrapper}>
+                <View style={[MainStyles.EventScreenTabWrapper,{backgroundColor:'#d1dbed'}]}>
                     <TouchableOpacity style={[
                     MainStyles.EIAButtons,
                     (this.state.curStatus == 2)?{backgroundColor:'#87d292'}:''
@@ -103,7 +103,8 @@ export default class EventDetail extends Component{
                         }}>INTERESTED</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[
-                    MainStyles.EIAButtons       
+                    MainStyles.EIAButtons,
+                    (this.state.curStatus == 0)?{backgroundColor:'#d28787'}:''
                     ]}
                         onPress={()=>this.setUserEventStatus(3)}
                         >
@@ -116,7 +117,23 @@ export default class EventDetail extends Component{
                     </TouchableOpacity>
                 </View>
                 {
-                    this.state.userList.length > 0 && 
+                    this.state && this.state.eventData !='' && 
+                    <View style={MainStyles.eventDataHeader}>
+                        <View style={{width:40,height:40,marginRight:10}}>
+                            <ProgressiveImage source={{uri:this.state.eventData.photoUrl}} style={{width:40,height:40}}/>
+                        </View>
+                        <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column'}}>
+                            <Text style={{color:'#03163a',fontFamily:'Roboto-Regular',fontSize:12,flexWrap: 'wrap'}}>
+                                {this.state.eventData.group_name}, 
+                                <Text  style={{fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}> {this.state.eventData.group_address.split(" ").splice(0,5).join(" ")}</Text>
+                            </Text>
+                            <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:11,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
+                        </View>
+                    </View>
+                }
+                
+                {
+                    this.state && this.state.userList && this.state.userList.length > 0 && 
                     <FlatList 
                         data={this.state.userList}
                         renderItem={({item}) => (

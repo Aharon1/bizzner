@@ -2,6 +2,8 @@ import React, { PureComponent } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, ImageBackground } from "react-native";
 import { MarkerItem } from "./MarkerItem";
 import { MapClustering } from './MapClustering';
+import ProgressiveImage from '../AsyncModules/ImageComponent';
+import Icon from 'react-native-vector-icons/FontAwesome';
 const dummyImage = require('../../assets/dummy.jpg');
 
 export default class GoogleMapView extends PureComponent {
@@ -11,7 +13,7 @@ export default class GoogleMapView extends PureComponent {
         subject: ''
     }
     render() {
-        const { isModalOpen, modalName, backgroundImage, subject } = this.state;
+        const { isModalOpen, eventData } = this.state;
         return (
             <View style={styles.container}>
                 <MapClustering
@@ -25,39 +27,82 @@ export default class GoogleMapView extends PureComponent {
                 </MapClustering>
                 {
                     isModalOpen &&
-                    <TouchableOpacity
-                        onPress={this.onCloseModal}
-                        style={styles.modalContainer}>
-                        <ImageBackground style={styles.image} source={{ uri: backgroundImage }} >
-                            <Text style={styles.textStyle}>
-                                {subject}
+                    <View style={{width:'85%',paddingBottom:20,borderTopLeftRadius:10,borderTopRightRadius:10,backgroundColor:'#FFF',elevation:5}}>
+                        <View style={{width:'100%',height:150}}>
+                            <ProgressiveImage source={{uri:eventData.event_photo}} style={{width:'100%',height:150,borderTopLeftRadius:10,borderTopRightRadius:10}} />
+                        </View>
+                        <View style={{
+                            paddingHorizontal:15,
+                            paddingVertical:10,
+                        }}>
+                            <Text style={{
+                                fontFamily:'Roboto-Medium',
+                                color:'#05296d',
+                                fontSize:16
+                            }}>
+                                {eventData.event_subject}
                             </Text>
-                            <Text style={styles.textStyle}>
-                                {modalName}
+                            <Text style={{
+                                fontFamily:'Roboto-Regular',
+                                color:'#05296d',
+                                fontSize:14
+                            }}>
+                                {eventData.group_name}, 
+                                <Text  style={{
+                                fontFamily:'Roboto-Light',
+                                color:'#05296d',
+                                fontSize:13
+                            }}> {eventData.group_address}</Text>
                             </Text>
-                        </ImageBackground>
-                    </TouchableOpacity>
+                            <View style={{flexDirection:'row',justifyContent:'space-around',alignItems:'center',marginTop:10}}>
+                                <View style={{flexDirection:'row',justifyContent:'flex-start',alignItems:'center'}}>
+                                    <Icon name="clock-o" style={{marginRight:5,color:'#8da6d5'}} size={14}/>
+                                    <Text  style={{fontFamily:'Roboto-Regular',fontSize:14,color:'#8da6d5'}}>
+                                        {this.formatDate(new Date(eventData.event_date+' '+eventData.event_time))} - {this.formatAMPM(new Date(eventData.event_date+' '+eventData.event_time))}
+                                    </Text>
+                                </View>
+                                <TouchableOpacity onPress={this.goToEvent} style={{borderRadius:20,paddingVertical:5,paddingHorizontal:15,backgroundColor:'#416bb9'}}>
+                                    <Text style={{color:'#FFF',fontFamily:'Roboto-Regular',fontSize:13}}>INFO</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
                 }
             </View>
         );
     }
 
-    onOpenModal = (modalName, backgroundImage, subject) => {
+    onOpenModal = (eventData) => {
         this.setState({
             isModalOpen: true,
-            modalName,
-            backgroundImage,
-            subject
+            eventData
         })
     }
-
+    goToEvent = ()=>{
+        this.props.onNavigate({event_id:this.state.eventData.event_id});
+        this.setState({
+            isModalOpen: false,
+            eventData:''
+        })
+    }
     onCloseModal = () => {
         this.setState({
             isModalOpen: false,
-            modalName: '',
-            subject: '',
-            backgroundImage: null
+            eventData:''
         })
+    }
+    formatAMPM(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
+    formatDate(date){
+        return date.getDate()+' '+(date.getMonth()+1)+' '+date.getFullYear();
     }
 }
 
@@ -76,16 +121,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: 5,
         color: '#000'
-    },
-    modalContainer: {
-        backgroundColor: '#fff',
-        flexDirection: 'row',
-        marginVertical: 20,
-    },
-    image: {
-        width: 250,
-        height: 150,
-        justifyContent: 'flex-end'
     },
     button: {
         width: 80,

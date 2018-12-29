@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { width as w, height as h } from 'react-native-dimension';
 import SuperCluster from 'supercluster';
+
 import CustomMarker from './ClusterMarker';
 
 export class MapClustering extends Component {
