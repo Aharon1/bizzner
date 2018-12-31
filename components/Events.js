@@ -27,16 +27,21 @@ class EventsScreen extends Component{
             MyEvents:{},
             isLocationSet:false,
             curLocation:{},
-            textingValue:false,
+            SLValue:false,
             isLoading:false,
-            locationItems:{},
+            SLItems:{},
+            SCItems:{},
             enableScrollViewScroll: true,
             isFocusedSL:false,
+            isFocusedSC:false,
+            isSelectedCity:'',
             isCurrentTab:'all-events'
         }
         //this.getLocationList();
-        this.hTC = this.handleTextChange.bind(this);
-        this.onChangeTextDelayed = _.debounce(this.hTC, 600);
+        this.hSL = this.handleSL.bind(this);
+        this.hSC = this.handleSC.bind(this);
+        this.onChangeSLDelayed = _.debounce(this.hSL, 300);
+        this.onChangeSCDelayed = _.debounce(this.hSC, 300);
     }
     changeTab(Screen){
         this.setState({TabComponent:Screen});
@@ -60,9 +65,21 @@ class EventsScreen extends Component{
             picUrl:curPic,
             place_id:curItem.place_id
         };
-        this.setState({isLocationSet:true,curLocation:locItem,CreateEventVisible:true,textingValue:false,enableScrollViewScroll:true});
+        this.setState({isLocationSet:true,curLocation:locItem,CreateEventVisible:true,SLValue:false,enableScrollViewScroll:true});
     }
     createNewEvent = () => {
+        if(this.state.NES == ''){
+            ToastAndroid.showWithGravity('Event Subject cannot be blank',ToastAndroid.BOTTOM);
+            return false;
+        }
+        if(this.state.NEN == ''){
+            ToastAndroid.showWithGravity('Event Not cannot be blank',ToastAndroid.BOTTOM);
+            return false;
+        }
+        if(this.state.NEUsersCount == ''){
+            ToastAndroid.showWithGravity('Please choose number of attendee',ToastAndroid.BOTTOM);
+            return false;
+        }
         this.setState({loading:true});
         var postUrl = SERVER_URL+'?action=create_event';
         var NES  = this.state.NES ;
@@ -94,6 +111,7 @@ class EventsScreen extends Component{
         })
         .then(response=>response.json())
         .then(response=>{
+            console.log(response);
             if(response.code == 300){
                 var locList = this.state.locationList;
                 var rBody = response.body;
@@ -125,9 +143,14 @@ class EventsScreen extends Component{
                     NED:new Date(),
                     NET:new Date(),
                 });
+                ToastAndroid.showWithGravity('Event created successfully',ToastAndroid.SHORT,ToastAndroid.BOTTOM,
+                25,
+                50,);
             }
             else{
-                ToastAndroid.showWithGravity('Event not created',ToastAndroid.BOTTOM);
+                ToastAndroid.showWithGravity('Event not created',ToastAndroid.SHORT,ToastAndroid.BOTTOM,
+                25,
+                50,);
                 this.setState({
                     loading:false,
                     CreateEventVisible:false,
@@ -156,6 +179,7 @@ class EventsScreen extends Component{
             })
             .then(res=>res.json())
             .then(response=>{
+                console.log(response);
                 var results = response.results
                 const placesArray = [];
                 for (const bodyKey in results){
@@ -164,7 +188,7 @@ class EventsScreen extends Component{
                         address:results[bodyKey].group_address,
                         isStarted:results[bodyKey].group_status,
                         photoUrl:results[bodyKey].photoUrl,
-                        key:results[bodyKey].place_id,
+                        key:results[bodyKey].key,
                         event_date:results[bodyKey].event_date,
                         event_time:results[bodyKey].event_time,
                         event_subject:results[bodyKey].event_subject,
@@ -192,25 +216,49 @@ class EventsScreen extends Component{
             console.log('Error',error);
         })
     }
-    handleTextChange(text){
-        if(text.length > 3){
-            this.setState({isLoading:true,textingValue:true,locationItems:{}});
-            var fetchUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+text+"&fields=photos,formatted_address,name,rating,place_id,geometry&key="+MAPKEY
+    handleSL(text){
+        if(text.length > 2){
+            this.setState({isLoading:true,SLValue:true,SLItems:{}});
+            var fetchUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+text+' '+this.state.isSelectedCity+"&fields=photos,formatted_address,name,rating,place_id,geometry&key="+MAPKEY
             fetch(fetchUrl)
             .then(response=>response.json())
             .then(res=>{
-                if(res.status == 'ZERO_RESULTS'){
-                    this.setState({locationItems:{}})
+                if(res.status == 'OK'){
+                    this.setState({SLItems:res.results})
+                    
                 }
                 else{
-                    this.setState({locationItems:res.results})
+                    this.setState({SLItems:{}})
                 }
                 this.setState({isLoading:false})
             })
         }
         else{
-            this.setState({textingValue:false})
+            this.setState({SLValue:false})
         }
+    }
+    handleSC(text){
+        if(text.length > 2){
+            this.setState({isLoadingSC:true,SCValue:true,SCItems:{}});
+            var fetchUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input="+text+"&types=(cities)&key="+MAPKEY;
+            fetch(fetchUrl)
+            .then(response=>response.json())
+            .then(res=>{
+                if(res.status == 'OK'){
+                    this.setState({SCItems:res.predictions})
+                }
+                else{
+                    this.setState({SCItems:{}})
+                }
+                this.setState({isLoadingSC:false})
+            })
+        }
+        else{
+            this.setState({SCValue:false})
+        }
+    }
+    citySet(description){
+        this.setState({isSelectedCity:description,SCValue:false})
     }
     switchEventTabs(tab){
         this.setState({isCurrentTab:tab});
@@ -315,8 +363,8 @@ class EventsScreen extends Component{
                         >
                             {
                                 this.state.isLocationSet == true &&
-                                <View style={{width:'100%',marginTop:0,marginBottom:0, height:200,}}>
-                                    <ImageBackground source={{uri:this.state.curLocation.picUrl}} style={{width: '100%', height: 200,flex:1,resizeMode:'center'}} resizeMode="cover">   
+                                <View style={{width:'100%',marginTop:0,marginBottom:0, height:150,}}>
+                                    <ImageBackground source={{uri:this.state.curLocation.picUrl}} style={{width: '100%', height: 150,flex:1,resizeMode:'center'}} resizeMode="cover">   
                                         <TouchableOpacity style={{position:'absolute',right:10,top:10}} onPress={()=>{this.setState({isLocationSet:false,curLocation:{}})}}>
                                             <Icon name="pencil" size={20} color="#FFF" />
                                         </TouchableOpacity>
@@ -339,6 +387,21 @@ class EventsScreen extends Component{
                                 this.state.isLocationSet == false && 
                                 <View style={{zIndex:40,paddingHorizontal:15}}>
                                     <View style={[
+                                        MainStyles.createEventFWI,{marginTop:10},
+                                        (this.state.isFocusedSC == true)?{borderWidth:1,borderColor:'#8da6d4',paddingHorizontal:10}:''
+                                        ]}>
+                                        <Icon name="search" style={MainStyles.cEFWIIcon}/>
+                                        <TextInput style={MainStyles.cEFWITF} 
+                                            placeholder="City" 
+                                            placeholderTextColor="#03163a" 
+                                            underlineColorAndroid="transparent"
+                                            onChangeText={(text)=>{this.setState({isSelectedCity:text}),this.onChangeSCDelayed(text)}}
+                                            value={this.state.isSelectedCity}
+                                            onFocus={()=>this.setState({isFocusedSC:true})}
+                                            onBlur={()=>this.setState({isFocusedSC:false})}
+                                        />
+                                    </View>
+                                    <View style={[
                                         MainStyles.createEventFWI,
                                         {
                                             marginTop:10,
@@ -346,23 +409,48 @@ class EventsScreen extends Component{
                                         },
                                         (this.state.isFocusedSL == true)?{borderWidth:1,borderColor:'#8da6d4',paddingHorizontal:10}:''
                                         ]}>
-                                        <Icon name="search" style={MainStyles.cEFWIIcon}/>
+                                        <Icon name="map-marker" style={MainStyles.cEFWIIcon}/>
                                         <TextInput style={MainStyles.cEFWITF} 
                                             placeholder="Places Near Me" 
                                             placeholderTextColor="#03163a" 
                                             underlineColorAndroid="transparent"
-                                            onChangeText={this.onChangeTextDelayed}
+                                            onChangeText={this.onChangeSLDelayed}
                                             onFocus={()=>this.setState({isFocusedSL:true})}
                                             onBlur={()=>this.setState({isFocusedSL:false})}
                                         />
                                     </View>
-                                    <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
-                                    <Text style={{color:'#0947b9',fontFamily:'Roboto-Medium'}}>Add location</Text>
-                                    </View>
+                                    {/* <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
+                                        <Text style={{color:'#0947b9',fontFamily:'Roboto-Medium'}}>Add location</Text>
+                                    </View> */}
                                 </View>
                             }
                             {
-                                this.state.textingValue &&  
+                                this.state.SCValue &&  
+                                <View style={[MainStyles.locationItemWrapper,{top:61}]} onStartShouldSetResponderCapture={() => {
+                                    this.setState({ enableScrollViewScroll: false });
+                                    if (this._myScroll.contentOffset === 0
+                                        && this.state.enableScrollViewScroll === false) {
+                                        this.setState({ enableScrollViewScroll: true });
+                                    }
+                                    }}>
+                                    {this.state.isLoadingSC && <ActivityIndicator size="large" color="#416bb9"/>}
+                                    {
+                                        this.state.SCItems.length > 0 && 
+                                        <FlatList data={this.state.SCItems}
+                                            renderItem={({item}) => (
+                                                <TouchableOpacity onPress={()=>this.citySet(item.description)} style={[MainStyles.locationItemBtn]}>
+                                                    <View style={{flexWrap: 'wrap',paddingLeft:5,justifyContent:'center', alignItems:'flex-start'}}>
+                                                        <Text style={{writingDirection:'ltr',textAlign:'left',fontFamily:'Roboto-Medium'}}>{item.description}</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            )}
+                                            keyExtractor={(item) => item.place_id}
+                                        />
+                                    }
+                                </View> 
+                            }
+                            {
+                                this.state.SLValue &&  
                                 <View style={[MainStyles.locationItemWrapper]} onStartShouldSetResponderCapture={() => {
                                     this.setState({ enableScrollViewScroll: false });
                                     if (this._myScroll.contentOffset === 0
@@ -372,8 +460,8 @@ class EventsScreen extends Component{
                                     }}>
                                     {this.state.isLoading && <ActivityIndicator size="large" color="#416bb9"/>}
                                     {
-                                        this.state.locationItems.length > 0 && 
-                                        <FlatList data={this.state.locationItems}
+                                        this.state.SLItems.length > 0 && 
+                                        <FlatList data={this.state.SLItems}
                                             renderItem={({item}) => (
                                                 <LocationItem
                                                     {...item}
@@ -400,12 +488,13 @@ class EventsScreen extends Component{
                                         selectedValue={this.state.NEUsersCount}
                                         style={MainStyles.cEFWIPF}
                                         onValueChange={(itemValue, itemIndex) => this.setState({NEUsersCount: itemValue})}>
+                                        <Picker.Item label="Number of Attendees" value="" />
                                         <Picker.Item label="5-10" value="10" />
                                         <Picker.Item label="10-15" value="15" />
                                         <Picker.Item label="15-20" value="20" />
                                     </Picker>
                                 </View>
-                                <View style={{flexDirection:'row',flex:1,justifyContent:'flex-end',marginBottom:30}}>
+                                <View style={{flexDirection:'row',flex:1,justifyContent:'flex-end',marginBottom:20}}>
                                     <View style={MainStyles.createEventFWI}>
                                         <Icon name="calendar" style={MainStyles.cEFWIIcon}/>
                                         <DatePicker
@@ -441,7 +530,7 @@ class EventsScreen extends Component{
                                         />
                                     </View>
                                 </View>
-                                <View style={[MainStyles.btnWrapper,{marginBottom:30}]}>
+                                <View style={[MainStyles.btnWrapper,{marginBottom:20}]}>
                                     <TouchableOpacity style={[MainStyles.btnSave]} onPress={this.createNewEvent}>
                                         <Text style={MainStyles.btnSaveText}>Create Event</Text>
                                     </TouchableOpacity>

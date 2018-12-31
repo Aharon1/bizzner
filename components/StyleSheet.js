@@ -387,7 +387,7 @@ const MainStyles = StyleSheet.create({
         flexDirection:'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop:30,
+        marginTop:20,
         position:'relative',
         overflow:'visible'
     },
@@ -454,7 +454,7 @@ const MainStyles = StyleSheet.create({
         zIndex: 4000,
         borderColor:'#8da6d4',
         borderWidth:1,
-        top:62,
+        top:123,
         marginBottom:0,
         borderTopWidth: 0,
         elevation:3,
