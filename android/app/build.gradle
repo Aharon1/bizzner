@@ -138,7 +138,9 @@ android {
 
 dependencies {
     implementation project(':react-native-push-notification')
-    implementation project(':react-native-camera')
+    implementation "com.android.support:exifinterface:+"
+    implementation "com.android.support:support-annotations:+"
+    implementation "com.android.support:support-v4:+"
     implementation project(':linkedin-sdk')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-linkedin-sdk')
@@ -146,8 +148,23 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation (project(':react-native-camera')) {
+        exclude group: "com.google.android.gms"
+        exclude group: "com.android.support"
+    }
+    implementation(project(':react-native-maps')) {
+      exclude group: 'com.android.support'
+      exclude module: 'appcompat-v7'
+      exclude module: 'support-v4'
+    }
+    implementation 'com.google.android.gms:play-services-base:+'
+    implementation 'com.google.android.gms:play-services-maps:+'
 }
-
+configurations.all {
+    resolutionStrategy {
+        force 'com.android.support:support-v4:27.1.0'
+    }
+}
 // Run this once to be able to run the application with BUCK
 // puts all compile dependencies into folder libs for BUCK to use
 task copyDownloadableDepsToLibs(type: Copy) {
