@@ -60,19 +60,19 @@ export default class EventDetail extends Component{
                 <View style={[MainStyles.tabContainer,{elevation:0,justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[
                         MainStyles.tabItem,MainStyles.tabItemActive]} onPress={()=>this.props.navigation.navigate('EventDetail',{event_id:this.state.event_id})}>
-                        <Icon name="user-plus" style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveIcon]}/>
-                        <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText]}>INVITED TO EVENT</Text>
+                        <Icon name="user-plus" style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveIcon,{fontSize:14}]}/>
+                        <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText,{fontSize:14}]}>INVITED TO EVENT</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[
                         MainStyles.tabItem,
                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
                         ]}>
-                        <Icon name="share-alt" style={MainStyles.tabItemIcon}/>
-                        <Text style={MainStyles.tabItemIcon}>SHARE</Text>
+                        <Icon name="share-alt" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
+                        <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>SHARE</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.tabItem}>
-                        <Icon name="comments" style={MainStyles.tabItemIcon}/>
-                        <Text style={MainStyles.tabItemIcon}>EVENT CHAT</Text>
+                        <Icon name="comments" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
+                        <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>EVENT CHAT</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={[MainStyles.EventScreenTabWrapper,{backgroundColor:'#d1dbed'}]}>
