@@ -40,8 +40,8 @@ class EventsScreen extends Component{
         //this.getLocationList();
         this.hSL = this.handleSL.bind(this);
         this.hSC = this.handleSC.bind(this);
-        this.onChangeSLDelayed = _.debounce(this.hSL, 300);
-        this.onChangeSCDelayed = _.debounce(this.hSC, 300);
+        this.onChangeSLDelayed = _.debounce(this.hSL, 200);
+        this.onChangeSCDelayed = _.debounce(this.hSC, 200);
     }
     changeTab(Screen){
         this.setState({TabComponent:Screen});
@@ -133,7 +133,7 @@ class EventsScreen extends Component{
                     userIds:rBody.usersIds,
                 }
                 locList.unshift(eventAdded);
-                
+                console.log(response);
                 this.setState({
                     locationList:locList,
                     loading:false,
@@ -148,6 +148,7 @@ class EventsScreen extends Component{
                 50,);
             }
             else{
+                console.log(response.code);
                 ToastAndroid.showWithGravity('Event not created',ToastAndroid.SHORT,ToastAndroid.BOTTOM,
                 25,
                 50,);
@@ -163,57 +164,61 @@ class EventsScreen extends Component{
         })
     }
     componentDidMount(){
-        navigator.geolocation.getCurrentPosition(positions=>{
+        var dateNow = new Date();
+        var Geolocation = navigator.geolocation;
+        var curDate = dateNow.getFullYear()+'-'+(dateNow.getMonth()+1)+'-'+dateNow.getDate();
+        Geolocation.getCurrentPosition(positions=>{
+            console.log(positions);
             let Latitude = positions.coords.latitude;
             let Longitude = positions.coords.longitude;
-            var dateNow = new Date();
-            var curDate = dateNow.getFullYear()+'-'+(dateNow.getMonth()+1)+'-'+dateNow.getDate();
-            var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate;
-            fetch(fetchData,{
-                method:'POST',
-                body:JSON.stringify({
-                    action:'search_location_db',
-                    latitude:Latitude,//22.7150822,
-                    longitude:Longitude//75.8707448
-                })
-            })
-            .then(res=>res.json())
-            .then(response=>{
-                console.log(response);
-                var results = response.results
-                const placesArray = [];
-                for (const bodyKey in results){
-                    placesArray.push({
-                        name:results[bodyKey].group_name,
-                        address:results[bodyKey].group_address,
-                        isStarted:results[bodyKey].group_status,
-                        photoUrl:results[bodyKey].photoUrl,
-                        key:results[bodyKey].key,
-                        event_date:results[bodyKey].event_date,
-                        event_time:results[bodyKey].event_time,
-                        event_subject:results[bodyKey].event_subject,
-                        event_note:results[bodyKey].event_note,
-                        latitude:results[bodyKey].latitude,
-                        longitude:results[bodyKey].longitude,
-                        place_id:results[bodyKey].place_id,
-                        group_id:results[bodyKey].group_id,
-                        usersCount:results[bodyKey].usersCount,
-                        userIds:results[bodyKey].usersIds,
-                    });
-                }
-                var MyEvents = placesArray.filter((item)=>{
-                    for(const uid in item.userIds){
-                        if(item.userIds[uid].user_id = "29"){
-                            return true;
-                        }
-                    }
-                })
-                this.setState({loading:false,locationList:placesArray,MyEvents:MyEvents});
-            }).catch(err => {
-                console.log('Error What is this',err);
-            })
+            
+            //var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate;
+            this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate);
         },error=>{
             console.log('Error',error);
+            this._fetchLists('user_id=29&curDate='+curDate);
+        }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 })
+    }
+    _fetchLists(params){
+        var fetchData = 'http://bizzner.com/app?action=search_location_db&'+params;
+        fetch(fetchData,{
+            method:'POST',
+        })
+        .then(res=>res.json())
+        .then(response=>{
+            console.log(response.results)
+            var results = response.results
+            const placesArray = [];
+            for (const bodyKey in results){
+                placesArray.push({
+                    name:results[bodyKey].group_name,
+                    address:results[bodyKey].group_address,
+                    isStarted:results[bodyKey].group_status,
+                    photoUrl:results[bodyKey].photoUrl,
+                    key:results[bodyKey].key,
+                    event_date:results[bodyKey].event_date,
+                    event_time:results[bodyKey].event_time,
+                    event_subject:results[bodyKey].event_subject,
+                    event_note:results[bodyKey].event_note,
+                    latitude:results[bodyKey].latitude,
+                    longitude:results[bodyKey].longitude,
+                    place_id:results[bodyKey].place_id,
+                    group_id:results[bodyKey].group_id,
+                    usersCount:results[bodyKey].usersCount,
+                    userIds:results[bodyKey].usersIds,
+                });
+            }
+            var MyEvents = placesArray.filter((item)=>{
+                for(const uid in item.userIds){
+                    if(item.userIds[uid].user_id = "29"){
+                        return true;
+                    }
+                }
+            })
+            this.setState({loading:false,locationList:placesArray,MyEvents:MyEvents});
+        }).catch(err => {
+            this.setState({loading:false,locationList:{},MyEvents:{}});
+            console.log('Error What is this',err);
         })
     }
     handleSL(text){

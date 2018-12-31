@@ -138,6 +138,7 @@ android {
 
 dependencies {
     implementation project(':react-native-push-notification')
+    implementation project(':react-native-camera')
     implementation "com.android.support:exifinterface:+"
     implementation "com.android.support:support-annotations:+"
     implementation "com.android.support:support-v4:+"

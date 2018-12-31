@@ -88,6 +88,11 @@ export default class ListItem extends Component{
                         ]}>{Item.event_subject}</Text>
                         <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Medium'}]}>{Item.name}</Text>
                         <Text style={MainStyles.EITWAddress}>{Address}</Text>
+                            <View style={MainStyles.EITWAction}>
+                                <Image source={require('../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
+                                <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({Item.usersCount}) </Text>
+                                <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>Info</Text>
+                            </View>
                     </View>
                     <View style={{
                         justifyContent:'center',

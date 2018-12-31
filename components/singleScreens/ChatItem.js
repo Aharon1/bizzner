@@ -14,14 +14,14 @@ class ChatItem extends Component{
     }
     render(){
         const {msgItem} = this.props;
-        const isMyMsg = (msgItem.msgBy == 1)?true:false;
+        const isMyMsg = (msgItem.send_by == 1)?true:false;
         return (
             <View style={Styles.msgContainer}>
                 {
                     isMyMsg == false
                     &&
                     <View style={Styles.AvatarCont}>
-                        <ProgressiveImage source={require('../../assets/dummy.jpg')} style={Styles.msgAvatar} />
+                        <ProgressiveImage source={{uri:msgItem.send_user_pic}} style={Styles.msgAvatar} />
                     </View>
                 }
                 
@@ -30,28 +30,22 @@ class ChatItem extends Component{
                         {
                             isMyMsg == false
                             && 
-                            <Text style={Styles.msgSenderName}>{msgItem.name},</Text>
+                            <Text style={Styles.msgSenderName}>{msgItem.send_user_name},</Text>
                         }
                         
-                        <Text style={Styles.msgSenderName}>{this.formatAMPM(new Date(msgItem.time))}</Text>
+                        <Text style={Styles.msgSenderName}>{this.formatAMPM(new Date(msgItem.send_on))}</Text>
                     </View>
                     <View style={isMyMsg?{justifyContent:'flex-end',alignItems:'flex-end'}:''}>
-                        <Text style={[Styles.msgText,isMyMsg?{borderTopRightRadius:0,borderTopLeftRadius:5}:'']}>{msgItem.text}</Text>
+                        <Text style={[Styles.msgText,isMyMsg?{borderTopRightRadius:0,borderTopLeftRadius:5}:'']}>{msgItem.msg_text}</Text>
                     </View>
                 </View>
-                {
+                {/*
                     isMyMsg == true
                     &&
                     <View style={Styles.AvatarCont}>
-                        <ProgressiveImage source={require('../../assets/dummy.jpg')} style={{
-                            width:60,
-                            height:60,
-                            borderWidth: 5,
-                            borderColor: '#FFF',
-                            borderRadius:50
-                        }} />
+                        <ProgressiveImage source={require('../../assets/dummy.jpg')} style={Styles.msgAvatar}/>
                     </View>
-                }
+                */}
             </View>
         );
     }

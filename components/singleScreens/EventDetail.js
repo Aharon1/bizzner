@@ -70,7 +70,7 @@ export default class EventDetail extends Component{
                         <Icon name="share-alt" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
                         <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>SHARE</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={MainStyles.tabItem}>
+                    <TouchableOpacity style={MainStyles.tabItem} onPress={()=>this.props.navigation.navigate('Event Chat',{event_id:this.state.event_id})}>
                         <Icon name="comments" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
                         <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>EVENT CHAT</Text>
                     </TouchableOpacity>
