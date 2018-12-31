@@ -44,6 +44,13 @@ export default class ListItem extends Component{
         var strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
     }
+    formatDate(date){
+        var dateStr = '';
+        dateStr += (date.getDate() < 10)?'0'+date.getDate()+' ':date.getDate()+' ';
+        dateStr += ((date.getMonth()+1) < 10)?'0'+(date.getMonth()+1)+' ':(date.getMonth()+1)+' ';
+        dateStr += date.getFullYear();
+        return dateStr;
+    }
     componentWillMount(){
         for(const uid in this.props.item.userIds){
             if(this.props.item.userIds[uid].user_id == "29"){
@@ -81,25 +88,12 @@ export default class ListItem extends Component{
                         ]}>{Item.event_subject}</Text>
                         <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Medium'}]}>{Item.name}</Text>
                         <Text style={MainStyles.EITWAddress}>{Address}</Text>
-                        {
-                            Item.isStarted === true?
-                                <View style={MainStyles.EITWAction}>
-                                <Image source={require('../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
-                                <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({Item.usersCount}) </Text>
-                                <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>Info</Text>
-                                </View>
-                            :
-                            <View style={MainStyles.EITWAction}>
-                                <Icon name="calendar-plus-o" size={16} style={[MainStyles.EITWActionIcon,MainStyles.EITWAIOffline]} />
-                                <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOffline]}>Create new event</Text>
-                            </View>
-                        }
                     </View>
                     <View style={{
                         justifyContent:'center',
                         alignItems:'flex-start'
                     }}>
-                        <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Medium'}]}>{eventDate.getDate()+' '+eventDate.getMonth()+' '+eventDate.getFullYear()}</Text>
+                        <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Medium'}]}>{this.formatDate(eventDate)}</Text>
                         <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{eventTime}</Text>
                     </View>
                 </TouchableOpacity>

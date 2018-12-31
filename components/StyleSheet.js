@@ -374,7 +374,7 @@ const MainStyles = StyleSheet.create({
         flexDirection:'row',
         paddingHorizontal:10,
         paddingVertical:5,
-        backgroundColor:'#c9d5eb',
+        backgroundColor:'#bbcae6',
         justifyContent:'center',
         alignItems:'center',
         borderRadius:7,
@@ -387,7 +387,7 @@ const MainStyles = StyleSheet.create({
         flexDirection:'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop:30,
+        marginTop:20,
         position:'relative',
         overflow:'visible'
     },
@@ -401,7 +401,7 @@ const MainStyles = StyleSheet.create({
         height:45
     },
     cEFWITF:{
-        height:60,
+        height:50,
         flex: 1,
         flexDirection:'row',
         paddingTop: 0,
@@ -412,7 +412,7 @@ const MainStyles = StyleSheet.create({
         fontFamily:'Roboto-Light'
     },
     cEFWIPF:{
-        height:60,
+        height:50,
         flex: 1,
         flexDirection:'row',
         paddingTop: 0,
@@ -444,7 +444,7 @@ const MainStyles = StyleSheet.create({
        alignContent: 'flex-start',
     },
     locationItemWrapper:{
-        width:'100%',
+        width:'91%',
         marginHorizontal: 'auto',
         justifyContent:'center',
         left:15,
@@ -454,7 +454,7 @@ const MainStyles = StyleSheet.create({
         zIndex: 4000,
         borderColor:'#8da6d4',
         borderWidth:1,
-        top:72,
+        top:123,
         marginBottom:0,
         borderTopWidth: 0,
         elevation:3,
@@ -525,6 +525,33 @@ const MainStyles = StyleSheet.create({
     ChatIcon:{
         fontSize:35,
         color:'#8da6d5'
+    },
+    eventDataHeader:{
+        backgroundColor:'#fff',
+        flexDirection:'row',
+        paddingVertical:5,
+        paddingHorizontal:15,
+        shadowRadius:2,
+        shadowOpacity:0.3,
+        shadowOffset:{width:2,height:2},
+        elevation:5,
+        shadowColor:'#232323'
+    },
+    MessageContainer:{
+        flex:1
+    },
+    MessageContainerTextInput:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        paddingHorizontal:5,
+        paddingVertical:10,
+        backgroundColor:'#FFF'
+    },
+    MsgBtnDisable:{
+        opacity:0.6
+    },
+    MsgBtnEnable:{
+        opacity:1
     }
 });
 

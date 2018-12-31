@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import { View,Text,TouchableOpacity,FlatList} from 'react-native';
+import { View,Text,TouchableOpacity,FlatList,ToastAndroid} from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { HeaderButton } from '../Navigation/HeaderButton';
@@ -13,17 +13,40 @@ export default class EventDetail extends Component{
         this.state = {
             loading:true,
             event_id:this.props.navigation.getParam('event_id'),
-            userList:{}
+            userList:{},
+            curStatus:'',
+            eventData:''
         }
-        this.getEventUsers();
+        //this.getEventUsers();
     }
-    getEventUsers(){
+    componentDidMount(){
+        var user_id = 29;
         var eventId = this.props.navigation.getParam('event_id');
-        fetch(SERVER_URL+'?action=getEventUsers&event_id='+eventId)
+        fetch(SERVER_URL+'?action=getEventUsers&event_id='+eventId+'&user_id='+user_id)
         .then(response=>response.json())
         .then(res=>{
-            console.log(res);
-            this.setState({loading:false,userList:res.users,eventData:res.event_data});
+            this.setState({loading:false,userList:res.users,eventData:res.event_data,curStatus:res.curStatus});
+        })
+    }
+    componentWillUnmount(){
+        this.setState({loading:false,userList:{},eventData:{},curStatus:''});
+    }
+    setUserEventStatus =  async (statusValue)=>{
+        var curItem = this.state.eventData;
+        var user_id = 29;
+        fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
+        .then(response=>{
+            curStatus = statusValue;
+            this.setState({curStatus:statusValue});
+            if(statusValue == 1){
+                ToastAndroid.showWithGravity('You are interested to this event',ToastAndroid.SHORT,ToastAndroid.CENTER);
+            }
+            else if(statusValue == 2){
+                ToastAndroid.showWithGravity('You are joined to this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+            }
+            else if(statusValue ==3){
+                ToastAndroid.showWithGravity('You have ignored this event',ToastAndroid.SHORT,ToastAndroid.CENTER);
+            }
         })
     }
     render(){
@@ -34,66 +57,83 @@ export default class EventDetail extends Component{
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
                     <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>EVENT DETAILS</Text>
                 </View>
-                <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
+                <View style={[MainStyles.tabContainer,{elevation:0,justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[
                         MainStyles.tabItem,MainStyles.tabItemActive]} onPress={()=>this.props.navigation.navigate('EventDetail',{event_id:this.state.event_id})}>
-                        <Icon name="user-plus" style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveIcon]}/>
-                        <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText]}>INVITED TO EVENT</Text>
+                        <Icon name="user-plus" style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveIcon,{fontSize:14}]}/>
+                        <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText,{fontSize:14}]}>INVITED TO EVENT</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[
                         MainStyles.tabItem,
                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
                         ]}>
-                        <Icon name="share-alt" style={MainStyles.tabItemIcon}/>
-                        <Text style={MainStyles.tabItemIcon}>SHARE</Text>
+                        <Icon name="share-alt" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
+                        <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>SHARE</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.tabItem}>
-                        <Icon name="comments" style={MainStyles.tabItemIcon}/>
-                        <Text style={MainStyles.tabItemIcon}>EVENT CHAT</Text>
+                        <Icon name="comments" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
+                        <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>EVENT CHAT</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={MainStyles.EventScreenTabWrapper}>
-                <TouchableOpacity style={[
-                        MainStyles.EIAButtons,
-                        (this.state.userStatus == 2)?{backgroundColor:'#87d292'}:''
-                        ]}
-                        onPress={()=>this.setUserEventStatus(2)}
+                <View style={[MainStyles.EventScreenTabWrapper,{backgroundColor:'#d1dbed'}]}>
+                    <TouchableOpacity style={[
+                    MainStyles.EIAButtons,
+                    (this.state.curStatus == 2)?{backgroundColor:'#87d292'}:''
+                    ]}
+                    onPress={()=>this.setUserEventStatus(2)}
+                    >
+                        <Icon name="check" size={15} style={{color:'#FFF',marginRight:5,}}/>
+                        <Text style={{
+                            color:'#FFF',
+                            fontFamily:'Roboto-Medium',
+                            fontSize:14
+                        }}>JOIN</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[
+                    MainStyles.EIAButtons,{marginHorizontal:5},
+                    (this.state.curStatus == 1)?{backgroundColor:'#8da6d5'}:''
+                    ]}
+                        onPress={()=>this.setUserEventStatus(1)}
+                    >
+                        <Icon name="star" size={15} style={{color:'#FFF',marginRight:5,}}/>
+                        <Text style={{
+                            color:'#FFF',
+                            fontFamily:'Roboto-Medium',
+                            fontSize:14
+                        }}>INTERESTED</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[
+                    MainStyles.EIAButtons,
+                    (this.state.curStatus == 0)?{backgroundColor:'#d28787'}:''
+                    ]}
+                        onPress={()=>this.setUserEventStatus(3)}
                         >
-                            <Icon name="check" size={15} style={{color:'#FFF',marginRight:5,}}/>
-                            <Text style={{
-                                color:'#FFF',
-                                fontFamily:'Roboto-Medium',
-                                fontSize:14
-                            }}>JOIN</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{marginHorizontal:5},
-                        (this.state.userStatus == 1)?{backgroundColor:'#8da6d5'}:''
-                        ]}
-                            onPress={()=>this.setUserEventStatus(1)}
-                        >
-                            <Icon name="star" size={15} style={{color:'#FFF',marginRight:5,}}/>
-                            <Text style={{
-                                color:'#FFF',
-                                fontFamily:'Roboto-Medium',
-                                fontSize:14
-                            }}>INTERESTED</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[
-                        MainStyles.EIAButtons       
-                        ]}
-                            onPress={()=>this.setUserEventStatus(3)}
-                            >
-                            <Icon name="ban" size={15} style={{color:'#FFF',marginRight:5,}}/>
-                            <Text style={{
-                                color:'#FFF',
-                                fontFamily:'Roboto-Medium',
-                                fontSize:14
-                            }}>IGNORE</Text>
-                        </TouchableOpacity>
+                        <Icon name="ban" size={15} style={{color:'#FFF',marginRight:5,}}/>
+                        <Text style={{
+                            color:'#FFF',
+                            fontFamily:'Roboto-Medium',
+                            fontSize:14
+                        }}>IGNORE</Text>
+                    </TouchableOpacity>
                 </View>
                 {
-                    this.state.userList.length > 0 && 
+                    this.state && this.state.eventData !='' && 
+                    <View style={MainStyles.eventDataHeader}>
+                        <View style={{width:40,height:40,marginRight:10}}>
+                            <ProgressiveImage source={{uri:this.state.eventData.photoUrl}} style={{width:40,height:40}}/>
+                        </View>
+                        <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column'}}>
+                            <Text style={{color:'#03163a',fontFamily:'Roboto-Regular',fontSize:12,flexWrap: 'wrap'}}>
+                                {this.state.eventData.group_name}, 
+                                <Text  style={{fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}> {this.state.eventData.group_address.split(" ").splice(0,5).join(" ")}</Text>
+                            </Text>
+                            <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:11,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
+                        </View>
+                    </View>
+                }
+                
+                {
+                    this.state && this.state.userList && this.state.userList.length > 0 && 
                     <FlatList 
                         data={this.state.userList}
                         renderItem={({item}) => (

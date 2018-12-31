@@ -42,17 +42,8 @@ const Drawer = createDrawerNavigator({
         screen:EventDetail
     },
     ['Event Chat']:{
-        screen:EventChatScreen,
-        navigationOption:{
-            headerMode: 'none',
-            tabBarVisible:false
-        }
+        screen:EventChatScreen
     },
-    [`LOGOUT`]: {
-        screen: LogoutScreen,
-        
-    },
-    
 },
     {
         initialRouteName: 'CURRENT EVENTS',
