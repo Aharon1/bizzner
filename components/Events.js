@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View,Text,TouchableOpacity, TextInput,ImageBackground, Platform,FlatList,ActivityIndicator,ToastAndroid,Picker,ScrollView} from 'react-native';
+import { View,Text,TouchableOpacity, TextInput,ImageBackground, Platform,FlatList,ActivityIndicator,ToastAndroid,Picker,ScrollView,PermissionsAndroid} from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
@@ -12,6 +12,7 @@ import ListItem from './ListItem';
 import LocationItem from './AsyncModules/LocationItem';
 import _ from 'lodash';
 import TabContainer from './TabContainer';
+import Permissions from 'react-native-permissions'
 class EventsScreen extends Component{
     constructor(props){
         super(props);
@@ -165,19 +166,37 @@ class EventsScreen extends Component{
     }
     componentDidMount(){
         var dateNow = new Date();
-        var Geolocation = navigator.geolocation;
-        var curDate = dateNow.getFullYear()+'-'+(dateNow.getMonth()+1)+'-'+dateNow.getDate();
-        Geolocation.getCurrentPosition(positions=>{
-            console.log(positions);
-            let Latitude = positions.coords.latitude;
-            let Longitude = positions.coords.longitude;
-            
-            //var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate;
-            this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate);
-        },error=>{
-            console.log('Error',error);
-            this._fetchLists('user_id=29&curDate='+curDate);
-        }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 })
+        var curMonth = ((dateNow.getMonth()+1) >= 10)?(dateNow.getMonth()+1):'0'+(dateNow.getMonth()+1);
+        var curDate = (dateNow.getDate() >= 10)?dateNow.getDate():'0'+dateNow.getDate();
+        var curDate = dateNow.getFullYear()+'-'+curMonth+'-'+curDate;
+        Permissions.check('location', { type: 'always' }).then(response => {
+            if(response == "undetermined"){
+                Permissions.request('location', { type: 'always' }).then(response => {
+                    console.log(response)
+                    if(response == "denied"){
+                        this._fetchLists('user_id=29&curDate='+curDate);
+                    }
+                    else{
+                        var Geolocation = navigator.geolocation;
+                        Geolocation.getCurrentPosition(positions=>{
+                            console.log(positions);
+                            let Latitude = positions.coords.latitude;
+                            let Longitude = positions.coords.longitude;
+                            
+                            //var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate;
+                            this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate);
+                        },error=>{
+                            console.log('Error',error);
+                            this._fetchLists('user_id=29&curDate='+curDate);
+                        }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 })
+                    }
+                })
+            }
+            else if(response == "denied"){
+                this._fetchLists('user_id=29&curDate='+curDate);
+            }
+            console.log(response);
+        })
     }
     _fetchLists(params){
         var fetchData = 'http://bizzner.com/app?action=search_location_db&'+params;
@@ -186,7 +205,7 @@ class EventsScreen extends Component{
         })
         .then(res=>res.json())
         .then(response=>{
-            console.log(response.results)
+            console.log(response)
             var results = response.results
             const placesArray = [];
             for (const bodyKey in results){
@@ -360,6 +379,7 @@ class EventsScreen extends Component{
                     }}
                     >
                         <ScrollView 
+                        keyboardShouldPersistTaps={'handled'}
                         contentContainerStyle={{
                             paddingHorizontal:0,
                         }}
@@ -424,9 +444,9 @@ class EventsScreen extends Component{
                                             onBlur={()=>this.setState({isFocusedSL:false})}
                                         />
                                     </View>
-                                    {/* <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
+                                    <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
                                         <Text style={{color:'#0947b9',fontFamily:'Roboto-Medium'}}>Add location</Text>
-                                    </View> */}
+                                    </View>
                                 </View>
                             }
                             {
@@ -442,6 +462,7 @@ class EventsScreen extends Component{
                                     {
                                         this.state.SCItems.length > 0 && 
                                         <FlatList data={this.state.SCItems}
+                                            keyboardShouldPersistTaps={'handled'}
                                             renderItem={({item}) => (
                                                 <TouchableOpacity onPress={()=>this.citySet(item.description)} style={[MainStyles.locationItemBtn]}>
                                                     <View style={{flexWrap: 'wrap',paddingLeft:5,justifyContent:'center', alignItems:'flex-start'}}>
@@ -467,6 +488,7 @@ class EventsScreen extends Component{
                                     {
                                         this.state.SLItems.length > 0 && 
                                         <FlatList data={this.state.SLItems}
+                                            keyboardShouldPersistTaps={'handled'}
                                             renderItem={({item}) => (
                                                 <LocationItem
                                                     {...item}
@@ -481,16 +503,17 @@ class EventsScreen extends Component{
                             <View style={{paddingHorizontal:15,marginBottom:15}}>
                                 <View style={[MainStyles.createEventFWI]}>
                                     <Icon name="thumb-tack" style={MainStyles.cEFWIIcon}/>
-                                    <TextInput style={MainStyles.cEFWITF} placeholder="Subject" onChangeText={(text)=>{this.setState({NES:text})}} placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                                    <TextInput style={MainStyles.cEFWITF} placeholder="Subject" onChangeText={(text)=>{this.setState({NES:text})}} returnKeyType="next" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
                                 </View>
                                 <View style={MainStyles.createEventFWI}>
                                     <Icon name="bell" style={MainStyles.cEFWIIcon}/>
-                                    <TextInput style={MainStyles.cEFWITF} placeholder="Note" onChangeText={(text)=>{this.setState({NEN:text})}} placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                                    <TextInput style={MainStyles.cEFWITF} placeholder="Note" onChangeText={(text)=>{this.setState({NEN:text})}} returnKeyType="next" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
                                 </View>
                                 <View style={MainStyles.createEventFWI}>
                                     <Icon name="users" style={MainStyles.cEFWIIcon}/>
                                     <Picker
                                         selectedValue={this.state.NEUsersCount}
+                                        returnKeyType="next"
                                         style={MainStyles.cEFWIPF}
                                         onValueChange={(itemValue, itemIndex) => this.setState({NEUsersCount: itemValue})}>
                                         <Picker.Item label="Number of Attendees" value="" />
