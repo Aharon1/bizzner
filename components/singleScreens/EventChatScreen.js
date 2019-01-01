@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { View,Text,TouchableOpacity,
-    FlatList,TextInput,Image, Keyboard,
+    FlatList,TextInput,Image, Keyboard,ActivityIndicator,
     Platform,KeyboardAvoidingView} from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -16,31 +16,11 @@ class EventChatScreen extends Component{
         this.state = {
             loading:false,
             event_id:this.props.navigation.getParam('event_id'),
+            event_note:this.props.navigation.getParam('note'),
             disableBtn:true,
             newMessage:'',
-            messages:[
-                {
-                    msgBy:2,
-                    key:'1',
-                    name:'Axel Lionel Rozen',
-                    time:'03:55:00',
-                    text:'See I told you nobody will care about the 14 thousand people'
-                },
-                {
-                    msgBy:1,
-                    key:'2',
-                    name:'Terrorist',
-                    time:'03:49:00',
-                    text:'Why a donkey?'
-                },
-                {
-                    msgBy:2,
-                    key:'3',
-                    name:'Terrorist',
-                    time:'03:47:00',
-                    text:'We are planning to kill 14 thousand people and a donkey'
-                }
-            ]
+            isloadingMsgs:true,
+            messages:{}
         }
     }
     componentDidMount() {
@@ -83,6 +63,7 @@ class EventChatScreen extends Component{
                 if (oldMessagesNumber < messagesCopy.length)
                     this.scrollToTheBottom();
               }
+              this.setState({isloadingMsgs:false});
             })
           .done();
     }
@@ -158,13 +139,20 @@ class EventChatScreen extends Component{
                         <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>PRIVATE MESSAGE</Text>
                     </View>
                     <View style={[MainStyles.tabContainer,{justifyContent:'flex-start',paddingHorizontal:15,paddingVertical:15}]}>
-                        <Text style={{fontSize:16,fontFamily:'Roboto-Medium',color:'#05296d'}}>Note: pls came from the front green door</Text>
+                        <Text style={{fontSize:16,fontFamily:'Roboto-Medium',color:'#05296d'}}>Note: {this.state.event_note}</Text>
                     </View>
                 </View>
                 <View style={{
                     backgroundColor:'#d1dbee',
                     flex:1
                 }}>
+                {
+                    this.state.isloadingMsgs &&
+                    <ActivityIndicator size="large"  color="#0947b9" animating={true} />
+                }
+                {
+                    this.state.messages !='' && this.state.messages.length > 0
+                    && 
                     <FlatList
                     ref= 'list'
                     inverted
@@ -172,6 +160,8 @@ class EventChatScreen extends Component{
                     renderItem={this.renderMsgItem}
                     keyExtractor= {this.keyExtractor}
                     />
+                }
+                    
                 </View>
                 
                 <KeyboardAvoidingView behavior={behavior}>

@@ -16,14 +16,19 @@ import Permissions from 'react-native-permissions'
 class EventsScreen extends Component{
     constructor(props){
         super(props);
+        var curDate = new Date();
+        var day = (curDate.getDate() >=10)?curDate.getDate():'0'+curDate.getDate();
+        var month = ((curDate.getMonth()+1) >=10)?(curDate.getMonth()+1):'0'+(curDate.getMonth()+1);
+        var newDate = day+'/'+month+'/'+curDate.getFullYear();
+        var newTime = curDate.getHours()+':'+curDate.getMinutes()+':'+curDate.getSeconds()
         this.state = {
             loading:true,
             TabComponent : '',
             CreateEventVisible:false,
             NES:'',
             NEN:'',
-            NED:new Date(),
-            NET:new Date(),
+            NED:newDate,
+            NET:newTime,
             locationList:{},
             MyEvents:{},
             isLocationSet:false,
@@ -141,8 +146,6 @@ class EventsScreen extends Component{
                     CreateEventVisible:false,
                     NES:'',
                     NEN:'',
-                    NED:new Date(),
-                    NET:new Date(),
                 });
                 ToastAndroid.showWithGravity('Event created successfully',ToastAndroid.SHORT,ToastAndroid.BOTTOM,
                 25,
@@ -158,13 +161,15 @@ class EventsScreen extends Component{
                     CreateEventVisible:false,
                     NES:'',
                     NEN:'',
-                    NED:new Date(),
-                    NET:new Date(),
                 });
             }
+            this.refreshList();
         })
     }
     componentDidMount(){
+        this.refreshList();
+    }
+    refreshList(){
         var dateNow = new Date();
         var curMonth = ((dateNow.getMonth()+1) >= 10)?(dateNow.getMonth()+1):'0'+(dateNow.getMonth()+1);
         var curDate = (dateNow.getDate() >= 10)?dateNow.getDate():'0'+dateNow.getDate();
@@ -173,10 +178,7 @@ class EventsScreen extends Component{
             if(response == "undetermined"){
                 Permissions.request('location', { type: 'always' }).then(response => {
                     console.log(response)
-                    if(response == "denied"){
-                        this._fetchLists('user_id=29&curDate='+curDate);
-                    }
-                    else{
+                    if(response == "authorized"){
                         var Geolocation = navigator.geolocation;
                         Geolocation.getCurrentPosition(positions=>{
                             console.log(positions);
@@ -190,10 +192,28 @@ class EventsScreen extends Component{
                             this._fetchLists('user_id=29&curDate='+curDate);
                         }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 })
                     }
+                    else{
+                        this._fetchLists('user_id=29&curDate='+curDate);
+                        
+                    }
                 })
             }
             else if(response == "denied"){
                 this._fetchLists('user_id=29&curDate='+curDate);
+            }
+            else if(response == "authorized"){
+                var Geolocation = navigator.geolocation;
+                Geolocation.getCurrentPosition(positions=>{
+                    console.log(positions);
+                    let Latitude = positions.coords.latitude;
+                    let Longitude = positions.coords.longitude;
+                    
+                    //var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate;
+                    this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate);
+                },error=>{
+                    console.log('Error',error);
+                    this._fetchLists('user_id=29&curDate='+curDate);
+                }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 })
             }
             console.log(response);
         })
