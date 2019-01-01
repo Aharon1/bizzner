@@ -15,7 +15,7 @@ import SplashScreen from '../Splash';
 import EventDetail from '../singleScreens/EventDetail';
 import EventChatScreen from '../singleScreens/EventChatScreen';
 const drawerItemStyle = { borderBottomWidth: 1, borderBottomColor: '#f3f3f3', height: 60, textAlign: 'left' };
-const drawerLabelStyle = { margin: 0, fontSize: 16, fontFamily: 'Roboto-Medium' };
+const drawerLabelStyle = { margin: 0, fontSize: 15, fontFamily: 'Roboto-Medium' };
 const Drawer = createDrawerNavigator({
     ['CURRENT EVENTS']: {
         screen: CurrentEventsScreen
@@ -48,11 +48,11 @@ const Drawer = createDrawerNavigator({
     {
         initialRouteName: 'CURRENT EVENTS',
         overlayColor: 'rgba(0, 0, 0, 0.2)',
-        drawerWidth: 300,
+        drawerWidth: 280,
         contentComponent: props =>
             <ScrollView>
                 <TouchableOpacity style={{ paddingLeft: 12 }} onPress={props.navigation.closeDrawer}>
-                    <Icon name="bars" style={{ fontSize: 22, color: '#8da6d5' }} />
+                    <Icon name="bars" style={{ fontSize: 18, color: '#8da6d5' }} />
                 </TouchableOpacity>
                 <DrawerItems
                     {...props}

@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import {SERVER_URL} from '../Constants';
-import { Text, View, Image, TouchableOpacity, ScrollView,TextInput,KeyboardAvoidingView,Animated} from 'react-native';
+import { Text, View, Image, TouchableOpacity, ScrollView,TextInput,KeyboardAvoidingView,Animated,ToastAndroid} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
 import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog';
 import ToggleSwitch from 'toggle-switch-react-native'
 import Loader from './Loader';
 import RequestPermssions from './AsyncModules/Permission';
+import Permissions from 'react-native-permissions'
 import PushNotification from 'react-native-push-notification';
 class ProfileScreen extends Component{
     constructor(props){
@@ -25,8 +26,28 @@ class ProfileScreen extends Component{
       };
     }
     GoToNextScreen(){
-      this.setState({visible:false,loading:true});
-      var fetchData = SERVER_URL+'?action=save_profile';
+      if(this.state.gpsOn){
+        Permissions.check('location', { type: 'always' }).then(response => {
+          if(response == "undetermined"){
+            Permissions.request('location', { type: 'always' }).then(response => {
+              if(response != 'authorized'){
+                ToastAndroid.showWithGravity('We can\'t fetch events near you!',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+              }
+              else{
+              }
+              this.setState({visible:false,loading:true});
+              var fetchData = SERVER_URL+'?action=save_profile';
+              fetch(fetchData,{
+                  method:'POST',
+              }).then(postResponse=>{
+                  this.setState({loading:false})
+                  this.props.navigation.navigate('Home');
+              })
+            })
+          }
+        })
+      }
+      
       /*PushNotification.configure({
           onRegister: function(token) {
               console.log( 'TOKEN:', token );
@@ -44,57 +65,7 @@ class ProfileScreen extends Component{
           popInitialNotification: true,
           requestPermissions: true,
       });*/
-      fetch(fetchData,{
-        method:'POST',
-        body:JSON.stringify({
-
-        })
-      }).then(postResponse=>{
-        /*navigator.geolocation.getCurrentPosition(positions=>{
-          let Latitude = positions.coords.latitude;
-          let Longitude = positions.coords.longitude;
-          var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
-          fetch(fetchData,{
-              method:'POST',
-              body:JSON.stringify({
-                  action:'search_location_db',
-                  latitude:Latitude,//22.7150822,
-                  longitude:Longitude//75.8707448
-              })
-          })
-          .then(response=>{
-              var bodyText = JSON.parse(response._bodyText);
-              var results = bodyText.results
-              const placesArray = [];
-              for (const bodyKey in results){
-                  placesArray.push({
-                    name:results[bodyKey].group_name,
-                    address:results[bodyKey].group_address,
-                    isStarted:results[bodyKey].group_status,
-                    photoUrl:results[bodyKey].photoUrl,
-                    key:results[bodyKey].place_id,
-                    event_date:results[bodyKey].event_date,
-                    event_time:results[bodyKey].event_time,
-                    event_subject:results[bodyKey].event_subject,
-                    event_note:results[bodyKey].event_note,
-                    latitude:results[bodyKey].latitude,
-                    longitude:results[bodyKey].longitude,
-                    place_id:results[bodyKey].place_id,
-                    group_id:results[bodyKey].group_id
-                  });
-              }
-              this.setState({loading:false})
-              this.props.navigation.navigate('Home',{locationList:placesArray,nextPageToken:bodyText.next_page_token});
-          }).catch(err => {
-              console.log('Error What is this',err);
-          })
-          
-        },error=>{
-          console.log('Error',error);
-        })*/
-        this.setState({loading:false})
-        this.props.navigation.navigate('Home');
-      })
+      
     }
     getDetail(key){
       /*try{
