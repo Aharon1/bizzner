@@ -8,7 +8,7 @@ import DatePicker from 'react-native-datepicker';
 import { HeaderButton } from './Navigation/HeaderButton';
 import {SERVER_URL,MAPKEY} from '../Constants';
 import Loader from './Loader';
-import ListItem from './ListItem';
+import ListItem from './AsyncModules/ListItem';
 import LocationItem from './AsyncModules/LocationItem';
 import _ from 'lodash';
 import TabContainer from './TabContainer';
@@ -333,7 +333,7 @@ class EventsScreen extends Component{
                     this.state.locationList.length > 0 && 
                     <FlatList data={this.state.locationList}
                         renderItem={({item}) => (
-                            <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
+                            <ListItem item={item} fetchDetails={this.fetchDetails}/>
                             )}
                         keyExtractor={(item) => item.key}
                     />
@@ -344,7 +344,7 @@ class EventsScreen extends Component{
                     this.state.MyEvents.length > 0 && 
                     <FlatList data={this.state.MyEvents}
                         renderItem={({item}) => (
-                            <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
+                            <ListItem item={item} fetchDetails={this.fetchDetails}/>
                             )}
                         keyExtractor={(item) => item.key}
                     />

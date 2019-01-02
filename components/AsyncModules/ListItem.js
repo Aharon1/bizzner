@@ -3,9 +3,10 @@ import { View,Text,Image,TouchableOpacity,ToastAndroid} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
 import ProgressiveImage from './AsyncModules/ImageComponent';
+import { withNavigation } from 'react-navigation';
 import { SERVER_URL } from '../Constants';
 let userStatus = '';
-export default class ListItem extends Component{
+ class ListItem extends Component{
     constructor(props){
         super(props);
         this.state={
@@ -14,8 +15,7 @@ export default class ListItem extends Component{
         }
     }
     checkEvent = ()=>{
-        //var curItem = await this.props.item;
-        this.props.navigate('EventDetail',{event_id:this.state.eventId});
+        this.props.navigation.navigate('EventDetail',{event_id:this.state.eventId});
     }
     setUserEventStatus =  async (statusValue)=>{
         var curItem = await this.props.item;
@@ -48,7 +48,9 @@ export default class ListItem extends Component{
     formatDate(date){
         var dateStr = '';
         dateStr += (date.getDate() < 10)?'0'+date.getDate()+' ':date.getDate()+' ';
-        dateStr += ((date.getMonth()+1) < 10)?'0'+(date.getMonth()+1)+' ':(date.getMonth()+1)+' ';
+        var monthArray = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var month = monthArray[date.getMonth()];
+        dateStr += month+' ';
         dateStr += date.getFullYear();
         return dateStr;
     }
@@ -67,8 +69,8 @@ export default class ListItem extends Component{
         const Item = this.props.item;
         var date = Item.event_date+' '+Item.event_time;
         var eventDate = new Date(date);
-        var N = 5;
-        var Address = Item.address.split(" ").splice(0,N).join(" ");
+        var N = 7;
+        var Address = Item.address;//.split(" ").splice(0,N).join(" ");
         var eventTime = this.formatAMPM(eventDate);
         return (
             <View
@@ -84,23 +86,26 @@ export default class ListItem extends Component{
                         <ProgressiveImage source={{uri:Item.photoUrl}} style={{ width: 70, height: 70 }} resizeMode="cover"/>
                     </View>
                     <View style={MainStyles.EventItemTextWrapper}>
-                        <Text style={[MainStyles.EITWName,
-                            (Item.isStarted === true)?{color:'#39b549'}:''
-                        ]}>{Item.event_subject}</Text>
-                        <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Medium'}]}>{Item.name}</Text>
-                        <Text style={MainStyles.EITWAddress}>{Address}</Text>
-                            <View style={MainStyles.EITWAction}>
-                                <Image source={require('../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
-                                <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({Item.usersCount}) </Text>
-                                <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>Info</Text>
-                            </View>
-                    </View>
-                    <View style={{
-                        justifyContent:'center',
-                        alignItems:'flex-start'
-                    }}>
-                        <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Medium'}]}>{this.formatDate(eventDate)}</Text>
-                        <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{eventTime}</Text>
+                        <View style={{flexDirection:'row', alignItems:'center'}}>
+                            <Icon name="thumb-tack" style={{color:'#8da6d4',marginRight:5}} size={13} />
+                            <Text style={[MainStyles.EITWName,
+                                (Item.isStarted === true)?{color:'#39b549'}:''
+                            ]}>{Item.event_subject}</Text>
+                        </View>
+                        <View style={{flexDirection:'row', alignItems:'center'}}>
+                            <Icon name="map-marker" style={{color:'#8da6d4',marginRight:5}} size={13} />
+                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{Item.name}</Text>
+                        </View>
+                        <Text style={[MainStyles.EITWAddress,{marginLeft:14}]}>{Address}</Text>
+                        <View style={{flexDirection:'row', alignItems:'center'}}>
+                            <Icon name="clock-o" style={{color:'#8da6d4',marginRight:5}} size={13} />
+                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.formatDate(eventDate)}, {eventTime}</Text>
+                        </View>
+                        <View style={MainStyles.EITWAction}>
+                            <Image source={require('../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
+                            <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({Item.usersCount}) </Text>
+                            <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>Info</Text>
+                        </View>
                     </View>
                 </TouchableOpacity>
                 { 
@@ -151,3 +156,4 @@ export default class ListItem extends Component{
         )
     }
 }
+export default withNavigation(ListItem)

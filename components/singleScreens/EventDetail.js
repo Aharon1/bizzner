@@ -22,22 +22,22 @@ export default class EventDetail extends Component{
     componentDidMount(){
         this.fetchNewDetails();
     }
-    componentDidUpdate(prevProps){
+    componentDidUpdate(prevProps,prevState,snapshot){
         var paramEventId = this.props.navigation.getParam('event_id');
         var prevEventId = prevProps.navigation.getParam('event_id')
-        if(paramEventId != prevEventId){
+        if(paramEventId != prevState.event_id){
             this.setState({loading:true,userList:{},eventData:'',curStatus:'',event_id:paramEventId});
             this.fetchNewDetails()
         }
-        
     }
     /*componentWillReceiveProps(){
         var paramEventId = this.props.navigation.getParam('event_id');
-        console.log(this.state.event_id,paramEventId);
-        //if(this.state.event_id != paramEventId){
+        //console.log(this.state.event_id,paramEventId);
+        console.log('New=>'+paramEventId,'Previuos=>'+this.state.event_id);
+        if(this.state.event_id != paramEventId){
             this.setState({loading:true,userList:{},eventData:'',curStatus:'',event_id:paramEventId});
             this.fetchNewDetails()
-        //}
+        }
     }*/
     fetchNewDetails(){
         var user_id = 29;
@@ -47,9 +47,6 @@ export default class EventDetail extends Component{
         .then(res=>{
             this.setState({loading:false,userList:res.users,eventData:res.event_data,curStatus:res.curStatus});
         })
-    }
-    componentWillUnmount(){
-        this.setState({loading:false,userList:{},eventData:{},curStatus:''});
     }
     setUserEventStatus =  async (statusValue)=>{
         var curItem = this.state.eventData;
