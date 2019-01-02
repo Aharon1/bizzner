@@ -20,8 +20,28 @@ export default class EventDetail extends Component{
         //this.getEventUsers();
     }
     componentDidMount(){
+        this.fetchNewDetails();
+    }
+    componentDidUpdate(prevProps){
+        var paramEventId = this.props.navigation.getParam('event_id');
+        var prevEventId = prevProps.navigation.getParam('event_id')
+        if(paramEventId != prevEventId){
+            this.setState({loading:true,userList:{},eventData:'',curStatus:'',event_id:paramEventId});
+            this.fetchNewDetails()
+        }
+        
+    }
+    /*componentWillReceiveProps(){
+        var paramEventId = this.props.navigation.getParam('event_id');
+        console.log(this.state.event_id,paramEventId);
+        //if(this.state.event_id != paramEventId){
+            this.setState({loading:true,userList:{},eventData:'',curStatus:'',event_id:paramEventId});
+            this.fetchNewDetails()
+        //}
+    }*/
+    fetchNewDetails(){
         var user_id = 29;
-        var eventId = this.props.navigation.getParam('event_id');
+        var eventId = this.state.event_id;
         fetch(SERVER_URL+'?action=getEventUsers&event_id='+eventId+'&user_id='+user_id)
         .then(response=>response.json())
         .then(res=>{
@@ -55,24 +75,24 @@ export default class EventDetail extends Component{
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
-                    <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>EVENT DETAILS</Text>
+                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>EVENT DETAILS</Text>
                 </View>
                 <View style={[MainStyles.tabContainer,{elevation:0,justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[
                         MainStyles.tabItem,MainStyles.tabItemActive]} onPress={()=>this.props.navigation.navigate('EventDetail',{event_id:this.state.event_id})}>
                         <Icon name="user-plus" style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveIcon,{fontSize:14}]}/>
-                        <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText,{fontSize:14}]}>INVITED TO EVENT</Text>
+                        <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText,{fontSize:14}]}>Invited to event</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[
                         MainStyles.tabItem,
                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
                         ]}>
                         <Icon name="share-alt" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
-                        <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>SHARE</Text>
+                        <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>Share</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.tabItem} onPress={()=>this.props.navigation.navigate('Event Chat',{event_id:this.state.event_id,note:this.state.eventData.event_note})}>
                         <Icon name="comments" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
-                        <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>EVENT CHAT</Text>
+                        <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>Event chat</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={[MainStyles.EventScreenTabWrapper,{backgroundColor:'#d1dbed'}]}>
@@ -87,7 +107,7 @@ export default class EventDetail extends Component{
                             color:'#FFF',
                             fontFamily:'Roboto-Medium',
                             fontSize:14
-                        }}>JOIN</Text>
+                        }}>Join</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[
                     MainStyles.EIAButtons,{marginHorizontal:5},
@@ -100,7 +120,7 @@ export default class EventDetail extends Component{
                             color:'#FFF',
                             fontFamily:'Roboto-Medium',
                             fontSize:14
-                        }}>INTERESTED</Text>
+                        }}>Interested</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[
                     MainStyles.EIAButtons,
@@ -113,7 +133,7 @@ export default class EventDetail extends Component{
                             color:'#FFF',
                             fontFamily:'Roboto-Medium',
                             fontSize:14
-                        }}>IGNORE</Text>
+                        }}>Ignore</Text>
                     </TouchableOpacity>
                 </View>
                 {

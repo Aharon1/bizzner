@@ -9,12 +9,13 @@ export default class ListItem extends Component{
     constructor(props){
         super(props);
         this.state={
-            userStatus:''
+            userStatus:'',
+            eventId:''
         }
     }
-    checkEvent = async ()=>{
-        var curItem = await this.props.item;
-        this.props.navigate('EventDetail',{event_id:curItem.group_id});
+    checkEvent = ()=>{
+        //var curItem = await this.props.item;
+        this.props.navigate('EventDetail',{event_id:this.state.eventId});
     }
     setUserEventStatus =  async (statusValue)=>{
         var curItem = await this.props.item;
@@ -55,7 +56,7 @@ export default class ListItem extends Component{
         for(const uid in this.props.item.userIds){
             if(this.props.item.userIds[uid].user_id == "29"){
                 userStatus=this.props.item.userIds[uid].status;
-                this.setState({userStatus:this.props.item.userIds[uid].status});
+                this.setState({userStatus:this.props.item.userIds[uid].status,eventId:this.props.item.group_id});
             }
         }
     }
@@ -75,7 +76,7 @@ export default class ListItem extends Component{
                 (this.state.userStatus == 3)?{opacity:0.5}:'',
                 {borderBottomColor:'#8da6d4',borderBottomWidth:1},
                 (Item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
-                (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#dff9ec'}:'']}>
+                (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#FFFFFF'}:'']}>
                 <TouchableOpacity style={[
                     MainStyles.EventItem,
                 ]} onPress={this.checkEvent}>
@@ -116,7 +117,7 @@ export default class ListItem extends Component{
                                 color:'#FFF',
                                 fontFamily:'Roboto-Medium',
                                 fontSize:14
-                            }}>JOIN</Text>
+                            }}>Join</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[
                         MainStyles.EIAButtons,{marginHorizontal:5},
@@ -129,7 +130,7 @@ export default class ListItem extends Component{
                                 color:'#FFF',
                                 fontFamily:'Roboto-Medium',
                                 fontSize:14
-                            }}>INTERESTED</Text>
+                            }}>Interested</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[
                         MainStyles.EIAButtons       
@@ -141,7 +142,7 @@ export default class ListItem extends Component{
                                 color:'#FFF',
                                 fontFamily:'Roboto-Medium',
                                 fontSize:14
-                            }}>IGNORE</Text>
+                            }}>Ignore</Text>
                         </TouchableOpacity>
                     </View>
                 }

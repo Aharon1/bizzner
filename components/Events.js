@@ -117,7 +117,6 @@ class EventsScreen extends Component{
         })
         .then(response=>response.json())
         .then(response=>{
-            console.log(response);
             if(response.code == 300){
                 var locList = this.state.locationList;
                 var rBody = response.body;
@@ -139,7 +138,6 @@ class EventsScreen extends Component{
                     userIds:rBody.usersIds,
                 }
                 locList.unshift(eventAdded);
-                console.log(response);
                 this.setState({
                     locationList:locList,
                     loading:false,
@@ -152,7 +150,6 @@ class EventsScreen extends Component{
                 50,);
             }
             else{
-                console.log(response.code);
                 ToastAndroid.showWithGravity('Event not created',ToastAndroid.SHORT,ToastAndroid.BOTTOM,
                 25,
                 50,);
@@ -175,10 +172,9 @@ class EventsScreen extends Component{
         var curDate = (dateNow.getDate() >= 10)?dateNow.getDate():'0'+dateNow.getDate();
         var curDate = dateNow.getFullYear()+'-'+curMonth+'-'+curDate;
         Permissions.check('location', { type: 'always' }).then(response => {
-            console.log(response);
             if(response == "authorized"){
-                navigator.geolocation.getCurrentPosition(positions=>{
-                    console.log(positions);
+                var Geolocation = navigator.geolocation;
+                Geolocation.getCurrentPosition(positions=>{
                     let Latitude = positions.coords.latitude;
                     let Longitude = positions.coords.longitude;
                     this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate);
@@ -199,7 +195,6 @@ class EventsScreen extends Component{
         })
         .then(res=>res.json())
         .then(response=>{
-            console.log(response)
             var results = response.results
             const placesArray = [];
             for (const bodyKey in results){
@@ -291,7 +286,7 @@ class EventsScreen extends Component{
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
-                    <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>EVENTS</Text>
+                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>EVENTS</Text>
                 </View>
                 
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
@@ -326,10 +321,10 @@ class EventsScreen extends Component{
                 }
                 <View style={MainStyles.EventScreenTabWrapper}>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('all-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>ALL EVENTS</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>All events</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('my-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>MY EVENTS</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>My events</Text>
                     </TouchableOpacity>
                 </View>
                 { 
