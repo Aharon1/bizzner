@@ -13,7 +13,9 @@ export default class GoogleMapView extends PureComponent {
         subject: ''
     }
     render() {
+        
         const { isModalOpen, eventData } = this.state;
+        console.log(eventData);
         return (
             <View style={styles.container}>
                 <MapClustering
@@ -28,6 +30,7 @@ export default class GoogleMapView extends PureComponent {
                 {
                     isModalOpen &&
                     <View style={{width:'85%',paddingBottom:20,borderTopLeftRadius:10,borderTopRightRadius:10,backgroundColor:'#FFF',elevation:5}}>
+                        
                         <View style={{width:'100%',height:150}}>
                             <ProgressiveImage source={{uri:eventData.event_photo}} style={{width:'100%',height:150,borderTopLeftRadius:10,borderTopRightRadius:10}} />
                         </View>
@@ -66,6 +69,9 @@ export default class GoogleMapView extends PureComponent {
                                 </TouchableOpacity>
                             </View>
                         </View>
+                        <TouchableOpacity style={{position:'absolute',top:5,right:5}} onPress={()=>this.setState({isModalOpen:false})}>
+                            <Icon name="times" size={18} style={{color:'#FFF'}}/>
+                        </TouchableOpacity>
                     </View>
                 }
             </View>
@@ -102,7 +108,13 @@ export default class GoogleMapView extends PureComponent {
         return strTime;
     }
     formatDate(date){
-        return date.getDate()+' '+(date.getMonth()+1)+' '+date.getFullYear();
+        var dateStr = '';
+        dateStr += (date.getDate() < 10)?'0'+date.getDate()+' ':date.getDate()+' ';
+        var monthArray = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var month = monthArray[date.getMonth()];
+        dateStr += month+' ';
+        dateStr += date.getFullYear();
+        return dateStr;
     }
 }
 

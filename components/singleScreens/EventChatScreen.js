@@ -1,54 +1,38 @@
 import React,{Component} from 'react';
 import { View,Text,TouchableOpacity,
-    FlatList,TextInput,Image, Keyboard,
+    FlatList,TextInput,Image, Keyboard,ActivityIndicator,
+    AsyncStorage,
     Platform,KeyboardAvoidingView} from 'react-native';
-import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { HeaderButton } from '../Navigation/HeaderButton';
 import MainStyles from '../StyleSheet';
 import Loader from '../Loader';
 import { SERVER_URL } from '../../Constants';
 import ChatItem from './ChatItem';
-
+var clearTime = ''
 class EventChatScreen extends Component{
     constructor(props){
         super(props);
         this.state = {
             loading:false,
             event_id:this.props.navigation.getParam('event_id'),
+            event_note:this.props.navigation.getParam('note'),
             disableBtn:true,
-            text:'',
-            messages:[
-                {
-                    msgBy:2,
-                    key:'1',
-                    name:'Axel Lionel Rozen',
-                    time:'03:55:00',
-                    text:'See I told you nobody will care about the 14 thousand people'
-                },
-                {
-                    msgBy:1,
-                    key:'2',
-                    name:'Terrorist',
-                    time:'03:49:00',
-                    text:'Why a donkey?'
-                },
-                {
-                    msgBy:2,
-                    key:'3',
-                    name:'Terrorist',
-                    time:'03:47:00',
-                    text:'We are planning to kill 14 thousand people and a donkey'
-                }
-            ]
+            newMessage:'',
+            isloadingMsgs:true,
+            messages:{}
         }
     }
-    componentDidMount() {
-        this.update();
+    async setUserId(){
+        var userID =  await AsyncStorage.getItem('userID');
+        this.setState({userID});
     }
-    onStartTyping(text){
-        if(text && text.length >= 1){
-            this.setState({disableBtn:false,text})
+    componentDidMount() {
+        this.setUserId();
+        setTimeout(()=>{this.update()},200);
+    }
+    onStartTyping(newMessage){
+        if(newMessage && newMessage.length >= 1){
+            this.setState({disableBtn:false,newMessage})
         }
         else {
             this.setState({disableBtn:true})
@@ -72,29 +56,94 @@ class EventChatScreen extends Component{
         fetch(SERVER_URL + '?action=getEventMessages&event_id='+this.state.event_id)
           .then((response) => response.json())
           .then((responseData) => {
-            var messagesCopy = responseData;
-            var oldMessagesNumber = this.state.messages.length;
-            messagesCopy.reverse();
-            this.setState({
-              messages: messagesCopy,
-              dataSource: this.state.dataSource.cloneWithRows(messagesCopy),
-            });
-            /*if (oldMessagesNumber < messagesCopy.length)
-              this.scrollToTheBottom();*/
-          })
+              if(responseData.code == 200){
+                var messagesCopy = responseData.body.messages;
+                var oldMessagesNumber = this.state.messages.length;
+                messagesCopy.reverse();
+                this.setState({
+                    messages: messagesCopy,
+                });
+                if (oldMessagesNumber < messagesCopy.length)
+                    this.scrollToTheBottom();
+              }
+              this.setState({isloadingMsgs:false});
+            })
           .done();
     }
     update() {
         this.getMessages();
-        this.setInterval(
+        clearTime = setInterval(
           () => {this.getMessages();},
-          5000
+          1500
         );
     }
-    renderMsgItem({item}){
-        return <ChatItem msgItem={item} />
+    componentWillUnmount(){
+        clearTimeout(clearTime);
+    }
+    renderMsgItem(item,userID){
+        return <ChatItem msgItem={item} userID={userID}/>
     }
     keyExtractor = (item,index) => item.key;
+    /********
+     * Scrolling to Bottom
+    */
+    scrollToTheBottom() {
+        this.list.getScrollResponder().scrollTo({x:0,y:0,animate:true});
+    }
+    /********
+     * Sending Message To Database
+    */
+    sendNewMessage() {
+        var message = this.state.newMessage;
+        if (message) {
+            var newDate = new Date();
+            var month = (newDate.getMonth()+1);
+            month = month > 10 ?month : '0'+month;
+            var date = newDate.getDate() > 10?newDate.getDate():'0'+newDate.getDate();
+
+            var DateTime = newDate.getFullYear()+'-'+month+'-'+date+' '+newDate.getHours()+':'+newDate.getMinutes()+':'+newDate.getSeconds();
+            this.refs['newMessage'].setNativeProps({text: ''});
+            if(this.state.messages.length > 0){
+                var messagesCopy = this.state.messages.slice();
+                for (var i = messagesCopy.length; i > 0; i--) {
+                    messagesCopy[i] = messagesCopy[i - 1];
+                }
+                messagesCopy[0] = {
+                    send_by:this.state.userID,
+                    key:'key-'+messagesCopy.length+1,
+                    send_on:DateTime,
+                    msg_text:message
+                }
+            }
+            else{
+                var messagesCopy = this.state.messages
+                messagesCopy = {
+                    send_by:this.state.userID,
+                    key:'key-'+messagesCopy.length+1,
+                    send_on:DateTime,
+                    msg_text:message
+                }
+            }
+            this.setState({
+                messages: messagesCopy,
+                newMessage: '',
+                disableBtn:true,
+            });
+            //Keyboard.dismiss();
+            if(this.state.messages.length > 4){
+                this.scrollToTheBottom();
+            }
+            fetch( SERVER_URL + '?action=msgSend&user_id='+this.state.userID+'&grp_id='+this.state.event_id+'&is_grp_msg=1&msg_text=' + message+'&creation_date='+DateTime)
+            .then((response) => response.json())
+            .then((responseData) => {
+            })
+            .done();
+        }
+    }
+    /**
+    * Rendering Chat Screen
+    */
+
     render(){
         const enableBtn = this.state.disableBtn?MainStyles.MsgBtnDisable:MainStyles.MsgBtnEnable;
         let behavior = '';
@@ -106,23 +155,35 @@ class EventChatScreen extends Component{
                 <Loader loading={this.state.loading} />
                 <View>
                     <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                        <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
+                        <TouchableOpacity style={{ paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
+                            <Icon name="arrow-left" style={{ fontSize: 24, color: '#8da6d5' }} />
+                        </TouchableOpacity>
                         <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>PRIVATE MESSAGE</Text>
                     </View>
                     <View style={[MainStyles.tabContainer,{justifyContent:'flex-start',paddingHorizontal:15,paddingVertical:15}]}>
-                        <Text style={{fontSize:16,fontFamily:'Roboto-Medium',color:'#05296d'}}>Note: pls came from the front green door</Text>
+                        <Text style={{fontSize:16,fontFamily:'Roboto-Medium',color:'#05296d'}}>Note: {this.state.event_note}</Text>
                     </View>
                 </View>
                 <View style={{
                     backgroundColor:'#d1dbee',
                     flex:1
                 }}>
+                {
+                    this.state.isloadingMsgs &&
+                    <ActivityIndicator size="large"  color="#0947b9" animating={true} style={{marginTop:15}}/>
+                }
+                {
+                    this.state.messages !='' && this.state.messages.length > 0
+                    && 
                     <FlatList
+                    ref= {ref => this.list = ref}
                     inverted
                     data={this.state.messages} 
-                    renderItem={this.renderMsgItem}
+                    renderItem={(items)=>{return this.renderMsgItem(items.item,this.state.userID)}}
                     keyExtractor= {this.keyExtractor}
                     />
+                }
+                    
                 </View>
                 
                 <KeyboardAvoidingView behavior={behavior}>
@@ -132,10 +193,11 @@ class EventChatScreen extends Component{
                             placeholder="Type a message here" 
                             style={{fontFamily:'Roboto-Regular',fontSize:15,color:'#8da6d5',flex:1,paddingHorizontal:10}} 
                             placeholderTextColor="#8da6d5"
-                            onChangeText={(text)=>this.onStartTyping(text)}
-                            ref = {input =>{this.textInput = input} }
+                            onChangeText={(newMessage)=>this.onStartTyping(newMessage)}
+                            ref = {'newMessage'}
+                            text = {this.state.newMessage}
                         />
-                        <TouchableOpacity onPress={this.sendMsg.bind(this)} style={[{justifyContent:'center',alignItems:'center'},enableBtn]} disabled={this.state.disableBtn}>
+                        <TouchableOpacity onPress={this.sendNewMessage.bind(this)} style={[{justifyContent:'center',alignItems:'center'},enableBtn]} disabled={this.state.disableBtn}>
                             <Image source={require('../../assets/msg-icon.png')} style={[{width:47,height:40},enableBtn]}/>
                         </TouchableOpacity>
                     </View>

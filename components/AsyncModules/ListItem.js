@@ -1,36 +1,38 @@
 import React, { Component } from 'react';
 import { View,Text,Image,TouchableOpacity,ToastAndroid} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import MainStyles from './StyleSheet';
-import ProgressiveImage from './AsyncModules/ImageComponent';
-import { SERVER_URL } from '../Constants';
+import MainStyles from '../StyleSheet';
+import ProgressiveImage from './ImageComponent';
+import { withNavigation } from 'react-navigation';
+import { SERVER_URL } from '../../Constants';
 let userStatus = '';
-export default class ListItem extends Component{
+ class ListItem extends Component{
     constructor(props){
         super(props);
         this.state={
-            userStatus:''
+            userStatus:'',
+            eventId:'',
+
         }
     }
-    checkEvent = async ()=>{
-        var curItem = await this.props.item;
-        this.props.navigate('EventDetail',{event_id:curItem.group_id});
+    checkEvent = ()=>{
+        this.props.navigation.navigate('EventDetail',{event_id:this.state.eventId});
     }
     setUserEventStatus =  async (statusValue)=>{
         var curItem = await this.props.item;
-        var user_id = 29;
+        var user_id = this.props.userID;
         fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
         .then(response=>{
             userStatus = statusValue;
             this.setState({userStatus:statusValue});
             if(statusValue == 1){
-                ToastAndroid.showWithGravity('You are interested to this event',ToastAndroid.SHORT,ToastAndroid.CENTER);
+                ToastAndroid.showWithGravity('You are interested to this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
             }
             else if(statusValue == 2){
                 ToastAndroid.showWithGravity('You are joined to this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
             }
             else if(statusValue ==3){
-                ToastAndroid.showWithGravity('You have ignored this event',ToastAndroid.SHORT,ToastAndroid.CENTER);
+                ToastAndroid.showWithGravity('You have ignored this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
             }
         })
     }
@@ -47,17 +49,20 @@ export default class ListItem extends Component{
     formatDate(date){
         var dateStr = '';
         dateStr += (date.getDate() < 10)?'0'+date.getDate()+' ':date.getDate()+' ';
-        dateStr += ((date.getMonth()+1) < 10)?'0'+(date.getMonth()+1)+' ':(date.getMonth()+1)+' ';
+        var monthArray = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var month = monthArray[date.getMonth()];
+        dateStr += month+' ';
         dateStr += date.getFullYear();
         return dateStr;
     }
-    componentWillMount(){
+    componentDidMount(){
         for(const uid in this.props.item.userIds){
-            if(this.props.item.userIds[uid].user_id == "29"){
+            if(this.props.item.userIds[uid].user_id == this.props.userID){
                 userStatus=this.props.item.userIds[uid].status;
                 this.setState({userStatus:this.props.item.userIds[uid].status});
             }
         }
+        this.setState({eventId:this.props.item.group_id});
     }
     render(){
         var d1 = new Date ();
@@ -66,8 +71,8 @@ export default class ListItem extends Component{
         const Item = this.props.item;
         var date = Item.event_date+' '+Item.event_time;
         var eventDate = new Date(date);
-        var N = 5;
-        var Address = Item.address.split(" ").splice(0,N).join(" ");
+        var N = 7;
+        var Address = Item.address;//.split(" ").splice(0,N).join(" ");
         var eventTime = this.formatAMPM(eventDate);
         return (
             <View
@@ -75,7 +80,7 @@ export default class ListItem extends Component{
                 (this.state.userStatus == 3)?{opacity:0.5}:'',
                 {borderBottomColor:'#8da6d4',borderBottomWidth:1},
                 (Item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
-                (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#dff9ec'}:'']}>
+                (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#FFFFFF'}:'']}>
                 <TouchableOpacity style={[
                     MainStyles.EventItem,
                 ]} onPress={this.checkEvent}>
@@ -83,22 +88,32 @@ export default class ListItem extends Component{
                         <ProgressiveImage source={{uri:Item.photoUrl}} style={{ width: 70, height: 70 }} resizeMode="cover"/>
                     </View>
                     <View style={MainStyles.EventItemTextWrapper}>
-                        <Text style={[MainStyles.EITWName,
-                            (Item.isStarted === true)?{color:'#39b549'}:''
-                        ]}>{Item.event_subject}</Text>
-                        <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Medium'}]}>{Item.name}</Text>
-                        <Text style={MainStyles.EITWAddress}>{Address}</Text>
-                    </View>
-                    <View style={{
-                        justifyContent:'center',
-                        alignItems:'flex-start'
-                    }}>
-                        <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Medium'}]}>{this.formatDate(eventDate)}</Text>
-                        <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{eventTime}</Text>
+                        <View style={{flexDirection:'row', alignItems:'center'}}>
+                            <Icon name="thumb-tack" style={{color:'#8da6d4',marginRight:5}} size={13} />
+                            <Text style={[MainStyles.EITWName,
+                                (Item.isStarted === true)?{color:'#39b549'}:''
+                            ]}>{Item.event_subject}</Text>
+                        </View>
+                        <View style={{flexDirection:'row', alignItems:'center'}}>
+                            <Icon name="map-marker" style={{color:'#8da6d4',marginRight:5}} size={13} />
+                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{Item.name}</Text>
+                        </View>
+                        <Text style={[MainStyles.EITWAddress,{marginLeft:14}]}>{Address}</Text>
+                        <View style={{flexDirection:'row', alignItems:'center'}}>
+                            <Icon name="clock-o" style={{color:'#8da6d4',marginRight:5}} size={13} />
+                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.formatDate(eventDate)}, {eventTime}</Text>
+                        </View>
+                        <View style={MainStyles.EITWAction}>
+                            <Image source={require('../../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
+                            <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({Item.usersCount}) </Text>
+                            <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>Info</Text>
+                        </View>
                     </View>
                 </TouchableOpacity>
                 { 
                     this.state.userStatus != 3 && 
+                    Item.usersCount < Item.usersPlace
+                    && 
                     <View style={MainStyles.EIAButtonsWrapper}>
                         <TouchableOpacity style={[
                         MainStyles.EIAButtons,
@@ -111,7 +126,7 @@ export default class ListItem extends Component{
                                 color:'#FFF',
                                 fontFamily:'Roboto-Medium',
                                 fontSize:14
-                            }}>JOIN</Text>
+                            }}>Join</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[
                         MainStyles.EIAButtons,{marginHorizontal:5},
@@ -124,7 +139,7 @@ export default class ListItem extends Component{
                                 color:'#FFF',
                                 fontFamily:'Roboto-Medium',
                                 fontSize:14
-                            }}>INTERESTED</Text>
+                            }}>Interested</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[
                         MainStyles.EIAButtons       
@@ -136,12 +151,19 @@ export default class ListItem extends Component{
                                 color:'#FFF',
                                 fontFamily:'Roboto-Medium',
                                 fontSize:14
-                            }}>IGNORE</Text>
+                            }}>Ignore</Text>
                         </TouchableOpacity>
                     </View>
                 }
-                
+                {
+                    Item.usersCount == Item.usersPlace
+                    && 
+                    <View style={[{paddingVertical:5,backgroundColor:'#8da6d4',justifyContent:'center',alignItems:'center'}]}>
+                        <Text style={{color:'#FFF',fontFamily:'Roboto-Medium',fontSize:15}}>No more places available</Text>
+                    </View>
+                }
             </View>
         )
     }
 }
+export default withNavigation(ListItem)

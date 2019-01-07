@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
-import { View,Text,TouchableOpacity, TextInput,ImageBackground, Platform,FlatList,ActivityIndicator,ToastAndroid,Picker,ScrollView} from 'react-native';
+import { View,Text,TouchableOpacity, TextInput,ImageBackground, 
+    Platform,FlatList,ActivityIndicator,AsyncStorage,
+    RefreshControl,
+    ToastAndroid,Picker,ScrollView,PermissionsAndroid
+} from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
@@ -8,21 +12,27 @@ import DatePicker from 'react-native-datepicker';
 import { HeaderButton } from './Navigation/HeaderButton';
 import {SERVER_URL,MAPKEY} from '../Constants';
 import Loader from './Loader';
-import ListItem from './ListItem';
+import ListItem from './AsyncModules/ListItem';
 import LocationItem from './AsyncModules/LocationItem';
 import _ from 'lodash';
 import TabContainer from './TabContainer';
+import Permissions from 'react-native-permissions'
 class EventsScreen extends Component{
     constructor(props){
         super(props);
+        var curDate = new Date();
+        var day = (curDate.getDate() >=10)?curDate.getDate():'0'+curDate.getDate();
+        var month = ((curDate.getMonth()+1) >=10)?(curDate.getMonth()+1):'0'+(curDate.getMonth()+1);
+        var newDate = day+'/'+month+'/'+curDate.getFullYear();
+        var newTime = curDate.getHours()+':'+curDate.getMinutes()+':'+curDate.getSeconds()
         this.state = {
             loading:true,
             TabComponent : '',
             CreateEventVisible:false,
             NES:'',
             NEN:'',
-            NED:new Date(),
-            NET:new Date(),
+            NED:newDate,
+            NET:newTime,
             locationList:{},
             MyEvents:{},
             isLocationSet:false,
@@ -35,19 +45,28 @@ class EventsScreen extends Component{
             isFocusedSL:false,
             isFocusedSC:false,
             isSelectedCity:'',
-            isCurrentTab:'all-events'
+            isCurrentTab:'all-events',
+            isRefreshing:false
         }
+        this.viewabilityConfig = {
+            waitForInteraction: true,
+            viewAreaCoveragePercentThreshold: 95
+        }
+        this.refreshList = this._refreshList.bind(this);
         //this.getLocationList();
         this.hSL = this.handleSL.bind(this);
         this.hSC = this.handleSC.bind(this);
-        this.onChangeSLDelayed = _.debounce(this.hSL, 300);
-        this.onChangeSCDelayed = _.debounce(this.hSC, 300);
+        this.onChangeSLDelayed = _.debounce(this.hSL, 200);
+        this.onChangeSCDelayed = _.debounce(this.hSC, 200);
+    }
+    async setUserId(){
+        var userID =  await AsyncStorage.getItem('userID');
+        this.setState({userID});
     }
     changeTab(Screen){
         this.setState({TabComponent:Screen});
     }
     fetchDetails = (curItem)=>{
-        
         var curPic = 'http://bizzner.com/app/assets/images/default.jpg';
         if(typeof(curItem.photos) !== 'undefined'){
             if(typeof(curItem.photos[0].photo_reference) !== 'undefined'){
@@ -100,7 +119,7 @@ class EventsScreen extends Component{
         '&longitude='+encodeURIComponent(cL.longitude)+
         '&picUrl='+encodeURIComponent(cL.picUrl)+
         '&device='+encodeURIComponent(Platform.OS)+
-        '&userId=29';
+        '&userId='+this.state.userID;
         var postUrlParam = postUrl+params;
         fetch(postUrlParam,{
             method:'POST',
@@ -111,7 +130,6 @@ class EventsScreen extends Component{
         })
         .then(response=>response.json())
         .then(response=>{
-            console.log(response);
             if(response.code == 300){
                 var locList = this.state.locationList;
                 var rBody = response.body;
@@ -133,88 +151,103 @@ class EventsScreen extends Component{
                     userIds:rBody.usersIds,
                 }
                 locList.unshift(eventAdded);
-                
                 this.setState({
                     locationList:locList,
                     loading:false,
                     CreateEventVisible:false,
                     NES:'',
                     NEN:'',
-                    NED:new Date(),
-                    NET:new Date(),
                 });
-                ToastAndroid.showWithGravity('Event created successfully',ToastAndroid.SHORT,ToastAndroid.BOTTOM,
-                25,
-                50,);
+                ToastAndroid.showWithGravity('Event created successfully',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
             }
             else{
-                ToastAndroid.showWithGravity('Event not created',ToastAndroid.SHORT,ToastAndroid.BOTTOM,
-                25,
-                50,);
+                ToastAndroid.showWithGravity('Event not created',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
                 this.setState({
                     loading:false,
                     CreateEventVisible:false,
                     NES:'',
                     NEN:'',
-                    NED:new Date(),
-                    NET:new Date(),
                 });
             }
+            this.refreshList();
         })
     }
     componentDidMount(){
-        navigator.geolocation.getCurrentPosition(positions=>{
-            let Latitude = positions.coords.latitude;
-            let Longitude = positions.coords.longitude;
-            var dateNow = new Date();
-            var curDate = dateNow.getFullYear()+'-'+(dateNow.getMonth()+1)+'-'+dateNow.getDate();
-            var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate;
-            fetch(fetchData,{
-                method:'POST',
-                body:JSON.stringify({
-                    action:'search_location_db',
-                    latitude:Latitude,//22.7150822,
-                    longitude:Longitude//75.8707448
+        this.setUserId();
+        setTimeout(()=>{this.refreshList();},200);
+    }
+    _refreshList(){
+        var dateNow = new Date();
+        var curMonth = ((dateNow.getMonth()+1) >= 10)?(dateNow.getMonth()+1):'0'+(dateNow.getMonth()+1);
+        var curDate = (dateNow.getDate() >= 10)?dateNow.getDate():'0'+dateNow.getDate();
+        var curDate = dateNow.getFullYear()+'-'+curMonth+'-'+curDate;
+        var curMinute = (dateNow.getMinutes() >= 10)?dateNow.getMinutes():'0'+dateNow.getMinutes();
+        var curSeconds = (dateNow.getSeconds() >= 10)?dateNow.getSeconds():'0'+dateNow.getSeconds();
+        var curHours = (dateNow.getHours() >= 10)?dateNow.getHours():'0'+dateNow.getHours();
+        var curTime = curHours+':'+curMinute+':'+curSeconds;
+        Permissions.check('location', { type: 'always' }).then(response => {
+            if(response == "authorized"){
+                var Geolocation = navigator.geolocation;
+                Geolocation.getCurrentPosition(positions=>{
+                    let Latitude = positions.coords.latitude;
+                    let Longitude = positions.coords.longitude;
+                    this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
+                },error=>{
+                    console.log('Error',error);
+                    this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate)+'&curTime='+curTime;
                 })
-            })
-            .then(res=>res.json())
-            .then(response=>{
-                console.log(response);
-                var results = response.results
-                const placesArray = [];
-                for (const bodyKey in results){
-                    placesArray.push({
-                        name:results[bodyKey].group_name,
-                        address:results[bodyKey].group_address,
-                        isStarted:results[bodyKey].group_status,
-                        photoUrl:results[bodyKey].photoUrl,
-                        key:results[bodyKey].key,
-                        event_date:results[bodyKey].event_date,
-                        event_time:results[bodyKey].event_time,
-                        event_subject:results[bodyKey].event_subject,
-                        event_note:results[bodyKey].event_note,
-                        latitude:results[bodyKey].latitude,
-                        longitude:results[bodyKey].longitude,
-                        place_id:results[bodyKey].place_id,
-                        group_id:results[bodyKey].group_id,
-                        usersCount:results[bodyKey].usersCount,
-                        userIds:results[bodyKey].usersIds,
-                    });
-                }
-                var MyEvents = placesArray.filter((item)=>{
-                    for(const uid in item.userIds){
-                        if(item.userIds[uid].user_id = "29"){
-                            return true;
-                        }
-                    }
-                })
-                this.setState({loading:false,locationList:placesArray,MyEvents:MyEvents});
-            }).catch(err => {
-                console.log('Error What is this',err);
-            })
-        },error=>{
-            console.log('Error',error);
+            }
+            else{
+                this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+            }
         })
+    }
+    _fetchLists(params){
+        var fetchData = 'http://bizzner.com/app?action=search_location_db&'+params;
+        fetch(fetchData,{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json',
+                'Accept':'application/json',
+                'Cache-Control': 'no-cache'
+            }
+        })
+        .then(res=>res.json())
+        .then(response=>{
+            var results = response.results
+            const placesArray = [];
+            for (const bodyKey in results){
+                placesArray.push({
+                    name:results[bodyKey].group_name,
+                    address:results[bodyKey].group_address,
+                    isStarted:results[bodyKey].group_status,
+                    photoUrl:results[bodyKey].photoUrl,
+                    key:results[bodyKey].key,
+                    event_date:results[bodyKey].event_date,
+                    event_time:results[bodyKey].event_time,
+                    event_subject:results[bodyKey].event_subject,
+                    event_note:results[bodyKey].event_note,
+                    latitude:results[bodyKey].latitude,
+                    longitude:results[bodyKey].longitude,
+                    place_id:results[bodyKey].place_id,
+                    group_id:results[bodyKey].group_id,
+                    usersPlace:results[bodyKey].usersPlace,
+                    usersCount:results[bodyKey].usersCount,
+                    userIds:results[bodyKey].usersIds,
+                });
+            }
+            var MyEvents = placesArray.filter((item,key)=>{
+                for(const uid in response.usersIds[key]){
+                    if(response.usersIds[key][uid].user_id == this.state.userID){
+                        return true;
+                    }
+                }
+            })
+            this.setState({loading:false,locationList:placesArray,MyEvents:MyEvents,isRefreshing:false});
+        }).catch(err => {
+            this.setState({loading:false,locationList:{},MyEvents:{},isRefreshing:false});
+            console.log('Error What is this',err);
+        }).done()
     }
     handleSL(text){
         if(text.length > 2){
@@ -273,7 +306,7 @@ class EventsScreen extends Component{
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
-                    <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>EVENTS</Text>
+                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>EVENTS</Text>
                 </View>
                 
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
@@ -308,10 +341,10 @@ class EventsScreen extends Component{
                 }
                 <View style={MainStyles.EventScreenTabWrapper}>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('all-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>ALL EVENTS</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>All events</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('my-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>MY EVENTS</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>My events</Text>
                     </TouchableOpacity>
                 </View>
                 { 
@@ -320,9 +353,20 @@ class EventsScreen extends Component{
                     this.state.locationList.length > 0 && 
                     <FlatList data={this.state.locationList}
                         renderItem={({item}) => (
-                            <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
+                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID}/>
                             )}
                         keyExtractor={(item) => item.key}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.isRefreshing}
+                                onRefresh={()=>{this.setState({isRefreshing:true}),this.refreshList()}}
+                                title="Pull to refresh"
+                                tintColor="#fff"
+                                titleColor="#fff"
+                                colors={["#2e4d85","red", "green", "blue"]}
+                            />
+                        }
+                        viewabilityConfig={this.viewabilityConfig}
                     />
                 }
                 {
@@ -331,10 +375,35 @@ class EventsScreen extends Component{
                     this.state.MyEvents.length > 0 && 
                     <FlatList data={this.state.MyEvents}
                         renderItem={({item}) => (
-                            <ListItem item={item} fetchDetails={this.fetchDetails} navigate={this.props.navigation.navigate}/>
+                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID}/>
                             )}
                         keyExtractor={(item) => item.key}
+                        refreshControl={
+                            <RefreshControl
+                              refreshing={this.state.isRefreshing}
+                              onRefresh={()=>{this.setState({isRefreshing:true}),this.refreshList()}}
+                              title="Pull to refresh"
+                                tintColor="#fff"
+                                titleColor="#fff"
+                                colors={["#2e4d85","red", "green", "blue"]}
+                            />
+                          }
+                        viewabilityConfig={this.viewabilityConfig}
                     />
+                }
+                {
+                    this.state.locationList.length == 0 && 
+                    this.state.MyEvents.length == 0 &&
+                    <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                        <Text style={{fontFamily:'Roboto-Medium',color:'#2e4d85',fontSize:18}}>No events right now!</Text>
+                        <TouchableOpacity 
+                        onPress={this.refreshList}
+                        style={{flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'#2e4d85',paddingHorizontal:15,marginTop:10,paddingVertical:5,borderRadius:50}}
+                        >
+                            <Icon name="repeat" style={{marginRight:10,color:'#FFF'}} size={16}/>
+                            <Text style={{fontFamily:'Roboto-Regular',color:'#FFF',fontSize:16}}>Retry</Text>
+                        </TouchableOpacity>
+                    </View> 
                 }
                 <Dialog
                     visible={this.state.CreateEventVisible}
@@ -355,6 +424,7 @@ class EventsScreen extends Component{
                     }}
                     >
                         <ScrollView 
+                        keyboardShouldPersistTaps={'handled'}
                         contentContainerStyle={{
                             paddingHorizontal:0,
                         }}
@@ -419,9 +489,9 @@ class EventsScreen extends Component{
                                             onBlur={()=>this.setState({isFocusedSL:false})}
                                         />
                                     </View>
-                                    {/* <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
+                                    <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
                                         <Text style={{color:'#0947b9',fontFamily:'Roboto-Medium'}}>Add location</Text>
-                                    </View> */}
+                                    </View>
                                 </View>
                             }
                             {
@@ -437,6 +507,7 @@ class EventsScreen extends Component{
                                     {
                                         this.state.SCItems.length > 0 && 
                                         <FlatList data={this.state.SCItems}
+                                            keyboardShouldPersistTaps={'handled'}
                                             renderItem={({item}) => (
                                                 <TouchableOpacity onPress={()=>this.citySet(item.description)} style={[MainStyles.locationItemBtn]}>
                                                     <View style={{flexWrap: 'wrap',paddingLeft:5,justifyContent:'center', alignItems:'flex-start'}}>
@@ -462,6 +533,7 @@ class EventsScreen extends Component{
                                     {
                                         this.state.SLItems.length > 0 && 
                                         <FlatList data={this.state.SLItems}
+                                            keyboardShouldPersistTaps={'handled'}
                                             renderItem={({item}) => (
                                                 <LocationItem
                                                     {...item}
@@ -476,17 +548,23 @@ class EventsScreen extends Component{
                             <View style={{paddingHorizontal:15,marginBottom:15}}>
                                 <View style={[MainStyles.createEventFWI]}>
                                     <Icon name="thumb-tack" style={MainStyles.cEFWIIcon}/>
-                                    <TextInput style={MainStyles.cEFWITF} placeholder="Subject" onChangeText={(text)=>{this.setState({NES:text})}} placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                                    <TextInput style={MainStyles.cEFWITF} placeholder="Subject" onChangeText={(text)=>{this.setState({NES:text})}} returnKeyType="next" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
                                 </View>
                                 <View style={MainStyles.createEventFWI}>
                                     <Icon name="bell" style={MainStyles.cEFWIIcon}/>
-                                    <TextInput style={MainStyles.cEFWITF} placeholder="Note" onChangeText={(text)=>{this.setState({NEN:text})}} placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                                    <TextInput style={MainStyles.cEFWITF} placeholder="Note" onChangeText={(text)=>{this.setState({NEN:text})}} returnKeyType="next" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
                                 </View>
                                 <View style={MainStyles.createEventFWI}>
                                     <Icon name="users" style={MainStyles.cEFWIIcon}/>
                                     <Picker
+                                        mode="dropdown"
                                         selectedValue={this.state.NEUsersCount}
+                                        returnKeyType="next"
                                         style={MainStyles.cEFWIPF}
+                                        textStyle={{fontSize: 17,fontFamily:'Roboto-Light'}}
+                                        itemTextStyle= {{
+                                            fontSize: 17,fontFamily:'Roboto-Light'
+                                        }}
                                         onValueChange={(itemValue, itemIndex) => this.setState({NEUsersCount: itemValue})}>
                                         <Picker.Item label="Number of Attendees" value="" />
                                         <Picker.Item label="5-10" value="10" />
@@ -519,7 +597,7 @@ class EventsScreen extends Component{
                                             date={this.state.NET}
                                             mode="time"
                                             placeholder="Select Time"
-                                            format="hh:mm"
+                                            format="HH:mm"
                                             confirmBtnText="Confirm"
                                             cancelBtnText="Cancel"
                                             showIcon={false} 

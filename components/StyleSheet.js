@@ -377,7 +377,7 @@ const MainStyles = StyleSheet.create({
         backgroundColor:'#bbcae6',
         justifyContent:'center',
         alignItems:'center',
-        borderRadius:7,
+        borderRadius:15,
     },
     createEventFWI:{
         borderBottomColor:'#8da6d4',
@@ -408,7 +408,7 @@ const MainStyles = StyleSheet.create({
         paddingRight: 0,
         paddingBottom: 0,
         paddingLeft: 0,
-        fontSize:18,
+        fontSize:17,
         fontFamily:'Roboto-Light'
     },
     cEFWIPF:{
@@ -501,7 +501,7 @@ const MainStyles = StyleSheet.create({
     },
     ULITWAction : {
         flexDirection:'row',
-        marginTop:20,
+        marginTop:10,
         paddingVertical:2,
         paddingHorizontal:8,
         alignItems:'center',
