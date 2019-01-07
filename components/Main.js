@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Text, View, Image, TouchableOpacity, AsyncStorage} from 'react-native';
+import { Text, View, Image, TouchableOpacity, AsyncStorage,ToastAndroid} from 'react-native';
 import MainStyles from './StyleSheet';
 import LinkedInSDK from 'react-native-linkedin-sdk';
 import Loader from './Loader';
+import {SERVER_URL} from '../Constants';
 class MainScreen extends Component {
   constructor(props){
     super(props);
@@ -34,18 +35,60 @@ class MainScreen extends Component {
     //
     const profile = await LinkedInSDK.getRequest('https://api.linkedin.com/v1/people/~:(first-name,last-name,email-address,headline,summary,location:(name),positions:(title,is-current))?format=json');
     const profilePicture = await LinkedInSDK.getRequest('https://api.linkedin.com/v1/people/~/picture-urls::(original)?format=json');
-    let userDetails = {
-      firstName:profile.data.firstName,
-      lastName:profile.data.lastName,
-      emailAddress:profile.data.emailAddress,
-      headline:profile.data.headline,
-      location:profile.data.location.name,
-      position:profile.data.positions.values[0].title,
-      profilePicture:profilePicture.data.values[0]
+    var profileData = profile.data;
+    var userDetails = {
+      "firstName":profile.data.firstName,
+      "lastName":profile.data.lastName,
+      "emailAddress":profile.data.emailAddress,
+      "headline":profile.data.headline,
+      "location":profile.data.location.name,
+      "position":profile.data.positions.values[0].title,
+      "profilePicture":profilePicture.data.values[0]
     }
-    await AsyncStorage.setItem('isUserLoggedin','true');
-    this.setState({loading:false})
-    this.props.navigation.navigate('Profile',userDetails);
+    var params = 'firstName='+encodeURIComponent(profileData.firstName)+'&';
+    params += 'lastName='+encodeURIComponent(profileData.lastName)+'&';
+    params += 'emailAddress='+encodeURIComponent(profileData.emailAddress)+'&';
+    params += 'headline='+encodeURIComponent(profileData.headline)+'&';
+    params += 'location='+encodeURIComponent(profileData.location.name)+'&';
+    params += 'position='+encodeURIComponent(profileData.positions.values[0].title)+'&';
+    params += 'profilePicture='+encodeURIComponent(profilePicture.data.values[0]);
+    fetch(SERVER_URL+'?action=check_user_details&'+params)
+    .then(res=>res.json())
+    .then(res=>{
+      console.log(res);
+      if(res.code == 200){
+        this.saveDetails('isUserLoggedin','true');
+        this.saveDetails('userID',res.body.ID);
+        ToastAndroid.showWithGravity(res.message,ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+        setTimeout(()=>{
+          this.setState({loading:false})
+          this.props.navigation.navigate('Profile');
+        },300)
+        
+      }
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+    /*fetch(SERVER_URL+'?action=check_user_details',{
+      method: 'POST',
+      headers: {
+        //'Accept': 'application/json',
+        //'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/json',
+      },
+      body:JSON.stringify(userDetails)
+    })
+    //.then(res=>res.json())
+    .then(response=>{
+      console.log(response);
+      await AsyncStorage.setItem('isUserLoggedin','true');
+      this.props.navigation.navigate('Profile',userDetails);
+      this.setState({loading:false})
+    })
+    .catch(err=>{
+      console.log(err);
+    });*/
     /*navigator.geolocation.getCurrentPosition(positions=>{
       let Latitude = positions.coords.latitude;
       let Longitude = positions.coords.longitude;

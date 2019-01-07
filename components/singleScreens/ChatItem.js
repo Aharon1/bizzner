@@ -13,8 +13,8 @@ class ChatItem extends Component{
         return strTime;
     }
     render(){
-        const {msgItem} = this.props;
-        const isMyMsg = (msgItem.send_by == 1)?true:false;
+        const {msgItem,userID} = this.props;
+        const isMyMsg = (msgItem.send_by == userID)?true:false;
         return (
             <View style={Styles.msgContainer}>
                 {

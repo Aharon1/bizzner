@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import { View,Text,Image,TouchableOpacity,ToastAndroid} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import MainStyles from './StyleSheet';
-import ProgressiveImage from './AsyncModules/ImageComponent';
+import MainStyles from '../StyleSheet';
+import ProgressiveImage from './ImageComponent';
 import { withNavigation } from 'react-navigation';
-import { SERVER_URL } from '../Constants';
+import { SERVER_URL } from '../../Constants';
 let userStatus = '';
  class ListItem extends Component{
     constructor(props){
         super(props);
         this.state={
             userStatus:'',
-            eventId:''
+            eventId:'',
+
         }
     }
     checkEvent = ()=>{
@@ -19,7 +20,7 @@ let userStatus = '';
     }
     setUserEventStatus =  async (statusValue)=>{
         var curItem = await this.props.item;
-        var user_id = 29;
+        var user_id = this.props.userID;
         fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
         .then(response=>{
             userStatus = statusValue;
@@ -54,13 +55,14 @@ let userStatus = '';
         dateStr += date.getFullYear();
         return dateStr;
     }
-    componentWillMount(){
+    componentDidMount(){
         for(const uid in this.props.item.userIds){
-            if(this.props.item.userIds[uid].user_id == "29"){
+            if(this.props.item.userIds[uid].user_id == this.props.userID){
                 userStatus=this.props.item.userIds[uid].status;
-                this.setState({userStatus:this.props.item.userIds[uid].status,eventId:this.props.item.group_id});
+                this.setState({userStatus:this.props.item.userIds[uid].status});
             }
         }
+        this.setState({eventId:this.props.item.group_id});
     }
     render(){
         var d1 = new Date ();
@@ -102,7 +104,7 @@ let userStatus = '';
                             <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.formatDate(eventDate)}, {eventTime}</Text>
                         </View>
                         <View style={MainStyles.EITWAction}>
-                            <Image source={require('../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
+                            <Image source={require('../../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
                             <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({Item.usersCount}) </Text>
                             <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>Info</Text>
                         </View>
@@ -110,6 +112,8 @@ let userStatus = '';
                 </TouchableOpacity>
                 { 
                     this.state.userStatus != 3 && 
+                    Item.usersCount < Item.usersPlace
+                    && 
                     <View style={MainStyles.EIAButtonsWrapper}>
                         <TouchableOpacity style={[
                         MainStyles.EIAButtons,
@@ -151,7 +155,13 @@ let userStatus = '';
                         </TouchableOpacity>
                     </View>
                 }
-                
+                {
+                    Item.usersCount == Item.usersPlace
+                    && 
+                    <View style={[{paddingVertical:5,backgroundColor:'#8da6d4',justifyContent:'center',alignItems:'center'}]}>
+                        <Text style={{color:'#FFF',fontFamily:'Roboto-Medium',fontSize:15}}>No more places available</Text>
+                    </View>
+                }
             </View>
         )
     }

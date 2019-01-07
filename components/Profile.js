@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import {SERVER_URL} from '../Constants';
-import { Text, View, Image, TouchableOpacity, ScrollView,TextInput,KeyboardAvoidingView,Animated,ToastAndroid} from 'react-native';
+import { Text, View, Image, TouchableOpacity, ScrollView,
+  TextInput,KeyboardAvoidingView,Animated,ToastAndroid,
+  AsyncStorage
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
 import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog';
@@ -13,17 +16,46 @@ class ProfileScreen extends Component{
     constructor(props){
       super(props);
       this.state = {
-        loading:false,
+        loading:true,
         visible: false,
-        emailAddress : this.getDetail('emailAddress'),
-        location : this.getDetail('location'),
-        headline : this.getDetail('headline'),
-        position : this.getDetail('position'),
-        profilePicture : this.getDetail('profilePicture'),
+        firstName:'',
+        lastName:'',
+        emailAddress : '',
+        location : '',
+        headline : '',
+        position : '',
+        profilePicture : '',
         animation: new Animated.Value(30),
         gpsOn:true,
         pushOn:true
       };
+    }
+    componentDidMount(){
+      this.get_usersDetails();
+    }
+    get_usersDetails = async ()=>{
+      var UserID = await AsyncStorage.getItem('userID');
+      this.setState({UserID});
+      setTimeout(()=>{
+        fetch(SERVER_URL+'?action=get_user_data&user_id='+UserID)
+        .then(res=>res.json())
+        .then(response=>{
+          if(response.code == 200){
+            var body = response.body;
+            this.setState({
+              loading:false,
+              firstName:body.first_name,
+              lastName:body.last_name,
+              emailAddress : body.user_email,
+              location : body.country,
+              headline : body.headline,
+              position : body.current_position,
+              profilePicture : body.user_pic_thumb
+            });
+          }
+          else{}
+        })
+      },200)
     }
     GoToNextScreen(){
       if(this.state.gpsOn){
@@ -114,7 +146,17 @@ class ProfileScreen extends Component{
             {/*Header Profile Picture Section*/}
             <View style={MainStyles.pHeadPicWrapper}>
               <View style={MainStyles.pHeadPic}>
-                <Image source={{uri:this.state.profilePicture}} style={{width:130,height:130}}/>
+                {
+                  this.state.profilePicture == ''
+                  && 
+                  <Image source={require('../assets/dummy.jpg')} style={{width:130,height:130}}/>
+                }
+                {
+                  this.state.profilePicture != ''
+                  && 
+                  <Image source={{uri:this.state.profilePicture}} style={{width:130,height:130}}/>
+                }
+                
               </View>
               <View style={MainStyles.pHeadPicEditBtnWrapper}>
                 
@@ -140,7 +182,7 @@ class ProfileScreen extends Component{
             {/*Header Profile Name Section*/}
             <View style={MainStyles.profileTextWrapper}>
               <Text style={MainStyles.pTWText}>PROFILE</Text>
-              <Text style={MainStyles.pTWNameText}>{this.getDetail('firstName')} {this.getDetail('lastName')}</Text>
+              <Text style={MainStyles.pTWNameText}>{this.state.firstName} {this.state.lastName}</Text>
             </View>
           </View>
           

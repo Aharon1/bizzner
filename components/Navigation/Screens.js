@@ -42,10 +42,10 @@ function createScreen(label, icon, Component) {
     }
 }
 
-export const SettingsScreen = createEmptyScreen('SETTINGS', 'cog');
-export const ComplainScreen = createEmptyScreen('COMPLAIN', 'pen');
-export const HistoryScreen = createEmptyScreen('EVENTS HISTORY', 'history')
-export const EditProfileScreen = createScreen('EDIT PROFILE', 'user', ProfileScreen);
-export const MessagesScreen = createEmptyScreen('PRIVATE MESSAGES', 'comment');
-export const CurrentEventsScreen = createScreen('CURRENT EVENTS', 'calendar-check', EventsScreen);
-export const LogoutScreen = createScreen('LOGOUT', 'sign-out-alt', Logout);
+export const SettingsScreen = createEmptyScreen('Settings', 'cog');
+export const ComplainScreen = createEmptyScreen('Complain', 'pen');
+export const HistoryScreen = createEmptyScreen('Events History', 'history')
+export const EditProfileScreen = createScreen('Edit Profile', 'user', ProfileScreen);
+export const MessagesScreen = createEmptyScreen('Private Messages', 'comment');
+export const CurrentEventsScreen = createScreen('Current Events', 'calendar-check', EventsScreen);
+export const LogoutScreen = createScreen('Logout', 'sign-out-alt', Logout);

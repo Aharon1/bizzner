@@ -6,7 +6,7 @@
  * @flow
  */
 import React from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import { ScrollView, TouchableOpacity,View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createDrawerNavigator, DrawerItems, createStackNavigator } from 'react-navigation';
 import { SettingsScreen, ComplainScreen, CurrentEventsScreen, HistoryScreen, EditProfileScreen, MessagesScreen, LogoutScreen } from './Screens';
@@ -14,53 +14,58 @@ import MainScreen from '../Main';
 import SplashScreen from '../Splash';
 import EventDetail from '../singleScreens/EventDetail';
 import EventChatScreen from '../singleScreens/EventChatScreen';
-const drawerItemStyle = { borderBottomWidth: 1, borderBottomColor: '#f3f3f3', height: 60, textAlign: 'left' };
-const drawerLabelStyle = { margin: 0, fontSize: 15, fontFamily: 'Roboto-Medium' };
+const drawerItemStyle = { 
+    borderBottomWidth: 1, 
+    borderBottomColor: '#8da6d5', 
+    height: 60, 
+    textAlign: 'left' 
+};
+const drawerLabelStyle = { 
+    margin: 0, 
+    fontSize: 15, 
+    fontFamily: 'Roboto-Medium',
+    paddingHorizontal:20
+};
 const Drawer = createDrawerNavigator({
-    ['CURRENT EVENTS']: {
+    ['Current Events']: {
         screen: CurrentEventsScreen
     },
-    ['MESSAGES']: {
+    ['Messages']: {
         screen: MessagesScreen
     },
-    ['PROFILE']: {
+    ['Profile']: {
         screen: EditProfileScreen,
     },
-    ['HISTORY']: {
+    ['History']: {
         screen: HistoryScreen
     },
-    [`COMPLAIN`]: {
+    [`Complain`]: {
         screen: ComplainScreen,
     },
-    [`SETTINGS`]: {
+    [`Settings`]: {
         screen: SettingsScreen,
     },
-    [`LOGOUT`]: {
+    [`Logout`]: {
         screen:LogoutScreen
     },
-    ['EventDetail']:{
-        screen:EventDetail
-    },
-    ['Event Chat']:{
-        screen:EventChatScreen
-    },
+    
 },
     {
-        initialRouteName: 'CURRENT EVENTS',
-        overlayColor: 'rgba(0, 0, 0, 0.2)',
-        drawerWidth: 280,
+        initialRouteName: 'Current Events',
+        overlayColor: 'rgba(0, 0, 0, 0.5)',
+        drawerWidth: 250,
         contentComponent: props =>
-            <ScrollView>
-                <TouchableOpacity style={{ paddingLeft: 12 }} onPress={props.navigation.closeDrawer}>
-                    <Icon name="bars" style={{ fontSize: 18, color: '#8da6d5' }} />
+            <ScrollView style={{marginTop:10,padding:0}}>
+                <TouchableOpacity style={{ paddingLeft: 20,justifyContent:'flex-end' }} onPress={props.navigation.closeDrawer}>
+                    <Icon name="bars" style={{ fontSize: 20, color: '#8da6d5' }} />
                 </TouchableOpacity>
                 <DrawerItems
                     {...props}
                     itemStyle={drawerItemStyle}
                     inactiveTintColor={'#3d6cba'}
-                    itemsContainerStyle={{ paddingHorizontal: 20 }}
+                    itemsContainerStyle={{ paddingHorizontal: 0 }}
                     labelStyle={drawerLabelStyle}
-                    iconContainerStyle={{ marginHorizontal: 0, marginRight: 16 }}
+                    iconContainerStyle={{ marginHorizontal: 0, marginLeft: 16 }}
                     activeBackgroundColor={'#fff'}
                 />
 
@@ -84,7 +89,12 @@ const Navigation = createStackNavigator({
     Splash: {
         screen: SplashScreen
     },
-
+    ['EventDetail']:{
+        screen:EventDetail
+    },
+    ['Event Chat']:{
+        screen:EventChatScreen
+    },
 }, {
     headerMode: 'none',
     initialRouteName: 'Splash',
