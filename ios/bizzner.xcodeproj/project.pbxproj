@@ -64,6 +64,8 @@
 		ABAAA26B429642BA95D380F4 /* RobotoRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 486A4E965AA64A079EC3E213 /* RobotoRegular.ttf */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		C23BC415DA114DAEB6D4169D /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A079A17DDED7498F8BCDA9D3 /* MaterialIcons.ttf */; };
+		CE4570F121E4DE5500613B63 /* bizzner.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4570F021E4DE5500613B63 /* bizzner.swift */; };
+		CE45712E21E4DF1300613B63 /* RNLinkedInSessionManager.xcworkspace in Resources */ = {isa = PBXBuildFile; fileRef = CE45710221E4DF1300613B63 /* RNLinkedInSessionManager.xcworkspace */; };
 		CEFE97CE21E38A9C00DC27B2 /* libReactNativePermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEFE97C121E3897000DC27B2 /* libReactNativePermissions.a */; };
 		D3BAC898C36E4BE4B528976F /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4B313331DA0B492AB58C22AC /* Ionicons.ttf */; };
 		D6D322DA8C8F3C6B768E0683 /* libPods-bizzner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4A5C9E8E7F52D1E31BED3EC /* libPods-bizzner.a */; };
@@ -450,6 +452,9 @@
 		B8C89237C2684A18914DAA56 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Medium.ttf"; path = "../assets/fonts/Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		BBBD9B2AE4404E4B945F7278 /* libRNVectorIcons-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNVectorIcons-tvOS.a"; sourceTree = "<group>"; };
 		CD6ED339116D4CFB9EDB7F95 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
+		CE4570EF21E4DE5400613B63 /* bizzner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bizzner-Bridging-Header.h"; sourceTree = "<group>"; };
+		CE4570F021E4DE5500613B63 /* bizzner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bizzner.swift; sourceTree = "<group>"; };
+		CE45710221E4DF1300613B63 /* RNLinkedInSessionManager.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; name = RNLinkedInSessionManager.xcworkspace; path = "../../../../Users/user/Desktop/bizzner/bizzner/node_modules/react-native-linkedin-sdk/ios/RNLinkedInSessionManager.xcworkspace"; sourceTree = "<group>"; };
 		CEFE979721E3897000DC27B2 /* ReactNativePermissions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativePermissions.xcodeproj; path = "../node_modules/react-native-permissions/ios/ReactNativePermissions.xcodeproj"; sourceTree = "<group>"; };
 		CEFE97C521E38A7F00DC27B2 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		E8898C8CCBEF4A5E85839D0A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
@@ -608,6 +613,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				CE4570F021E4DE5500613B63 /* bizzner.swift */,
+				CE4570EF21E4DE5400613B63 /* bizzner-Bridging-Header.h */,
 			);
 			name = bizzner;
 			sourceTree = "<group>";
@@ -701,6 +708,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				CE45710221E4DF1300613B63 /* RNLinkedInSessionManager.xcworkspace */,
 				CEFE97C521E38A7F00DC27B2 /* RCTPushNotification.xcodeproj */,
 				CEFE979721E3897000DC27B2 /* ReactNativePermissions.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
@@ -912,6 +920,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 4G5CHP8UZ3;
+						LastSwiftMigration = 1010;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1338,6 +1347,7 @@
 				EAC130CE5B584ACA9B86CF64 /* AntDesign.ttf in Resources */,
 				66BDB12640574DEF91623CAE /* Entypo.ttf in Resources */,
 				8F22A7504497484FA3268FE7 /* EvilIcons.ttf in Resources */,
+				CE45712E21E4DF1300613B63 /* RNLinkedInSessionManager.xcworkspace in Resources */,
 				1D309782256A4FFA87A6B1B4 /* Feather.ttf in Resources */,
 				5E61BECFE0A7401F9E1F3A8B /* FontAwesome.ttf in Resources */,
 				3253FFC303694829ABEDAD97 /* FontAwesome5_Brands.ttf in Resources */,
@@ -1465,6 +1475,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				CE4570F121E4DE5500613B63 /* bizzner.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1517,6 +1528,7 @@
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1545,6 +1557,7 @@
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				HEADER_SEARCH_PATHS = (
@@ -1572,14 +1585,22 @@
 			baseConfigurationReference = 1FCEC131C2C8F406841C5BBE /* Pods-bizzner.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 4G5CHP8UZ3;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)..\node_modules\neact-native-gesture-handlerios/**",
-					"$(SRCROOT)..\node_modules\neact-native-navigationlibios/**",
-					"$(SRCROOT)..\node_modules\neact-native-vector-iconsRNVectorIconsManager",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-gesture-handlerios/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-navigationlibios/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-vector-iconsRNVectorIconsManager",
+					"$(SRCROOT)/../node_modules/react-native-linkedin-sdk/ios/RNLinkedInSessionManager",
 				);
 				INFOPLIST_FILE = bizzner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1590,6 +1611,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.bizzner;
 				PRODUCT_NAME = bizzner;
+				SWIFT_OBJC_BRIDGING_HEADER = "bizzner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1599,13 +1623,21 @@
 			baseConfigurationReference = 1501E34AEDDB9E1161D15104 /* Pods-bizzner.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4G5CHP8UZ3;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)..\node_modules\neact-native-gesture-handlerios/**",
-					"$(SRCROOT)..\node_modules\neact-native-navigationlibios/**",
-					"$(SRCROOT)..\node_modules\neact-native-vector-iconsRNVectorIconsManager",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-gesture-handlerios/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-navigationlibios/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-vector-iconsRNVectorIconsManager",
+					"$(SRCROOT)/../node_modules/react-native-linkedin-sdk/ios/RNLinkedInSessionManager",
 				);
 				INFOPLIST_FILE = bizzner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1616,6 +1648,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.bizzner;
 				PRODUCT_NAME = bizzner;
+				SWIFT_OBJC_BRIDGING_HEADER = "bizzner-Bridging-Header.h";
+				"SWIFT_OPTIMIZATION_LEVEL[arch=*]" = "-O";
+				SWIFT_VERSION = 4.2;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
