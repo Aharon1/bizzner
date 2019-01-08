@@ -1,10 +1,12 @@
 import React,{Component} from 'react';
-import { View,Text,TouchableOpacity,FlatList,ToastAndroid,AsyncStorage,RefreshControl} from 'react-native';
+import { View,Text,TouchableOpacity,FlatList,ToastAndroid,ActivityIndicator,
+    AsyncStorage,RefreshControl,ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
 import {SERVER_URL} from '../../Constants';
 import Loader from '../Loader';
 import ProgressiveImage from '../../components/AsyncModules/ImageComponent';
+import Dialog, { SlideAnimation } from 'react-native-popup-dialog';
 export default class EventDetail extends Component{
     constructor(props){
         super(props);
@@ -14,9 +16,14 @@ export default class EventDetail extends Component{
             userList:{},
             curStatus:'',
             eventData:'',
-            isRefreshing:false
+            isRefreshing:false,
+            profileDetailShow:false,
+            profilePicture:'',
+            isLoadingProfile : true,
+            userData:''
         }
         this.fetchNewDetails = this._fetchNewDetails.bind(this);
+        this.fetchUserData = this._fetchUserData.bind(this);
         //this.getEventUsers();
     }
     async setUserId(){
@@ -50,7 +57,6 @@ export default class EventDetail extends Component{
         fetch(SERVER_URL+'?action=getEventUsers&event_id='+eventId+'&user_id='+user_id)
         .then(response=>response.json())
         .then(res=>{
-            console.log(res);
             this.setState({loading:false,isRefreshing:false,userList:res.users,eventData:res.event_data,curStatus:res.curStatus});
         })
     }
@@ -71,6 +77,17 @@ export default class EventDetail extends Component{
             else if(statusValue ==3){
                 ToastAndroid.showWithGravity('You have ignored this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
             }
+        })
+    }
+    _fetchUserData = (user_id)=>{
+        this.setState({isLoadingProfile:true,profileDetailShow:true});
+        fetch(SERVER_URL+'?action=get_user_data&user_id='+user_id)
+        .then(res=>res.json())
+        .then(response=>{
+            this.setState({userData:response.body,isLoadingProfile:false});
+        })
+        .catch(err=>{
+            console.log(err);
         })
     }
     render(){
@@ -197,9 +214,9 @@ export default class EventDetail extends Component{
                             <View style={[MainStyles.UserListItem,
                                 (item.status == "1")?{backgroundColor:'#d1dbed'}:''
                             ]}>
-                                <View style={MainStyles.userListItemImageWrapper}>
-                                    <ProgressiveImage source={{uri:item.picUrl}} style={MainStyles.userListItemIWImage} resizeMode="cover"/>
-                                </View>
+                                <TouchableOpacity style={MainStyles.userListItemImageWrapper}  onPress={()=>this.fetchUserData(item.user_id)}>
+                                        <ProgressiveImage source={{uri:item.picUrl}} style={MainStyles.userListItemIWImage} resizeMode="cover"/>
+                                </TouchableOpacity>
                                 <View style={MainStyles.userListItemTextWrapper}>
                                     <Text style={MainStyles.ULITWName}>{item.name}</Text>
                                     <Text style={MainStyles.ULITWTitle}>{item.title}</Text>
@@ -246,6 +263,114 @@ export default class EventDetail extends Component{
                         keyExtractor={(item) => item.key}
                     />
                 }
+                <Dialog
+                    visible={this.state.profileDetailShow}
+                    dialogStyle={[MainStyles.confirmPopup,{width:'95%',padding:0,maxHeight:'95%'}]}
+                    dialogAnimation={new SlideAnimation()}
+                    containerStyle={{zIndex: 10,flex:1,justifyContent: 'space-between',}}
+                    rounded={false}
+                    >
+                    
+                    <View style={[MainStyles.confirmPopupHeader,{alignItems:'center',justifyContent:'flex-start',flexDirection:'row',backgroundColor:'#416bb9'}]}>
+                        <TouchableOpacity onPress={()=>this.setState({profileDetailShow:false,isLoadingProfile:true,userData:''})}>
+                            <Icon name="times" style={{fontSize:20,color:'#FFF'}}/>
+                        </TouchableOpacity>
+                        <Text style={{color:'#FFF',fontFamily: 'Roboto-Medium',fontSize:17,marginLeft:20}}>PROFILE DETAILS</Text>
+                    </View>
+                    <View style={{padding:0,borderWidth: 0,backgroundColor:'#FFF',overflow:'visible'}}>
+                        <ScrollView 
+                        contentContainerStyle={{
+                            paddingHorizontal:0,
+                        }}
+                        >
+                            {
+                                this.state.isLoadingProfile 
+                                && 
+                                <ActivityIndicator size="large"  color="#0947b9" animating={true} />
+                            }
+                            {
+                                !this.state.isLoadingProfile 
+                                &&
+                                this.state.userData != ''
+                                && 
+                                <View>
+                                    <View style={{
+                                    backgroundColor:'#2e4d85',
+                                    height:100,
+                                    paddingTop: 20,
+                                    overflow: 'visible',
+                                    alignItems:'center',
+                                    }}>
+                                        <View style={{
+                                            width:120,
+                                            height:120,
+                                            borderWidth: 5,
+                                            borderColor: '#FFF',
+                                            borderRadius: 100,
+                                            overflow: 'hidden',
+                                            position: 'relative',
+                                        }}>
+                                            <ProgressiveImage source={{uri:this.state.userData.user_pic_thumb}} style={{width:120,height:120}}/>
+                                        </View>
+                                    </View>
+                                    <View style={{
+                                        marginTop:50,
+                                        alignItems:'center',
+                                        justifyContent:'center',
+                                    }}>
+                                        <Text style={{
+                                            fontFamily:'Roboto-Light',
+                                            fontSize:20,
+                                            color:'#0947b9'
+                                        }}>{this.state.userData.first_name} {this.state.userData.last_name}</Text>
+                                    </View>
+                                    <View style={{
+                                        paddingHorizontal:40,
+                                        flex:1
+                                    }}>
+                                        <View style={MainStyles.profileTextItem}>
+                                            <Icon name="map-marker" size={16} style={MainStyles.profileTextItemIcon}/>
+                                            <Text style={MainStyles.PTIText}>{this.state.userData.country} </Text>
+                                        </View>
+                                        <View style={MainStyles.profileTextItem}>
+                                            <Icon name="adn" size={16} style={MainStyles.profileTextItemIcon}/>
+                                            <Text style={MainStyles.PTIText}>{this.state.userData.headline} </Text>
+                                        </View>
+                                        <View style={MainStyles.profileTextItem}>
+                                            <Icon name="briefcase" size={16} style={MainStyles.profileTextItemIcon}/>
+                                            <Text style={MainStyles.PTIText}>{this.state.userData.current_position} </Text>
+                                        </View>
+                                        <View style={MainStyles.profileTextItem}>
+                                            <Icon name="camera-retro" size={16} style={MainStyles.profileTextItemIcon}/>
+                                            <View style={{alignItems:'flex-start',flexWrap:'wrap'}}>
+                                                <Text style={[MainStyles.PTIText,{fontFamily:'Roboto-Light'}]}>{this.state.userData.interests}</Text>
+                                            </View>
+                                        </View>
+                                    </View>
+                                    <View style={{
+                                        marginVertical:15,
+                                        justifyContent:'center',
+                                        alignItems:'center',
+                                        marginBottom:70
+                                    }}>
+                                        <TouchableOpacity style={{
+                                            paddingHorizontal:40,
+                                            paddingVertical:20,
+                                            borderRadius:35,
+                                            backgroundColor:'#0947b9'
+                                        }}>
+                                            <Text style={{
+                                                color:'#FFF',
+                                                fontFamily:'Roboto-Regular',
+                                                fontSize:18
+                                            }}>CHAT</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            }
+                        </ScrollView>
+                    </View>
+                </Dialog>
             </View>
         );
     }

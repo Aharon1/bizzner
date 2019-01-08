@@ -552,6 +552,20 @@ const MainStyles = StyleSheet.create({
     },
     MsgBtnEnable:{
         opacity:1
+    },
+    profileTextItem:{
+        flexDirection:'row',
+        marginTop:10,
+        borderBottomColor:'#8da6d4',
+        borderBottomWidth:1,
+        marginBottom:15,
+        paddingBottom:8,
+    },
+    profileTextItemIcon:{color:'#416bb9',marginRight:15,marginTop:5},
+    PTIText:{
+        fontFamily:'Roboto-Regular',
+        fontSize:16,
+        color:'#03163a'
     }
 });
 
