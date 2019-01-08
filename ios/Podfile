@@ -38,7 +38,7 @@ target 'bizzner' do
   pod 'GoogleMaps'  # Uncomment this line if you want to support GoogleMaps on iOS
   pod 'Google-Maps-iOS-Utils' # Uncomment this line if you want to support GoogleMaps on iOS
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
-  pod 'LinkedinSwift', '~> 1.6.6'
+  pod 'LinkedinSwift', '~> 1.7.7'
 
 end
 
