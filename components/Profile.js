@@ -60,10 +60,12 @@ class ProfileScreen extends Component{
     GoToNextScreen(){
       if(this.state.gpsOn){
         Permissions.check('location', { type: 'always' }).then(response => {
+          console.log('location',response);
           if(response == "undetermined"){
             Permissions.request('location', { type: 'always' }).then(response => {
+              console.log('location',response);
               if(response != 'authorized'){
-                ToastAndroid.showWithGravity('We can\'t fetch events near you!',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+                //ToastAndroid.showWithGravity('We can\'t fetch events near you!',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
               }
               else{
               }
@@ -76,6 +78,16 @@ class ProfileScreen extends Component{
                   this.props.navigation.navigate('Home');
               })
             })
+          }
+          else{
+            this.setState({visible:false,loading:true});
+              var fetchData = SERVER_URL+'?action=save_profile';
+              fetch(fetchData,{
+                  method:'POST',
+              }).then(postResponse=>{
+                  this.setState({loading:false})
+                  this.props.navigation.navigate('Home');
+              })
           }
         })
       }
@@ -228,7 +240,7 @@ class ProfileScreen extends Component{
                 rounded={false}
             >
               <View style={[MainStyles.confirmPopupHeader,{alignItems:'center',justifyContent:'space-between',flexDirection:'row'}]}>
-                  <Text style={{color:'#8da6d5',fontFamily: 'RobotMedium',fontSize:16}}>Allow</Text>
+                  <Text style={{color:'#8da6d5',fontFamily: 'Roboto-Medium',fontSize:16}}>Allow</Text>
                   <TouchableOpacity onPress={()=>{this.setState({visible:false})}}>
                       <Image source={require('../assets/close-icon.png')} style={{width:25,height:25}}/>
                   </TouchableOpacity>
@@ -237,11 +249,11 @@ class ProfileScreen extends Component{
                   <View style={MainStyles.confirmPopupContent}>
                       <View style={[MainStyles.cPCOption1,{paddingTop:20}]}>
                           <View>
-                          <Text style={{fontSize:17,fontFamily:'RobotoLight',color:'#03163a',maxWidth:100}}>Push notifications</Text>
+                          <Text style={{fontSize:17,fontFamily:'Roboto-Light',color:'#03163a',maxWidth:100}}>Push notifications</Text>
                           </View>
                           <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                               <View>
-                              <Text style={{fontSize:17,fontFamily:'RobotoLight',color:'#000',marginRight:10}}>NO</Text>
+                              <Text style={{fontSize:17,fontFamily:'Roboto-Light',color:'#000',marginRight:10}}>NO</Text>
                               </View>
                               <ToggleSwitch
                                   isOn={this.state.pushOn}
@@ -250,16 +262,16 @@ class ProfileScreen extends Component{
                                   onToggle={ (isOn) => {this.setState({pushOn:isOn})} }
                               />
                               <View>
-                              <Text style={{fontSize:17,fontFamily:'RobotoLight',color:'#000',marginLeft:10}}>YES</Text>
+                              <Text style={{fontSize:17,fontFamily:'Roboto-Light',color:'#000',marginLeft:10}}>YES</Text>
                               </View>
                           </View>
                       </View>
                       <View style={[MainStyles.cPCOption2]}>
                           <View>
-                          <Text style={{fontSize:17,fontFamily:'RobotoLight',color:'#03163a',maxWidth:100}}>GPS</Text>
+                          <Text style={{fontSize:17,fontFamily:'Roboto-Light',color:'#03163a',maxWidth:100}}>GPS</Text>
                           </View>
                           <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                              <Text style={{fontSize:17,fontFamily:'RobotoLight',color:'#000',marginRight:10}}>NO</Text>
+                              <Text style={{fontSize:17,fontFamily:'Roboto-Light',color:'#000',marginRight:10}}>NO</Text>
                               <ToggleSwitch
                                   isOn={this.state.gpsOn}
                                   onColor='#39b54a'
@@ -267,13 +279,13 @@ class ProfileScreen extends Component{
                                   size='medium'
                                   onToggle={ (isOn) => {this.setState({gpsOn:isOn})} }
                               />
-                              <Text style={{fontSize:16,fontFamily:'RobotoLight',color:'#000',marginLeft:10}}>YES</Text>
+                              <Text style={{fontSize:16,fontFamily:'Roboto-Light',color:'#000',marginLeft:10}}>YES</Text>
                           </View>
                       </View>
                       <View style={{alignItems:'center',flexDirection:'row',alignContent:'center',justifyContent:"center"}}>
                           <View style={{width:230}}>
-                              <Text style={{fontFamily:'RobotoRegular',fontSize:16,color:'#03163a',alignItems:'center',justifyContent:'center'}}>
-                              Note: <Text style={{fontFamily:'RobotoLight',fontSize:16}}>Its important your location, Allow GPS location? Yes / No</Text>
+                              <Text style={{fontFamily:'Roboto-Regular',fontSize:16,color:'#03163a',alignItems:'center',justifyContent:'center'}}>
+                              Note: <Text style={{fontFamily:'Roboto-Light',fontSize:16}}>Its important your location, Allow GPS location? Yes / No</Text>
                               </Text>
                           </View>
                       </View>

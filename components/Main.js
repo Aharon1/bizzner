@@ -30,10 +30,12 @@ class MainScreen extends Component {
         'r_basicprofile',
         'r_emailaddress',
       ],
-      redirectUri: 'https://github.com/joonhocho/react-native-linkedin-sdk/oauth2callback',
+      redirectUri: 'http://bizzner.com/app/linkedin-auth.php',
     });
     //
+    console.log('token',token);
     const profile = await LinkedInSDK.getRequest('https://api.linkedin.com/v1/people/~:(first-name,last-name,email-address,headline,summary,location:(name),positions:(title,is-current))?format=json');
+
     const profilePicture = await LinkedInSDK.getRequest('https://api.linkedin.com/v1/people/~/picture-urls::(original)?format=json');
     var profileData = profile.data;
     var userDetails = {
@@ -52,18 +54,19 @@ class MainScreen extends Component {
     params += 'location='+encodeURIComponent(profileData.location.name)+'&';
     params += 'position='+encodeURIComponent(profileData.positions.values[0].title)+'&';
     params += 'profilePicture='+encodeURIComponent(profilePicture.data.values[0]);
+    
     fetch(SERVER_URL+'?action=check_user_details&'+params)
     .then(res=>res.json())
     .then(res=>{
-      console.log(res);
+      console.log('response',res.body);
       if(res.code == 200){
         this.saveDetails('isUserLoggedin','true');
         this.saveDetails('userID',res.body.ID);
-        ToastAndroid.showWithGravity(res.message,ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+        //ToastAndroid.showWithGravity(res.message,ToastAndroid.SHORT,ToastAndroid.BOTTOM);
         setTimeout(()=>{
           this.setState({loading:false})
           this.props.navigation.navigate('Profile');
-        },300)
+        },200)
         
       }
     })

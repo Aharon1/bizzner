@@ -65,8 +65,8 @@
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		C23BC415DA114DAEB6D4169D /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A079A17DDED7498F8BCDA9D3 /* MaterialIcons.ttf */; };
 		CE4570F121E4DE5500613B63 /* bizzner.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4570F021E4DE5500613B63 /* bizzner.swift */; };
-		CE45712E21E4DF1300613B63 /* RNLinkedInSessionManager.xcworkspace in Resources */ = {isa = PBXBuildFile; fileRef = CE45710221E4DF1300613B63 /* RNLinkedInSessionManager.xcworkspace */; };
-		CEFE97CE21E38A9C00DC27B2 /* libReactNativePermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEFE97C121E3897000DC27B2 /* libReactNativePermissions.a */; };
+		CEED595F21E60FCD00F317A8 /* RNLinkedInSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEED595D21E60FCC00F317A8 /* RNLinkedInSessionManager.swift */; };
+		CEED596021E60FCD00F317A8 /* RNLinkedInSessionManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = CEED595E21E60FCC00F317A8 /* RNLinkedInSessionManagerBridge.m */; };
 		D3BAC898C36E4BE4B528976F /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4B313331DA0B492AB58C22AC /* Ionicons.ttf */; };
 		D6D322DA8C8F3C6B768E0683 /* libPods-bizzner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4A5C9E8E7F52D1E31BED3EC /* libPods-bizzner.a */; };
 		EAC130CE5B584ACA9B86CF64 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 75ADB2E669394A59A0172154 /* AntDesign.ttf */; };
@@ -394,7 +394,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
 		00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGeolocation.xcodeproj; path = "../node_modules/react-native/Libraries/Geolocation/RCTGeolocation.xcodeproj"; sourceTree = "<group>"; };
 		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
@@ -454,7 +453,9 @@
 		CD6ED339116D4CFB9EDB7F95 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		CE4570EF21E4DE5400613B63 /* bizzner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bizzner-Bridging-Header.h"; sourceTree = "<group>"; };
 		CE4570F021E4DE5500613B63 /* bizzner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bizzner.swift; sourceTree = "<group>"; };
-		CE45710221E4DF1300613B63 /* RNLinkedInSessionManager.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; name = RNLinkedInSessionManager.xcworkspace; path = "../../../../Users/user/Desktop/bizzner/bizzner/node_modules/react-native-linkedin-sdk/ios/RNLinkedInSessionManager.xcworkspace"; sourceTree = "<group>"; };
+		CE77501A21E4EC1B00C9F269 /* libReactNativePermissions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReactNativePermissions.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEED595D21E60FCC00F317A8 /* RNLinkedInSessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RNLinkedInSessionManager.swift; sourceTree = "<group>"; };
+		CEED595E21E60FCC00F317A8 /* RNLinkedInSessionManagerBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNLinkedInSessionManagerBridge.m; sourceTree = "<group>"; };
 		CEFE979721E3897000DC27B2 /* ReactNativePermissions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativePermissions.xcodeproj; path = "../node_modules/react-native-permissions/ios/ReactNativePermissions.xcodeproj"; sourceTree = "<group>"; };
 		CEFE97C521E38A7F00DC27B2 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		E8898C8CCBEF4A5E85839D0A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
@@ -477,7 +478,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CEFE97CE21E38A9C00DC27B2 /* libReactNativePermissions.a in Frameworks */,
 				FA42FF8921CD97CF00B0F9E8 /* libRCTPushNotification.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */,
@@ -606,7 +606,6 @@
 		13B07FAE1A68108700A75B9A /* bizzner */ = {
 			isa = PBXGroup;
 			children = (
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -679,6 +678,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CE77501A21E4EC1B00C9F269 /* libReactNativePermissions.a */,
 				FA42FF8821CD97CF00B0F9E8 /* libRCTPushNotification.a */,
 				FA0A59BF21CD8CD900B930D7 /* libRCTPushNotification.a */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
@@ -708,7 +708,6 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				CE45710221E4DF1300613B63 /* RNLinkedInSessionManager.xcworkspace */,
 				CEFE97C521E38A7F00DC27B2 /* RCTPushNotification.xcodeproj */,
 				CEFE979721E3897000DC27B2 /* ReactNativePermissions.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
@@ -741,6 +740,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				CEED595C21E60FCC00F317A8 /* RNLinkedInSessionManager */,
 				13B07FAE1A68108700A75B9A /* bizzner */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* bizznerTests */,
@@ -782,6 +782,16 @@
 				2D16E6721FA4F8DC00B85C8A /* libRCTBlob-tvOS.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		CEED595C21E60FCC00F317A8 /* RNLinkedInSessionManager */ = {
+			isa = PBXGroup;
+			children = (
+				CEED595D21E60FCC00F317A8 /* RNLinkedInSessionManager.swift */,
+				CEED595E21E60FCC00F317A8 /* RNLinkedInSessionManagerBridge.m */,
+			);
+			name = RNLinkedInSessionManager;
+			path = "../node_modules/react-native-linkedin-sdk/ios/RNLinkedInSessionManager";
 			sourceTree = "<group>";
 		};
 		CEFE979821E3897000DC27B2 /* Products */ = {
@@ -1347,7 +1357,6 @@
 				EAC130CE5B584ACA9B86CF64 /* AntDesign.ttf in Resources */,
 				66BDB12640574DEF91623CAE /* Entypo.ttf in Resources */,
 				8F22A7504497484FA3268FE7 /* EvilIcons.ttf in Resources */,
-				CE45712E21E4DF1300613B63 /* RNLinkedInSessionManager.xcworkspace in Resources */,
 				1D309782256A4FFA87A6B1B4 /* Feather.ttf in Resources */,
 				5E61BECFE0A7401F9E1F3A8B /* FontAwesome.ttf in Resources */,
 				3253FFC303694829ABEDAD97 /* FontAwesome5_Brands.ttf in Resources */,
@@ -1476,6 +1485,8 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				CE4570F121E4DE5500613B63 /* bizzner.swift in Sources */,
+				CEED596021E60FCD00F317A8 /* RNLinkedInSessionManagerBridge.m in Sources */,
+				CEED595F21E60FCD00F317A8 /* RNLinkedInSessionManager.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1814,6 +1825,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1867,6 +1879,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1894,7 +1907,7 @@
 				00E356F71AD99517003FC87E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "bizzner" */ = {
 			isa = XCConfigurationList;
@@ -1903,7 +1916,7 @@
 				13B07F951A680F5B00A75B9A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "bizzner-tvOS" */ = {
 			isa = XCConfigurationList;
@@ -1912,7 +1925,7 @@
 				2D02E4981E0B4A5E006451C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "bizzner-tvOSTests" */ = {
 			isa = XCConfigurationList;
@@ -1921,7 +1934,7 @@
 				2D02E49A1E0B4A5E006451C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "bizzner" */ = {
 			isa = XCConfigurationList;
@@ -1930,7 +1943,7 @@
 				83CBBA211A601CBA00E9B192 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
