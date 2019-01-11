@@ -14,6 +14,10 @@ import MainScreen from '../Main';
 import SplashScreen from '../Splash';
 import EventDetail from '../singleScreens/EventDetail';
 import EventChatScreen from '../singleScreens/EventChatScreen';
+import SignUp from '../SignScreen/SignUp';
+import ConfirmScreen from '../SignScreen/ConfirmScreen';
+import SignIn from '../SignScreen/SignIn';
+import Interests from '../Interests';
 const drawerItemStyle = { 
     borderBottomWidth: 1, 
     borderBottomColor: '#8da6d5', 
@@ -88,6 +92,18 @@ const Navigation = createStackNavigator({
     },
     Splash: {
         screen: SplashScreen
+    },
+    SignUp:{
+        screen:SignUp
+    },
+    ConfirmScreen:{
+        screen:ConfirmScreen
+    },
+    SignIn:{
+        screen:SignIn
+    },
+    InterestsScreen:{
+        screen:Interests
     },
     ['EventDetail']:{
         screen:EventDetail

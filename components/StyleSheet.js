@@ -61,8 +61,8 @@ const MainStyles = StyleSheet.create({
         width:win.width
     },
     orImg:{
-        marginTop:40,
-        marginBottom:40
+        marginTop:20,
+        marginBottom:20
     },
     btnWrapper:{
         width:'100%',
@@ -103,6 +103,7 @@ const MainStyles = StyleSheet.create({
         height:130,
         borderWidth: 5,
         borderColor: '#FFF',
+        backgroundColor:'#d1dbed',
         borderRadius: 70,
         marginBottom:20,
         overflow: 'hidden',
