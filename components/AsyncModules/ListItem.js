@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View,Text,Image,TouchableOpacity,ToastAndroid} from 'react-native';
+import { View,Text,Image,TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
 import ProgressiveImage from './ImageComponent';
 import { withNavigation } from 'react-navigation';
+import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
 let userStatus = '';
  class ListItem extends Component{
@@ -26,13 +27,13 @@ let userStatus = '';
             userStatus = statusValue;
             this.setState({userStatus:statusValue});
             if(statusValue == 1){
-                ToastAndroid.showWithGravity('You are interested to this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+                Toast.show('You are interested to this event',Toast.SHORT);
             }
             else if(statusValue == 2){
-                ToastAndroid.showWithGravity('You are joined to this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+                Toast.show('You are joined to this event',Toast.SHORT);
             }
             else if(statusValue ==3){
-                ToastAndroid.showWithGravity('You have ignored this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+                Toast.show('You have ignored this event',Toast.SHORT);
             }
         })
     }

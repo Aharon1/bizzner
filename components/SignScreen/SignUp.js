@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Text, View, Image, TouchableOpacity, ScrollView, 
-    TextInput,KeyboardAvoidingView,Animated,ToastAndroid,Platform,
-    AsyncStorage,Linking } from 'react-native';
+    TextInput,KeyboardAvoidingView,Animated,Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Loader from '../Loader';
 import MainStyles from '../StyleSheet';

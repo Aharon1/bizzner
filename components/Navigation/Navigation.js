@@ -17,6 +17,7 @@ import EventChatScreen from '../singleScreens/EventChatScreen';
 import SignUp from '../SignScreen/SignUp';
 import ConfirmScreen from '../SignScreen/ConfirmScreen';
 import SignIn from '../SignScreen/SignIn';
+import ForgotPassword from '../SignScreen/ForgotPassword';
 import Interests from '../Interests';
 const drawerItemStyle = { 
     borderBottomWidth: 1, 
@@ -101,6 +102,9 @@ const Navigation = createStackNavigator({
     },
     SignIn:{
         screen:SignIn
+    },
+    ForgotPassword:{
+        screen:ForgotPassword
     },
     InterestsScreen:{
         screen:Interests

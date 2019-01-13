@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, TextInput,ImageBackground, 
     Platform,FlatList,ActivityIndicator,AsyncStorage,
-    RefreshControl,
-    ToastAndroid,Picker,ScrollView,PermissionsAndroid
+    RefreshControl,Picker,ScrollView,
 } from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -17,6 +16,7 @@ import LocationItem from './AsyncModules/LocationItem';
 import _ from 'lodash';
 import TabContainer from './TabContainer';
 import Permissions from 'react-native-permissions'
+import Toast from 'react-native-simple-toast';
 class EventsScreen extends Component{
     constructor(props){
         super(props);
@@ -88,15 +88,15 @@ class EventsScreen extends Component{
     }
     createNewEvent = () => {
         if(this.state.NES == ''){
-            ToastAndroid.showWithGravity('Event Subject cannot be blank',ToastAndroid.BOTTOM);
+            Toast.show('Event Subject cannot be blank',Toast.SHORT);
             return false;
         }
         if(this.state.NEN == ''){
-            ToastAndroid.showWithGravity('Event Not cannot be blank',ToastAndroid.BOTTOM);
+            Toast.show('Event Not cannot be blank',Toast.SHORT);
             return false;
         }
         if(this.state.NEUsersCount == ''){
-            ToastAndroid.showWithGravity('Please choose number of attendee',ToastAndroid.BOTTOM);
+            Toast.show('Please choose number of attendee',Toast.SHORT);
             return false;
         }
         this.setState({loading:true});
@@ -158,10 +158,10 @@ class EventsScreen extends Component{
                     NES:'',
                     NEN:'',
                 });
-                ToastAndroid.showWithGravity('Event created successfully',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+                Toast.show('Event created successfully',Toast.SHORT);
             }
             else{
-                ToastAndroid.showWithGravity('Event not created',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+                Toast.show('Event not created',Toast.SHORT);
                 this.setState({
                     loading:false,
                     CreateEventVisible:false,

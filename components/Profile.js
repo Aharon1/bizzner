@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {SERVER_URL} from '../Constants';
 import { Text, View, Image, TouchableOpacity, ScrollView,
-  TextInput,KeyboardAvoidingView,Animated,ToastAndroid,
+  TextInput,KeyboardAvoidingView,Animated,
   AsyncStorage
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -65,7 +65,6 @@ class ProfileScreen extends Component{
             Permissions.request('location', { type: 'always' }).then(response => {
               console.log('location',response);
               if(response != 'authorized'){
-                //ToastAndroid.showWithGravity('We can\'t fetch events near you!',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
               }
               else{
               }

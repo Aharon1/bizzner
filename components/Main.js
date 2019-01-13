@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Text, View, Image, TouchableOpacity, AsyncStorage,Platform,ToastAndroid} from 'react-native';
+import { Text, View, Image, TouchableOpacity, AsyncStorage,Platform} from 'react-native';
 import MainStyles from './StyleSheet';
 import LinkedInSDK from 'react-native-linkedin-sdk';
 import Loader from './Loader';
+import Toast from 'react-native-simple-toast';
 import {SERVER_URL} from '../Constants';
 class MainScreen extends Component {
   constructor(props){
@@ -19,9 +20,9 @@ class MainScreen extends Component {
     await AsyncStorage.setItem(key,value);
   }
   async Login() {
-    /*this.setState({
+    this.setState({
       loading: true
-    });*/
+    });
     const token = await LinkedInSDK.signIn({
       clientID: '81fcixszrwwavz',
       clientSecret: 'm3sWUS3DpPoHZdZk',
@@ -31,8 +32,17 @@ class MainScreen extends Component {
         'r_emailaddress',
       ],
       redirectUri: 'https://github.com/joonhocho/react-native-linkedin-sdk/oauth2callback',//'http://bizzner.com/app/linkedin-auth.php',
+    }).catch(error=>{
+      console.log(error);
     });
     //
+    if(!token.accessToken){
+      Toast.show('Linkedin is temporarily disabled',Toast.SHORT);
+      this.setState({
+        loading: false
+      });
+      return false;
+    }
     console.log('token',token);
     const profile = await LinkedInSDK.getRequest('https://api.linkedin.com/v1/people/~:(first-name,last-name,email-address,headline,summary,location:(name),positions:(title,is-current))?format=json');
     const profilePicture = await LinkedInSDK.getRequest('https://api.linkedin.com/v1/people/~/picture-urls::(original)?format=json');
@@ -59,9 +69,7 @@ class MainScreen extends Component {
       if(res.code == 200){
         this.saveDetails('isUserLoggedin','true');
         this.saveDetails('userID',res.body.ID);
-        if(Platform.OS === 'android'){
-          ToastAndroid.showWithGravity(res.message,ToastAndroid.SHORT,ToastAndroid.BOTTOM);
-        }
+        Toast.show(res.message,Toast.SHORT);
         setTimeout(()=>{
           this.setState({loading:false})
           this.props.navigation.navigate('Profile');
@@ -72,53 +80,6 @@ class MainScreen extends Component {
     .catch(err=>{
       console.log(err);
     })
-  }
-  async checkUser(){
-    let isUserLoggedIn = await AsyncStorage.getItem('isUserLoggedin');
-    if(isUserLoggedIn == 'true'){
-      this.setState({
-        loading: true
-      });
-      navigator.geolocation.getCurrentPosition(positions=>{
-        let Latitude = positions.coords.latitude;
-        let Longitude = positions.coords.longitude;
-        var fetchData = 'http://dissdemo.biz/bizzler?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
-        fetch(fetchData,{
-            method:'POST',
-            body:JSON.stringify({
-                action:'search_location_db',
-                latitude:Latitude,//22.7150822,
-                longitude:Longitude//75.8707448
-            })
-        })
-        .then(response=>{
-            var bodyText = JSON.parse(response._bodyText);
-            const placesArray = [];
-            for (const bodyKey in bodyText){
-                placesArray.push({
-                    name:bodyText[bodyKey].group_name,
-                    address:bodyText[bodyKey].group_address,
-                    isStarted:bodyText[bodyKey].group_status,
-                    photoUrl:bodyText[bodyKey].photoUrl,
-                    key:bodyKey
-                });
-            }            
-            this.props.navigation.navigate('Events',{locationList:placesArray});
-            this.setState({loading:false});
-        }).catch(err => {
-          this.setState({loading:false});
-          console.log('Error What is this',err);
-        })
-        
-      },error=>{
-        this.setState({loading:false});
-        console.log('Error',error);
-      })
-      
-    }
-    this.setState({loading:false});
-    console.log(userDetails);
-    this.props.navigation.navigate('Profile',userDetails);
   }
   render() {
     return ( 
