@@ -149,6 +149,9 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation "com.google.android.gms:play-services-gcm:+"
+    implementation 'me.leolin:ShortcutBadger:1.1.8@aar'
+    implementation "com.google.firebase:firebase-messaging:+"
     implementation (project(':react-native-camera')) {
         exclude group: "com.google.android.gms"
         exclude group: "com.android.support"

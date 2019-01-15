@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {FlatList,ActivityIndicator,View,ToastAndroid} from 'react-native';
+import {FlatList,ActivityIndicator,View} from 'react-native';
 import ListItem from './ListItem';
 class EventsList extends Component{
     constructor(props){
