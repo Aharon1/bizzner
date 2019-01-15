@@ -16,8 +16,7 @@ export default class PlacesAutocomplete extends Component{
     
     render (){
         return (
-            
-            
+            <></>    
         )
     }
 }

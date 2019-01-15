@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import { View,Text,TouchableOpacity,FlatList,ToastAndroid,ActivityIndicator,
+import { View,Text,TouchableOpacity,FlatList,ActivityIndicator,
     AsyncStorage,RefreshControl,ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
@@ -69,13 +69,13 @@ export default class EventDetail extends Component{
             curStatus = statusValue;
             this.setState({curStatus:statusValue});
             if(statusValue == 1){
-                ToastAndroid.showWithGravity('You are interested to this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+                Toast.show('You are interested to this event',Toast.SHORT);
             }
             else if(statusValue == 2){
-                ToastAndroid.showWithGravity('You are joined to this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+                Toast.show('You are joined to this event',Toast.SHORT);
             }
             else if(statusValue ==3){
-                ToastAndroid.showWithGravity('You have ignored this event',ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+                Toast.show('You have ignored this event',Toast.SHORT);
             }
         })
     }

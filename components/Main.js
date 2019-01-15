@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Text, View, Image, TouchableOpacity, AsyncStorage,ToastAndroid} from 'react-native';
+import { Text, View, Image, TouchableOpacity, AsyncStorage,Platform} from 'react-native';
 import MainStyles from './StyleSheet';
 import LinkedInSDK from 'react-native-linkedin-sdk';
 import Loader from './Loader';
+import Toast from 'react-native-simple-toast';
 import {SERVER_URL} from '../Constants';
 class MainScreen extends Component {
   constructor(props){
@@ -30,12 +31,20 @@ class MainScreen extends Component {
         'r_basicprofile',
         'r_emailaddress',
       ],
-      redirectUri: 'http://bizzner.com/app/linkedin-auth.php',
+      redirectUri: 'https://github.com/joonhocho/react-native-linkedin-sdk/oauth2callback',//'http://bizzner.com/app/linkedin-auth.php',
+    }).catch(error=>{
+      console.log(error);
     });
     //
+    if(!token.accessToken){
+      Toast.show('Linkedin is temporarily disabled',Toast.SHORT);
+      this.setState({
+        loading: false
+      });
+      return false;
+    }
     console.log('token',token);
     const profile = await LinkedInSDK.getRequest('https://api.linkedin.com/v1/people/~:(first-name,last-name,email-address,headline,summary,location:(name),positions:(title,is-current))?format=json');
-
     const profilePicture = await LinkedInSDK.getRequest('https://api.linkedin.com/v1/people/~/picture-urls::(original)?format=json');
     var profileData = profile.data;
     var userDetails = {
@@ -54,15 +63,13 @@ class MainScreen extends Component {
     params += 'location='+encodeURIComponent(profileData.location.name)+'&';
     params += 'position='+encodeURIComponent(profileData.positions.values[0].title)+'&';
     params += 'profilePicture='+encodeURIComponent(profilePicture.data.values[0]);
-    
     fetch(SERVER_URL+'?action=check_user_details&'+params)
     .then(res=>res.json())
     .then(res=>{
-      console.log('response',res.body);
       if(res.code == 200){
         this.saveDetails('isUserLoggedin','true');
         this.saveDetails('userID',res.body.ID);
-        //ToastAndroid.showWithGravity(res.message,ToastAndroid.SHORT,ToastAndroid.BOTTOM);
+        Toast.show(res.message,Toast.SHORT);
         setTimeout(()=>{
           this.setState({loading:false})
           this.props.navigation.navigate('Profile');
@@ -73,116 +80,8 @@ class MainScreen extends Component {
     .catch(err=>{
       console.log(err);
     })
-    /*fetch(SERVER_URL+'?action=check_user_details',{
-      method: 'POST',
-      headers: {
-        //'Accept': 'application/json',
-        //'Content-Type': 'multipart/form-data',
-        'Content-Type': 'application/json',
-      },
-      body:JSON.stringify(userDetails)
-    })
-    //.then(res=>res.json())
-    .then(response=>{
-      console.log(response);
-      await AsyncStorage.setItem('isUserLoggedin','true');
-      this.props.navigation.navigate('Profile',userDetails);
-      this.setState({loading:false})
-    })
-    .catch(err=>{
-      console.log(err);
-    });*/
-    /*navigator.geolocation.getCurrentPosition(positions=>{
-      let Latitude = positions.coords.latitude;
-      let Longitude = positions.coords.longitude;
-      var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
-      this.saveDetails('Latitude',''+Latitude+'');
-      this.saveDetails('Longitude',''+Longitude+'');
-      fetch(fetchData,{
-          method:'POST',
-          body:JSON.stringify({
-              action:'search_location_db',
-              latitude:Latitude,//22.7150822,
-              longitude:Longitude//75.8707448
-          })
-      })
-      .then(response=>{
-          var bodyText = JSON.parse(response._bodyText);
-          var results = bodyText.results
-          const placesArray = [];
-          for (const bodyKey in results){
-              placesArray.push({
-                  name:results[bodyKey].group_name,
-                  address:results[bodyKey].group_address,
-                  isStarted:results[bodyKey].group_status,
-                  photoUrl:results[bodyKey].photoUrl,
-                  key:'key-'+bodyKey,
-                  place_id:results[bodyKey].place_id,
-                  latitude:results[bodyKey].latitude,
-                  longitude:results[bodyKey].longitude
-              });
-          }            
-          this.props.navigation.navigate('Events',{locationList:placesArray});
-          this.setState({loading:false});
-      }).catch(err => {
-        this.setState({loading:false});
-        console.log('Error What is this',err);
-      })
-      
-    },error=>{
-      this.setState({loading:false});
-      console.log('Error',error);
-    })*/
-  }
-  async checkUser(){
-    let isUserLoggedIn = await AsyncStorage.getItem('isUserLoggedin');
-    if(isUserLoggedIn == 'true'){
-      this.setState({
-        loading: true
-      });
-      navigator.geolocation.getCurrentPosition(positions=>{
-        let Latitude = positions.coords.latitude;
-        let Longitude = positions.coords.longitude;
-        var fetchData = 'http://dissdemo.biz/bizzler?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
-        fetch(fetchData,{
-            method:'POST',
-            body:JSON.stringify({
-                action:'search_location_db',
-                latitude:Latitude,//22.7150822,
-                longitude:Longitude//75.8707448
-            })
-        })
-        .then(response=>{
-            var bodyText = JSON.parse(response._bodyText);
-            const placesArray = [];
-            for (const bodyKey in bodyText){
-                placesArray.push({
-                    name:bodyText[bodyKey].group_name,
-                    address:bodyText[bodyKey].group_address,
-                    isStarted:bodyText[bodyKey].group_status,
-                    photoUrl:bodyText[bodyKey].photoUrl,
-                    key:bodyKey
-                });
-            }            
-            this.props.navigation.navigate('Events',{locationList:placesArray});
-            this.setState({loading:false});
-        }).catch(err => {
-          this.setState({loading:false});
-          console.log('Error What is this',err);
-        })
-        
-      },error=>{
-        this.setState({loading:false});
-        console.log('Error',error);
-      })
-      
-    }
-    this.setState({loading:false});
-    console.log(userDetails);
-    this.props.navigation.navigate('Profile',userDetails);
   }
   render() {
-    const {navigate} = this.props.navigation;
     return ( 
       <View style = { MainStyles.container } >
         <Loader loading={this.state.loading} />
@@ -193,13 +92,13 @@ class MainScreen extends Component {
           <TouchableOpacity style={[ MainStyles.btn, MainStyles.linBtn]} onPress={()=> this.Login() }>
             <Image source={require('../assets/l-btn.png')} style={[{width:'100%'}]} resizeMode={'contain'}/>
           </TouchableOpacity>
-          <TouchableOpacity style={[ MainStyles.btn]}>
+          <TouchableOpacity style={[ MainStyles.btn]} onPress={()=>{this.props.navigation.navigate('SignIn')}}>
             <Image source={require('../assets/e-btn.png')}  style={{width:'100%'}} resizeMode={'contain'}/>
           </TouchableOpacity>
           <View style = { MainStyles.minContainer } >
             <Image source={require('../assets/or.png')} style={[MainStyles.orImg,{width:'100%'}]} resizeMode={'contain'}/>
           </View>
-          <TouchableOpacity style={[ MainStyles.btn]}>
+          <TouchableOpacity style={[ MainStyles.btn]} onPress={()=>{this.props.navigation.navigate('SignUp')}}>
             <Image source={require('../assets/su-btn.png')} style={{width:'100%'}} resizeMode={'contain'}/>
           </TouchableOpacity>
       </View>
