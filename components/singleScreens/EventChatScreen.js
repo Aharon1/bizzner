@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import { View,Text,TouchableOpacity,
     FlatList,TextInput,Image, Keyboard,ActivityIndicator,
-    AsyncStorage,
+    AsyncStorage,SafeAreaView,
     Platform,KeyboardAvoidingView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
@@ -151,7 +151,7 @@ class EventChatScreen extends Component{
             behavior = 'padding';
         }
         return(
-            <View style={MainStyles.normalContainer}>
+            <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View>
                     <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
@@ -202,7 +202,7 @@ class EventChatScreen extends Component{
                         </TouchableOpacity>
                     </View>
                 </KeyboardAvoidingView>
-            </View>
+            </SafeAreaView>
         );
     }
 }

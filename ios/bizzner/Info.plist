@@ -2,12 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSLocationUsageDescription</key>
-	<string>Will fetch events</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Use to fetch events</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Access your location</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -32,13 +26,10 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>li5282345</string>
+				<string>bizzner</string>
 			</array>
 		</dict>
 	</array>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Need to Upload</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Uploading profile</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LIAppId</key>
@@ -53,6 +44,8 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>localhost</key>
@@ -61,11 +54,19 @@
 				<true/>
 			</dict>
 		</dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
 	</dict>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Access your location</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Use to fetch events</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Will fetch events</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string/>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Need to Upload</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Uploading profile</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

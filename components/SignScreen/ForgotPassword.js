@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Text, View, TouchableOpacity,Image,
-    TextInput,KeyboardAvoidingView,Platform,
-    AsyncStorage } from 'react-native';
+    TextInput,KeyboardAvoidingView,Platform,ScrollView,
+    AsyncStorage,SafeAreaView,Keyboard } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Loader from '../Loader';
 import MainStyles from '../StyleSheet';
@@ -30,6 +30,7 @@ class ForgotPassword extends Component{
         fetch(SERVER_URL+'?action=forgot_password&fp_email='+this.state.emailAddress)
         .then(res=>res.json())
         .then(response=>{
+            console.log(response);
             if(response.code == 200){
                 this.setState({isTokenSent:true});
             }
@@ -86,7 +87,7 @@ class ForgotPassword extends Component{
     }
     render(){
         return(
-            <View style={{backgroundColor:'#FFF',flex:1}}>
+            <SafeAreaView style={{backgroundColor:'#FFF',flex:1}}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={{ paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
@@ -101,7 +102,7 @@ class ForgotPassword extends Component{
                 }}>
                     {
                         this.state.isTokenSent && !this.state.fpTokenInserted &&
-                        <View style={{width:'75%'}}>
+                        <ScrollView style={{width:'75%',flex:1,}} contentContainerStyle={{marginTop:30}} keyboardShouldPersistTaps='handled'>
                             <Text style={{
                             marginBottom:30,
                             fontFamily:'Roboto-Light',
@@ -131,6 +132,10 @@ class ForgotPassword extends Component{
                                     style={{flex:1,textAlign:'left',alignItems:'center',paddingRight: 10,height:40,fontSize:18,fontFamily:'Roboto-Light'}} 
                                     placeholder="Token *" 
                                     onChangeText={(text)=>this.setState({fpToken:text})} 
+                                    returnKeyType={"go"} 
+                                    blurOnSubmit={true}
+                                    ref={(input)=>{this.token=input}}
+                                    onSubmitEditing={() => { Keyboard.dismiss(); }} 
                                     autoCapitalize='none' 
                                     keyboardType='number-pad'
                                     placeholderTextColor="#03163a" 
@@ -149,12 +154,12 @@ class ForgotPassword extends Component{
                                     </Text>
                                 </TouchableOpacity>
                             </View>
-                        </View>
+                        </ScrollView>
                     }
                     {
                         this.state.isTokenSent  && this.state.fpTokenInserted
                         &&
-                        <View style={{width:'75%'}}>
+                        <ScrollView style={{width:'75%',flex:1,}} contentContainerStyle={{marginTop:30}} keyboardShouldPersistTaps='handled'>
                             <Text style={{
                                 marginBottom:30,
                                 fontFamily:'Roboto-Light',
@@ -225,11 +230,11 @@ class ForgotPassword extends Component{
                                     </Text>
                                 </TouchableOpacity>
                             </View>
-                        </View>
+                        </ScrollView>
                     }
                     {   
                         !this.state.isTokenSent && this.state.fpToken =='' && !this.state.fpTokenInserted &&
-                        <View style={{width:'75%'}}>
+                        <ScrollView style={{width:'75%',flex:1,}} contentContainerStyle={{marginTop:30}} keyboardShouldPersistTaps='handled'>
                             <Text style={{
                                 marginBottom:30,
                                 fontFamily:'Roboto-Light',
@@ -258,10 +263,10 @@ class ForgotPassword extends Component{
                                 <TextInput 
                                     style={{flex:1,textAlign:'left',alignItems:'center',paddingRight: 10,height:40,fontSize:18,fontFamily:'Roboto-Light'}} 
                                     placeholder="Email *" 
-                                    returnKeyType={"next"} 
+                                    returnKeyType={"go"} 
                                     ref={(input) => { this.emailAddress = input; }} 
-                                    onSubmitEditing={() => { this.country.focus(); }} 
-                                    blurOnSubmit={false}
+                                    blurOnSubmit={true}
+                                    onSubmitEditing={() => { Keyboard.dismiss(); }} 
                                     onChangeText={(text)=>this.setState({emailAddress:text})} 
                                     keyboardType="email-address" 
                                     autoCapitalize='none' 
@@ -281,11 +286,11 @@ class ForgotPassword extends Component{
                                     </Text>
                                 </TouchableOpacity>
                             </View>
-                        </View>
+                        </ScrollView>
                     }
                     
                 </KeyboardAvoidingView>
-            </View>
+            </SafeAreaView>
         );
     }
 }

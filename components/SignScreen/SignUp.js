@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Text, View, Image, TouchableOpacity, ScrollView, 
-    TextInput,KeyboardAvoidingView,Animated,Platform } from 'react-native';
+    TextInput,KeyboardAvoidingView,Animated,Platform, SafeAreaView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Loader from '../Loader';
 import MainStyles from '../StyleSheet';
@@ -102,7 +102,7 @@ class SignUp extends Component{
     }
     render(){
         return(
-            <View style={MainStyles.normalContainer}>
+            <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 {/*Header Section*/}
                 <View style={MainStyles.profileHeader}>
@@ -253,7 +253,7 @@ class SignUp extends Component{
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
-            </View>
+            </SafeAreaView>
         );
     }
 }

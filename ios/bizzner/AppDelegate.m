@@ -11,16 +11,32 @@
 #import <React/RCTRootView.h>
 #import <React/RCTPushNotificationManager.h>
 #import <GoogleMaps/GoogleMaps.h>
+#import <React/RCTLinkingManager.h>
 
 @implementation AppDelegate
+
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity
+ restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler
+{
+  return [RCTLinkingManager application:application
+                   continueUserActivity:userActivity
+                     restorationHandler:restorationHandler];
+}
+
+
+
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   
   NSURL *jsCodeLocation;
   [GMSServices provideAPIKey:@"AIzaSyDxEvhzNHkgOlKkrX9xSIrZhoYWE7UfN5A"]; // add this line using the api key obtained from Google Console
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-
+  
+jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  
+  
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"bizzner"
                                                initialProperties:nil
@@ -67,9 +83,8 @@
   if ([LinkedinSwiftHelper shouldHandleUrl:url]) {
     return [LinkedinSwiftHelper application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
   }
-  
-  // ... your code
-  
-  return YES;
+  return [RCTLinkingManager application:application openURL:url
+                      sourceApplication:sourceApplication annotation:annotation];
 }
+
 @end

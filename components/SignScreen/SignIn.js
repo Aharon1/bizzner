@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import {Text, View, TouchableOpacity,Image,
-    TextInput,KeyboardAvoidingView,Platform,Alert,
-    AsyncStorage } from 'react-native';
+    TextInput,KeyboardAvoidingView,Platform,Alert,ScrollView,
+    AsyncStorage,SafeAreaView,Keyboard } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Loader from '../Loader';
 import MainStyles from '../StyleSheet';
 import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
 import NotifService from '../AsyncModules/NotifService';
-class SignIn extends Component<Props>{
+class SignIn extends Component{
     constructor(props){
         super(props);
         this.state={
@@ -16,6 +16,7 @@ class SignIn extends Component<Props>{
             emailAddress:'',
             password:'',
         }
+        this.signIn = this._signIn.bind(this);
     }
     async saveDetails(key,value){
         await AsyncStorage.setItem(key,value);
@@ -34,18 +35,17 @@ class SignIn extends Component<Props>{
         .then(res=>res.json())
         .then(response=>{
             console.log(response)
+            this.setState({loading:false});
             if(response.code == 200){
                 this.saveDetails('isUserLoggedin','true');
                 this.saveDetails('userID',response.body.ID);
                 setTimeout(()=>{
                     Toast.show('LoggedIn successfully', Toast.SHORT);
-                    this.setState({loading:false})
                     this.props.navigation.navigate('Home');
                   },200)
             }
             else{
-                Toast.show(response.message, Toast.SHORT);
-                this.setState({loading:false});
+                Toast.show(response.message, Toast.LONG);
             }
         })
         .catch(err=>{
@@ -54,7 +54,7 @@ class SignIn extends Component<Props>{
     }
     render(){
         return(
-            <View style={{backgroundColor:'#FFF',flex:1}}>
+            <SafeAreaView style={{backgroundColor:'#FFF',flex:1}}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={{ paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
@@ -67,7 +67,7 @@ class SignIn extends Component<Props>{
                     justifyContent:'center',
                     alignItems:'center'
                 }}>
-                    <View style={{width:'75%'}}>
+                    <ScrollView style={{width:'75%',flex:1}} contentContainerStyle={{marginTop:30}} keyboardShouldPersistTaps='handled'>
                         <Text style={{
                             marginBottom:30,
                             fontFamily:'Roboto-Light',
@@ -126,8 +126,9 @@ class SignIn extends Component<Props>{
                                 returnKeyType={"go"} 
                                 secureTextEntry={true} 
                                 ref={(input) => { this.password = input; }} 
-                                blurOnSubmit={false}
+                                blurOnSubmit={true}
                                 onChangeText={(text)=>this.setState({password:text})} 
+                                onSubmitEditing={() => { Keyboard.dismiss(); }} 
                                 placeholderTextColor="#03163a" 
                                 underlineColorAndroid="transparent" 
                                 value={this.state.password}
@@ -153,15 +154,15 @@ class SignIn extends Component<Props>{
                             justifyContent:'center',
                             alignItems:'center'
                         }}>
-                            <TouchableOpacity style={MainStyles.btnSave} onPress={this.signIn}>
+                            <TouchableOpacity style={MainStyles.btnSave} ref={(button)=>{this.submit=button}} onPress={this.signIn}>
                                 <Text style={MainStyles.btnSaveText}>
                                     LOGIN
                                 </Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
+                    </ScrollView>
                 </KeyboardAvoidingView>
-            </View>
+            </SafeAreaView>
         );
     }
 }

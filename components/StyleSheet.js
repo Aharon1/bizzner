@@ -414,12 +414,14 @@ const MainStyles = StyleSheet.create({
     },
     cEFWIPF:{
         height:50,
+        width:'100%',
         flex: 1,
         flexDirection:'row',
         paddingTop: 0,
         paddingRight: 0,
         paddingBottom: 0,
         paddingLeft: 0,
+        
     },
     cEFWIDF:{
         borderWidth: 0,

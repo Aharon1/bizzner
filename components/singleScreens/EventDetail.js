@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { View,Text,TouchableOpacity,FlatList,ActivityIndicator,
-    AsyncStorage,RefreshControl,ScrollView} from 'react-native';
+    AsyncStorage,RefreshControl,ScrollView,SafeAreaView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
 import {SERVER_URL} from '../../Constants';
@@ -92,7 +92,7 @@ export default class EventDetail extends Component{
     }
     render(){
         return(
-            <View style={MainStyles.normalContainer}>
+            <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={{ paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
@@ -371,7 +371,7 @@ export default class EventDetail extends Component{
                         </ScrollView>
                     </View>
                 </Dialog>
-            </View>
+            </SafeAreaView>
         );
     }
 }

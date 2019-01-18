@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, TextInput,ImageBackground, 
     Platform,FlatList,ActivityIndicator,AsyncStorage,
-    RefreshControl,Picker,ScrollView,
+    RefreshControl,Picker,ScrollView,ActionSheetIOS,SafeAreaView
 } from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -46,7 +46,8 @@ class EventsScreen extends Component{
             isFocusedSC:false,
             isSelectedCity:'',
             isCurrentTab:'all-events',
-            isRefreshing:false
+            isRefreshing:false,
+            no_Attendees:'No. of Attendees'
         }
         this.viewabilityConfig = {
             waitForInteraction: true,
@@ -300,9 +301,27 @@ class EventsScreen extends Component{
         this.setState({TabComponent:''});
         this.props.navigation.navigate('Home');
     }
+    pickerIos = ()=>{
+        ActionSheetIOS.showActionSheetWithOptions({
+            options: ['Cancel', '5-10','10-15','15-20'],
+            cancelButtonIndex: 0,
+          },
+          (buttonIndex) => {
+            if (buttonIndex === 1) {
+                this.setState({NEUsersCount: 10,no_Attendees:'5-10'})
+            }
+            else if (buttonIndex === 2) {
+                this.setState({NEUsersCount: 15,no_Attendees:'10-15'})
+            }
+            else if (buttonIndex === 3) {
+                this.setState({NEUsersCount: 20,no_Attendees:'15-20'})
+            }
+            
+          });
+    }
     render(){
         return (
-            <View style={MainStyles.normalContainer}>
+            <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
@@ -407,7 +426,7 @@ class EventsScreen extends Component{
                 }
                 <Dialog
                     visible={this.state.CreateEventVisible}
-                    dialogStyle={[MainStyles.confirmPopup,{width:'95%',padding:0,maxHeight:'95%'}]}
+                    dialogStyle={[MainStyles.confirmPopup,{width:'95%',padding:0,maxHeight:'95%',marginTop:'10%'}]}
                     dialogAnimation={new SlideAnimation()}
                     containerStyle={{zIndex: 10,flex:1,justifyContent: 'space-between',}}
                     rounded={false}
@@ -416,7 +435,7 @@ class EventsScreen extends Component{
                         <TouchableOpacity onPress={()=>{this.setState({CreateEventVisible:false,isLocationSet:false,curLocation:{}})}}>
                             <Icon name="times" style={{fontSize:20,color:'#FFF'}}/>
                         </TouchableOpacity>
-                        <Text style={{color:'#FFF',fontFamily: 'RobotoMedium',fontSize:17,marginLeft:20}}>CREATE NEW EVENT</Text>
+                        <Text style={{color:'#FFF',fontFamily: 'Roboto-Medium',fontSize:17,marginLeft:20}}>CREATE NEW EVENT</Text>
                     </View>
                     <View style={{padding:0,borderWidth: 0,backgroundColor:'#FFF',overflow:'visible'}} 
                     onStartShouldSetResponderCapture={() => {
@@ -528,7 +547,7 @@ class EventsScreen extends Component{
                                         && this.state.enableScrollViewScroll === false) {
                                         this.setState({ enableScrollViewScroll: true });
                                     }
-                                    }}>
+                                }}>
                                     {this.state.isLoading && <ActivityIndicator size="large" color="#416bb9"/>}
                                     {
                                         this.state.SLItems.length > 0 && 
@@ -556,21 +575,31 @@ class EventsScreen extends Component{
                                 </View>
                                 <View style={MainStyles.createEventFWI}>
                                     <Icon name="users" style={MainStyles.cEFWIIcon}/>
-                                    <Picker
-                                        mode="dropdown"
+                                    {
+                                        Platform.OS == 'android' && 
+                                        <Picker
                                         selectedValue={this.state.NEUsersCount}
                                         returnKeyType="next"
                                         style={MainStyles.cEFWIPF}
                                         textStyle={{fontSize: 17,fontFamily:'Roboto-Light'}}
                                         itemTextStyle= {{
-                                            fontSize: 17,fontFamily:'Roboto-Light'
+                                            fontSize: 17,fontFamily:'Roboto-Light',
                                         }}
+                                        itemStyle={[MainStyles.cEFWIPF,{fontSize: 17,fontFamily:'Roboto-Light'}]}
                                         onValueChange={(itemValue, itemIndex) => this.setState({NEUsersCount: itemValue})}>
-                                        <Picker.Item label="Number of Attendees" value="" />
-                                        <Picker.Item label="5-10" value="10" />
-                                        <Picker.Item label="10-15" value="15" />
-                                        <Picker.Item label="15-20" value="20" />
-                                    </Picker>
+                                            <Picker.Item label="Number of Attendees" value="" />
+                                            <Picker.Item label="5-10" value="10" />
+                                            <Picker.Item label="10-15" value="15" />
+                                            <Picker.Item label="15-20" value="20" />
+                                        </Picker>
+                                    }
+                                    {
+                                        Platform.OS == 'ios' && 
+                                        <TouchableOpacity style={[MainStyles.cEFWITF,{alignItems:'center'}]} onPress={()=>{this.pickerIos()}}>
+                                            <Text style={{color:'#03163a',fontFamily:'Roboto-Light'}}>{this.state.no_Attendees}</Text>
+                                        </TouchableOpacity>
+                                        
+                                    }
                                 </View>
                                 <View style={{flexDirection:'row',flex:1,justifyContent:'flex-end',marginBottom:20}}>
                                     <View style={MainStyles.createEventFWI}>
@@ -618,7 +647,7 @@ class EventsScreen extends Component{
                         </ScrollView>
                     </View>
                 </Dialog>
-            </View>
+            </SafeAreaView>
         )
     }
 }

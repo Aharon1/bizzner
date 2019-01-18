@@ -19,7 +19,11 @@ class SplashScreen extends Component{
           });
         } 
         else {
-            Linking.addEventListener('url', this.handleOpenURL);
+            var linkingListner=Linking.addListener('url', this.handleOpenURL);
+            if(!linkingListner.context){
+                this.authenticateSession()
+            }
+            console.log(linkingListner);
         }
     }
     componentWillUnmount() { // C
@@ -30,7 +34,6 @@ class SplashScreen extends Component{
     }
     checkToken = (url)=>{
         if(url){
-            console.log(url);
             var fullUrl = url.split('/');
             var tokenString = fullUrl[fullUrl.length - 2];
             if(tokenString == 'token'){
