@@ -60,6 +60,27 @@ export default class EventDetail extends Component{
             this.setState({loading:false,isRefreshing:false,userList:res.users,eventData:res.event_data,curStatus:res.curStatus});
         })
     }
+    formatAMPM(date) {
+        var date = new Date(date);
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
+    formatDate(date){
+        var date = new Date(date);
+        var dateStr = '';
+        dateStr += (date.getDate() < 10)?'0'+date.getDate()+' ':date.getDate()+' ';
+        var monthArray = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var month = monthArray[date.getMonth()];
+        dateStr += month+' ';
+        dateStr += date.getFullYear();
+        return dateStr;
+    }
     setUserEventStatus =  async (statusValue)=>{
         var curItem = this.state.eventData;
         var user_id = this.state.userID;
@@ -96,7 +117,7 @@ export default class EventDetail extends Component{
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={{ paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
-                        <Icon name="arrow-left" style={{ fontSize: 24, color: '#8da6d5' }} />
+                        <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
                     </TouchableOpacity>
                     <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>EVENT DETAILS</Text>
                 </View>
@@ -198,10 +219,11 @@ export default class EventDetail extends Component{
                         <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column'}}>
                             <Text style={{color:'#03163a',fontFamily:'Roboto-Regular',fontSize:12,flexWrap: 'wrap'}}>
                                 {this.state.eventData.group_name}, 
-                                <Text  style={{fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}> {this.state.eventData.group_address.split(" ").splice(0,5).join(" ")}</Text>
                             </Text>
+                            <Text  style={{fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}> {this.state.eventData.group_address}</Text>
                             <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:11,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
                             <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
+                            <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>{this.formatDate(this.state.eventData.event_date+' '+this.state.eventData.event_time)} {this.formatAMPM(this.state.eventData.event_date+' '+this.state.eventData.event_time)}</Text>
                         </View>
                     </View>
                 }

@@ -567,6 +567,23 @@ const MainStyles = StyleSheet.create({
         fontFamily:'Roboto-Regular',
         fontSize:16,
         color:'#03163a'
+    },
+    tagsContent:{
+        marginTop:20
+    },
+    InterestsTags:{
+        paddingVertical:10,
+        paddingHorizontal:15,
+        borderColor:'#0846b8',
+        borderRadius:30,
+        borderWidth:1,
+        textAlign:"center",
+        margin:5,
+    },
+    ITText:{
+        color:'#0846b8',
+        fontFamily:'Roboto-Regular',
+        fontSize:15
     }
 });
 

@@ -19,6 +19,7 @@ import ConfirmScreen from '../SignScreen/ConfirmScreen';
 import SignIn from '../SignScreen/SignIn';
 import ForgotPassword from '../SignScreen/ForgotPassword';
 import Interests from '../Interests';
+
 const drawerItemStyle = { 
     borderBottomWidth: 1, 
     borderBottomColor: '#8da6d5', 

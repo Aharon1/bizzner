@@ -46,6 +46,7 @@ class SplashScreen extends Component{
                     }
                     else{
                         Toast.show(response.message, Toast.SHORT);
+                        this.authenticateSession()
                     }
                 })
                 .catch(err=>{

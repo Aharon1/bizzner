@@ -8,7 +8,7 @@ import MainStyles from '../StyleSheet';
 import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
 import NotifService from '../AsyncModules/NotifService';
-class SignIn extends Component<Props>{
+class SignIn extends Component{
     constructor(props){
         super(props);
         this.state={
@@ -16,6 +16,7 @@ class SignIn extends Component<Props>{
             emailAddress:'',
             password:'',
         }
+        this.signIn = this._signIn.bind(this);
     }
     async saveDetails(key,value){
         await AsyncStorage.setItem(key,value);

@@ -10,7 +10,8 @@ import Dialog, { DialogContent,SlideAnimation } from 'react-native-popup-dialog'
 import ToggleSwitch from 'toggle-switch-react-native'
 import Loader from './Loader';
 import RequestPermssions from './AsyncModules/Permission';
-import Permissions from 'react-native-permissions'
+import Permissions from 'react-native-permissions';
+import Toast from 'react-native-simple-toast';
 import PushNotification from 'react-native-push-notification';
 class ProfileScreen extends Component{
     constructor(props){
@@ -25,9 +26,13 @@ class ProfileScreen extends Component{
         headline : '',
         position : '',
         profilePicture : '',
+        interests:[],
         animation: new Animated.Value(30),
         gpsOn:true,
-        pushOn:true
+        pushOn:true,
+        IShow:false,
+        InterestsTags:[],
+        usersInteretsIds:{}
       };
     }
     componentDidMount(){
@@ -42,6 +47,7 @@ class ProfileScreen extends Component{
         .then(response=>{
           if(response.code == 200){
             var body = response.body;
+            console.log(response.interestTags);
             this.setState({
               loading:false,
               firstName:body.first_name,
@@ -50,7 +56,10 @@ class ProfileScreen extends Component{
               location : body.country,
               headline : body.headline,
               position : body.current_position,
-              profilePicture : body.user_pic_thumb
+              profilePicture : body.user_pic_thumb,
+              interests:body.interests,
+              InterestsTags:response.interestTags,
+              usersInteretsIds:response.usersInteretsIds
             });
           }
           else{}
@@ -69,24 +78,12 @@ class ProfileScreen extends Component{
               else{
               }
               this.setState({visible:false,loading:true});
-              var fetchData = SERVER_URL+'?action=save_profile';
-              fetch(fetchData,{
-                  method:'POST',
-              }).then(postResponse=>{
-                  this.setState({loading:false})
-                  this.props.navigation.navigate('Home');
-              })
+              this._saveProfile();
             })
           }
           else{
             this.setState({visible:false,loading:true});
-              var fetchData = SERVER_URL+'?action=save_profile';
-              fetch(fetchData,{
-                  method:'POST',
-              }).then(postResponse=>{
-                  this.setState({loading:false})
-                  this.props.navigation.navigate('Home');
-              })
+            this._saveProfile();
           }
         })
       }
@@ -110,15 +107,27 @@ class ProfileScreen extends Component{
       });*/
       
     }
-    getDetail(key){
-      /*try{
-        let value = await AsyncStorage.getItem('userDetails');
-        return JSON.parse(value);
-      }catch(error){
-        alert(error);
-      }*/
-      const { navigation } = this.props;
-      return navigation.getParam(key);
+    _saveProfile = ()=>{
+      var fetchData = SERVER_URL+'?action=save_profile';
+      var params = '&ID='+this.state.UserID;
+      params += '&first_name='+this.state.firstName;
+      params += '&last_name='+this.state.lastName;
+      params += '&user_email='+this.state.emailAddress;
+      params += '&country='+this.state.location;
+      params += '&headline='+this.state.firstName;
+      params += '&current_position='+this.state.headline;
+      params += '&interests=';
+      params += '&notification_on='+this.state.pushOn;
+      params += '&gps_on='+this.state.gpsOn;
+      fetch(fetchData,{
+          method:'POST',
+      })
+      .then(res=>res.json())
+      .then(postResponse=>{
+          Toast.show(postResponse.message,Toast.SHORT);
+          this.setState({loading:false})
+          this.props.navigation.navigate('Home');
+      })
     }
     capturePhoto = async function(){
       if (this.useCamera) {
@@ -132,7 +141,6 @@ class ProfileScreen extends Component{
     picPhoto = async function(){
       if(RequestPermssions.Camera()){
         
-
       }
     };
     togglePicOption = () => {
@@ -146,9 +154,19 @@ class ProfileScreen extends Component{
         }
       })
     }
+    selectTag = (id)=>{
+      if(this.state.usersInteretsIds.indexOf(id) === -1){
+          var selectedITs = this.state.usersInteretsIds;
+          selectedITs.push(id);
+          this.setState({selectedITs})
+      }
+      else{
+          var selectedITs = this.state.usersInteretsIds;
+          selectedITs.splice(this.state.usersInteretsIds.indexOf(id),1);
+          this.setState({selectedITs});
+      }
+  }
     render() {
-      /*const userDetails = this.getDetail();
-      console.log(userDetails);*/
       return (
         <View style={MainStyles.normalContainer}>
           <Loader loading={this.state.loading} />
@@ -218,8 +236,38 @@ class ProfileScreen extends Component{
                 </View>
               <View style={MainStyles.inputFieldWithIcon}>
                 <Icon name="camera-retro" style={MainStyles.iFWIIcon}/>
-                <TextInput style={MainStyles.ifWITI} placeholder="Interests" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
-                <TouchableOpacity style={MainStyles.iFWIPlus}>
+                {
+                  this.state.interests.length == 0 && 
+                  <TextInput style={MainStyles.ifWITI} placeholder="Interests" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                }
+                {
+                  this.state.interests.length > 0 && 
+                  <View style={{
+                    flex:9,
+                    flexDirection:'row',
+                    flexWrap:'wrap',
+                    alignItems:'center',
+                    justifyContent:'flex-start'
+                  }}>
+                    {
+                      this.state.interests.map((item,key)=>(
+                        <View key = { key } style={{
+                          backgroundColor:'#0846b8',
+                          paddingVertical:5,
+                          paddingHorizontal:10,
+                          borderColor:'#0846b8',
+                          borderRadius:30,
+                          borderWidth:1,
+                          textAlign:"center",
+                          margin:2,
+                          }}>
+                          <Text style={{color:'#FFF',fontFamily:'Roboto-Regular',fontSize:13}}>{item.tag_name}</Text>
+                        </View>
+                      ))
+                    }
+                  </View>
+                }
+                <TouchableOpacity style={MainStyles.iFWIPlus} onPress={()=>{this.setState({IShow:true})}}>
                   <Icon name="plus-circle" style={MainStyles.ifWIPlusIcon}/>
                 </TouchableOpacity>
               </View>
@@ -294,6 +342,76 @@ class ProfileScreen extends Component{
                           </TouchableOpacity>
                       </View>
                   </View>
+              </DialogContent>
+          </Dialog>
+          <Dialog
+                visible={this.state.IShow}
+                dialogStyle={MainStyles.confirmPopup}
+                dialogAnimation={new SlideAnimation()}
+                dialogStyle={{width:320,padding:0}} 
+                containerStyle={{zIndex: 10}}
+                rounded={true}
+          >
+              <View style={[MainStyles.confirmPopupHeader,{alignItems:'center',justifyContent:'space-between',flexDirection:'row'}]}>
+                  <Text style={{color:'#8da6d5',fontFamily: 'Roboto-Medium',fontSize:16}}>Add Interests</Text>
+                  <TouchableOpacity onPress={()=>{this.setState({IShow:false})}}>
+                      <Image source={require('../assets/close-icon.png')} style={{width:25,height:25}}/>
+                  </TouchableOpacity>
+              </View>
+              <DialogContent style={{padding:0,borderWidth: 0,backgroundColor:'#d1dbed'}}>
+                <View style={MainStyles.confirmPopupContent}>
+                <ScrollView style={MainStyles.tagsContent} contentContainerStyle={{
+                    justifyContent:"center",
+                    alignItems:'center',
+                }}>
+                    <View style={{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'center'}}>
+                        {
+                            this.state.InterestsTags.map(( item, key ) =>
+                            {
+                              console.log(item,this.state.usersInteretsIds);
+                              return(
+                                <TouchableOpacity key = { key } style={[
+                                    MainStyles.InterestsTags,
+                                    (this.state.InterestsTags.filter(p => p.id == item.id))?{backgroundColor:'#0846b8'}:''
+                                ]} onPress={()=>{this.selectTag(item.id)}}>
+                                    <Text style={[
+                                        MainStyles.ITText,
+                                        (this.state.InterestsTags.filter(p => p.id == item.id))?{color:'#FFF'}:''
+                                    ]}>{item.tag_name}</Text>
+                                </TouchableOpacity>
+                            )})
+                        }
+                    </View>
+                    <TouchableOpacity style={{
+                        backgroundColor:'#3a6cc7',
+                        padding:15,
+                        marginTop:15,
+                        borderRadius:50,
+                    }} onPress={this.loadMoreTags}>
+                        <Icon name="chevron-down" style={{color:'#FFF'}} size={15}/>
+                    </TouchableOpacity>
+                    <View style={{
+                        marginTop:30
+                    }}>
+                        <TouchableOpacity style={{
+                            paddingVertical:10,
+                            paddingHorizontal:20,
+                            backgroundColor:'#0947b9',
+                            borderRadius:50
+                        }}
+                        onPress={()=>{
+                            this.setState({IShow:false});
+                        }}
+                        >
+                            <Text style={{
+                                fontSize:18,
+                                color:'#FFF',
+                                fontFamily:'Roboto-Regular'
+                            }}>ADD</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+                </View>
               </DialogContent>
           </Dialog>
         </View>
