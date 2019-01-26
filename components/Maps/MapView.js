@@ -15,7 +15,6 @@ export default class GoogleMapView extends PureComponent {
     render() {
         
         const { isModalOpen, eventData } = this.state;
-        console.log(eventData);
         return (
             <View style={styles.container}>
                 <MapClustering

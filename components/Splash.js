@@ -19,7 +19,11 @@ class SplashScreen extends Component{
           });
         } 
         else {
-            Linking.addEventListener('url', this.handleOpenURL);
+            var linkingListner=Linking.addListener('url', this.handleOpenURL);
+            if(!linkingListner.context){
+                this.authenticateSession()
+            }
+            console.log(linkingListner);
         }
     }
     componentWillUnmount() { // C

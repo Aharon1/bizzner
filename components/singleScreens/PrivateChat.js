@@ -9,14 +9,12 @@ import Loader from '../Loader';
 import { SERVER_URL } from '../../Constants';
 import ChatItem from './ChatItem';
 var clearTime = ''
-class EventChatScreen extends Component{
-    _isMounted = false;
+class PrivateChatScreen extends Component{
     constructor(props){
         super(props);
         this.state = {
             loading:false,
             event_id:this.props.navigation.getParam('event_id'),
-            event_note:this.props.navigation.getParam('note'),
             disableBtn:true,
             newMessage:'',
             isloadingMsgs:true,
@@ -28,7 +26,6 @@ class EventChatScreen extends Component{
         this.setState({userID});
     }
     componentDidMount() {
-        this._isMounted = true;
         this.setUserId();
         setTimeout(()=>{this.update()},200);
     }
@@ -55,34 +52,31 @@ class EventChatScreen extends Component{
         Keyboard.dismiss();
     }
     getMessages() {
-        fetch(SERVER_URL + '?action=getEventMessages&event_id='+this.state.event_id)
+        fetch(SERVER_URL + '?action=getMessage&event_id='+this.state.event_id)
           .then((response) => response.json())
           .then((responseData) => {
-            if (this._isMounted) {
-                if(responseData.code == 200){
-                    var messagesCopy = responseData.body.messages;
-                    var oldMessagesNumber = this.state.messages.length;
-                    messagesCopy.reverse();
-                    this.setState({
-                        messages: messagesCopy,
-                    });
-                    if (oldMessagesNumber < messagesCopy.length)
-                        this.scrollToTheBottom();
-                }
-                this.setState({isloadingMsgs:false});
-            }
-        })
-        .done();
+              if(responseData.code == 200){
+                var messagesCopy = responseData.body.messages;
+                var oldMessagesNumber = this.state.messages.length;
+                messagesCopy.reverse();
+                this.setState({
+                    messages: messagesCopy,
+                });
+                if (oldMessagesNumber < messagesCopy.length)
+                    this.scrollToTheBottom();
+              }
+              this.setState({isloadingMsgs:false});
+            })
+          .done();
     }
     update() {
         this.getMessages();
         clearTime = setInterval(
           () => {this.getMessages();},
-          1000
+          1500
         );
     }
     componentWillUnmount(){
-        this._isMounted = false;
         clearTimeout(clearTime);
     }
     renderMsgItem(item,userID){
@@ -133,7 +127,7 @@ class EventChatScreen extends Component{
             if(this.state.messages.length > 4){
                 this.scrollToTheBottom();
             }
-            fetch( SERVER_URL + '?action=msgSend&user_id='+this.state.userID+'&grp_id='+this.state.event_id+'&is_grp_msg=1&msg_text=' + message)
+            fetch( SERVER_URL + '?action=msgSend&user_id='+this.state.userID+'&grp_id='+this.state.event_id+'&is_grp_msg=0&msg_text=' + message)
             .then((response) => response.json())
             .then((responseData) => {
             })
@@ -158,10 +152,7 @@ class EventChatScreen extends Component{
                         <TouchableOpacity style={{ paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
                             <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
                         </TouchableOpacity>
-                        <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>PRIVATE MESSAGE</Text>
-                    </View>
-                    <View style={[MainStyles.tabContainer,{justifyContent:'flex-start',paddingHorizontal:15,paddingVertical:15}]}>
-                        <Text style={{fontSize:16,fontFamily:'Roboto-Medium',color:'#05296d'}}>Note: {this.state.event_note}</Text>
+                        <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>PRIVATE CHAT</Text>
                     </View>
                 </View>
                 <View style={{
@@ -205,4 +196,4 @@ class EventChatScreen extends Component{
     }
 }
 
-export default EventChatScreen;
+export default PrivateChatScreen;

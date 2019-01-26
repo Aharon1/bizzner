@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, TextInput,ImageBackground, 
     Platform,FlatList,ActivityIndicator,AsyncStorage,
-    RefreshControl,Picker,ScrollView
+    RefreshControl,Picker,ScrollView,SafeAreaView
 } from 'react-native';
-import { DrawerActions } from 'react-navigation';
+import { DrawerActions,NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
 import Dialog, { SlideAnimation } from 'react-native-popup-dialog';
@@ -177,7 +177,28 @@ class EventsScreen extends Component{
     }
     componentDidMount(){
         this.setUserId();
-        setTimeout(()=>{this.refreshList();},200);
+        setTimeout(()=>{
+            this.refreshList();
+            this.getPrivatChatCount();
+            setInterval(()=>{
+                this.getPrivatChatCount();
+            },4000);
+        },200);
+    }
+    async getPrivatChatCount(){
+        var userID =  await AsyncStorage.getItem('userID');
+        await fetch(SERVER_URL+'?action=privatMsgsCount&user_id='+userID)
+        .then(res=>res.json())
+        .then(response=>{
+            const setInboxLabel = NavigationActions.setParams({
+                params: { privateCount: response.pcCount},
+                key: 'Messages',
+              });
+            this.props.navigation.dispatch(setInboxLabel);
+        })
+        .catch(err=>{
+            console.log(err);
+        })
     }
     _refreshList(){
         var dateNow = new Date();
@@ -312,7 +333,6 @@ class EventsScreen extends Component{
         if(item.event_subject.toLowerCase().match(text) || item.name.toLowerCase().match(text))
             return item;
         })
-        console.log(filteredList);
         if (!text || text === '') {
         this.setState({
             renderedListData: fullList,
@@ -333,7 +353,7 @@ class EventsScreen extends Component{
     }
     render(){
         return (
-            <View style={MainStyles.normalContainer}>
+            <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
@@ -443,7 +463,7 @@ class EventsScreen extends Component{
                     this.state.noFilterData==false && 
                     <FlatList data={(this.state.renderedListData && this.state.renderedListData.length > 0)?this.state.renderedListData:this.state.locationList}
                         renderItem={({item}) => (
-                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID}/>
+                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID} refresh={this.refreshList}/>
                             )}
                         keyExtractor={(item) => item.key}
                         refreshControl={
@@ -451,8 +471,6 @@ class EventsScreen extends Component{
                                 refreshing={this.state.isRefreshing}
                                 onRefresh={()=>{this.setState({isRefreshing:true}),this.refreshList()}}
                                 title="Pull to refresh"
-                                tintColor="#fff"
-                                titleColor="#fff"
                                 colors={["#2e4d85","red", "green", "blue"]}
                             />
                         }
@@ -465,7 +483,7 @@ class EventsScreen extends Component{
                     this.state.MyEvents.length > 0 && 
                     <FlatList data={this.state.MyEvents}
                         renderItem={({item}) => (
-                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID}/>
+                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID} refresh={this.refreshList}/>
                             )}
                         keyExtractor={(item) => item.key}
                         refreshControl={
@@ -473,12 +491,11 @@ class EventsScreen extends Component{
                               refreshing={this.state.isRefreshing}
                               onRefresh={()=>{this.setState({isRefreshing:true}),this.refreshList()}}
                               title="Pull to refresh"
-                                tintColor="#fff"
-                                titleColor="#fff"
                                 colors={["#2e4d85","red", "green", "blue"]}
                             />
                           }
                         viewabilityConfig={this.viewabilityConfig}
+                        
                     />
                 }
                 {
@@ -506,7 +523,7 @@ class EventsScreen extends Component{
                         <TouchableOpacity onPress={()=>{this.setState({CreateEventVisible:false,isLocationSet:false,curLocation:{}})}}>
                             <Icon name="times" style={{fontSize:20,color:'#FFF'}}/>
                         </TouchableOpacity>
-                        <Text style={{color:'#FFF',fontFamily: 'RobotoMedium',fontSize:17,marginLeft:20}}>CREATE NEW EVENT</Text>
+                        <Text style={{color:'#FFF',fontFamily: 'Roboto-Medium',fontSize:17,marginLeft:20}}>CREATE NEW EVENT</Text>
                     </View>
                     <View style={{padding:0,borderWidth: 0,backgroundColor:'#FFF',overflow:'visible'}} 
                     onStartShouldSetResponderCapture={() => {
@@ -526,7 +543,7 @@ class EventsScreen extends Component{
                                 <View style={{width:'100%',marginTop:0,marginBottom:0, height:150,}}>
                                     <ImageBackground source={{uri:this.state.curLocation.picUrl}} style={{width: '100%', height: 150,flex:1,resizeMode:'center'}} resizeMode="cover">   
                                         <TouchableOpacity style={{position:'absolute',right:10,top:10}} onPress={()=>{this.setState({isLocationSet:false,curLocation:{}})}}>
-                                            <Icon name="pencil" size={20} color="#FFF" />
+                                            <Icon name="pencil" size={28} color="#FFF" />
                                         </TouchableOpacity>
                                         <View style={{
                                                 color: 'white',
@@ -708,7 +725,7 @@ class EventsScreen extends Component{
                         </ScrollView>
                     </View>
                 </Dialog>
-            </View>
+            </SafeAreaView>
         )
     }
 }

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Text, View, TouchableOpacity,Image,
-    TextInput,KeyboardAvoidingView,Platform,Alert,
+    TextInput,KeyboardAvoidingView,Platform,Alert,SafeAreaView,
     AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Loader from '../Loader';
@@ -38,11 +38,12 @@ class SignIn extends Component{
             if(response.code == 200){
                 this.saveDetails('isUserLoggedin','true');
                 this.saveDetails('userID',response.body.ID);
+                Toast.show('LoggedIn successfully', Toast.SHORT);
                 setTimeout(()=>{
-                    Toast.show('LoggedIn successfully', Toast.SHORT);
+                    
                     this.setState({loading:false})
-                    this.props.navigation.navigate('Home');
-                  },200)
+                    this.props.navigation.navigate('Current Events');
+                  },500)
             }
             else{
                 Toast.show(response.message, Toast.SHORT);
@@ -55,7 +56,7 @@ class SignIn extends Component{
     }
     render(){
         return(
-            <View style={{backgroundColor:'#FFF',flex:1}}>
+            <SafeAreaView style={{backgroundColor:'#FFF',flex:1}}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={{ paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
@@ -162,7 +163,7 @@ class SignIn extends Component{
                         </View>
                     </View>
                 </KeyboardAvoidingView>
-            </View>
+            </SafeAreaView>
         );
     }
 }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Image, TouchableOpacity, AsyncStorage,Platform} from 'react-native';
+import { Text, View, Image, TouchableOpacity, AsyncStorage,Platform,Linking} from 'react-native';
 import MainStyles from './StyleSheet';
 import LinkedInSDK from 'react-native-linkedin-sdk';
 import Loader from './Loader';
@@ -80,6 +80,47 @@ class MainScreen extends Component {
     .catch(err=>{
       console.log(err);
     })
+  }
+  componentDidMount() { // B
+    if (Platform.OS === 'android') {
+      Linking.getInitialURL().then(url => {
+        this.checkToken(url)
+      });
+    } 
+    else {
+        Linking.addListener('url', this.handleOpenURL);
+    }
+  }
+  componentWillUnmount() { // C
+      Linking.removeEventListener('url', this.handleOpenURL);
+  }
+  handleOpenURL = (event) => { // D
+      this.checkToken(event.url);
+  }
+  checkToken = (url)=>{
+      if(url){
+          var fullUrl = url.split('/');
+          var tokenString = fullUrl[fullUrl.length - 2];
+          if(tokenString == 'token'){
+              var token = fullUrl[fullUrl.length - 1];
+              fetch(SERVER_URL+'?action=check-token&token='+token)
+              .then(res=>res.json())
+              .then(response=>{
+                  if(response.code == 200){
+                      this.saveDetails('isUserLoggedin','true');
+                      this.saveDetails('userID',response.body.ID);
+                      Toast.show(response.message, Toast.SHORT);
+                      this.props.navigation.navigate('ConfirmScreen');
+                  }
+                  else{
+                      Toast.show(response.message, Toast.SHORT);
+                  }
+              })
+              .catch(err=>{
+                  console.log(err)
+              })
+          }
+      }
   }
   render() {
     return ( 

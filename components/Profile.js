@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {SERVER_URL} from '../Constants';
 import { Text, View, Image, TouchableOpacity, ScrollView,
   TextInput,KeyboardAvoidingView,Animated,
-  AsyncStorage
+  AsyncStorage,SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
@@ -47,7 +47,6 @@ class ProfileScreen extends Component{
         .then(response=>{
           if(response.code == 200){
             var body = response.body;
-            console.log(response.interestTags);
             this.setState({
               loading:false,
               firstName:body.first_name,
@@ -69,10 +68,8 @@ class ProfileScreen extends Component{
     GoToNextScreen(){
       if(this.state.gpsOn){
         Permissions.check('location', { type: 'always' }).then(response => {
-          console.log('location',response);
           if(response == "undetermined"){
             Permissions.request('location', { type: 'always' }).then(response => {
-              console.log('location',response);
               if(response != 'authorized'){
               }
               else{
@@ -133,7 +130,6 @@ class ProfileScreen extends Component{
       if (this.useCamera) {
         const options = { quality: 1, base64: true };
         this.useCamera.capture({metadata:options}).then(res=>{
-          console.log('Response',res);
         })
         //this.setState({ profilePicture: data.uri  });
       }
@@ -154,24 +150,33 @@ class ProfileScreen extends Component{
         }
       })
     }
-    selectTag = (id)=>{
-      if(this.state.usersInteretsIds.indexOf(id) === -1){
+    selectTag = (item)=>{
+      if(this.state.usersInteretsIds.indexOf(item.id) === -1){
           var selectedITs = this.state.usersInteretsIds;
-          selectedITs.push(id);
+          selectedITs.push(item.id);
+          this.state.interests.push(item);
           this.setState({selectedITs})
       }
       else{
           var selectedITs = this.state.usersInteretsIds;
-          selectedITs.splice(this.state.usersInteretsIds.indexOf(id),1);
+          selectedITs.splice(this.state.usersInteretsIds.indexOf(item.id),1);
+          this.state.interests.filter((i,key)=>{
+            if(i.id == item.id){
+              delete this.state.interests[key];
+            }
+          });
           this.setState({selectedITs});
       }
   }
     render() {
       return (
-        <View style={MainStyles.normalContainer}>
+        <SafeAreaView style={MainStyles.normalContainer}>
           <Loader loading={this.state.loading} />
           {/*Header Section*/}
           <View style={MainStyles.profileHeader}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('Current Events') } style={{position:'absolute',top:15,left:15}}>
+                <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }}/>
+            </TouchableOpacity>
             {/*Header Profile Picture Section*/}
             <View style={MainStyles.pHeadPicWrapper}>
               <View style={MainStyles.pHeadPic}>
@@ -212,12 +217,13 @@ class ProfileScreen extends Component{
             <View style={MainStyles.profileTextWrapper}>
               <Text style={MainStyles.pTWText}>PROFILE</Text>
               <Text style={MainStyles.pTWNameText}>{this.state.firstName} {this.state.lastName}</Text>
-            </View>
+              </View>
           </View>
           
           {/*Body Section*/}
-          <ScrollView style={MainStyles.profileBody}>
-            <KeyboardAvoidingView  style={{flex:1}}>
+          <KeyboardAvoidingView  style={{flex:1}}  behavior="padding" enabled>
+            <ScrollView style={MainStyles.profileBody}>
+            
                 <View style={MainStyles.inputFieldWithIcon}>
                   <Icon name="envelope" style={MainStyles.iFWIIcon}/>
                   <TextInput style={MainStyles.ifWITI} placeholder="Email" keyboardType="email-address" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.emailAddress}/>
@@ -234,50 +240,70 @@ class ProfileScreen extends Component{
                   <Icon name="briefcase" style={MainStyles.iFWIIcon}/>
                   <TextInput style={MainStyles.ifWITI} placeholder="Current position" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.position}/>
                 </View>
-              <View style={MainStyles.inputFieldWithIcon}>
-                <Icon name="camera-retro" style={MainStyles.iFWIIcon}/>
-                {
-                  this.state.interests.length == 0 && 
-                  <TextInput style={MainStyles.ifWITI} placeholder="Interests" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
-                }
-                {
-                  this.state.interests.length > 0 && 
-                  <View style={{
+                <View style={MainStyles.inputFieldWithIcon}>
+                  <Icon name="camera-retro" style={MainStyles.iFWIIcon}/>
+                  {
+                    this.state.interests.length == 0 && 
+                    <TextInput style={MainStyles.ifWITI} placeholder="Interests" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                  }
+                  {
+                    this.state.interests.length > 0 && 
+                    <View style={{
                     flex:9,
                     flexDirection:'row',
                     flexWrap:'wrap',
                     alignItems:'center',
                     justifyContent:'flex-start'
-                  }}>
-                    {
-                      this.state.interests.map((item,key)=>(
-                        <View key = { key } style={{
-                          backgroundColor:'#0846b8',
-                          paddingVertical:5,
-                          paddingHorizontal:10,
-                          borderColor:'#0846b8',
-                          borderRadius:30,
-                          borderWidth:1,
-                          textAlign:"center",
-                          margin:2,
-                          }}>
-                          <Text style={{color:'#FFF',fontFamily:'Roboto-Regular',fontSize:13}}>{item.tag_name}</Text>
-                        </View>
-                      ))
-                    }
+                    }}>
+                      {
+                        this.state.interests.map((item,key)=>(
+                          <View key = { key } style={{
+                            backgroundColor:'#0846b8',
+                            paddingVertical:5,
+                            paddingHorizontal:10,
+                            borderColor:'#0846b8',
+                            borderRadius:30,
+                            borderWidth:1,
+                            textAlign:"center",
+                            margin:2,
+                            justifyContent:'center',
+                            flexDirection:'row'
+                            }}>
+                            <Text style={{color:'#FFF',fontFamily:'Roboto-Regular',fontSize:13}}>{item.tag_name}</Text> 
+                            <TouchableOpacity style={{
+                              justifyContent:'center',
+                              marginLeft:4
+                            }}
+                            onPress={()=>{
+                              var selectedITs = this.state.usersInteretsIds;
+                              selectedITs.splice(this.state.usersInteretsIds.indexOf(item.id),1);
+                              this.setState({selectedITs});
+                              this.state.interests.filter((i,key)=>{
+                                if(i.id == item.id){
+                                  delete this.state.interests[key];
+                                }
+                              });
+                            }}
+                            >
+                              <Icon name="times" color="#FFF"/>
+                            </TouchableOpacity>
+                          </View>
+                        ))
+                      }
                   </View>
                 }
                 <TouchableOpacity style={MainStyles.iFWIPlus} onPress={()=>{this.setState({IShow:true})}}>
                   <Icon name="plus-circle" style={MainStyles.ifWIPlusIcon}/>
                 </TouchableOpacity>
               </View>
-            </KeyboardAvoidingView>
-            <View style={[MainStyles.btnWrapper,{flex:1,justifyContent:'flex-end',flexDirection: 'row'}]}>
-              <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.setState({ visible: true });}}>
-                <Text style={MainStyles.btnSaveText}>SAVE</Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
+            
+              <View style={[MainStyles.btnWrapper,{flex:1,justifyContent:'flex-end',flexDirection: 'row'}]}>
+                <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.setState({ visible: true });}}>
+                  <Text style={MainStyles.btnSaveText}>SAVE</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
           <Dialog
                 visible={this.state.visible}
                 dialogStyle={MainStyles.confirmPopup}
@@ -368,15 +394,15 @@ class ProfileScreen extends Component{
                         {
                             this.state.InterestsTags.map(( item, key ) =>
                             {
-                              console.log(item,this.state.usersInteretsIds);
+                              var isSelected = this.state.usersInteretsIds.filter(p =>p === item.id);
                               return(
                                 <TouchableOpacity key = { key } style={[
                                     MainStyles.InterestsTags,
-                                    (this.state.InterestsTags.filter(p => p.id == item.id))?{backgroundColor:'#0846b8'}:''
-                                ]} onPress={()=>{this.selectTag(item.id)}}>
+                                    (isSelected.length>0)?{backgroundColor:'#0846b8'}:''
+                                ]} onPress={()=>{this.selectTag(item)}}>
                                     <Text style={[
                                         MainStyles.ITText,
-                                        (this.state.InterestsTags.filter(p => p.id == item.id))?{color:'#FFF'}:''
+                                        (isSelected.length>0)?{color:'#FFF'}:''
                                     ]}>{item.tag_name}</Text>
                                 </TouchableOpacity>
                             )})
@@ -414,7 +440,7 @@ class ProfileScreen extends Component{
                 </View>
               </DialogContent>
           </Dialog>
-        </View>
+        </SafeAreaView>
       );
     }
   }

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Text, View, TouchableOpacity,Image,
-    TextInput,KeyboardAvoidingView,Platform,
+    TextInput,KeyboardAvoidingView,Platform,SafeAreaView,
     AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Loader from '../Loader';
@@ -86,7 +86,7 @@ class ForgotPassword extends Component{
     }
     render(){
         return(
-            <View style={{backgroundColor:'#FFF',flex:1}}>
+            <SafeAreaView style={{backgroundColor:'#FFF',flex:1}}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={{ paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
@@ -285,7 +285,7 @@ class ForgotPassword extends Component{
                     }
                     
                 </KeyboardAvoidingView>
-            </View>
+            </SafeAreaView>
         );
     }
 }

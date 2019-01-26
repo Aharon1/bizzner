@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { View,Text,TouchableOpacity,FlatList,ActivityIndicator,
-    AsyncStorage,RefreshControl,ScrollView} from 'react-native';
+    AsyncStorage,RefreshControl,ScrollView,SafeAreaView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
 import {SERVER_URL} from '../../Constants';
@@ -20,7 +20,7 @@ export default class EventDetail extends Component{
             profileDetailShow:false,
             profilePicture:'',
             isLoadingProfile : true,
-            userData:''
+            userData:[]
         }
         this.fetchNewDetails = this._fetchNewDetails.bind(this);
         this.fetchUserData = this._fetchUserData.bind(this);
@@ -42,15 +42,6 @@ export default class EventDetail extends Component{
             this.fetchNewDetails()
         }
     }
-    /*componentWillReceiveProps(){
-        var paramEventId = this.props.navigation.getParam('event_id');
-        //console.log(this.state.event_id,paramEventId);
-        console.log('New=>'+paramEventId,'Previuos=>'+this.state.event_id);
-        if(this.state.event_id != paramEventId){
-            this.setState({loading:true,userList:{},eventData:'',curStatus:'',event_id:paramEventId});
-            this.fetchNewDetails()
-        }
-    }*/
     _fetchNewDetails(){
         var user_id = this.state.userID;
         var eventId = this.state.event_id;
@@ -111,9 +102,21 @@ export default class EventDetail extends Component{
             console.log(err);
         })
     }
+    startPrivateChat(other_user_id){
+        this.setState({loading:true})
+        fetch(SERVER_URL+'?action=startPrivateChat&user_id='+this.state.userID+'&privateUserId='+other_user_id)
+        .then(res=>res.json())
+        .then(response=>{
+            this.setState({loading:false})
+            this.props.navigation.navigate('Private Chat',{event_id:response.privateChatId})
+        })
+        .catch(err=>{
+
+        });
+    }
     render(){
         return(
-            <View style={MainStyles.normalContainer}>
+            <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={{ paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
@@ -196,7 +199,7 @@ export default class EventDetail extends Component{
                     </View>
                 }
                 {
-                    this.state.eventData.usersCount != 0
+                    this.state.eventData.usersCount == 0
                     && 
                     this.state.curStatus != 1
                     &&
@@ -267,9 +270,12 @@ export default class EventDetail extends Component{
                                         </View>
                                     }
                                 </View>
-                                <TouchableOpacity style={MainStyles.ChatIconWrapper} onPress={()=>{alert('Alerting')}}>
-                                    <Icon name="comments"style={MainStyles.ChatIcon}/>
-                                </TouchableOpacity>
+                                {
+                                    item.user_id != this.state.userID && 
+                                    <TouchableOpacity style={MainStyles.ChatIconWrapper} onPress={()=>{this.startPrivateChat(item.user_id)}}>
+                                        <Icon name="comments"style={MainStyles.ChatIcon}/>
+                                    </TouchableOpacity>
+                                }
                             </View>
                         )}
                         refreshControl={
@@ -313,7 +319,7 @@ export default class EventDetail extends Component{
                             {
                                 !this.state.isLoadingProfile 
                                 &&
-                                this.state.userData != ''
+                                this.state.userData
                                 && 
                                 <View>
                                     <View style={{
@@ -365,7 +371,33 @@ export default class EventDetail extends Component{
                                         <View style={MainStyles.profileTextItem}>
                                             <Icon name="camera-retro" size={16} style={MainStyles.profileTextItemIcon}/>
                                             <View style={{alignItems:'flex-start',flexWrap:'wrap'}}>
-                                                <Text style={[MainStyles.PTIText,{fontFamily:'Roboto-Light'}]}>{this.state.userData.interests}</Text>
+                                            {
+                                                this.state.userData.interests.length > 0 && 
+                                                <View style={{
+                                                    flex:9,
+                                                    flexDirection:'row',
+                                                    flexWrap:'wrap',
+                                                    alignItems:'center',
+                                                    justifyContent:'flex-start'
+                                                }}>
+                                                    {
+                                                    this.state.userData.interests.map((item,key)=>(
+                                                        <View key = { key } style={{
+                                                        backgroundColor:'#0846b8',
+                                                        paddingVertical:5,
+                                                        paddingHorizontal:10,
+                                                        borderColor:'#0846b8',
+                                                        borderRadius:30,
+                                                        borderWidth:1,
+                                                        textAlign:"center",
+                                                        margin:2,
+                                                        }}>
+                                                        <Text style={{color:'#FFF',fontFamily:'Roboto-Regular',fontSize:13}}>{item.tag_name}</Text>
+                                                        </View>
+                                                    ))
+                                                    }
+                                                </View>
+                                                }
                                             </View>
                                         </View>
                                     </View>
@@ -375,25 +407,28 @@ export default class EventDetail extends Component{
                                         alignItems:'center',
                                         marginBottom:70
                                     }}>
+                                    {
+                                        this.state.userData.ID != this.state.userID && 
                                         <TouchableOpacity style={{
                                             paddingHorizontal:40,
                                             paddingVertical:20,
                                             borderRadius:35,
                                             backgroundColor:'#0947b9'
-                                        }}>
+                                        }}  onPress={()=>{this.startPrivateChat(this.state.userData.ID)}}>
                                             <Text style={{
                                                 color:'#FFF',
                                                 fontFamily:'Roboto-Regular',
                                                 fontSize:18
                                             }}>CHAT</Text>
                                         </TouchableOpacity>
+                                    }
                                     </View>
                                 </View>
                             }
                         </ScrollView>
                     </View>
                 </Dialog>
-            </View>
+            </SafeAreaView>
         );
     }
 }

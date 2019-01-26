@@ -43,7 +43,7 @@ class MapScreen extends Component {
     _onNavigate = (params) => {
         this.props.navigation.navigate('EventDetail', params)
     }
-    _getMapData = (position) => {
+    _getMapData = async (position) => {
         const { latitude, longitude } = position.coords;
             const currentPosition = {
                 latitude,

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, 
     Platform,FlatList,AsyncStorage,
-    RefreshControl,
+    RefreshControl,SafeAreaView
 } from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -14,7 +14,7 @@ class PrivatMsgScreen extends Component{
     constructor(props){
         super(props);
         this.state={
-            loading:false,
+            loading:true,
             chatList:{},
             isRefreshing:false
         }
@@ -39,7 +39,6 @@ class PrivatMsgScreen extends Component{
         .then(response=>{
             if(response.code != 404){
                 this.setState({chatList:response.body.results});
-                console.log(this.state.chatList);
             }
             this.setState({loading:false,isRefreshing:false})
         })
@@ -61,7 +60,7 @@ class PrivatMsgScreen extends Component{
     }
     render(){
         return(
-            <View style={MainStyles.normalContainer}>
+            <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
@@ -72,7 +71,7 @@ class PrivatMsgScreen extends Component{
                     <FlatList 
                         data={this.state.chatList} 
                         renderItem={({item})=>(
-                            <TouchableOpacity style={[MainStyles.UserListItem,{backgroundColor:'#d1dbed'}]}>
+                            <TouchableOpacity style={[MainStyles.UserListItem,{backgroundColor:'#d1dbed'}]} onPress={()=>{this.props.navigation.navigate('Private Chat',{event_id:item.chat_id})}}>
                                 <View style={{overflow:'hidden',width:70,height:70}}>
                                     <ProgressiveImage source={{uri:item.user_pic}} style={{
                                         width: 70, 
@@ -84,7 +83,7 @@ class PrivatMsgScreen extends Component{
                                 </View>
                                 <View style={MainStyles.userListItemTextWrapper}>
                                     <Text style={[MainStyles.ULITWName,{fontFamily:'Roboto-Meduim',color:'#03163a'}]}>{item.name}</Text>
-                                    <Text style={[MainStyles.ULITWTitle,{color:'#416bb9'}]}>{item.msg_text.split(" ").splice(0,2).join(" ")}</Text>
+                                    <Text style={[MainStyles.ULITWTitle,{color:'#416bb9'}]}>{item.msg_text.split(" ").splice(0,4).join(" ")}</Text>
                                 </View>
                                 <View style={[MainStyles.ChatIconWrapper,{flexDirection:'row'}]}>
                                     <Text 
@@ -95,32 +94,35 @@ class PrivatMsgScreen extends Component{
                                         marginRight:7
                                     }}>{this.formatAMPM(item.timestamp)}</Text>
                                     {
-                                        
+                                        item.unread_count > 0 && 
+                                        <Text style={{
+                                            color:'#FFF',
+                                            fontFamily:'Roboto-Medium',
+                                            fontSize:12,
+                                            backgroundColor:'#5cc06c',
+                                            width:30,
+                                            height:30,
+                                            textAlign:'center',
+                                            textAlignVertical:'center',
+                                            borderRadius:100
+                                        }}>{item.unread_count}</Text>
                                     }
-                                    <Text style={{
-                                        color:'#FFF',
-                                        fontFamily:'Roboto-Medium',
-                                        fontSize:12,
-                                        backgroundColor:'#5cc06c',
-                                        width:30,
-                                        height:30,
-                                        textAlign:'center',
-                                        textAlignVertical:'center',
-                                        borderRadius:100
-                                    }}>23</Text>
-                                    <Text style={{
-                                        color:'#FFF',
-                                        fontFamily:'Roboto-Medium',
-                                        fontSize:12,
-                                        backgroundColor:'#c4d1e9',
-                                        width:30,
-                                        height:30,
-                                        textAlign:'center',
-                                        textAlignVertical:'center',
-                                        borderRadius:100
-                                    }}>
-                                        <Icon name="check" />
-                                    </Text>
+                                    {
+                                        item.unread_count == 0 && 
+                                        <Text style={{
+                                            color:'#FFF',
+                                            fontFamily:'Roboto-Medium',
+                                            fontSize:12,
+                                            backgroundColor:'#c4d1e9',
+                                            width:30,
+                                            height:30,
+                                            textAlign:'center',
+                                            textAlignVertical:'center',
+                                            borderRadius:100
+                                        }}>
+                                            <Icon name="check" />
+                                        </Text>
+                                    }
                                 </View>
                             </TouchableOpacity>
                         )}
@@ -139,7 +141,7 @@ class PrivatMsgScreen extends Component{
                     />
                 }
                 
-            </View>
+            </SafeAreaView>
         );
     }
 }
