@@ -10,7 +10,9 @@ import Loader from './Loader';
 import { HeaderButton } from './Navigation/HeaderButton';
 import {SERVER_URL} from '../Constants';
 import ProgressiveImage from './AsyncModules/ImageComponent';
+var clearTime = '';
 class PrivatMsgScreen extends Component{
+    _isMounted = false;
     constructor(props){
         super(props);
         this.state={
@@ -30,17 +32,23 @@ class PrivatMsgScreen extends Component{
         this.setState({userID});
     }
     componentDidMount(){
+        this._isMounted = true;
         this.setUserId();
-        setTimeout(()=>{this.fetchList();},200)
+        setTimeout(()=>{
+            this.fetchList();
+            clearTime = setInterval(()=>{this.fetchList();},4000)
+        },200)
     }
     _fetchList= async ()=>{
         await fetch(SERVER_URL+'?action=getPrivateList&user_id='+this.state.userID)
         .then(res=>res.json())
         .then(response=>{
-            if(response.code != 404){
-                this.setState({chatList:response.body.results});
+            if (this._isMounted) {
+                if(response.code != 404){
+                    this.setState({chatList:response.body.results});
+                }
+                this.setState({loading:false,isRefreshing:false})
             }
-            this.setState({loading:false,isRefreshing:false})
         })
         .catch()
     }
@@ -57,6 +65,10 @@ class PrivatMsgScreen extends Component{
         minutes = minutes < 10 ? '0'+minutes : minutes;
         var strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
+    }
+    componentWillUnmount(){
+        this._isMounted = false;
+        clearTimeout(clearTime);
     }
     render(){
         return(

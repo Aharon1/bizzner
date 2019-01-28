@@ -10,6 +10,7 @@ import { SERVER_URL } from '../../Constants';
 import ChatItem from './ChatItem';
 var clearTime = ''
 class PrivateChatScreen extends Component{
+    _isMounted = false;
     constructor(props){
         super(props);
         this.state = {
@@ -26,8 +27,17 @@ class PrivateChatScreen extends Component{
         this.setState({userID});
     }
     componentDidMount() {
+        this._isMounted = true;
         this.setUserId();
-        setTimeout(()=>{this.update()},200);
+        setTimeout(()=>{
+            fetch(SERVER_URL+'?action=readMsg&chat_id='+this.state.event_id+'&isgrp=0&userId='+this.state.userID)
+            .then(response=>{
+                this.update()
+            })
+            .catch(err=>{
+                console.log(err);
+            })
+        },200);
     }
     onStartTyping(newMessage){
         if(newMessage && newMessage.length >= 1){
@@ -55,17 +65,19 @@ class PrivateChatScreen extends Component{
         fetch(SERVER_URL + '?action=getMessage&event_id='+this.state.event_id)
           .then((response) => response.json())
           .then((responseData) => {
-              if(responseData.code == 200){
-                var messagesCopy = responseData.body.messages;
-                var oldMessagesNumber = this.state.messages.length;
-                messagesCopy.reverse();
-                this.setState({
-                    messages: messagesCopy,
-                });
-                if (oldMessagesNumber < messagesCopy.length)
-                    this.scrollToTheBottom();
-              }
-              this.setState({isloadingMsgs:false});
+                if (this._isMounted) {
+                    if(responseData.code == 200){
+                        var messagesCopy = responseData.body.messages;
+                        var oldMessagesNumber = this.state.messages.length;
+                        messagesCopy.reverse();
+                        this.setState({
+                            messages: messagesCopy,
+                        });
+                        if (oldMessagesNumber < messagesCopy.length)
+                            this.scrollToTheBottom();
+                    }
+                    this.setState({isloadingMsgs:false});
+                }
             })
           .done();
     }
@@ -77,6 +89,7 @@ class PrivateChatScreen extends Component{
         );
     }
     componentWillUnmount(){
+        this._isMounted = false;
         clearTimeout(clearTime);
     }
     renderMsgItem(item,userID){

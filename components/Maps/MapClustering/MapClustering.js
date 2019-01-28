@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {View,Text} from 'react-native';
+import {View,Text,StyleSheet} from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { width as w, height as h } from 'react-native-dimension';
 import SuperCluster from 'supercluster';
@@ -145,7 +145,14 @@ export class MapClustering extends Component {
                 clusterTextStyle={this.state.clusterTextStyle}
                 marker={cluster.properties.point_count === 0 ? cluster.marker : null}
                 key={JSON.stringify(cluster.geometry) + cluster.properties.cluster_id + cluster.properties.point_count}
-                onClusterPress={()=>{this.setState({geomatry:cluster.geometry,eventLimit:cluster.properties.point_count,showEventSlider:true})}}
+                onClusterPress={()=>{
+                    console.log(currentRegion);
+                    this.setState({
+                        geomatry:cluster.geometry,
+                        eventLimit:cluster.properties.point_count,
+                        showEventSlider:true
+                    })
+                }}
             />));
         } else {
             clusteredMarkers = this.state.markers.map(marker => marker.marker);
@@ -169,13 +176,6 @@ export class MapClustering extends Component {
     closeSlider = ()=>{
         this.setState({showEventSlider:false})
     }
-    showSlider(){
-        return (
-            <View style={CurrentStyles.sliderWrapper}>
-                <Text>Slider</Text>
-            </View>
-        )//<EventSlider location={this.state.geomatry} limit={this.state.eventLimit} closeSlider={this.closeSlider()}/>;
-    }
     render() {
         return (
             <MapView
@@ -188,7 +188,17 @@ export class MapClustering extends Component {
             >
                 {this.state.clusteredMarkers}
                 {this.state.otherChildren}
-                {this.state.showEventSlider && this.showSlider()}
+                { 
+                    // this.state.showEventSlider
+                    // && 
+                    <View style={{
+                        flex:1,
+                        position:'absolute',
+                        flexDirection:'row',
+                    }}>
+                        <Text>BottomSlider</Text>
+                    </View>
+                }
             </MapView>
         );
     }
