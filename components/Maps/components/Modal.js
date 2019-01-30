@@ -44,7 +44,7 @@ export class Modal extends PureComponent {
               fontSize: 16
             }}
           >
-            {eventData.event_subject}}
+            {eventData.event_subject}
           </Text>
           <Text
             style={{
