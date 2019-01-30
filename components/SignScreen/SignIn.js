@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View, TouchableOpacity,Image,
+import {Text, View, TouchableOpacity,Image,ScrollView,
     TextInput,KeyboardAvoidingView,Platform,Alert,SafeAreaView,
     AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -69,7 +69,7 @@ class SignIn extends Component{
                     justifyContent:'center',
                     alignItems:'center'
                 }}>
-                    <View style={{width:'75%'}}>
+                    <ScrollView keyboardShouldPersistTaps={'handled'} style={{width:'75%',flex:1,marginTop:15}}>
                         <Text style={{
                             marginBottom:30,
                             fontFamily:'Roboto-Light',
@@ -161,7 +161,7 @@ class SignIn extends Component{
                                 </Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
+                    </ScrollView>
                 </KeyboardAvoidingView>
             </SafeAreaView>
         );
