@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, TextInput,ImageBackground, 
     Platform,FlatList,ActivityIndicator,AsyncStorage,
-    RefreshControl,Picker,ScrollView,
+    RefreshControl,Picker,ScrollView,SafeAreaView
 } from 'react-native';
-import { DrawerActions } from 'react-navigation';
+import { DrawerActions,NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
 import Dialog, { SlideAnimation } from 'react-native-popup-dialog';
@@ -46,7 +46,10 @@ class EventsScreen extends Component{
             isFocusedSC:false,
             isSelectedCity:'',
             isCurrentTab:'all-events',
-            isRefreshing:false
+            isRefreshing:false,
+            isSearchOpen:false,
+            noFilterData:false,
+            isFiltering:false
         }
         this.viewabilityConfig = {
             waitForInteraction: true,
@@ -174,7 +177,28 @@ class EventsScreen extends Component{
     }
     componentDidMount(){
         this.setUserId();
-        setTimeout(()=>{this.refreshList();},200);
+        setTimeout(()=>{
+            this.refreshList();
+            this.getPrivatChatCount();
+            setInterval(()=>{
+                this.getPrivatChatCount();
+            },4000);
+        },200);
+    }
+    async getPrivatChatCount(){
+        var userID =  await AsyncStorage.getItem('userID');
+        await fetch(SERVER_URL+'?action=privatMsgsCount&user_id='+userID)
+        .then(res=>res.json())
+        .then(response=>{
+            const setInboxLabel = NavigationActions.setParams({
+                params: { privateCount: response.pcCount},
+                key: 'Messages',
+              });
+            this.props.navigation.dispatch(setInboxLabel);
+        })
+        .catch(err=>{
+            console.log(err);
+        })
     }
     _refreshList(){
         var dateNow = new Date();
@@ -194,7 +218,7 @@ class EventsScreen extends Component{
                     this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
                 },error=>{
                     console.log('Error',error);
-                    this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate)+'&curTime='+curTime;
+                    this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
                 })
             }
             else{
@@ -300,9 +324,36 @@ class EventsScreen extends Component{
         this.setState({TabComponent:''});
         this.props.navigation.navigate('Home');
     }
+    searchText = (e) => {
+        if(e.length>0){this.setState({isFiltering:true})}
+        else{this.setState({isFiltering:false})}
+        let text = e.toLowerCase()
+        let fullList = this.state.locationList;
+        let filteredList = fullList.filter((item) => { // search from a full list, and not from a previous search results list
+        if(item.event_subject.toLowerCase().match(text) || item.name.toLowerCase().match(text))
+            return item;
+        })
+        if (!text || text === '') {
+        this.setState({
+            renderedListData: fullList,
+            noFilterData:false,
+        })
+        } else if (!filteredList.length) {
+        // set no data flag to true so as to render flatlist conditionally
+        this.setState({
+            noFilterData: true
+        })
+        }
+        else if (Array.isArray(filteredList)) {
+        this.setState({
+            noFilterData: false,
+            renderedListData: filteredList
+        })
+        }
+    }
     render(){
         return (
-            <View style={MainStyles.normalContainer}>
+            <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
@@ -310,8 +361,7 @@ class EventsScreen extends Component{
                 </View>
                 
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
-                    <TouchableOpacity style={[
-                        MainStyles.tabItem,(this.state.TabComponent == '') ? MainStyles.tabItemActive : null]} onPress={()=>this.gotEventsList()}>
+                    <TouchableOpacity style={[MainStyles.tabItem,(this.state.TabComponent == '') ? MainStyles.tabItemActive : null]} onPress={()=>this.gotEventsList()}>
                         <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveIcon : null]}/>
                         <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveText : null]}>List</Text>
                     </TouchableOpacity>
@@ -326,10 +376,65 @@ class EventsScreen extends Component{
                         <Icon name="calendar-o" style={MainStyles.tabItemIcon}/>
                         <Text style={MainStyles.tabItemIcon}>Create Event</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={MainStyles.tabItem}>
+                    <TouchableOpacity style={MainStyles.tabItem} onPress={()=>{
+                        this.setState({isSearchOpen:true});
+                        setTimeout(()=>{this.searchInput.focus();},200);
+                    }}>
                         <Icon name="search" style={MainStyles.tabItemIcon}/>
                         <Text style={MainStyles.tabItemText}>Search</Text>
                     </TouchableOpacity>
+                    {
+                        this.state.isSearchOpen && 
+                        <View style={{
+                            position:'absolute',
+                            width:'109.1%',
+                            backgroundColor:'#FFF',
+                            left:0,
+                            right:0,
+                            flexDirection:'row',
+                            justifyContent:'space-between',
+                            alignItems:'center',
+                            height:'100%',
+                            borderColor:'#8da6d4',
+                            borderTopWidth:2,
+                            borderBottomWidth:2,
+                        }}>
+                            <View style={{
+                                height:'100%',
+                                alignItems:'center',
+                                justifyContent: 'center',
+                                backgroundColor:'#8da6d4',
+                                paddingHorizontal:8
+                            }}>
+                                <Icon name="search" size={17} style={{color:'#FFF'}}/>
+                            </View>
+                            <TextInput  
+                            style={{
+                                flex:1,
+                                fontFamily:'Roboto-Regular',
+                                color:'#8da6d4',
+                                fontSize:17,
+                                paddingHorizontal:10
+                            }}
+                            placeholder="Search..."
+                            placeholderTextColor="#8da6d4"
+                            keyboardType="web-search"
+                            ref={input=>this.searchInput = input}
+                            onChangeText={text=>{this.searchText(text)}}
+                            />
+                            <TouchableOpacity onPress={()=>{this.setState({isSearchOpen:false,isFiltering:false,noFilterData:false,renderedListData:[]})}} 
+                            style={{
+                                height:'100%',
+                                alignItems:'center',
+                                justifyContent: 'center',
+                                backgroundColor:'#8da6d4',
+                                paddingHorizontal:8
+                            }}
+                            >
+                                <Icon name="times" size={20} style={{color:'#FFF'}}/>
+                            </TouchableOpacity>
+                        </View>
+                    }
                 </View>
                 {
                     this.state.TabComponent != '' &&
@@ -347,13 +452,18 @@ class EventsScreen extends Component{
                         <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>My events</Text>
                     </TouchableOpacity>
                 </View>
+                {
+                    this.state.noFilterData==true && this.state.isFiltering==true &&
+                    <Text>No Data</Text>
+                }
                 { 
                     this.state.isCurrentTab == 'all-events' && 
                     this.state.locationList && 
-                    this.state.locationList.length > 0 && 
-                    <FlatList data={this.state.locationList}
+                    this.state.locationList.length > 0 &&  
+                    this.state.noFilterData==false && 
+                    <FlatList data={(this.state.renderedListData && this.state.renderedListData.length > 0)?this.state.renderedListData:this.state.locationList}
                         renderItem={({item}) => (
-                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID}/>
+                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID} refresh={this.refreshList}/>
                             )}
                         keyExtractor={(item) => item.key}
                         refreshControl={
@@ -361,8 +471,6 @@ class EventsScreen extends Component{
                                 refreshing={this.state.isRefreshing}
                                 onRefresh={()=>{this.setState({isRefreshing:true}),this.refreshList()}}
                                 title="Pull to refresh"
-                                tintColor="#fff"
-                                titleColor="#fff"
                                 colors={["#2e4d85","red", "green", "blue"]}
                             />
                         }
@@ -375,7 +483,7 @@ class EventsScreen extends Component{
                     this.state.MyEvents.length > 0 && 
                     <FlatList data={this.state.MyEvents}
                         renderItem={({item}) => (
-                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID}/>
+                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID} refresh={this.refreshList}/>
                             )}
                         keyExtractor={(item) => item.key}
                         refreshControl={
@@ -383,12 +491,11 @@ class EventsScreen extends Component{
                               refreshing={this.state.isRefreshing}
                               onRefresh={()=>{this.setState({isRefreshing:true}),this.refreshList()}}
                               title="Pull to refresh"
-                                tintColor="#fff"
-                                titleColor="#fff"
                                 colors={["#2e4d85","red", "green", "blue"]}
                             />
                           }
                         viewabilityConfig={this.viewabilityConfig}
+                        
                     />
                 }
                 {
@@ -416,7 +523,7 @@ class EventsScreen extends Component{
                         <TouchableOpacity onPress={()=>{this.setState({CreateEventVisible:false,isLocationSet:false,curLocation:{}})}}>
                             <Icon name="times" style={{fontSize:20,color:'#FFF'}}/>
                         </TouchableOpacity>
-                        <Text style={{color:'#FFF',fontFamily: 'RobotoMedium',fontSize:17,marginLeft:20}}>CREATE NEW EVENT</Text>
+                        <Text style={{color:'#FFF',fontFamily: 'Roboto-Medium',fontSize:17,marginLeft:20}}>CREATE NEW EVENT</Text>
                     </View>
                     <View style={{padding:0,borderWidth: 0,backgroundColor:'#FFF',overflow:'visible'}} 
                     onStartShouldSetResponderCapture={() => {
@@ -436,7 +543,7 @@ class EventsScreen extends Component{
                                 <View style={{width:'100%',marginTop:0,marginBottom:0, height:150,}}>
                                     <ImageBackground source={{uri:this.state.curLocation.picUrl}} style={{width: '100%', height: 150,flex:1,resizeMode:'center'}} resizeMode="cover">   
                                         <TouchableOpacity style={{position:'absolute',right:10,top:10}} onPress={()=>{this.setState({isLocationSet:false,curLocation:{}})}}>
-                                            <Icon name="pencil" size={20} color="#FFF" />
+                                            <Icon name="pencil" size={28} color="#FFF" />
                                         </TouchableOpacity>
                                         <View style={{
                                                 color: 'white',
@@ -618,7 +725,7 @@ class EventsScreen extends Component{
                         </ScrollView>
                     </View>
                 </Dialog>
-            </View>
+            </SafeAreaView>
         )
     }
 }

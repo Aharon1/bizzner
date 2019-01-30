@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {Text, View, Image, TouchableOpacity, ScrollView, 
-    TextInput,KeyboardAvoidingView,Animated,Platform } from 'react-native';
+import {Text, View, Image, TouchableOpacity, ScrollView, SafeAreaView,
+    TextInput,KeyboardAvoidingView,Animated,Platform,AlertIOS,ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Loader from '../Loader';
 import MainStyles from '../StyleSheet';
@@ -87,14 +87,19 @@ class SignUp extends Component{
         .then(response=>{
             this.setState({loading:false});
             if(response.code==200){
-                Toast.show(response.message, Toast.SHORT);
                 this.props.navigation.navigate('Auth');
             }
-            else if (response.code==404){
+            if(Platform.OS == 'ios'){
+                AlertIOS.alert(
+                    response.title,
+                    response.message
+                   );
+            }
+            else{
                 Toast.show(response.message, Toast.SHORT);
             }
-            
             console.log(response);
+            
         })
         .catch(err=>{
             console.error(err);
@@ -102,8 +107,8 @@ class SignUp extends Component{
     }
     render(){
         return(
-            <View style={MainStyles.normalContainer}>
-                <Loader loading={this.state.loading} />
+            <SafeAreaView style={MainStyles.normalContainer}>
+                {/* <Loader loading={this.state.loading} /> */}
                 {/*Header Section*/}
                 <View style={MainStyles.profileHeader}>
                     <TouchableOpacity onPress={() => this.props.navigation.goBack() } style={{position:'absolute',top:15,left:15}}>
@@ -138,8 +143,8 @@ class SignUp extends Component{
                     </View>
                 </View>
                 {/*Body Section*/}
-                <ScrollView style={[MainStyles.profileBody,{marginBottom: 0}]} keyboardShouldPersistTaps={'handled'}>
-                    <KeyboardAvoidingView  style={{flex:1}}>
+                <KeyboardAvoidingView  style={{flex:1}}  behavior="padding" enabled>
+                    <ScrollView style={[MainStyles.profileBody,{marginBottom: 0}]} keyboardShouldPersistTaps={'handled'}>
                         <View style={MainStyles.inputFieldWithIcon}>
                             <Icon name="user" style={[MainStyles.iFWIIcon,{color:'#6789c6'}]}/>
                             <TextInput 
@@ -246,14 +251,15 @@ class SignUp extends Component{
                                 value={this.state.confirmPassword}
                             />
                         </View>
-                    </KeyboardAvoidingView>
-                    <View style={[MainStyles.btnWrapper,{flex:1,justifyContent:'flex-end',flexDirection: 'row'}]}>
-                        <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.registerUser();}}>
-                            <Text style={MainStyles.btnSaveText}>SIGN UP</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
-            </View>
+                        <View style={[MainStyles.btnWrapper,{flex:1,justifyContent:'flex-end',flexDirection: 'row'}]}>
+                            <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.registerUser();}}>
+                                {this.state.loading && <ActivityIndicator size="large" color="#FFFFFF" />}
+                                {!this.state.loading && <Text style={MainStyles.btnSaveText}>SIGN UP</Text>}
+                            </TouchableOpacity>
+                        </View>
+                    </ScrollView>
+                </KeyboardAvoidingView>
+            </SafeAreaView>
         );
     }
 }

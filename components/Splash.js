@@ -19,7 +19,11 @@ class SplashScreen extends Component{
           });
         } 
         else {
-            Linking.addEventListener('url', this.handleOpenURL);
+            var linkingListner=Linking.addListener('url', this.handleOpenURL);
+            if(!linkingListner.context){
+                this.authenticateSession()
+            }
+            console.log(linkingListner);
         }
     }
     componentWillUnmount() { // C
@@ -46,6 +50,7 @@ class SplashScreen extends Component{
                     }
                     else{
                         Toast.show(response.message, Toast.SHORT);
+                        this.authenticateSession()
                     }
                 })
                 .catch(err=>{
