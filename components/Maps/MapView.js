@@ -1,142 +1,173 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, ImageBackground } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ImageBackground,
+  ScrollView
+} from "react-native";
 import { MarkerItem } from "./MarkerItem";
-import { MapClustering } from './MapClustering';
-import ProgressiveImage from '../AsyncModules/ImageComponent';
-import Icon from 'react-native-vector-icons/FontAwesome';
-const dummyImage = require('../../assets/dummy.jpg');
+import { MapClustering } from "./MapClustering";
+import { Modal } from "./components/Modal";
+
+const dummyImage = require("../../assets/dummy.jpg");
 
 export default class GoogleMapView extends PureComponent {
-    state = {
-        isModalOpen: false,
-        modalName: '',
-        subject: ''
-    }
-    render() {
-        
-        const { isModalOpen, eventData } = this.state;
-        return (
-            <View style={styles.container}>
-                <MapClustering
-                    onPress={this.onCloseModal}
-                    style={styles.map}
-                    region={this.props.currentPosition}>
-                    {this.props.events.map((marker, id) => (<MarkerItem {...marker}
-                        key={id} onOpenModal={this.onOpenModal} cluster={true}
-                        onNavigate={this.props.onNavigate} />))
-                    }
-                </MapClustering>
-                {
-                    isModalOpen &&
-                    <View style={{width:'85%',paddingBottom:20,borderTopLeftRadius:10,borderTopRightRadius:10,backgroundColor:'#FFF',elevation:5}}>
-                        
-                        <View style={{width:'100%',height:150}}>
-                            <ProgressiveImage source={{uri:eventData.event_photo}} style={{width:'100%',height:150,borderTopLeftRadius:10,borderTopRightRadius:10}} />
-                        </View>
-                        <View style={{
-                            paddingHorizontal:15,
-                            paddingVertical:10,
-                        }}>
-                            <Text style={{
-                                fontFamily:'Roboto-Medium',
-                                color:'#05296d',
-                                fontSize:16
-                            }}>
-                                {eventData.event_subject}
-                            </Text>
-                            <Text style={{
-                                fontFamily:'Roboto-Regular',
-                                color:'#05296d',
-                                fontSize:14
-                            }}>
-                                {eventData.group_name}, 
-                                <Text  style={{
-                                fontFamily:'Roboto-Light',
-                                color:'#05296d',
-                                fontSize:13
-                            }}> {eventData.group_address}</Text>
-                            </Text>
-                            <View style={{flexDirection:'row',justifyContent:'space-around',alignItems:'center',marginTop:10}}>
-                                <View style={{flexDirection:'row',justifyContent:'flex-start',alignItems:'center'}}>
-                                    <Icon name="clock-o" style={{marginRight:5,color:'#8da6d5'}} size={14}/>
-                                    <Text  style={{fontFamily:'Roboto-Regular',fontSize:14,color:'#8da6d5'}}>
-                                        {this.formatDate(new Date(eventData.event_date+' '+eventData.event_time))} - {this.formatAMPM(new Date(eventData.event_date+' '+eventData.event_time))}
-                                    </Text>
-                                </View>
-                                <TouchableOpacity onPress={this.goToEvent} style={{borderRadius:20,paddingVertical:5,paddingHorizontal:15,backgroundColor:'#416bb9'}}>
-                                    <Text style={{color:'#FFF',fontFamily:'Roboto-Regular',fontSize:13}}>INFO</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <TouchableOpacity style={{position:'absolute',top:5,right:5}} onPress={()=>this.setState({isModalOpen:false})}>
-                            <Icon name="times" size={18} style={{color:'#FFF'}}/>
-                        </TouchableOpacity>
-                    </View>
-                }
-            </View>
-        );
-    }
+  state = {
+    isModalOpen: false,
+    isModalClusterOpen: false,
+    modalName: "",
+    subject: "",
+    clusterEvents: []
+  };
+  render() {
+    const { isModalOpen, isModalClusterOpen } = this.state;
+    return (
+      <View style={styles.container}>
+        <MapClustering
+          onPress={this.onCloseModal}
+          style={styles.map}
+          region={this.props.currentPosition}
+          onClusterPress={this.onModalClusterOpen}
+        >
+          {this.props.events.map((marker, id) => (
+            <MarkerItem
+              {...marker}
+              key={id}
+              onOpenModal={this.onOpenModal}
+              cluster={true}
+              onNavigate={this.props.onNavigate}
+            />
+          ))}
+        </MapClustering>
+        {isModalOpen && this.renderMarker()}
+        {isModalClusterOpen && this.renderCluster() }
+      </View>
+    );
+  }
+  renderMarker = () =>{
+    const { eventData } = this.state
+    return (
+      <Modal
+            eventData={eventData}
+            goToEvent={() => this.goToEvent(eventData.id)}
+            onCloseModal={this.onCloseModal}
+            formatDate={this.formatDate}
+            formatAMPM={this.formatAMPM}
+          />
+    )
+  }
+  renderCluster = () =>{
+    return (
+      <ScrollView
+            horizontal={true}
+            contentContainerStyle={{ alignItems: "flex-end" }}
+          >
+            {this.state.clusterEvents.map(event => {
+              const id = event.marker.props.id
+              const eventData = event.marker.props
+              return (
+                <Modal
+                  key={id}
+                  goToEvent={() => this.goToEvent(id)}
+                  onCloseModal={this.onModalClusterClose}
+                  eventData={eventData}  
+                  formatDate={this.formatDate}
+                  formatAMPM={this.formatAMPM}
+                />
+              );
+            })}
+          </ScrollView>
+    )
+  }
+  onOpenModal = eventData => {
+    this.setState({
+      isModalOpen: true,
+      eventData
+    });
+  };
+  goToEvent = id => {
+    const event_id = id ? id : this.state.eventData.event_id;
+    this.props.onNavigate({ event_id });
 
-    onOpenModal = (eventData) => {
-        this.setState({
-            isModalOpen: true,
-            eventData
-        })
-    }
-    goToEvent = ()=>{
-        this.props.onNavigate({event_id:this.state.eventData.event_id});
-        this.setState({
-            isModalOpen: false,
-            eventData:''
-        })
-    }
-    onCloseModal = () => {
-        this.setState({
-            isModalOpen: false,
-            eventData:''
-        })
-    }
-    formatAMPM(date) {
-        var hours = date.getHours();
-        var minutes = date.getMinutes();
-        var ampm = hours >= 12 ? 'pm' : 'am';
-        hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0'+minutes : minutes;
-        var strTime = hours + ':' + minutes + ' ' + ampm;
-        return strTime;
-    }
-    formatDate(date){
-        var dateStr = '';
-        dateStr += (date.getDate() < 10)?'0'+date.getDate()+' ':date.getDate()+' ';
-        var monthArray = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        var month = monthArray[date.getMonth()];
-        dateStr += month+' ';
-        dateStr += date.getFullYear();
-        return dateStr;
-    }
+    this.setState({
+      isModalOpen: false,
+      eventData: ""
+    });
+  };
+  onCloseModal = () => {
+    this.setState({
+      isModalOpen: false,
+      eventData: ""
+    });
+  };
+  formatAMPM(date) {
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? "pm" : "am";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    var strTime = hours + ":" + minutes + " " + ampm;
+    return strTime;
+  }
+  formatDate(date) {
+    var dateStr = "";
+    dateStr +=
+      date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
+    var monthArray = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ];
+    var month = monthArray[date.getMonth()];
+    dateStr += month + " ";
+    dateStr += date.getFullYear();
+    return dateStr;
+  }
+  onModalClusterOpen = clusterEvents => {
+    this.setState({
+      isModalClusterOpen: true,
+      clusterEvents
+    });
+  };
+onModalClusterClose = () =>{
+  this.setState({
+      isModalClusterOpen: false
+  })
+}
 }
 
 const styles = StyleSheet.create({
-    container: {
-        ...StyleSheet.absoluteFillObject,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-    },
-    map: {
-        ...StyleSheet.absoluteFillObject,
-    },
-    textStyle: {
-        fontSize: 20,
-        alignSelf: 'flex-start',
-        flexDirection: 'row',
-        padding: 5,
-        color: '#000'
-    },
-    button: {
-        width: 80,
-        paddingHorizontal: 12,
-        alignItems: 'center',
-        marginHorizontal: 10
-    },
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "flex-end",
+    alignItems: "center"
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject
+  },
+  textStyle: {
+    fontSize: 20,
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    padding: 5,
+    color: "#000"
+  },
+  button: {
+    width: 80,
+    paddingHorizontal: 12,
+    alignItems: "center",
+    marginHorizontal: 10
+  }
 });
