@@ -122,7 +122,7 @@ const Navigation = createStackNavigator({
     },
 }, {
     headerMode: 'none',
-    initialRouteName: 'Home',
+    initialRouteName: 'Splash',
     containerOptions: {
         style: {
             backgroundColor: '#f00',

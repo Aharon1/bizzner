@@ -7,6 +7,7 @@ import {SERVER_URL} from '../../Constants';
 import Loader from '../Loader';
 import ProgressiveImage from '../../components/AsyncModules/ImageComponent';
 import Dialog, { SlideAnimation } from 'react-native-popup-dialog';
+import Toast from 'react-native-simple-toast';
 export default class EventDetail extends Component{
     constructor(props){
         super(props);
@@ -118,11 +119,11 @@ export default class EventDetail extends Component{
         return(
             <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
-                <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                    <TouchableOpacity style={{ paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
+                <View style={[MainStyles.eventsHeader,{justifyContent:'center'}]}>
+                    <TouchableOpacity style={{ alignItems:'center',paddingLeft: 12,flexDirection:'row' }} onPress={() => this.props.navigation.goBack() }>
                         <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
+                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>EVENT DETAILS</Text>
                     </TouchableOpacity>
-                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>EVENT DETAILS</Text>
                 </View>
                 <View style={[MainStyles.tabContainer,{elevation:0,justifyContent:'space-around',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[

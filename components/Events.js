@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, TextInput,ImageBackground, 
     Platform,FlatList,ActivityIndicator,AsyncStorage,
-    RefreshControl,Picker,ScrollView,SafeAreaView
+    RefreshControl,Picker,ScrollView,SafeAreaView,ActionSheetIOS
 } from 'react-native';
 import { DrawerActions,NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -9,6 +9,7 @@ import MainStyles from './StyleSheet';
 import Dialog, { SlideAnimation } from 'react-native-popup-dialog';
 import DatePicker from 'react-native-datepicker';
 import { HeaderButton } from './Navigation/HeaderButton';
+import Footer from './Navigation/Footer';
 import {SERVER_URL,MAPKEY} from '../Constants';
 import Loader from './Loader';
 import ListItem from './AsyncModules/ListItem';
@@ -49,7 +50,8 @@ class EventsScreen extends Component{
             isRefreshing:false,
             isSearchOpen:false,
             noFilterData:false,
-            isFiltering:false
+            isFiltering:false,
+            no_Attendees:'No. of Attendees'
         }
         this.viewabilityConfig = {
             waitForInteraction: true,
@@ -258,6 +260,7 @@ class EventsScreen extends Component{
                     usersPlace:results[bodyKey].usersPlace,
                     usersCount:results[bodyKey].usersCount,
                     userIds:results[bodyKey].usersIds,
+                    timestamp:results[bodyKey].timestamp,
                 });
             }
             var MyEvents = placesArray.filter((item,key)=>{
@@ -350,6 +353,24 @@ class EventsScreen extends Component{
             renderedListData: filteredList
         })
         }
+    }
+    pickerIos = ()=>{
+        ActionSheetIOS.showActionSheetWithOptions({
+            options: ['Cancel', '5-10','10-15','15-20'],
+            cancelButtonIndex: 0,
+          },
+          (buttonIndex) => {
+            if (buttonIndex === 1) {
+                this.setState({NEUsersCount: 10,no_Attendees:'5-10'})
+            }
+            else if (buttonIndex === 2) {
+                this.setState({NEUsersCount: 15,no_Attendees:'10-15'})
+            }
+            else if (buttonIndex === 3) {
+                this.setState({NEUsersCount: 20,no_Attendees:'15-20'})
+            }
+            
+          });
     }
     render(){
         return (
@@ -453,8 +474,25 @@ class EventsScreen extends Component{
                     </TouchableOpacity>
                 </View>
                 {
-                    this.state.noFilterData==true && this.state.isFiltering==true &&
-                    <Text>No Data</Text>
+                    this.state.noFilterData==true && this.state.isFiltering==true && 
+                    <View style={{
+                        flex:1,
+                        alignContent:'center',
+                        alignItems:'center',
+                        justifyContent:'center',
+                        
+                    }}>
+                        <Text style={{
+                            fontFamily:'Roboto-Medium',
+                            fontSize:18,
+                            color:'#FFFFFF',
+                            backgroundColor:'#0846b8',
+                            paddingVertical:10,
+                            paddingHorizontal:15,
+                            borderRadius:50,
+                            elevation:8
+                        }}>NO DATA</Text>
+                    </View>
                 }
                 { 
                     this.state.isCurrentTab == 'all-events' && 
@@ -663,21 +701,31 @@ class EventsScreen extends Component{
                                 </View>
                                 <View style={MainStyles.createEventFWI}>
                                     <Icon name="users" style={MainStyles.cEFWIIcon}/>
-                                    <Picker
-                                        mode="dropdown"
+                                    {
+                                        Platform.OS == 'android' && 
+                                        <Picker
                                         selectedValue={this.state.NEUsersCount}
                                         returnKeyType="next"
                                         style={MainStyles.cEFWIPF}
                                         textStyle={{fontSize: 17,fontFamily:'Roboto-Light'}}
                                         itemTextStyle= {{
-                                            fontSize: 17,fontFamily:'Roboto-Light'
+                                            fontSize: 17,fontFamily:'Roboto-Light',
                                         }}
+                                        itemStyle={[MainStyles.cEFWIPF,{fontSize: 17,fontFamily:'Roboto-Light'}]}
                                         onValueChange={(itemValue, itemIndex) => this.setState({NEUsersCount: itemValue})}>
-                                        <Picker.Item label="Number of Attendees" value="" />
-                                        <Picker.Item label="5-10" value="10" />
-                                        <Picker.Item label="10-15" value="15" />
-                                        <Picker.Item label="15-20" value="20" />
-                                    </Picker>
+                                            <Picker.Item label="Number of Attendees" value="" />
+                                            <Picker.Item label="5-10" value="10" />
+                                            <Picker.Item label="10-15" value="15" />
+                                            <Picker.Item label="15-20" value="20" />
+                                        </Picker>
+                                    }
+                                    {
+                                        Platform.OS == 'ios' && 
+                                        <TouchableOpacity style={[MainStyles.cEFWITF,{alignItems:'center'}]} onPress={()=>{this.pickerIos()}}>
+                                            <Text style={{color:'#03163a',fontFamily:'Roboto-Light'}}>{this.state.no_Attendees}</Text>
+                                        </TouchableOpacity>
+                                        
+                                    }
                                 </View>
                                 <View style={{flexDirection:'row',flex:1,justifyContent:'flex-end',marginBottom:20}}>
                                     <View style={MainStyles.createEventFWI}>
@@ -725,6 +773,7 @@ class EventsScreen extends Component{
                         </ScrollView>
                     </View>
                 </Dialog>
+                <Footer />
             </SafeAreaView>
         )
     }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {SERVER_URL} from '../Constants';
 import { Text, View, Image, TouchableOpacity, ScrollView,
   TextInput,KeyboardAvoidingView,Animated,
-  AsyncStorage,SafeAreaView
+  AsyncStorage,SafeAreaView,ActionSheetIOS,Picker,Platform
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
@@ -16,212 +16,178 @@ import PushNotification from 'react-native-push-notification';
 import FormData from 'FormData';
 import axios from 'axios';
 import ImagePicker from 'react-native-image-picker';
+import countryList from 'react-select-country-list'
 class ProfileScreen extends Component{
-    constructor(props){
-      super(props);
-      this.state = {
-        loading:true,
-        visible: false,
-        firstName:'',
-        lastName:'',
-        emailAddress : '',
-        location : '',
-        headline : '',
-        position : '',
-        profilePicture : '',
-        interests:[],
-        animation: new Animated.Value(30),
-        gpsOn:true,
-        pushOn:true,
-        IShow:false,
-        InterestsTags:[],
-        usersInteretsIds:{},
-        isOpenCamera:false,
-        base64Image:''
-      };
-    }
-    componentDidMount(){
-      this.get_usersDetails();
-    }
-    get_usersDetails = async ()=>{
-      var UserID = await AsyncStorage.getItem('userID');
-      this.setState({UserID});
-      setTimeout(()=>{
-        fetch(SERVER_URL+'?action=get_user_data&user_id='+UserID)
-        .then(res=>res.json())
-        .then(response=>{
-          if(response.code == 200){
-            var body = response.body;
-            this.setState({
-              loading:false,
-              firstName:body.first_name,
-              lastName:body.last_name,
-              emailAddress : body.user_email,
-              location : body.country,
-              headline : body.headline,
-              position : body.current_position,
-              profilePicture : body.user_pic_thumb,
-              interests:body.interests,
-              InterestsTags:response.interestTags,
-              usersInteretsIds:response.usersInteretsIds
-            });
-          }
-          else{}
-        })
-      },200)
-    }
-    GoToNextScreen(){
-      if(this.state.gpsOn){
-        Permissions.check('location', { type: 'always' }).then(response => {
-          if(response == "undetermined"){
-            Permissions.request('location', { type: 'always' }).then(response => {
-              if(response != 'authorized'){
-              }
-              else{
-              }
-              this.setState({visible:false,loading:false});
-              this._saveProfile();
-            })
-          }
-          else{
+  constructor(props){
+    super(props);
+    this.state = {
+      loading:true,
+      visible: false,
+      firstName:'',
+      lastName:'',
+      emailAddress : '',
+      location : '',
+      headline : '',
+      position : '',
+      profilePicture : '',
+      interests:[],
+      animation: new Animated.Value(30),
+      gpsOn:true,
+      pushOn:true,
+      IShow:false,
+      InterestsTags:[],
+      usersInteretsIds:{},
+      isOpenCamera:false,
+      base64Image:'',
+      CountryList:countryList().getLabels()
+    };
+  }
+  componentDidMount(){
+    this.get_usersDetails();
+  }
+  get_usersDetails = async ()=>{
+    var UserID = await AsyncStorage.getItem('userID');
+    this.setState({UserID});
+    setTimeout(()=>{
+      fetch(SERVER_URL+'?action=get_user_data&user_id='+UserID)
+      .then(res=>res.json())
+      .then(response=>{
+        if(response.code == 200){
+          var body = response.body;
+          this.setState({
+            loading:false,
+            firstName:body.first_name,
+            lastName:body.last_name,
+            emailAddress : body.user_email,
+            location : body.country,
+            headline : body.headline,
+            position : body.current_position,
+            profilePicture : body.user_pic_thumb,
+            interests:body.interests,
+            InterestsTags:response.interestTags,
+            usersInteretsIds:response.usersInteretsIds
+          });
+        }
+        else{}
+      })
+    },200)
+  }
+  GoToNextScreen(){
+    if(this.state.gpsOn){
+      Permissions.check('location', { type: 'always' }).then(response => {
+        if(response == "undetermined"){
+          Permissions.request('location', { type: 'always' }).then(response => {
+            if(response != 'authorized'){
+            }
+            else{
+            }
             this.setState({visible:false,loading:false});
             this._saveProfile();
-          }
-        })
-      }
-      
-      /*PushNotification.configure({
-          onRegister: function(token) {
-              console.log( 'TOKEN:', token );
-          },
-          onNotification: function(notification) {
-              console.log( 'NOTIFICATION:', notification );
-              notification.finish(PushNotificationIOS.FetchResult.NoData);
-          },
-          senderID: "71450108131",
-          permissions: {
-              alert: true,
-              badge: true,
-              sound: true
-          },
-          popInitialNotification: true,
-          requestPermissions: true,
-      });*/
-      
+          })
+        }
+        else{
+          this.setState({visible:false,loading:false});
+          this._saveProfile();
+        }
+      })
     }
-    _saveProfile = ()=>{
-      var interests = this.state.usersInteretsIds.join(',');
-      var fetchData = SERVER_URL+'?action=save_profile';
-      var params = '&ID='+this.state.UserID;
-      params += '&first_name='+this.state.firstName;
-      params += '&last_name='+this.state.lastName;
-      params += '&user_email='+this.state.emailAddress;
-      params += '&country='+this.state.location;
-      params += '&headline='+this.state.firstName;
-      params += '&current_position='+this.state.headline;
-      params += '&interests='+encodeURIComponent(interests);
-      params += '&notification_on='+this.state.pushOn;
-      params += '&gps_on='+this.state.gpsOn;
-      var formData = new FormData();
-      //formData.append("userPic", this.state.base64Image);
-      formData.append('file', this.state.imageData);
-      formData.append('gps_on', this.state.gpsOn);
-      console.log(formData);
-      let data = new FormData();
-      /*data.append('action', 'ADD');
-      data.append('param', 0);
-      data.append('secondParam', 0);
-      data.append('file', new Blob([payload], { type: 'text/csv' }));*/
-      // this works
-      let request = new XMLHttpRequest();
-      request.onreadystatechange = (e) => {
-        console.log(request);
-        if (request.readyState !== 4) {
-          return;
-        }
-        if (request.status === 200) {
-          console.log('success', request.responseText);
-        } else {
-          console.warn('error');
-        }
-      };
-      request.open('POST', fetchData+params);
-      request.send(formData);
-      /*axios.post(fetchData+params,{
+    
+    /*PushNotification.configure({
+        onRegister: function(token) {
+            console.log( 'TOKEN:', token );
+        },
+        onNotification: function(notification) {
+            console.log( 'NOTIFICATION:', notification );
+            notification.finish(PushNotificationIOS.FetchResult.NoData);
+        },
+        senderID: "71450108131",
+        permissions: {
+            alert: true,
+            badge: true,
+            sound: true
+        },
+        popInitialNotification: true,
+        requestPermissions: true,
+    });*/
+    
+  }
+  _saveProfile = ()=>{
+    var interests = this.state.usersInteretsIds.join(',');
+    var fetchData = SERVER_URL+'?action=save_profile';
+    var params = '&ID='+this.state.UserID;
+    params += '&first_name='+this.state.firstName;
+    params += '&last_name='+this.state.lastName;
+    params += '&user_email='+this.state.emailAddress;
+    params += '&country='+this.state.location;
+    params += '&headline='+this.state.firstName;
+    params += '&current_position='+this.state.headline;
+    params += '&interests='+encodeURIComponent(interests);
+    params += '&notification_on='+this.state.pushOn;
+    params += '&gps_on='+this.state.gpsOn;
+    var formData = new FormData();
+    //formData.append("userPic", this.state.base64Image);
+    formData.append('file', this.state.imageData);
+    formData.append('gps_on', this.state.gpsOn);
+    console.log(formData);
+    let data = new FormData();
+    /*data.append('action', 'ADD');
+    data.append('param', 0);
+    data.append('secondParam', 0);
+    data.append('file', new Blob([payload], { type: 'text/csv' }));*/
+    // this works
+    let request = new XMLHttpRequest();
+    request.onreadystatechange = (e) => {
+      console.log(request);
+      if (request.readyState !== 4) {
+        return;
+      }
+      if (request.status === 200) {
+        console.log('success', request.responseText);
+      } else {
+        console.warn('error');
+      }
+    };
+    request.open('POST', fetchData+params);
+    request.send(formData);
+    /*axios.post(fetchData+params,{
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data'
+      },
+      data:formData
+    })
+    .then(res=>{
+      console.log(res.data);
+    })*/
+    /*fetch(fetchData+params,{
+        method:'POST',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data'
         },
-        data:formData
+        body: formData
+    })
+    .then(res=>{console.log(res);return res.json()})
+    .then(postResponse=>{
+      console.log(postResponse);
+        Toast.show(postResponse.message,Toast.SHORT);
+        this.setState({loading:false})
+        //this.props.navigation.navigate('Home');
+    })
+    .catch(err=>{
+      console.log(err);
+    })*/
+  }
+  capturePhoto = async function(){
+    if (this.useCamera) {
+      const options = { quality: 1, base64: true };
+      this.useCamera.capture({metadata:options}).then(res=>{
       })
-      .then(res=>{
-        console.log(res.data);
-      })*/
-      /*fetch(fetchData+params,{
-          method:'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'multipart/form-data'
-          },
-          body: formData
-      })
-      .then(res=>{console.log(res);return res.json()})
-      .then(postResponse=>{
-        console.log(postResponse);
-          Toast.show(postResponse.message,Toast.SHORT);
-          this.setState({loading:false})
-          //this.props.navigation.navigate('Home');
-      })
-      .catch(err=>{
-        console.log(err);
-      })*/
+      //this.setState({ profilePicture: data.uri  });
     }
-    capturePhoto = async function(){
-      if (this.useCamera) {
-        const options = { quality: 1, base64: true };
-        this.useCamera.capture({metadata:options}).then(res=>{
-        })
-        //this.setState({ profilePicture: data.uri  });
-      }
-    }
-    picPhoto = ()=>{
-      //if(RequestPermssions.Camera()){
-        var options = {
-          maxWidth:400,
-          maxHeight:400,
-          mediaType:'photo',
-          quality:1,
-          allowsEditing:true,
-          noData:true,
-          storageOptions:{
-            skipBackup:true,
-            cameraRoll:false,
-          }
-        }
-        ImagePicker.launchImageLibrary(options, (response) => {
-          // Same code as in above section!
-          if(!response.didCancel){
-            this.setState({ imageData:{
-              name:response.fileName,
-              type:response.type,
-              uri:response.path,
-              size:response.fileSize
-              },profilePicture:response.uri  });
-          }
-          this.togglePicOption();
-        });
-    };
-    togglePicOption = () => {
-      this.setState((prevState) => {
-        Animated.spring(this.state.animation, {
-          toValue: prevState.isModalVisible ? 0 : 1,
-        }).start()
-        return {
-          isModalVisible: !prevState.isModalVisible
-        }
-      })
-    }
-    takePicture = async function() {
+  }
+  picPhoto = ()=>{
+    //if(RequestPermssions.Camera()){
       var options = {
         maxWidth:400,
         maxHeight:400,
@@ -234,7 +200,7 @@ class ProfileScreen extends Component{
           cameraRoll:false,
         }
       }
-      ImagePicker.launchCamera(options, (response) => {
+      ImagePicker.launchImageLibrary(options, (response) => {
         // Same code as in above section!
         if(!response.didCancel){
           this.setState({ imageData:{
@@ -242,28 +208,77 @@ class ProfileScreen extends Component{
             type:response.type,
             uri:response.path,
             size:response.fileSize
-          },profilePicture:response.uri  });
+            },profilePicture:response.uri  });
         }
-      this.togglePicOption();
+        this.togglePicOption();
       });
-    };
-    selectTag = (item)=>{
-      if(this.state.usersInteretsIds.indexOf(item.id) === -1){
-          var selectedITs = this.state.usersInteretsIds;
-          selectedITs.push(item.id);
-          this.state.interests.push(item);
-          this.setState({selectedITs})
+  };
+  togglePicOption = () => {
+    this.setState((prevState) => {
+      Animated.spring(this.state.animation, {
+        toValue: prevState.isModalVisible ? 0 : 1,
+      }).start()
+      return {
+        isModalVisible: !prevState.isModalVisible
       }
-      else{
-          var selectedITs = this.state.usersInteretsIds;
-          selectedITs.splice(this.state.usersInteretsIds.indexOf(item.id),1);
-          this.state.interests.filter((i,key)=>{
-            if(i.id == item.id){
-              delete this.state.interests[key];
-            }
-          });
-          this.setState({selectedITs});
+    })
+  }
+  takePicture = async function() {
+    var options = {
+      maxWidth:400,
+      maxHeight:400,
+      mediaType:'photo',
+      quality:1,
+      allowsEditing:true,
+      noData:true,
+      storageOptions:{
+        skipBackup:true,
+        cameraRoll:false,
       }
+    }
+    ImagePicker.launchCamera(options, (response) => {
+      // Same code as in above section!
+      if(!response.didCancel){
+        this.setState({ imageData:{
+          name:response.fileName,
+          type:response.type,
+          uri:response.path,
+          size:response.fileSize
+        },profilePicture:response.uri  });
+      }
+    this.togglePicOption();
+    });
+  };
+  selectTag = (item)=>{
+    if(this.state.usersInteretsIds.indexOf(item.id) === -1){
+        var selectedITs = this.state.usersInteretsIds;
+        selectedITs.push(item.id);
+        this.state.interests.push(item);
+        this.setState({selectedITs})
+    }
+    else{
+        var selectedITs = this.state.usersInteretsIds;
+        selectedITs.splice(this.state.usersInteretsIds.indexOf(item.id),1);
+        this.state.interests.filter((i,key)=>{
+          if(i.id == item.id){
+            delete this.state.interests[key];
+          }
+        });
+        this.setState({selectedITs});
+    }
+  }
+  pickerIos = ()=>{
+    var options = new Array('Cancel');
+    options.push(this.state.CountryList);
+    ActionSheetIOS.showActionSheetWithOptions({
+        options: options,
+        cancelButtonIndex: 0,
+      },
+      (buttonIndex) => {
+        if(buttonIndex != 0){
+          this.setState({location: options[buttonIndex]})
+        }
+      });
   }
   render() {
     return (
@@ -321,7 +336,7 @@ class ProfileScreen extends Component{
             </View>
         </View>
         {/*Body Section*/}
-        <KeyboardAvoidingView  style={{flex:1}}  behavior="padding" enabled>
+        <KeyboardAvoidingView  style={{flex:1}} enabled>
           <ScrollView style={MainStyles.profileBody}>
           
               <View style={MainStyles.inputFieldWithIcon}>
@@ -330,7 +345,36 @@ class ProfileScreen extends Component{
               </View>
               <View style={MainStyles.inputFieldWithIcon}>
                 <Icon name="map-marker" style={MainStyles.iFWIIcon}/>
-                <TextInput style={MainStyles.ifWITI} placeholder="Country" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.location}/>
+                
+                {
+                    Platform.OS == 'android' && 
+                    <Picker
+                    selectedValue={this.state.location}
+                    style={MainStyles.cEFWIPF}
+                    textStyle={{fontSize: 17,fontFamily:'Roboto-Light'}}
+                    itemTextStyle= {{
+                        fontSize: 17,fontFamily:'Roboto-Light',
+                    }}
+                    itemStyle={[MainStyles.cEFWIPF,{fontSize: 17,fontFamily:'Roboto-Light'}]}
+                    onValueChange={(itemValue, itemIndex) => this.setState({location: itemValue})}>
+                        <Picker.Item label="Choose " value="" />
+                        {
+                          this.state.CountryList.map(item=>{
+                            return (
+                              <Picker.Item key={'key-'+item} label={item} value={item} />
+                            )
+                          })
+                        }
+                    </Picker>
+                }
+                {
+                    Platform.OS == 'ios' && 
+                    <TouchableOpacity style={[MainStyles.cEFWITF,{alignItems:'center'}]} onPress={()=>{this.pickerIos()}}>
+                        <Text style={{color:'#03163a',fontFamily:'Roboto-Light'}}>{this.state.location}</Text>
+                    </TouchableOpacity>
+                    
+                }
+                {/* <TextInput style={MainStyles.ifWITI} placeholder="Country" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.location}/> */}
               </View>
               <View style={MainStyles.inputFieldWithIcon}>
                 <Icon name="adn" style={MainStyles.iFWIIcon}/>
