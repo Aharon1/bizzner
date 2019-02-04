@@ -159,7 +159,6 @@ class EventChatScreen extends Component{
                             <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
                             <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>GROUP CHAT</Text>
                         </TouchableOpacity>
-                        
                     </View>
                     <View style={[MainStyles.tabContainer,{justifyContent:'flex-start',paddingHorizontal:15,paddingVertical:15}]}>
                         <Text style={{fontSize:16,fontFamily:'Roboto-Medium',color:'#05296d'}}>Note: {this.state.event_note}</Text>

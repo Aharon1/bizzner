@@ -1,9 +1,9 @@
 import React,{Component} from 'react';
 import { View,TouchableOpacity,Text,AsyncStorage } from 'react-native';
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions,withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {SERVER_URL} from '../../Constants';
-export default class Footer extends Component {
+class Footer extends Component {
     constructor(props){
         super(props);
         this.state={
@@ -28,6 +28,7 @@ export default class Footer extends Component {
         await fetch(SERVER_URL+'?action=privatMsgsCount&user_id='+userID)
         .then(res=>res.json())
         .then(response=>{
+            console.log(response);
             this.setState({pcCount:response.pcCount});
             const setInboxLabel = NavigationActions.setParams({
                 params: { privateCount: response.pcCount},
@@ -51,60 +52,61 @@ export default class Footer extends Component {
                 paddingBottom:5
             }}>
                 <TouchableOpacity style={{alignItems:'center',width:'50%',
-                paddingTop:10,
-                paddingBottom:10}} >
+                paddingTop:5,
+                paddingBottom:5}} onPress={()=>this.props.navigation.navigate('EventChatList')}>
                     <View>
-                        <Icon name="comments" style={{ fontSize: 28, color: '#8da6d5' }} />
-                        <View style={{
+                        <Icon name="comments" style={{ fontSize: 27, color: '#8da6d5' }} />
+                        {/* <View style={{
                                 position:'absolute',
-                                right:-13,
-                                top:-13,
+                                right:-12,
+                                top:-8,
                                 alignItems:'center',
                                 alignContent:'center',
                                 justifyContent:'center',
                                 backgroundColor:'#0846b8',
                                 borderRadius:100,
-                                width:25,
-                                height:25,
+                                width:20,
+                                height:20,
                             }}>
                             <Text style={{
-                                fontSize:11,
+                                fontSize:10,
+                                fontFamily:'Roboto-Light',
                                 color:'#FFFFFF',
-                            }}>23</Text>
-                        </View>
+                            }}>99+</Text>
+                        </View> */}
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={{alignItems:'center',
                 borderLeftColor:'#8da6d5',
                 borderLeftWidth:1,
-                width:'50%'}} >
+                width:'50%'}}  onPress={()=>this.props.navigation.navigate('Messages')} >
                     <View>
-                        <Icon name="comment" style={{ fontSize: 28, color: '#8da6d5' }} />
+                        <Icon name="comment" style={{ fontSize: 27, color: '#8da6d5' }} />
                         {
                             this.state.pcCount > 0 &&  
                             <View style={{
-                            position:'absolute',
-                            right:-13,
-                            top:-13,
-                            alignItems:'center',
-                            alignContent:'center',
-                            justifyContent:'center',
-                            backgroundColor:'#0846b8',
-                            borderRadius:100,
-                            width:25,
-                            height:25,
+                                position:'absolute',
+                                right:-12,
+                                top:-8,
+                                alignItems:'center',
+                                alignContent:'center',
+                                justifyContent:'center',
+                                backgroundColor:'#0846b8',
+                                borderRadius:100,
+                                width:20,
+                                height:20,
                             }}>
                                 <Text style={{
-                                    fontSize:11,
+                                    fontSize:10,
+                                    fontFamily:'Roboto-Light',
                                     color:'#FFFFFF',
-                                }}>23</Text>
+                                }}>{this.state.pcCount}</Text>
                             </View>
                         }
-                        
                     </View>
                 </TouchableOpacity>
             </View>
         )
     }
-    
 }
+export default  withNavigation(Footer)

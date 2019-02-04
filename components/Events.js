@@ -181,13 +181,13 @@ class EventsScreen extends Component{
         this.setUserId();
         setTimeout(()=>{
             this.refreshList();
-            this.getPrivatChatCount();
+            /*this.getPrivatChatCount();
             setInterval(()=>{
                 this.getPrivatChatCount();
-            },4000);
+            },4000);*/
         },200);
     }
-    async getPrivatChatCount(){
+    /*async getPrivatChatCount(){
         var userID =  await AsyncStorage.getItem('userID');
         await fetch(SERVER_URL+'?action=privatMsgsCount&user_id='+userID)
         .then(res=>res.json())
@@ -201,7 +201,7 @@ class EventsScreen extends Component{
         .catch(err=>{
             console.log(err);
         })
-    }
+    }*/
     _refreshList(){
         var dateNow = new Date();
         var curMonth = ((dateNow.getMonth()+1) >= 10)?(dateNow.getMonth()+1):'0'+(dateNow.getMonth()+1);
@@ -240,6 +240,7 @@ class EventsScreen extends Component{
         })
         .then(res=>res.json())
         .then(response=>{
+            console.log(response);
             var results = response.results
             const placesArray = [];
             for (const bodyKey in results){
@@ -380,7 +381,6 @@ class EventsScreen extends Component{
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
                     <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>EVENTS</Text>
                 </View>
-                
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[MainStyles.tabItem,(this.state.TabComponent == '') ? MainStyles.tabItemActive : null]} onPress={()=>this.gotEventsList()}>
                         <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveIcon : null]}/>

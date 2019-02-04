@@ -20,7 +20,7 @@ import ConfirmScreen from '../SignScreen/ConfirmScreen';
 import SignIn from '../SignScreen/SignIn';
 import ForgotPassword from '../SignScreen/ForgotPassword';
 import Interests from '../Interests';
-
+import EventChatListScreen from '../singleScreens/EventsChatList';
 const drawerItemStyle = { 
     borderBottomWidth: 1, 
     borderBottomColor: '#8da6d5', 
@@ -120,6 +120,9 @@ const Navigation = createStackNavigator({
     ['Private Chat']:{
         screen:PrivateChatScreen
     },
+    EventChatList:{
+        screen:EventChatListScreen
+    }
 }, {
     headerMode: 'none',
     initialRouteName: 'Splash',
