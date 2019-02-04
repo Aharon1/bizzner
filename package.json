@@ -16,6 +16,7 @@
     "react-native": "0.57.7",
     "react-native-datepicker": "^1.7.2",
     "react-native-dimension": "^1.0.6",
+    "react-native-geolocation-service": "^2.0.0",
     "react-native-gesture-handler": "^1.0.10",
     "react-native-image-picker": "^0.28.0",
     "react-native-lazyload": "^1.1.0",

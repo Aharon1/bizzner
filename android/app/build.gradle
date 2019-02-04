@@ -137,6 +137,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-geolocation-service')
     compile project(':react-native-image-picker')
     implementation project(':react-native-push-notification')
     implementation "com.android.support:exifinterface:+"

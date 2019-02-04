@@ -18,6 +18,7 @@ import _ from 'lodash';
 import TabContainer from './TabContainer';
 import Permissions from 'react-native-permissions'
 import Toast from 'react-native-simple-toast';
+import Geolocation from 'react-native-geolocation-service';
 class EventsScreen extends Component{
     constructor(props){
         super(props);
@@ -194,15 +195,43 @@ class EventsScreen extends Component{
         var curTime = curHours+':'+curMinute+':'+curSeconds;
         Permissions.check('location', { type: 'always' }).then(response => {
             if(response == "authorized"){
-                var Geolocation = navigator.geolocation;
-                Geolocation.getCurrentPosition(positions=>{
-                    let Latitude = positions.coords.latitude;
-                    let Longitude = positions.coords.longitude;
-                    this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
-                },error=>{
-                    console.log('Error',error);
-                    this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
-                })
+                Geolocation.getCurrentPosition(
+                    (position) => {
+                        let Latitude = position.coords.latitude;
+                        let Longitude = position.coords.longitude;
+                        this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
+                    },
+                    (error) => {
+                        // See error code charts below.
+                        console.log(error.code, error.message);
+                        this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                    },
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                );
+            }
+            else if(response == 'undetermined'){
+                Permissions.request('location', { type: 'always' }).then(response => {
+                    console.log(response);
+                    if(response == 'authorized'){
+                        Geolocation.getCurrentPosition(
+                            (position) => {
+                                console.log(position);
+                                let Latitude = position.coords.latitude;
+                                let Longitude = position.coords.longitude;
+                                this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
+                            },
+                            (error) => {
+                                // See error code charts below.
+                                console.log(error.code, error.message);
+                                this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                            },
+                            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                        );
+                    }
+                    else{
+                        this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                    }
+                });
             }
             else{
                 this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);

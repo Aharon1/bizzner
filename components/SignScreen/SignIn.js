@@ -45,7 +45,7 @@ class SignIn extends Component{
                 }
                 else{
                     Permissions.check('location').then(response => {
-                        if(response != 'authorized'){
+                        if(response == 'undetermined'){
                             Permissions.request('location').then(response => {
                             })
                         }

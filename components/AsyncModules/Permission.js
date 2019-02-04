@@ -53,7 +53,7 @@ const RequestPermssions = {
                 console.log("You can use the location")
                 return true;
             } else {
-                console.log("location permission denied")
+                console.log("location permission denied",granted)
                 return false;
             }
         } catch (err) {

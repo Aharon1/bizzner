@@ -32,8 +32,6 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>bizzner</string>
-			</array>
-			<array>
 				<string>li5282345</string>
 			</array>
 		</dict>
