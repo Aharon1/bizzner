@@ -155,6 +155,7 @@ export default class GoogleMapView extends PureComponent {
   onModalClusterOpen = clusterEvents => {
     this.setState({
       isModalClusterOpen: true,
+      isModalOpen: false,
       clusterEvents
     });
   };
