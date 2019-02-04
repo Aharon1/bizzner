@@ -7,7 +7,6 @@ import {SERVER_URL} from '../../Constants';
 import MainStyles from '../StyleSheet';
 import Loader from '../Loader';
 import Toast from 'react-native-simple-toast';
-import Footer from '../Navigation/Footer';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ProgressiveImage from '../AsyncModules/ImageComponent';
 class EventChatListScreen extends Component{
@@ -155,7 +154,6 @@ class EventChatListScreen extends Component{
                         viewabilityConfig={this.viewabilityConfig}
                     />
                 }
-                <Footer />
             </SafeAreaView>
         );
     }

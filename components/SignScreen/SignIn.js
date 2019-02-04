@@ -8,6 +8,8 @@ import MainStyles from '../StyleSheet';
 import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
 import NotifService from '../AsyncModules/NotifService';
+import Permissions from 'react-native-permissions';
+import RequestPermssions from '../AsyncModules/Permission';
 class SignIn extends Component{
     constructor(props){
         super(props);
@@ -34,14 +36,23 @@ class SignIn extends Component{
         fetch(SERVER_URL+'?action=login_user&lg_email='+this.state.emailAddress+'&lg_pass='+this.state.password)
         .then(res=>res.json())
         .then(response=>{
-            console.log(response)
             if(response.code == 200){
                 this.saveDetails('isUserLoggedin','true');
                 this.saveDetails('userID',response.body.ID);
                 Toast.show('LoggedIn successfully', Toast.SHORT);
+                if(Platform.OS =='android'){
+                    RequestPermssions.Location();
+                }
+                else{
+                    Permissions.check('location').then(response => {
+                        if(response != 'authorized'){
+                            Permissions.request('location').then(response => {
+                            })
+                        }
+                    });
+                }
                 setTimeout(()=>{
-                    
-                    this.setState({loading:false})
+                    this.setState({loading:false});
                     this.props.navigation.navigate('Current Events');
                   },500)
             }

@@ -4,6 +4,8 @@ import { NavigationActions,withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {SERVER_URL} from '../../Constants';
 class Footer extends Component {
+    _isMounted = false;
+    clearTime = '';
     constructor(props){
         super(props);
         this.state={
@@ -15,10 +17,11 @@ class Footer extends Component {
         this.setState({userID});
     }
     componentDidMount(){
+        this._isMounted = true;
         this.setUserId();
         setTimeout(()=>{
             this.getPrivatChatCount();
-            setInterval(()=>{
+            this.clearTime = setInterval(()=>{
                 this.getPrivatChatCount();
             },4000);
         },200);
@@ -28,22 +31,27 @@ class Footer extends Component {
         await fetch(SERVER_URL+'?action=privatMsgsCount&user_id='+userID)
         .then(res=>res.json())
         .then(response=>{
-            console.log(response);
-            this.setState({pcCount:response.pcCount});
-            const setInboxLabel = NavigationActions.setParams({
-                params: { privateCount: response.pcCount},
-                key: 'Messages',
-              });
-            this.props.navigation.dispatch(setInboxLabel);
+            if (this._isMounted) {
+                this.setState({pcCount:response.pcCount});
+                const setInboxLabel = NavigationActions.setParams({
+                    params: { privateCount: response.pcCount},
+                    key: 'Messages',
+                });
+                this.props.navigation.dispatch(setInboxLabel);
+            }
         })
         .catch(err=>{
             console.log(err);
         })
     }
+    componentWillUnmount(){
+        this._isMounted = false;
+        clearTimeout(this.clearTime);
+    }
     render(){
         return (
             <View style={{
-                justifyContent:'space-evenly',
+                justifyContent:'space-between',
                 alignItems:'center',
                 flexDirection:'row',
                 borderTopWidth:1,
@@ -51,7 +59,7 @@ class Footer extends Component {
                 paddingTop:5,
                 paddingBottom:5
             }}>
-                <TouchableOpacity style={{alignItems:'center',width:'50%',
+                <TouchableOpacity style={{alignItems:'center',width:'33%',
                 paddingTop:5,
                 paddingBottom:5}} onPress={()=>this.props.navigation.navigate('EventChatList')}>
                     <View>
@@ -79,7 +87,7 @@ class Footer extends Component {
                 <TouchableOpacity style={{alignItems:'center',
                 borderLeftColor:'#8da6d5',
                 borderLeftWidth:1,
-                width:'50%'}}  onPress={()=>this.props.navigation.navigate('Messages')} >
+                width:'33%'}}  onPress={()=>this.props.navigation.navigate('Messages')} >
                     <View>
                         <Icon name="comment" style={{ fontSize: 27, color: '#8da6d5' }} />
                         {
@@ -91,7 +99,7 @@ class Footer extends Component {
                                 alignItems:'center',
                                 alignContent:'center',
                                 justifyContent:'center',
-                                backgroundColor:'#0846b8',
+                                backgroundColor:'#e74c3c',
                                 borderRadius:100,
                                 width:20,
                                 height:20,
@@ -104,6 +112,12 @@ class Footer extends Component {
                             </View>
                         }
                     </View>
+                </TouchableOpacity>
+                <TouchableOpacity style={{alignItems:'center',
+                borderLeftColor:'#8da6d5',
+                borderLeftWidth:1,
+                width:'33%'}} onPress={()=>{this.props.showSearch()}}>
+                    <Icon name="search"  style={{ fontSize: 27, color: '#8da6d5' }}/>
                 </TouchableOpacity>
             </View>
         )

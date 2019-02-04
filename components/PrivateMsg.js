@@ -75,9 +75,11 @@ class PrivatMsgScreen extends Component{
         return(
             <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
-                <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                    <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
-                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>CHAT LIST</Text>
+                <View style={[MainStyles.eventsHeader,{justifyContent:'center'}]}>
+                    <TouchableOpacity style={{alignItems:'center',flexDirection:'row', paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
+                        <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
+                        <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>CHAT LIST</Text>
+                    </TouchableOpacity>
                 </View>
                 {
                     this.state && this.state.chatList && this.state.chatList.length > 0 && 

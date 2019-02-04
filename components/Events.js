@@ -181,27 +181,8 @@ class EventsScreen extends Component{
         this.setUserId();
         setTimeout(()=>{
             this.refreshList();
-            /*this.getPrivatChatCount();
-            setInterval(()=>{
-                this.getPrivatChatCount();
-            },4000);*/
         },200);
     }
-    /*async getPrivatChatCount(){
-        var userID =  await AsyncStorage.getItem('userID');
-        await fetch(SERVER_URL+'?action=privatMsgsCount&user_id='+userID)
-        .then(res=>res.json())
-        .then(response=>{
-            const setInboxLabel = NavigationActions.setParams({
-                params: { privateCount: response.pcCount},
-                key: 'Messages',
-              });
-            this.props.navigation.dispatch(setInboxLabel);
-        })
-        .catch(err=>{
-            console.log(err);
-        })
-    }*/
     _refreshList(){
         var dateNow = new Date();
         var curMonth = ((dateNow.getMonth()+1) >= 10)?(dateNow.getMonth()+1):'0'+(dateNow.getMonth()+1);
@@ -240,7 +221,6 @@ class EventsScreen extends Component{
         })
         .then(res=>res.json())
         .then(response=>{
-            console.log(response);
             var results = response.results
             const placesArray = [];
             for (const bodyKey in results){
@@ -373,6 +353,10 @@ class EventsScreen extends Component{
             
           });
     }
+    showSearchOption = ()=>{
+        this.setState({isSearchOpen:true});
+        setTimeout(()=>{this.searchInput.focus();},200);
+    }
     render(){
         return (
             <SafeAreaView style={MainStyles.normalContainer}>
@@ -397,13 +381,13 @@ class EventsScreen extends Component{
                         <Icon name="calendar-o" style={MainStyles.tabItemIcon}/>
                         <Text style={MainStyles.tabItemIcon}>Create Event</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={MainStyles.tabItem} onPress={()=>{
+                    {/* <TouchableOpacity style={MainStyles.tabItem} onPress={()=>{
                         this.setState({isSearchOpen:true});
                         setTimeout(()=>{this.searchInput.focus();},200);
                     }}>
                         <Icon name="search" style={MainStyles.tabItemIcon}/>
                         <Text style={MainStyles.tabItemText}>Search</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     {
                         this.state.isSearchOpen && 
                         <View style={{
@@ -467,10 +451,10 @@ class EventsScreen extends Component{
                 }
                 <View style={MainStyles.EventScreenTabWrapper}>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('all-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>All events</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>Near Events</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('my-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>My events</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>My Events</Text>
                     </TouchableOpacity>
                 </View>
                 {
@@ -773,7 +757,7 @@ class EventsScreen extends Component{
                         </ScrollView>
                     </View>
                 </Dialog>
-                <Footer />
+                <Footer showSearch={this.showSearchOption}/>
             </SafeAreaView>
         )
     }
