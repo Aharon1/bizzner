@@ -18,12 +18,12 @@ export class Modal extends PureComponent {
           width: 250,
           height: 300,
           paddingBottom: 20,
-          borderTopLeftRadius: 10,
-          borderTopRightRadius: 10,
+          borderRadius: 10,
           backgroundColor: "#FFF",
           elevation: 5,
           marginBottom: 5,
-          marginLeft: 10
+          marginLeft: 5,
+          marginRight:5
         }}
       >
         <View style={{ width: "100%", height: 150 }}>
@@ -50,7 +50,7 @@ export class Modal extends PureComponent {
               fontSize: 16
             }}
           >
-            {eventData.event_subject}}
+            {eventData.event_subject}
           </Text>
           <Text
             style={{
@@ -98,12 +98,9 @@ export class Modal extends PureComponent {
                   color: "#8da6d5"
                 }}
               >
-                {formatDate(
-                  new Date(eventData.event_date + " " + eventData.event_time)
-                )}{" "}
+                {formatDate(eventData.event_date,eventData.event_time)}{" "}
                 -{" "}
-                {formatAMPM(
-                  new Date(eventData.event_date + " " + eventData.event_time)
+                {formatAMPM(eventData.event_date,eventData.event_time
                 )}
               </Text>
             </View>

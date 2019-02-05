@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, TextInput,ImageBackground, 
     Platform,FlatList,ActivityIndicator,AsyncStorage,
-    RefreshControl,Picker,ScrollView,SafeAreaView
+    RefreshControl,Picker,ScrollView,SafeAreaView,ActionSheetIOS
 } from 'react-native';
 import { DrawerActions,NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -9,6 +9,7 @@ import MainStyles from './StyleSheet';
 import Dialog, { SlideAnimation } from 'react-native-popup-dialog';
 import DatePicker from 'react-native-datepicker';
 import { HeaderButton } from './Navigation/HeaderButton';
+import Footer from './Navigation/Footer';
 import {SERVER_URL,MAPKEY} from '../Constants';
 import Loader from './Loader';
 import ListItem from './AsyncModules/ListItem';
@@ -17,6 +18,7 @@ import _ from 'lodash';
 import TabContainer from './TabContainer';
 import Permissions from 'react-native-permissions'
 import Toast from 'react-native-simple-toast';
+import Geolocation from 'react-native-geolocation-service';
 class EventsScreen extends Component{
     constructor(props){
         super(props);
@@ -49,7 +51,8 @@ class EventsScreen extends Component{
             isRefreshing:false,
             isSearchOpen:false,
             noFilterData:false,
-            isFiltering:false
+            isFiltering:false,
+            no_Attendees:'No. of Attendees'
         }
         this.viewabilityConfig = {
             waitForInteraction: true,
@@ -179,26 +182,7 @@ class EventsScreen extends Component{
         this.setUserId();
         setTimeout(()=>{
             this.refreshList();
-            this.getPrivatChatCount();
-            setInterval(()=>{
-                this.getPrivatChatCount();
-            },4000);
         },200);
-    }
-    async getPrivatChatCount(){
-        var userID =  await AsyncStorage.getItem('userID');
-        await fetch(SERVER_URL+'?action=privatMsgsCount&user_id='+userID)
-        .then(res=>res.json())
-        .then(response=>{
-            const setInboxLabel = NavigationActions.setParams({
-                params: { privateCount: response.pcCount},
-                key: 'Messages',
-              });
-            this.props.navigation.dispatch(setInboxLabel);
-        })
-        .catch(err=>{
-            console.log(err);
-        })
     }
     _refreshList(){
         var dateNow = new Date();
@@ -211,15 +195,43 @@ class EventsScreen extends Component{
         var curTime = curHours+':'+curMinute+':'+curSeconds;
         Permissions.check('location', { type: 'always' }).then(response => {
             if(response == "authorized"){
-                var Geolocation = navigator.geolocation;
-                Geolocation.getCurrentPosition(positions=>{
-                    let Latitude = positions.coords.latitude;
-                    let Longitude = positions.coords.longitude;
-                    this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
-                },error=>{
-                    console.log('Error',error);
-                    this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
-                })
+                Geolocation.getCurrentPosition(
+                    (position) => {
+                        let Latitude = position.coords.latitude;
+                        let Longitude = position.coords.longitude;
+                        this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
+                    },
+                    (error) => {
+                        // See error code charts below.
+                        console.log(error.code, error.message);
+                        this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                    },
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                );
+            }
+            else if(response == 'undetermined'){
+                Permissions.request('location', { type: 'always' }).then(response => {
+                    console.log(response);
+                    if(response == 'authorized'){
+                        Geolocation.getCurrentPosition(
+                            (position) => {
+                                console.log(position);
+                                let Latitude = position.coords.latitude;
+                                let Longitude = position.coords.longitude;
+                                this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
+                            },
+                            (error) => {
+                                // See error code charts below.
+                                console.log(error.code, error.message);
+                                this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                            },
+                            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                        );
+                    }
+                    else{
+                        this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                    }
+                });
             }
             else{
                 this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
@@ -258,6 +270,7 @@ class EventsScreen extends Component{
                     usersPlace:results[bodyKey].usersPlace,
                     usersCount:results[bodyKey].usersCount,
                     userIds:results[bodyKey].usersIds,
+                    timestamp:results[bodyKey].timestamp,
                 });
             }
             var MyEvents = placesArray.filter((item,key)=>{
@@ -351,6 +364,28 @@ class EventsScreen extends Component{
         })
         }
     }
+    pickerIos = ()=>{
+        ActionSheetIOS.showActionSheetWithOptions({
+            options: ['Cancel', '5-10','10-15','15-20'],
+            cancelButtonIndex: 0,
+          },
+          (buttonIndex) => {
+            if (buttonIndex === 1) {
+                this.setState({NEUsersCount: 10,no_Attendees:'5-10'})
+            }
+            else if (buttonIndex === 2) {
+                this.setState({NEUsersCount: 15,no_Attendees:'10-15'})
+            }
+            else if (buttonIndex === 3) {
+                this.setState({NEUsersCount: 20,no_Attendees:'15-20'})
+            }
+            
+          });
+    }
+    showSearchOption = ()=>{
+        this.setState({isSearchOpen:true});
+        setTimeout(()=>{this.searchInput.focus();},200);
+    }
     render(){
         return (
             <SafeAreaView style={MainStyles.normalContainer}>
@@ -359,7 +394,6 @@ class EventsScreen extends Component{
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
                     <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>EVENTS</Text>
                 </View>
-                
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[MainStyles.tabItem,(this.state.TabComponent == '') ? MainStyles.tabItemActive : null]} onPress={()=>this.gotEventsList()}>
                         <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveIcon : null]}/>
@@ -376,13 +410,13 @@ class EventsScreen extends Component{
                         <Icon name="calendar-o" style={MainStyles.tabItemIcon}/>
                         <Text style={MainStyles.tabItemIcon}>Create Event</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={MainStyles.tabItem} onPress={()=>{
+                    {/* <TouchableOpacity style={MainStyles.tabItem} onPress={()=>{
                         this.setState({isSearchOpen:true});
                         setTimeout(()=>{this.searchInput.focus();},200);
                     }}>
                         <Icon name="search" style={MainStyles.tabItemIcon}/>
                         <Text style={MainStyles.tabItemText}>Search</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     {
                         this.state.isSearchOpen && 
                         <View style={{
@@ -446,15 +480,32 @@ class EventsScreen extends Component{
                 }
                 <View style={MainStyles.EventScreenTabWrapper}>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('all-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>All events</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>Near Events</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('my-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>My events</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>My Events</Text>
                     </TouchableOpacity>
                 </View>
                 {
-                    this.state.noFilterData==true && this.state.isFiltering==true &&
-                    <Text>No Data</Text>
+                    this.state.noFilterData==true && this.state.isFiltering==true && 
+                    <View style={{
+                        flex:1,
+                        alignContent:'center',
+                        alignItems:'center',
+                        justifyContent:'center',
+                        
+                    }}>
+                        <Text style={{
+                            fontFamily:'Roboto-Medium',
+                            fontSize:18,
+                            color:'#FFFFFF',
+                            backgroundColor:'#0846b8',
+                            paddingVertical:10,
+                            paddingHorizontal:15,
+                            borderRadius:50,
+                            elevation:8
+                        }}>NO DATA</Text>
+                    </View>
                 }
                 { 
                     this.state.isCurrentTab == 'all-events' && 
@@ -663,21 +714,31 @@ class EventsScreen extends Component{
                                 </View>
                                 <View style={MainStyles.createEventFWI}>
                                     <Icon name="users" style={MainStyles.cEFWIIcon}/>
-                                    <Picker
-                                        mode="dropdown"
+                                    {
+                                        Platform.OS == 'android' && 
+                                        <Picker
                                         selectedValue={this.state.NEUsersCount}
                                         returnKeyType="next"
                                         style={MainStyles.cEFWIPF}
                                         textStyle={{fontSize: 17,fontFamily:'Roboto-Light'}}
                                         itemTextStyle= {{
-                                            fontSize: 17,fontFamily:'Roboto-Light'
+                                            fontSize: 17,fontFamily:'Roboto-Light',
                                         }}
+                                        itemStyle={[MainStyles.cEFWIPF,{fontSize: 17,fontFamily:'Roboto-Light'}]}
                                         onValueChange={(itemValue, itemIndex) => this.setState({NEUsersCount: itemValue})}>
-                                        <Picker.Item label="Number of Attendees" value="" />
-                                        <Picker.Item label="5-10" value="10" />
-                                        <Picker.Item label="10-15" value="15" />
-                                        <Picker.Item label="15-20" value="20" />
-                                    </Picker>
+                                            <Picker.Item label="Number of Attendees" value="" />
+                                            <Picker.Item label="5-10" value="10" />
+                                            <Picker.Item label="10-15" value="15" />
+                                            <Picker.Item label="15-20" value="20" />
+                                        </Picker>
+                                    }
+                                    {
+                                        Platform.OS == 'ios' && 
+                                        <TouchableOpacity style={[MainStyles.cEFWITF,{alignItems:'center'}]} onPress={()=>{this.pickerIos()}}>
+                                            <Text style={{color:'#03163a',fontFamily:'Roboto-Light'}}>{this.state.no_Attendees}</Text>
+                                        </TouchableOpacity>
+                                        
+                                    }
                                 </View>
                                 <View style={{flexDirection:'row',flex:1,justifyContent:'flex-end',marginBottom:20}}>
                                     <View style={MainStyles.createEventFWI}>
@@ -725,6 +786,7 @@ class EventsScreen extends Component{
                         </ScrollView>
                     </View>
                 </Dialog>
+                <Footer showSearch={this.showSearchOption}/>
             </SafeAreaView>
         )
     }
