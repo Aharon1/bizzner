@@ -1,37 +1,25 @@
 import React, { Component } from 'react';
-import { View,Text,TouchableOpacity, TextInput,ImageBackground, 
+import { View,Text,TouchableOpacity, Image,
     Platform,FlatList,ActivityIndicator,AsyncStorage,
-    RefreshControl,Picker,ScrollView,SafeAreaView
+    RefreshControl,SafeAreaView
 } from 'react-native';
-import { DrawerActions,NavigationActions } from 'react-navigation';
+import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
-import Dialog, { SlideAnimation } from 'react-native-popup-dialog';
-import DatePicker from 'react-native-datepicker';
 import { HeaderButton } from './Navigation/HeaderButton';
-import {SERVER_URL,MAPKEY} from '../Constants';
+import {SERVER_URL} from '../Constants';
 import Loader from './Loader';
-import ListItem from './AsyncModules/ListItem';
-import LocationItem from './AsyncModules/LocationItem';
+import ProgressiveImage from './AsyncModules/ImageComponent';
 import _ from 'lodash';
-import Permissions from 'react-native-permissions'
 class HistoryPageScreen extends Component{
     constructor(props){
         super(props);
         this.state = {
             loading:true,
             locationList:{},
-            MyEvents:{},
             isLocationSet:false,
-            curLocation:{},
-            SLValue:false,
             isLoading:false,
-            SLItems:{},
-            SCItems:{},
             enableScrollViewScroll: true,
-            isFocusedSL:false,
-            isFocusedSC:false,
-            isSelectedCity:'',
             isRefreshing:false,
         }
         this.viewabilityConfig = {
@@ -62,7 +50,7 @@ class HistoryPageScreen extends Component{
         this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
     }
     _fetchLists(params){
-        var fetchData = SERVER_URL+'?action=search_location_db&'+params;
+        var fetchData = SERVER_URL+'?action=events_history&'+params;
         fetch(fetchData,{
             method:'POST',
             headers:{
@@ -101,26 +89,86 @@ class HistoryPageScreen extends Component{
             console.log('Error What is this',err);
         }).done()
     }
+    formatAMPM(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
+    formatDate(date){
+        var dateStr = '';
+        dateStr += (date.getDate() < 10)?'0'+date.getDate()+' ':date.getDate()+' ';
+        var monthArray = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var month = monthArray[date.getMonth()];
+        dateStr += month+' ';
+        dateStr += date.getFullYear();
+        return dateStr;
+    }
     render(){
         return (
             <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
-                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>EVENTS</Text>
+                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>EVENTS HISTORY</Text>
                 </View>
-                {
-                    this.state.noFilterData==true && this.state.isFiltering==true &&
-                    <Text>No Data</Text>
-                }
                 {
                     this.state.locationList && 
                     this.state.locationList.length > 0 &&  
-                    this.state.noFilterData==false && 
-                    <FlatList data={(this.state.renderedListData && this.state.renderedListData.length > 0)?this.state.renderedListData:this.state.locationList}
-                        renderItem={({item}) => (
-                            <ListItem item={item} userID={this.state.userID} refresh={this.refreshList}/>
-                            )}
+                    <FlatList data={this.state.locationList}
+                        renderItem={({item}) => { 
+                            var d1 = new Date ();
+                            var d2 = new Date ( d1 );
+                            d2.setHours ( d1.getHours() + 24 );
+                            var date = item.event_date+' '+item.event_time;
+                            var eventDate = new Date(date);
+                            var N = 7;
+                            var Address = item.address;//.split(" ").splice(0,N).join(" ");
+                            var eventTime = this.formatAMPM(eventDate);
+                            return (
+                            <View
+                                style={[
+                                    (this.state.userStatus == 3)?{opacity:0.5}:'',
+                                    {borderBottomColor:'#8da6d4',borderBottomWidth:1},
+                                    (item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
+                                    (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#FFFFFF'}:'']}>
+                                    <TouchableOpacity style={[
+                                        MainStyles.EventItem,
+                                    ]}>
+                                        <View style={MainStyles.EventItemImageWrapper}>
+                                            <ProgressiveImage source={{uri:item.photoUrl}} style={{ width: 70, height: 70 }} resizeMode="cover"/>
+                                        </View>
+                                        <View style={MainStyles.EventItemTextWrapper}>
+                                            <View style={{flexDirection:'row', alignItems:'center'}}>
+                                                <Icon name="thumb-tack" style={{color:'#8da6d4',marginRight:5}} size={13} />
+                                                <Text style={[MainStyles.EITWName,
+                                                    (item.isStarted === true)?{color:'#39b549'}:''
+                                                ]}>{item.event_subject}</Text>
+                                            </View>
+                                            <View style={{flexDirection:'row', alignItems:'center'}}>
+                                                <Icon name="map-marker" style={{color:'#8da6d4',marginRight:5}} size={13} />
+                                                <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{item.name}</Text>
+                                            </View>
+                                            <Text style={[MainStyles.EITWAddress,{marginLeft:14}]}>{Address}</Text>
+                                            <View style={{flexDirection:'row', alignItems:'center'}}>
+                                                <Icon name="clock-o" style={{color:'#8da6d4',marginRight:5}} size={13} />
+                                                <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.formatDate(eventDate)}, {eventTime}</Text>
+                                            </View>
+                                            <View style={MainStyles.EITWAction}>
+                                                <Image source={require('../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
+                                                <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({item.usersCount}) </Text>
+                                                <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>Info</Text>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            )
+                            }
+                        }
                         keyExtractor={(item) => item.key}
                         refreshControl={
                             <RefreshControl
@@ -135,7 +183,6 @@ class HistoryPageScreen extends Component{
                 }
                 {
                     this.state.locationList.length == 0 && 
-                    this.state.MyEvents.length == 0 &&
                     <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
                         <Text style={{fontFamily:'Roboto-Medium',color:'#2e4d85',fontSize:18}}>No events!</Text>
                         <TouchableOpacity 

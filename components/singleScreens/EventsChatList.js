@@ -1,25 +1,23 @@
 import React, { Component } from 'react';
-import { View,Text,TouchableOpacity, 
-    Platform,FlatList,AsyncStorage,
+import { View,Text,TouchableOpacity, TextInput, 
+    Platform,FlatList,ActivityIndicator,AsyncStorage,
     RefreshControl,SafeAreaView
 } from 'react-native';
-import { DrawerActions } from 'react-navigation';
+import {SERVER_URL} from '../../Constants';
+import MainStyles from '../StyleSheet';
+import Loader from '../Loader';
+import Toast from 'react-native-simple-toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import MainStyles from './StyleSheet';
-import Loader from './Loader';
-import { HeaderButton } from './Navigation/HeaderButton';
-import {SERVER_URL} from '../Constants';
-import ProgressiveImage from './AsyncModules/ImageComponent';
-import Footer from './Navigation/Footer';
-var clearTime = '';
-class PrivatMsgScreen extends Component{
+import ProgressiveImage from '../AsyncModules/ImageComponent';
+class EventChatListScreen extends Component{
     _isMounted = false;
+    clearTime = '';
     constructor(props){
         super(props);
         this.state={
-            loading:true,
-            chatList:{},
-            isRefreshing:false
+            loading:false,
+            isRefreshing:false,
+            chatList:{}
         }
         this.viewabilityConfig = {
             waitForInteraction: true,
@@ -39,19 +37,11 @@ class PrivatMsgScreen extends Component{
             this.fetchList();
             clearTime = setInterval(()=>{this.fetchList();},4000)
         },200)
+        
     }
-    _fetchList= async ()=>{
-        await fetch(SERVER_URL+'?action=getPrivateList&user_id='+this.state.userID)
-        .then(res=>res.json())
-        .then(response=>{
-            if (this._isMounted) {
-                if(response.code != 404){
-                    this.setState({chatList:response.body.results});
-                }
-                this.setState({loading:false,isRefreshing:false})
-            }
-        })
-        .catch()
+    componentWillUnmount(){
+        this._isMounted = false;
+        clearTimeout(this.clearTime);
     }
     _refreshList(){
         this.fetchList()
@@ -67,18 +57,27 @@ class PrivatMsgScreen extends Component{
         var strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
     }
-    componentWillUnmount(){
-        this._isMounted = false;
-        clearTimeout(clearTime);
+    _fetchList= async ()=>{ 
+        await fetch(SERVER_URL+'?action=EventMsgsList&user_id='+this.state.userID)
+        .then(res=>res.json())
+        .then(response=>{
+            if (this._isMounted) {
+                if(response.code != 404){
+                    this.setState({chatList:response.body.results});
+                }
+                this.setState({loading:false,isRefreshing:false})
+            }
+        })
+        .catch()
     }
     render(){
         return(
             <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{justifyContent:'center'}]}>
-                    <TouchableOpacity style={{alignItems:'center',flexDirection:'row', paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
-                        <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
-                        <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>CHAT LIST</Text>
+                    <TouchableOpacity style={{ alignItems:'center',paddingLeft: 12,flexDirection:'row' }} onPress={() => this.props.navigation.goBack() }>
+                        <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
+                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>EVENTS CHAT LIST</Text>
                     </TouchableOpacity>
                 </View>
                 {
@@ -86,9 +85,9 @@ class PrivatMsgScreen extends Component{
                     <FlatList 
                         data={this.state.chatList} 
                         renderItem={({item})=>(
-                            <TouchableOpacity style={[MainStyles.UserListItem,{backgroundColor:'#d1dbed'}]} onPress={()=>{this.props.navigation.navigate('Private Chat',{event_id:item.chat_id})}}>
+                            <TouchableOpacity style={[MainStyles.UserListItem,{backgroundColor:'#d1dbed'}]} onPress={()=>{this.props.navigation.navigate('Event Chat',{event_id:item.chat_id})}}>
                                 <View style={{overflow:'hidden',width:70,height:70}}>
-                                    <ProgressiveImage source={{uri:item.user_pic}} style={{
+                                    <ProgressiveImage source={{uri:item.event_pic}} style={{
                                         width: 70, 
                                         height: 70,
                                         borderRadius:100,
@@ -97,7 +96,7 @@ class PrivatMsgScreen extends Component{
                                     }} resizeMode="cover"/>
                                 </View>
                                 <View style={MainStyles.userListItemTextWrapper}>
-                                    <Text style={[MainStyles.ULITWName,{fontFamily:'Roboto-Meduim',color:'#03163a'}]}>{item.name}</Text>
+                                    <Text style={[MainStyles.ULITWName,{fontFamily:'Roboto-Meduim',color:'#03163a'}]}>{item.event_name}</Text>
                                     <Text style={[MainStyles.ULITWTitle,{color:'#416bb9'}]}>{item.msg_text.split(" ").splice(0,4).join(" ")}</Text>
                                 </View>
                                 <View style={[MainStyles.ChatIconWrapper,{flexDirection:'row'}]}>
@@ -107,7 +106,7 @@ class PrivatMsgScreen extends Component{
                                         fontFamily:'Roboto-Regular',
                                         fontSize:12,
                                         marginRight:7
-                                    }}>{this.formatAMPM(item.timestamp)}</Text>
+                                    }}>{this.formatAMPM(item.send_on)}</Text>
                                     {
                                         item.unread_count > 0 && 
                                         <Text style={{
@@ -155,9 +154,8 @@ class PrivatMsgScreen extends Component{
                         viewabilityConfig={this.viewabilityConfig}
                     />
                 }
-                <Footer />
             </SafeAreaView>
         );
     }
 }
-export default PrivatMsgScreen;
+export default EventChatListScreen;
