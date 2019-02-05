@@ -10,7 +10,7 @@ export class Modal extends PureComponent {
       <View
         style={{
           width: 250,
-          height: "50%",
+          height: "60%",
           paddingBottom: 20,
           borderTopLeftRadius: 10,
           borderTopRightRadius: 10,
