@@ -59,7 +59,7 @@ export default class GoogleMapView extends PureComponent {
 
   renderCluster = () => {
     return (
-      <View style={{height: '65%'}}>
+      <View style={{height: 300}}>
         <ScrollView
           horizontal={true}
           contentContainerStyle={{

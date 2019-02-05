@@ -1,16 +1,22 @@
 import React, { PureComponent } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { View, Text, TouchableOpacity, } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import ProgressiveImage from "../../AsyncModules/ImageComponent";
 
 export class Modal extends PureComponent {
   render() {
-      const {  goToEvent,onCloseModal, eventData, formatDate, formatAMPM} = this.props
+    const {
+      goToEvent,
+      onCloseModal,
+      eventData,
+      formatDate,
+      formatAMPM
+    } = this.props;
     return (
       <View
         style={{
           width: 250,
-          height: "60%",
+          height: 300,
           paddingBottom: 20,
           borderRadius: 10,
           backgroundColor: "#FFF",
@@ -22,7 +28,7 @@ export class Modal extends PureComponent {
       >
         <View style={{ width: "100%", height: 150 }}>
           <ProgressiveImage
-            source={{ uri: eventData.event_photo}}
+            source={{ uri: eventData.event_photo }}
             style={{
               width: "100%",
               height: 150,
@@ -53,7 +59,7 @@ export class Modal extends PureComponent {
               fontSize: 14
             }}
           >
-            {eventData.group_name },
+            {eventData.group_name},
             <Text
               style={{
                 fontFamily: "Roboto-Light",
@@ -62,7 +68,7 @@ export class Modal extends PureComponent {
               }}
             >
               {" "}
-              {eventData.group_address }
+              {eventData.group_address}
             </Text>
           </Text>
           <View
