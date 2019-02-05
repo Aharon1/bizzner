@@ -2,15 +2,11 @@ import React, { PureComponent } from "react";
 import {
   StyleSheet,
   View,
-  Text,
-  TouchableOpacity,
-  ImageBackground,
-  ScrollView,Platform
+  ScrollView
 } from "react-native";
 import { MarkerItem } from "./MarkerItem";
 import { MapClustering } from "./MapClustering";
 import { Modal } from "./components/Modal";
-import { height } from "react-native-dimension";
 
 const dummyImage = require("../../assets/dummy.jpg");
 
@@ -24,6 +20,7 @@ export default class GoogleMapView extends PureComponent {
   };
   render() {
     const { isModalOpen, isModalClusterOpen } = this.state;
+    console.log(this.props)
     return (
       <View style={styles.container}>
         <MapClustering
@@ -62,12 +59,11 @@ export default class GoogleMapView extends PureComponent {
 
   renderCluster = () => {
     return (
-      <View style={{height: '50%'}}>
+      <View style={{height: '65%'}}>
         <ScrollView
           horizontal={true}
           contentContainerStyle={{
-            alignItems: "flex-end",
-            alignSelf: "flex-end",
+            alignSelf: "center",
           }}
         >
           {this.state.clusterEvents.map(event => {

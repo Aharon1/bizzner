@@ -9,8 +9,8 @@ export class Modal extends PureComponent {
     return (
       <View
         style={{
-          width: 290,
-          height: 300,
+          width: 250,
+          height: "60%",
           paddingBottom: 20,
           borderRadius: 10,
           backgroundColor: "#FFF",
