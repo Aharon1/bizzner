@@ -63,7 +63,7 @@ export default class GoogleMapView extends PureComponent {
         <ScrollView
           horizontal={true}
           contentContainerStyle={{
-            alignSelf: "flex-end",
+            alignSelf: "center",
           }}
         >
           {this.state.clusterEvents.map(event => {
