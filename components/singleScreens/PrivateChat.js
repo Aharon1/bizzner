@@ -8,9 +8,10 @@ import MainStyles from '../StyleSheet';
 import Loader from '../Loader';
 import { SERVER_URL } from '../../Constants';
 import ChatItem from './ChatItem';
-var clearTime = ''
 class PrivateChatScreen extends Component{
     _isMounted = false;
+    clearTimeR = '';
+    clearTime = '';
     constructor(props){
         super(props);
         this.state = {
@@ -21,6 +22,7 @@ class PrivateChatScreen extends Component{
             isloadingMsgs:true,
             messages:{}
         }
+        this.readMsgs = this._readMsgs.bind(this);
     }
     async setUserId(){
         var userID =  await AsyncStorage.getItem('userID');
@@ -30,14 +32,22 @@ class PrivateChatScreen extends Component{
         this._isMounted = true;
         this.setUserId();
         setTimeout(()=>{
-            fetch(SERVER_URL+'?action=readMsg&chat_id='+this.state.event_id+'&isgrp=0&userId='+this.state.userID)
-            .then(response=>{
-                this.update()
-            })
-            .catch(err=>{
-                console.log(err);
-            })
+            this.readMsgs();
+            this.clearTimeR = setInterval(()=>{
+                this.readMsgs();
+            },2000)
+            this.update();
         },200);
+    }
+    _readMsgs = async ()=>{
+        fetch(SERVER_URL+'?action=readMsg&chat_id='+this.state.event_id+'&isgrp=0&userId='+this.state.userID)
+        .then(response=>{
+            
+        })
+        .catch(err=>{
+            console.log(err);
+        });
+        
     }
     onStartTyping(newMessage){
         if(newMessage && newMessage.length >= 1){
@@ -83,14 +93,15 @@ class PrivateChatScreen extends Component{
     }
     update() {
         this.getMessages();
-        clearTime = setInterval(
+        this.clearTime = setInterval(
           () => {this.getMessages();},
           1500
         );
     }
     componentWillUnmount(){
         this._isMounted = false;
-        clearTimeout(clearTime);
+        clearTimeout(this.clearTime);
+        clearTimeout(this.clearTimeR);
     }
     renderMsgItem(item,userID){
         return <ChatItem msgItem={item} userID={userID}/>
@@ -162,10 +173,10 @@ class PrivateChatScreen extends Component{
                 <Loader loading={this.state.loading} />
                 <View>
                     <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                        <TouchableOpacity style={{ paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
+                        <TouchableOpacity style={{alignItems:'center',flexDirection:'row', paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
                             <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
+                            <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>PRIVATE CHAT</Text>
                         </TouchableOpacity>
-                        <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>PRIVATE CHAT</Text>
                     </View>
                 </View>
                 <View style={{

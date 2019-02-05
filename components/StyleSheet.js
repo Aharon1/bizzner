@@ -93,7 +93,8 @@ const MainStyles = StyleSheet.create({
         paddingTop: 20,
         overflow: 'visible',
         paddingLeft:30,
-        flexDirection:'row'
+        flexDirection:'row',
+        marginBottom:60
     },
     pHeadPicWrapper:{
         position:'relative'
@@ -133,7 +134,8 @@ const MainStyles = StyleSheet.create({
     pHeadPicOptions:{
         position:"absolute",
         width: 120,
-        top: 40,
+        top: 0,
+        left:35,
         backgroundColor:'#FFF',
         borderRadius:5,
         elevation:3,
@@ -165,7 +167,6 @@ const MainStyles = StyleSheet.create({
     },
     profileBody:{
         flex:1,
-        marginTop:60,
         backgroundColor:'#fff',
         paddingHorizontal:30,
     },

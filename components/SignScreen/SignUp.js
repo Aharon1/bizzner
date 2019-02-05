@@ -143,7 +143,7 @@ class SignUp extends Component{
                     </View>
                 </View>
                 {/*Body Section*/}
-                <KeyboardAvoidingView  style={{flex:1}}  behavior="padding" enabled>
+                <KeyboardAvoidingView  style={{flex:1}} enabled>
                     <ScrollView style={[MainStyles.profileBody,{marginBottom: 0}]} keyboardShouldPersistTaps={'handled'}>
                         <View style={MainStyles.inputFieldWithIcon}>
                             <Icon name="user" style={[MainStyles.iFWIIcon,{color:'#6789c6'}]}/>

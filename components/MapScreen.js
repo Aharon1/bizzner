@@ -4,6 +4,7 @@ import GoogleMapView from './Maps/MapView';
 import { fetchEvents } from './Maps/mapData';
 import Permissions from 'react-native-permissions'
 import { SERVER_URL,MAPKEY } from '../Constants';
+import Geolocation from 'react-native-geolocation-service';
 const { height, width } = Dimensions.get('window');
 const TOP_BAR_HEIGHT = 110;
 const IS_LOADING = "IS_LOADING";
@@ -72,7 +73,12 @@ class MapScreen extends Component {
                         latitudeDelta: 0.05,
                         longitudeDelta: 0.02
                     };
-                    this.setState({currentPosition,appState:OK});
+                    const events = await fetchEvents();
+                    this.setState({
+                        currentPosition,
+                        events,
+                        appState: OK
+                    });
                 })
                 .catch()
             }).catch()
@@ -81,13 +87,42 @@ class MapScreen extends Component {
     }
     _loadMap = async () => {
         Permissions.check('location', { type: 'always' }).then(response => {
+            console.log(response);
             if(response == "authorized"){
-                var Geolocation = navigator.geolocation;
-                Geolocation.getCurrentPosition(positions=>{
-                    this._getMapData(positions);
-                },error=>{
-                    this._loadFromCountry()
-                })
+                Geolocation.getCurrentPosition(
+                    (position) => {
+                        console.log(position);
+                        this._getMapData(position);
+                    },
+                    (error) => {
+                        // See error code charts below.
+                        console.log(error.code, error.message);
+                        this._loadFromCountry()
+                    },
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                );
+            }
+            else if(response == 'undetermined'){
+                Permissions.request('location', { type: 'always' }).then(response => {
+                    console.log(response);
+                    if(response == 'authorized'){
+                        Geolocation.getCurrentPosition(
+                            (position) => {
+                                console.log(position);
+                                this._getMapData(position);
+                            },
+                            (error) => {
+                                // See error code charts below.
+                                console.log(error.code, error.message);
+                                this._loadFromCountry()
+                            },
+                            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                        );
+                    }
+                    else{
+                        this._loadFromCountry()
+                    }
+                });
             }
             else{
                 this._loadFromCountry()

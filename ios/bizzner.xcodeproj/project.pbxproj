@@ -350,7 +350,7 @@
 			remoteGlobalIDString = 358F4ED71D1E81A9004DF814;
 			remoteInfo = RCTBlob;
 		};
-		CE23C6E02208A9A30021ADE7 /* PBXContainerItemProxy */ = {
+		CEE699A821FF6D5E0003C5F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3088ADCB935845E284040A42 /* LRDRCTSimpleToast.xcodeproj */;
 			proxyType = 2;
@@ -796,10 +796,11 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CE23C6DD2208A9A30021ADE7 /* Products */ = {
+
+		CEE699A521FF6D5E0003C5F3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CE23C6E12208A9A30021ADE7 /* libLRDRCTSimpleToast.a */,
+				CEE699A921FF6D5E0003C5F3 /* libLRDRCTSimpleToast.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -977,7 +978,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = CE23C6DD2208A9A30021ADE7 /* Products */;
+					ProductGroup = CEE699A521FF6D5E0003C5F3 /* Products */;
 					ProjectRef = 3088ADCB935845E284040A42 /* LRDRCTSimpleToast.xcodeproj */;
 				},
 				{
@@ -1315,11 +1316,11 @@
 			remoteRef = ADBDB9261DFEBF0700ED6528 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CE23C6E12208A9A30021ADE7 /* libLRDRCTSimpleToast.a */ = {
+		CEE699A921FF6D5E0003C5F3 /* libLRDRCTSimpleToast.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libLRDRCTSimpleToast.a;
-			remoteRef = CE23C6E02208A9A30021ADE7 /* PBXContainerItemProxy */;
+			remoteRef = CEE699A821FF6D5E0003C5F3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CEFE97C121E3897000DC27B2 /* libReactNativePermissions.a */ = {

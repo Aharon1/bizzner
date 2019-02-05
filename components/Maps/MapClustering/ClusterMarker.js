@@ -4,10 +4,13 @@ import { Marker } from 'react-native-maps';
 
 export default class CustomMarker extends Component {
   shouldComponentUpdate(nextProps) {
+    
     return !(this.props.geometry === nextProps.geometry
       && this.props.pointCount === nextProps.pointCount);
   }
-
+  onClusterPress = () =>{
+    this.props.onClusterPress(this.props.clusterId)
+  }
   render() {
     if (this.props.pointCount > 0) {
       return (
@@ -16,13 +19,14 @@ export default class CustomMarker extends Component {
             longitude: this.props.geometry.coordinates[0],
             latitude: this.props.geometry.coordinates[1],
           }}
-          onPress={this.props.pointCount > 0 && this.props.onClusterPress}
+          onPress={this.onClusterPress} 
         >
           <View style={this.props.clusterStyle}>
             <Text style={this.props.clusterTextStyle}>
               {this.props.pointCount}
             </Text>
           </View>
+          
         </Marker>
       );
     }
