@@ -81,7 +81,7 @@ class MapScreen extends Component {
     }
     _loadMap = async () => {
         Permissions.check('location', { type: 'always' }).then(response => {
-            if(response == "authorized"){
+            if(true){
                 var Geolocation = navigator.geolocation;
                 Geolocation.getCurrentPosition(positions=>{
                     this._getMapData(positions);
