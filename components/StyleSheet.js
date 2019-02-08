@@ -93,7 +93,8 @@ const MainStyles = StyleSheet.create({
         paddingTop: 20,
         overflow: 'visible',
         paddingLeft:30,
-        flexDirection:'row'
+        flexDirection:'row',
+        marginBottom:60
     },
     pHeadPicWrapper:{
         position:'relative'
@@ -133,7 +134,8 @@ const MainStyles = StyleSheet.create({
     pHeadPicOptions:{
         position:"absolute",
         width: 120,
-        top: 40,
+        top: 0,
+        left:35,
         backgroundColor:'#FFF',
         borderRadius:5,
         elevation:3,
@@ -165,7 +167,6 @@ const MainStyles = StyleSheet.create({
     },
     profileBody:{
         flex:1,
-        marginTop:60,
         backgroundColor:'#fff',
         paddingHorizontal:30,
     },
@@ -231,7 +232,8 @@ const MainStyles = StyleSheet.create({
         fontSize:20
     },
     confirmPopup:{
-        padding:0
+        padding:0,
+        marginTop:30
     },
     confirmPopupHeader:{
         height:50,
@@ -567,6 +569,23 @@ const MainStyles = StyleSheet.create({
         fontFamily:'Roboto-Regular',
         fontSize:16,
         color:'#03163a'
+    },
+    tagsContent:{
+        marginTop:20
+    },
+    InterestsTags:{
+        paddingVertical:10,
+        paddingHorizontal:15,
+        borderColor:'#0846b8',
+        borderRadius:30,
+        borderWidth:1,
+        textAlign:"center",
+        margin:5,
+    },
+    ITText:{
+        color:'#0846b8',
+        fontFamily:'Roboto-Regular',
+        fontSize:15
     }
 });
 

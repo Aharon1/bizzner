@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {View,AsyncStorage,Image,Linking,Platform } from 'react-native';
+import {View,AsyncStorage,Image,Linking,Platform,BackHandler } from 'react-native';
 import Loader from './Loader';
 import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../Constants';
@@ -13,16 +13,25 @@ class SplashScreen extends Component{
         await AsyncStorage.setItem(key,value);
     }
     componentDidMount() { // B
+        this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+            BackHandler.exitApp(); // works best when the goBack is async
+            return true;
+          });
         if (Platform.OS === 'android') {
           Linking.getInitialURL().then(url => {
             this.checkToken(url)
           });
         } 
         else {
-            Linking.addEventListener('url', this.handleOpenURL);
+            var linkingListner=Linking.addListener('url', this.handleOpenURL);
+            if(!linkingListner.context){
+                this.authenticateSession()
+            }
+            console.log(linkingListner);
         }
     }
     componentWillUnmount() { // C
+        this.backHandler.remove();
         Linking.removeEventListener('url', this.handleOpenURL);
     }
     handleOpenURL = (event) => { // D
@@ -46,6 +55,7 @@ class SplashScreen extends Component{
                     }
                     else{
                         Toast.show(response.message, Toast.SHORT);
+                        this.authenticateSession()
                     }
                 })
                 .catch(err=>{

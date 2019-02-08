@@ -39,6 +39,26 @@ const RequestPermssions = {
         } catch (err) {
             console.warn('Response',err)
         }
+    },
+    Location: async ()=>{
+        try {
+            const granted = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+              {
+                'title': 'Bizzer wants to access your location',
+                'message': 'Bizzner App needs access to your location '
+              }
+            )
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log("You can use the location")
+                return true;
+            } else {
+                console.log("location permission denied",granted)
+                return false;
+            }
+        } catch (err) {
+            console.warn('Response',err)
+        }
     }
 }
 export default RequestPermssions;

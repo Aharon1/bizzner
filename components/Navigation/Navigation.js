@@ -6,7 +6,7 @@
  * @flow
  */
 import React from 'react';
-import { ScrollView, TouchableOpacity,View } from 'react-native';
+import { ScrollView, TouchableOpacity,View,SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createDrawerNavigator, DrawerItems, createStackNavigator } from 'react-navigation';
 import { SettingsScreen, ComplainScreen, CurrentEventsScreen, HistoryScreen, EditProfileScreen, MessagesScreen, LogoutScreen } from './Screens';
@@ -14,11 +14,13 @@ import MainScreen from '../Main';
 import SplashScreen from '../Splash';
 import EventDetail from '../singleScreens/EventDetail';
 import EventChatScreen from '../singleScreens/EventChatScreen';
+import PrivateChatScreen from '../singleScreens/PrivateChat';
 import SignUp from '../SignScreen/SignUp';
 import ConfirmScreen from '../SignScreen/ConfirmScreen';
 import SignIn from '../SignScreen/SignIn';
 import ForgotPassword from '../SignScreen/ForgotPassword';
 import Interests from '../Interests';
+import EventChatListScreen from '../singleScreens/EventsChatList';
 const drawerItemStyle = { 
     borderBottomWidth: 1, 
     borderBottomColor: '#8da6d5', 
@@ -34,9 +36,6 @@ const drawerLabelStyle = {
 const Drawer = createDrawerNavigator({
     ['Current Events']: {
         screen: CurrentEventsScreen
-    },
-    ['Messages']: {
-        screen: MessagesScreen
     },
     ['Profile']: {
         screen: EditProfileScreen,
@@ -60,6 +59,7 @@ const Drawer = createDrawerNavigator({
         overlayColor: 'rgba(0, 0, 0, 0.5)',
         drawerWidth: 250,
         contentComponent: props =>
+            <SafeAreaView>
             <ScrollView style={{marginTop:10,padding:0}}>
                 <TouchableOpacity style={{ paddingLeft: 20,justifyContent:'flex-end' }} onPress={props.navigation.closeDrawer}>
                     <Icon name="bars" style={{ fontSize: 20, color: '#8da6d5' }} />
@@ -75,6 +75,7 @@ const Drawer = createDrawerNavigator({
                 />
 
             </ScrollView>
+            </SafeAreaView>
 });
 const shadow = {
     shadowColor: '#000', shadowRadius: 5, shadowOpacity: 0.6, shadowOffset: {
@@ -87,6 +88,9 @@ const Navigation = createStackNavigator({
     },
     Home: {
         screen: Drawer,
+    },
+    ['Messages']: {
+        screen: MessagesScreen
     },
     Profile: {
         screen: EditProfileScreen,
@@ -115,6 +119,12 @@ const Navigation = createStackNavigator({
     ['Event Chat']:{
         screen:EventChatScreen
     },
+    ['Private Chat']:{
+        screen:PrivateChatScreen
+    },
+    EventChatList:{
+        screen:EventChatListScreen
+    }
 }, {
     headerMode: 'none',
     initialRouteName: 'Splash',

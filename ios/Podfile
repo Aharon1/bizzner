@@ -40,6 +40,8 @@ target 'bizzner' do
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
   pod 'LinkedinSwift', '~> 1.7.7'
 
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
 end
 
 post_install do |installer|

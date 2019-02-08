@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, TextInput,ImageBackground, 
-    Platform,FlatList,ActivityIndicator,AsyncStorage,
-    RefreshControl,Picker,ScrollView,
+    Platform,FlatList,ActivityIndicator,AsyncStorage,AlertIOS,
+    RefreshControl,Picker,ScrollView,SafeAreaView,ActionSheetIOS
 } from 'react-native';
-import { DrawerActions } from 'react-navigation';
+import { DrawerActions,NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
 import Dialog, { SlideAnimation } from 'react-native-popup-dialog';
 import DatePicker from 'react-native-datepicker';
 import { HeaderButton } from './Navigation/HeaderButton';
+import Footer from './Navigation/Footer';
 import {SERVER_URL,MAPKEY} from '../Constants';
 import Loader from './Loader';
 import ListItem from './AsyncModules/ListItem';
@@ -17,6 +18,7 @@ import _ from 'lodash';
 import TabContainer from './TabContainer';
 import Permissions from 'react-native-permissions'
 import Toast from 'react-native-simple-toast';
+import Geolocation from 'react-native-geolocation-service';
 class EventsScreen extends Component{
     constructor(props){
         super(props);
@@ -24,7 +26,7 @@ class EventsScreen extends Component{
         var day = (curDate.getDate() >=10)?curDate.getDate():'0'+curDate.getDate();
         var month = ((curDate.getMonth()+1) >=10)?(curDate.getMonth()+1):'0'+(curDate.getMonth()+1);
         var newDate = day+'/'+month+'/'+curDate.getFullYear();
-        var newTime = curDate.getHours()+':'+curDate.getMinutes()+':'+curDate.getSeconds()
+        var newTime = curDate.getHours()+':'+curDate.getMinutes()+':00'
         this.state = {
             loading:true,
             TabComponent : '',
@@ -46,7 +48,11 @@ class EventsScreen extends Component{
             isFocusedSC:false,
             isSelectedCity:'',
             isCurrentTab:'all-events',
-            isRefreshing:false
+            isRefreshing:false,
+            isSearchOpen:false,
+            noFilterData:false,
+            isFiltering:false,
+            no_Attendees:'No. of Attendees'
         }
         this.viewabilityConfig = {
             waitForInteraction: true,
@@ -87,6 +93,10 @@ class EventsScreen extends Component{
         this.setState({isLocationSet:true,curLocation:locItem,CreateEventVisible:true,SLValue:false,enableScrollViewScroll:true});
     }
     createNewEvent = () => {
+        if(!this.state.isLocationSet){
+            Toast.show('Please select event location',Toast.LONG);
+            return false;
+        }
         if(this.state.NES == ''){
             Toast.show('Event Subject cannot be blank',Toast.SHORT);
             return false;
@@ -97,6 +107,22 @@ class EventsScreen extends Component{
         }
         if(this.state.NEUsersCount == ''){
             Toast.show('Please choose number of attendee',Toast.SHORT);
+            return false;
+        }
+        var curTime = new Date();
+        var choosenDate = this.state.NED.split('/');
+        var tim30More = new Date((choosenDate[1]) + "/" + choosenDate[0] + "/" + choosenDate[2] + " " + time+':00');
+        var minutes = (tim30More.getTime() - curTime.getTime()) / (60 * 1000);
+        if (minutes < 30) { 
+                if(Platform.OS == 'ios'){
+                    AlertIOS.alert(
+                        "Warning",
+                        "Please give at least 30 minutes notice before event starts"
+                        );
+                }
+                else{
+                    Toast.show("Please give at least 30 minutes notice before event starts", Toast.LONG)
+                }
             return false;
         }
         this.setState({loading:true});
@@ -174,7 +200,9 @@ class EventsScreen extends Component{
     }
     componentDidMount(){
         this.setUserId();
-        setTimeout(()=>{this.refreshList();},200);
+        setTimeout(()=>{
+            this.refreshList();
+        },200);
     }
     _refreshList(){
         var dateNow = new Date();
@@ -187,15 +215,43 @@ class EventsScreen extends Component{
         var curTime = curHours+':'+curMinute+':'+curSeconds;
         Permissions.check('location', { type: 'always' }).then(response => {
             if(response == "authorized"){
-                var Geolocation = navigator.geolocation;
-                Geolocation.getCurrentPosition(positions=>{
-                    let Latitude = positions.coords.latitude;
-                    let Longitude = positions.coords.longitude;
-                    this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
-                },error=>{
-                    console.log('Error',error);
-                    this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate)+'&curTime='+curTime;
-                })
+                Geolocation.getCurrentPosition(
+                    (position) => {
+                        let Latitude = position.coords.latitude;
+                        let Longitude = position.coords.longitude;
+                        this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
+                    },
+                    (error) => {
+                        // See error code charts below.
+                        console.log(error.code, error.message);
+                        this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                    },
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                );
+            }
+            else if(response == 'undetermined'){
+                Permissions.request('location', { type: 'always' }).then(response => {
+                    console.log(response);
+                    if(response == 'authorized'){
+                        Geolocation.getCurrentPosition(
+                            (position) => {
+                                console.log(position);
+                                let Latitude = position.coords.latitude;
+                                let Longitude = position.coords.longitude;
+                                this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
+                            },
+                            (error) => {
+                                // See error code charts below.
+                                console.log(error.code, error.message);
+                                this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                            },
+                            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                        );
+                    }
+                    else{
+                        this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                    }
+                });
             }
             else{
                 this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
@@ -234,6 +290,7 @@ class EventsScreen extends Component{
                     usersPlace:results[bodyKey].usersPlace,
                     usersCount:results[bodyKey].usersCount,
                     userIds:results[bodyKey].usersIds,
+                    timestamp:results[bodyKey].timestamp,
                 });
             }
             var MyEvents = placesArray.filter((item,key)=>{
@@ -300,18 +357,65 @@ class EventsScreen extends Component{
         this.setState({TabComponent:''});
         this.props.navigation.navigate('Home');
     }
+    searchText = (e) => {
+        if(e.length>0){this.setState({isFiltering:true})}
+        else{this.setState({isFiltering:false})}
+        let text = e.toLowerCase()
+        let fullList = this.state.locationList;
+        let filteredList = fullList.filter((item) => { // search from a full list, and not from a previous search results list
+        if(item.event_subject.toLowerCase().match(text) || item.name.toLowerCase().match(text))
+            return item;
+        })
+        if (!text || text === '') {
+        this.setState({
+            renderedListData: fullList,
+            noFilterData:false,
+        })
+        } else if (!filteredList.length) {
+        // set no data flag to true so as to render flatlist conditionally
+        this.setState({
+            noFilterData: true
+        })
+        }
+        else if (Array.isArray(filteredList)) {
+        this.setState({
+            noFilterData: false,
+            renderedListData: filteredList
+        })
+        }
+    }
+    pickerIos = ()=>{
+        ActionSheetIOS.showActionSheetWithOptions({
+            options: ['Cancel', '5-10','10-15','15-20'],
+            cancelButtonIndex: 0,
+          },
+          (buttonIndex) => {
+            if (buttonIndex === 1) {
+                this.setState({NEUsersCount: 10,no_Attendees:'5-10'})
+            }
+            else if (buttonIndex === 2) {
+                this.setState({NEUsersCount: 15,no_Attendees:'10-15'})
+            }
+            else if (buttonIndex === 3) {
+                this.setState({NEUsersCount: 20,no_Attendees:'15-20'})
+            }
+            
+          });
+    }
+    showSearchOption = ()=>{
+        this.setState({isSearchOpen:true});
+        setTimeout(()=>{this.searchInput.focus();},200);
+    }
     render(){
         return (
-            <View style={MainStyles.normalContainer}>
+            <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
                     <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>EVENTS</Text>
                 </View>
-                
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
-                    <TouchableOpacity style={[
-                        MainStyles.tabItem,(this.state.TabComponent == '') ? MainStyles.tabItemActive : null]} onPress={()=>this.gotEventsList()}>
+                    <TouchableOpacity style={[MainStyles.tabItem,(this.state.TabComponent == '') ? MainStyles.tabItemActive : null]} onPress={()=>this.gotEventsList()}>
                         <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveIcon : null]}/>
                         <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveText : null]}>List</Text>
                     </TouchableOpacity>
@@ -326,10 +430,65 @@ class EventsScreen extends Component{
                         <Icon name="calendar-o" style={MainStyles.tabItemIcon}/>
                         <Text style={MainStyles.tabItemIcon}>Create Event</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={MainStyles.tabItem}>
+                    {/* <TouchableOpacity style={MainStyles.tabItem} onPress={()=>{
+                        this.setState({isSearchOpen:true});
+                        setTimeout(()=>{this.searchInput.focus();},200);
+                    }}>
                         <Icon name="search" style={MainStyles.tabItemIcon}/>
                         <Text style={MainStyles.tabItemText}>Search</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
+                    {
+                        this.state.isSearchOpen && 
+                        <View style={{
+                            position:'absolute',
+                            width:'109.1%',
+                            backgroundColor:'#FFF',
+                            left:0,
+                            right:0,
+                            flexDirection:'row',
+                            justifyContent:'space-between',
+                            alignItems:'center',
+                            height:'100%',
+                            borderColor:'#8da6d4',
+                            borderTopWidth:2,
+                            borderBottomWidth:2,
+                        }}>
+                            <View style={{
+                                height:'100%',
+                                alignItems:'center',
+                                justifyContent: 'center',
+                                backgroundColor:'#8da6d4',
+                                paddingHorizontal:8
+                            }}>
+                                <Icon name="search" size={17} style={{color:'#FFF'}}/>
+                            </View>
+                            <TextInput  
+                            style={{
+                                flex:1,
+                                fontFamily:'Roboto-Regular',
+                                color:'#8da6d4',
+                                fontSize:17,
+                                paddingHorizontal:10
+                            }}
+                            placeholder="Search..."
+                            placeholderTextColor="#8da6d4"
+                            keyboardType="web-search"
+                            ref={input=>this.searchInput = input}
+                            onChangeText={text=>{this.searchText(text)}}
+                            />
+                            <TouchableOpacity onPress={()=>{this.setState({isSearchOpen:false,isFiltering:false,noFilterData:false,renderedListData:[]})}} 
+                            style={{
+                                height:'100%',
+                                alignItems:'center',
+                                justifyContent: 'center',
+                                backgroundColor:'#8da6d4',
+                                paddingHorizontal:8
+                            }}
+                            >
+                                <Icon name="times" size={20} style={{color:'#FFF'}}/>
+                            </TouchableOpacity>
+                        </View>
+                    }
                 </View>
                 {
                     this.state.TabComponent != '' &&
@@ -341,19 +500,41 @@ class EventsScreen extends Component{
                 }
                 <View style={MainStyles.EventScreenTabWrapper}>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('all-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>All events</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>Near Events</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('my-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>My events</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>My Events</Text>
                     </TouchableOpacity>
                 </View>
+                {
+                    this.state.noFilterData==true && this.state.isFiltering==true && 
+                    <View style={{
+                        flex:1,
+                        alignContent:'center',
+                        alignItems:'center',
+                        justifyContent:'center',
+                        
+                    }}>
+                        <Text style={{
+                            fontFamily:'Roboto-Medium',
+                            fontSize:18,
+                            color:'#FFFFFF',
+                            backgroundColor:'#0846b8',
+                            paddingVertical:10,
+                            paddingHorizontal:15,
+                            borderRadius:50,
+                            elevation:8
+                        }}>NO DATA</Text>
+                    </View>
+                }
                 { 
                     this.state.isCurrentTab == 'all-events' && 
                     this.state.locationList && 
-                    this.state.locationList.length > 0 && 
-                    <FlatList data={this.state.locationList}
+                    this.state.locationList.length > 0 &&  
+                    this.state.noFilterData==false && 
+                    <FlatList data={(this.state.renderedListData && this.state.renderedListData.length > 0)?this.state.renderedListData:this.state.locationList}
                         renderItem={({item}) => (
-                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID}/>
+                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID} refresh={this.refreshList}/>
                             )}
                         keyExtractor={(item) => item.key}
                         refreshControl={
@@ -361,8 +542,6 @@ class EventsScreen extends Component{
                                 refreshing={this.state.isRefreshing}
                                 onRefresh={()=>{this.setState({isRefreshing:true}),this.refreshList()}}
                                 title="Pull to refresh"
-                                tintColor="#fff"
-                                titleColor="#fff"
                                 colors={["#2e4d85","red", "green", "blue"]}
                             />
                         }
@@ -375,7 +554,7 @@ class EventsScreen extends Component{
                     this.state.MyEvents.length > 0 && 
                     <FlatList data={this.state.MyEvents}
                         renderItem={({item}) => (
-                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID}/>
+                            <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID} refresh={this.refreshList}/>
                             )}
                         keyExtractor={(item) => item.key}
                         refreshControl={
@@ -383,12 +562,11 @@ class EventsScreen extends Component{
                               refreshing={this.state.isRefreshing}
                               onRefresh={()=>{this.setState({isRefreshing:true}),this.refreshList()}}
                               title="Pull to refresh"
-                                tintColor="#fff"
-                                titleColor="#fff"
                                 colors={["#2e4d85","red", "green", "blue"]}
                             />
                           }
                         viewabilityConfig={this.viewabilityConfig}
+                        
                     />
                 }
                 {
@@ -416,7 +594,7 @@ class EventsScreen extends Component{
                         <TouchableOpacity onPress={()=>{this.setState({CreateEventVisible:false,isLocationSet:false,curLocation:{}})}}>
                             <Icon name="times" style={{fontSize:20,color:'#FFF'}}/>
                         </TouchableOpacity>
-                        <Text style={{color:'#FFF',fontFamily: 'RobotoMedium',fontSize:17,marginLeft:20}}>CREATE NEW EVENT</Text>
+                        <Text style={{color:'#FFF',fontFamily: 'Roboto-Medium',fontSize:17,marginLeft:20}}>CREATE NEW EVENT</Text>
                     </View>
                     <View style={{padding:0,borderWidth: 0,backgroundColor:'#FFF',overflow:'visible'}} 
                     onStartShouldSetResponderCapture={() => {
@@ -436,7 +614,7 @@ class EventsScreen extends Component{
                                 <View style={{width:'100%',marginTop:0,marginBottom:0, height:150,}}>
                                     <ImageBackground source={{uri:this.state.curLocation.picUrl}} style={{width: '100%', height: 150,flex:1,resizeMode:'center'}} resizeMode="cover">   
                                         <TouchableOpacity style={{position:'absolute',right:10,top:10}} onPress={()=>{this.setState({isLocationSet:false,curLocation:{}})}}>
-                                            <Icon name="pencil" size={20} color="#FFF" />
+                                            <Icon name="pencil" size={28} color="#FFF" />
                                         </TouchableOpacity>
                                         <View style={{
                                                 color: 'white',
@@ -471,24 +649,27 @@ class EventsScreen extends Component{
                                             onBlur={()=>this.setState({isFocusedSC:false})}
                                         />
                                     </View>
-                                    <View style={[
-                                        MainStyles.createEventFWI,
-                                        {
-                                            marginTop:10,
-                                            
-                                        },
-                                        (this.state.isFocusedSL == true)?{borderWidth:1,borderColor:'#8da6d4',paddingHorizontal:10}:''
-                                        ]}>
-                                        <Icon name="map-marker" style={MainStyles.cEFWIIcon}/>
-                                        <TextInput style={MainStyles.cEFWITF} 
-                                            placeholder="Places Near Me" 
-                                            placeholderTextColor="#03163a" 
-                                            underlineColorAndroid="transparent"
-                                            onChangeText={this.onChangeSLDelayed}
-                                            onFocus={()=>this.setState({isFocusedSL:true})}
-                                            onBlur={()=>this.setState({isFocusedSL:false})}
-                                        />
-                                    </View>
+                                    {
+                                        this.state.isSelectedCity != '' && 
+                                        <View style={[
+                                            MainStyles.createEventFWI,
+                                            {
+                                                marginTop:10,
+                                                
+                                            },
+                                            (this.state.isFocusedSL == true)?{borderWidth:1,borderColor:'#8da6d4',paddingHorizontal:10}:''
+                                            ]}>
+                                            <Icon name="map-marker" style={MainStyles.cEFWIIcon}/>
+                                            <TextInput style={MainStyles.cEFWITF} 
+                                                placeholder="Places " 
+                                                placeholderTextColor="#03163a" 
+                                                underlineColorAndroid="transparent"
+                                                onChangeText={this.onChangeSLDelayed}
+                                                onFocus={()=>this.setState({isFocusedSL:true})}
+                                                onBlur={()=>this.setState({isFocusedSL:false})}
+                                            />
+                                        </View>
+                                    }
                                     <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
                                         <Text style={{color:'#0947b9',fontFamily:'Roboto-Medium'}}>Add location</Text>
                                     </View>
@@ -556,21 +737,31 @@ class EventsScreen extends Component{
                                 </View>
                                 <View style={MainStyles.createEventFWI}>
                                     <Icon name="users" style={MainStyles.cEFWIIcon}/>
-                                    <Picker
-                                        mode="dropdown"
+                                    {
+                                        Platform.OS == 'android' && 
+                                        <Picker
                                         selectedValue={this.state.NEUsersCount}
                                         returnKeyType="next"
                                         style={MainStyles.cEFWIPF}
                                         textStyle={{fontSize: 17,fontFamily:'Roboto-Light'}}
                                         itemTextStyle= {{
-                                            fontSize: 17,fontFamily:'Roboto-Light'
+                                            fontSize: 17,fontFamily:'Roboto-Light',
                                         }}
+                                        itemStyle={[MainStyles.cEFWIPF,{fontSize: 17,fontFamily:'Roboto-Light'}]}
                                         onValueChange={(itemValue, itemIndex) => this.setState({NEUsersCount: itemValue})}>
-                                        <Picker.Item label="Number of Attendees" value="" />
-                                        <Picker.Item label="5-10" value="10" />
-                                        <Picker.Item label="10-15" value="15" />
-                                        <Picker.Item label="15-20" value="20" />
-                                    </Picker>
+                                            <Picker.Item label="Number of Attendees" value="" />
+                                            <Picker.Item label="5-10" value="10" />
+                                            <Picker.Item label="10-15" value="15" />
+                                            <Picker.Item label="15-20" value="20" />
+                                        </Picker>
+                                    }
+                                    {
+                                        Platform.OS == 'ios' && 
+                                        <TouchableOpacity style={[MainStyles.cEFWITF,{alignItems:'center'}]} onPress={()=>{this.pickerIos()}}>
+                                            <Text style={{color:'#03163a',fontFamily:'Roboto-Light'}}>{this.state.no_Attendees}</Text>
+                                        </TouchableOpacity>
+                                        
+                                    }
                                 </View>
                                 <View style={{flexDirection:'row',flex:1,justifyContent:'flex-end',marginBottom:20}}>
                                     <View style={MainStyles.createEventFWI}>
@@ -601,7 +792,28 @@ class EventsScreen extends Component{
                                             confirmBtnText="Confirm"
                                             cancelBtnText="Cancel"
                                             showIcon={false} 
-                                            onDateChange={(time) => {this.setState({NET: time})}}
+                                            onDateChange={(time) => {
+                                                var curTime = new Date();
+                                                var choosenDate = this.state.NED.split('/');
+                                                var tim30More = new Date((choosenDate[1]) + "/" + choosenDate[0] + "/" + choosenDate[2] + " " + time+':00');
+                                                var minutes = (tim30More.getTime() - curTime.getTime()) / (60 * 1000);
+                                                if (minutes > 30) { 
+                                                    this.setState({NET: time})
+                                                }
+                                                else{
+                                                    setTimeout(()=>{
+                                                        if(Platform.OS == 'ios'){
+                                                            AlertIOS.alert(
+                                                                "Warning",
+                                                                "Please give at least 30 minutes notice before event starts"
+                                                               );
+                                                        }
+                                                        else{
+                                                            Toast.show("Please give at least 30 minutes notice before event starts", Toast.LONG)
+                                                        }
+                                                    },400)
+                                                    
+                                                }}}
                                             customStyles={{
                                                 dateInput:MainStyles.cEFWIDF
                                             }}
@@ -618,7 +830,8 @@ class EventsScreen extends Component{
                         </ScrollView>
                     </View>
                 </Dialog>
-            </View>
+                <Footer showSearch={this.showSearchOption}/>
+            </SafeAreaView>
         )
     }
 }

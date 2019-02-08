@@ -8,12 +8,12 @@
 
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { Text, View } from 'react-native';
+import { Text, View,SafeAreaView } from 'react-native';
 import ProfileScreen from '../Profile';
 import EventsScreen from '../Events';
 import Logout from '../AsyncModules/Logout';
-
-
+import PrivateMsgScreen from '../PrivateMsg';
+import HistoryPageScreen from '../History';
 function createEmptyScreen(label, icon) {
     return class extends React.Component {
         static navigationOptions = {
@@ -28,13 +28,48 @@ function createEmptyScreen(label, icon) {
     }
 }
 
-function createScreen(label, icon, Component) {
+function createScreen(label, icon, Component) {    
     return class extends React.Component {
-        static navigationOptions = {
-            drawerLabel: label,
-            drawerIcon: () => (
-                <Icon name={icon} style={{ fontSize: 20, color: '#86a7d6' }} />
-            )
+        static navigationOptions = ({ navigation }) =>  {
+            const { params } = navigation.state;
+            return {
+                drawerLabel: ()=>{
+                    if(label == 'Private Messages'){
+                        return (<SafeAreaView style={{
+                            flexDirection:'row',
+                            alignItems:'center'
+                        }}>
+                            <Text style={{
+                                margin: 0, 
+                                fontSize: 15, 
+                                fontFamily: 'Roboto-Medium',
+                                paddingHorizontal:20,
+                                color:'#3d6cba'
+                            }}>{label}</Text>
+                            {
+                                params && params.privateCount > 0 && 
+                                <Text style={{
+                                    color:'#FFF',
+                                    fontFamily:'Roboto-Medium',
+                                    fontSize:12,
+                                    backgroundColor:'#5cc06c',
+                                    width:25,
+                                    height:25,
+                                    textAlign:'center',
+                                    textAlignVertical:'center',
+                                    borderRadius:100
+                                }}>{params.privateCount}</Text>
+                            }       
+                        </SafeAreaView >)
+                    }
+                    else{
+                        return label
+                    }
+                },
+                drawerIcon: () => (
+                    <Icon name={icon} style={{ fontSize: 20, color: '#86a7d6' }} />
+                )
+            }
         };
         render() {
             return <Component {...this.props} />;
@@ -44,8 +79,8 @@ function createScreen(label, icon, Component) {
 
 export const SettingsScreen = createEmptyScreen('Settings', 'cog');
 export const ComplainScreen = createEmptyScreen('Complain', 'pen');
-export const HistoryScreen = createEmptyScreen('Events History', 'history')
+export const HistoryScreen = createScreen('Events History', 'history',HistoryPageScreen);
 export const EditProfileScreen = createScreen('Edit Profile', 'user', ProfileScreen);
-export const MessagesScreen = createEmptyScreen('Private Messages', 'comment');
+export const MessagesScreen = createScreen('Private Messages', 'comment',PrivateMsgScreen);
 export const CurrentEventsScreen = createScreen('Current Events', 'calendar-check', EventsScreen);
 export const LogoutScreen = createScreen('Logout', 'sign-out-alt', Logout);

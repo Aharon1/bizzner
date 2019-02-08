@@ -13,7 +13,7 @@ let userStatus = '';
         this.state={
             userStatus:'',
             eventId:'',
-
+            userID:this.props.userID
         }
     }
     checkEvent = ()=>{
@@ -22,6 +22,9 @@ let userStatus = '';
     setUserEventStatus =  async (statusValue)=>{
         var curItem = await this.props.item;
         var user_id = this.props.userID;
+        if(this.state.userStatus == statusValue){
+            statusValue = 0;
+        }
         fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
         .then(response=>{
             userStatus = statusValue;
@@ -35,6 +38,7 @@ let userStatus = '';
             else if(statusValue ==3){
                 Toast.show('You have ignored this event',Toast.SHORT);
             }
+            this.props.refresh();
         })
     }
     formatAMPM(date) {
@@ -102,7 +106,7 @@ let userStatus = '';
                         <Text style={[MainStyles.EITWAddress,{marginLeft:14}]}>{Address}</Text>
                         <View style={{flexDirection:'row', alignItems:'center'}}>
                             <Icon name="clock-o" style={{color:'#8da6d4',marginRight:5}} size={13} />
-                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.formatDate(eventDate)}, {eventTime}</Text>
+                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.formatDate(new Date(Item.timestamp))}, {this.formatAMPM(new Date(Item.timestamp))}</Text>
                         </View>
                         <View style={MainStyles.EITWAction}>
                             <Image source={require('../../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>

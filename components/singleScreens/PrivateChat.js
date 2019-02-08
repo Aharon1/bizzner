@@ -8,15 +8,15 @@ import MainStyles from '../StyleSheet';
 import Loader from '../Loader';
 import { SERVER_URL } from '../../Constants';
 import ChatItem from './ChatItem';
-var clearTime = ''
-class EventChatScreen extends Component{
-    _isMounted = false;clearTimeR = '';
+class PrivateChatScreen extends Component{
+    _isMounted = false;
+    clearTimeR = '';
+    clearTime = '';
     constructor(props){
         super(props);
         this.state = {
             loading:false,
             event_id:this.props.navigation.getParam('event_id'),
-            event_note:this.props.navigation.getParam('note'),
             disableBtn:true,
             newMessage:'',
             isloadingMsgs:true,
@@ -36,8 +36,18 @@ class EventChatScreen extends Component{
             this.clearTimeR = setInterval(()=>{
                 this.readMsgs();
             },2000)
-            this.update()
+            this.update();
         },200);
+    }
+    _readMsgs = async ()=>{
+        fetch(SERVER_URL+'?action=readMsg&chat_id='+this.state.event_id+'&isgrp=0&userId='+this.state.userID)
+        .then(response=>{
+            
+        })
+        .catch(err=>{
+            console.log(err);
+        });
+        
     }
     onStartTyping(newMessage){
         if(newMessage && newMessage.length >= 1){
@@ -46,16 +56,6 @@ class EventChatScreen extends Component{
         else {
             this.setState({disableBtn:true})
         }
-    }
-    _readMsgs = async ()=>{
-        fetch(SERVER_URL+'?action=readMsg&chat_id='+this.state.event_id+'&isgrp=1&userId='+this.state.userID)
-        .then(response=>{
-            console.log(response);
-        })
-        .catch(err=>{
-            console.log(err);
-        });
-        
     }
     sendMsg(){
         const msgs = this.state.messages;
@@ -72,36 +72,36 @@ class EventChatScreen extends Component{
         Keyboard.dismiss();
     }
     getMessages() {
-        fetch(SERVER_URL + '?action=getEventMessages&event_id='+this.state.event_id)
+        fetch(SERVER_URL + '?action=getMessage&event_id='+this.state.event_id)
           .then((response) => response.json())
           .then((responseData) => {
-            if (this._isMounted) {
-                if(responseData.code == 200){
-                    var messagesCopy = responseData.body.messages;
-                    var oldMessagesNumber = this.state.messages.length;
-                    messagesCopy.reverse();
-                    this.setState({
-                        messages: messagesCopy,
-                    });
-                    if (oldMessagesNumber < messagesCopy.length)
-                        this.scrollToTheBottom();
+                if (this._isMounted) {
+                    if(responseData.code == 200){
+                        var messagesCopy = responseData.body.messages;
+                        var oldMessagesNumber = this.state.messages.length;
+                        messagesCopy.reverse();
+                        this.setState({
+                            messages: messagesCopy,
+                        });
+                        if (oldMessagesNumber < messagesCopy.length)
+                            this.scrollToTheBottom();
+                    }
+                    this.setState({isloadingMsgs:false});
                 }
-                this.setState({isloadingMsgs:false});
-            }
-        })
-        .done();
+            })
+          .done();
     }
     update() {
         this.getMessages();
-        clearTime = setInterval(
+        this.clearTime = setInterval(
           () => {this.getMessages();},
-          1000
+          1500
         );
     }
     componentWillUnmount(){
         this._isMounted = false;
-        clearTimeout(clearTime);
-        clearInterval(this.clearTimeR)
+        clearTimeout(this.clearTime);
+        clearTimeout(this.clearTimeR);
     }
     renderMsgItem(item,userID){
         return <ChatItem msgItem={item} userID={userID}/>
@@ -151,7 +151,7 @@ class EventChatScreen extends Component{
             if(this.state.messages.length > 4){
                 this.scrollToTheBottom();
             }
-            fetch( SERVER_URL + '?action=msgSend&user_id='+this.state.userID+'&grp_id='+this.state.event_id+'&is_grp_msg=1&msg_text=' + message)
+            fetch( SERVER_URL + '?action=msgSend&user_id='+this.state.userID+'&grp_id='+this.state.event_id+'&is_grp_msg=0&msg_text=' + message)
             .then((response) => response.json())
             .then((responseData) => {
             })
@@ -172,14 +172,11 @@ class EventChatScreen extends Component{
             <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View>
-                    <View style={[MainStyles.eventsHeader,{justifyContent:'center'}]}>
+                    <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                         <TouchableOpacity style={{alignItems:'center',flexDirection:'row', paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
                             <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
-                            <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>EVENT CHAT</Text>
+                            <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>PRIVATE CHAT</Text>
                         </TouchableOpacity>
-                    </View>
-                    <View style={[MainStyles.tabContainer,{justifyContent:'flex-start',paddingHorizontal:15,paddingVertical:15}]}>
-                        <Text style={{fontSize:16,fontFamily:'Roboto-Medium',color:'#05296d'}}>Note: {this.state.event_note}</Text>
                     </View>
                 </View>
                 <View style={{
@@ -223,4 +220,4 @@ class EventChatScreen extends Component{
     }
 }
 
-export default EventChatScreen;
+export default PrivateChatScreen;

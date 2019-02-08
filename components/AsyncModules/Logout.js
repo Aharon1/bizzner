@@ -4,19 +4,30 @@ import Loader from '../Loader';
 class Logout extends Component{
     constructor(props) {
         super(props);
-        this.authenticateSession();
+        this.state = {
+            loading:true,
+        }
+        //this.authenticateSession = this._authenticateSession.bind(this);
     }
     async saveDetails(key,value){
         await AsyncStorage.setItem(key,value);
     }
     authenticateSession(){
-        const { navigation } = this.props;
         this.saveDetails('isUserLoggedin','false');
-        navigation.navigate('Auth');
-      }
+        setTimeout(()=>{
+            this.setState({loading:false});
+            this.props.navigation.navigate('Auth');
+        },1000);
+        
+    }
+    componentDidMount(){
+        this.authenticateSession();
+        console.log('is mounted');
+    }
     render(){
         return(
             <View style={{flex:1,justifyContent: 'center',alignItems:'center'}}>
+                <Loader loading={this.state.loading} />
                 <Image source={require('../../assets/bizzner-logo.png')} style={{height:72}}/>
             </View>
         );
