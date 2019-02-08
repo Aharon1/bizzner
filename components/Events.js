@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, TextInput,ImageBackground, 
-    Platform,FlatList,ActivityIndicator,AsyncStorage,
+    Platform,FlatList,ActivityIndicator,AsyncStorage,AlertIOS,
     RefreshControl,Picker,ScrollView,SafeAreaView,ActionSheetIOS
 } from 'react-native';
 import { DrawerActions,NavigationActions } from 'react-navigation';
@@ -26,7 +26,7 @@ class EventsScreen extends Component{
         var day = (curDate.getDate() >=10)?curDate.getDate():'0'+curDate.getDate();
         var month = ((curDate.getMonth()+1) >=10)?(curDate.getMonth()+1):'0'+(curDate.getMonth()+1);
         var newDate = day+'/'+month+'/'+curDate.getFullYear();
-        var newTime = curDate.getHours()+':'+curDate.getMinutes()+':'+curDate.getSeconds()
+        var newTime = curDate.getHours()+':'+curDate.getMinutes()+':00'
         this.state = {
             loading:true,
             TabComponent : '',
@@ -93,6 +93,10 @@ class EventsScreen extends Component{
         this.setState({isLocationSet:true,curLocation:locItem,CreateEventVisible:true,SLValue:false,enableScrollViewScroll:true});
     }
     createNewEvent = () => {
+        if(!this.state.isLocationSet){
+            Toast.show('Please select event location',Toast.LONG);
+            return false;
+        }
         if(this.state.NES == ''){
             Toast.show('Event Subject cannot be blank',Toast.SHORT);
             return false;
@@ -103,6 +107,22 @@ class EventsScreen extends Component{
         }
         if(this.state.NEUsersCount == ''){
             Toast.show('Please choose number of attendee',Toast.SHORT);
+            return false;
+        }
+        var curTime = new Date();
+        var choosenDate = this.state.NED.split('/');
+        var tim30More = new Date((choosenDate[1]) + "/" + choosenDate[0] + "/" + choosenDate[2] + " " + time+':00');
+        var minutes = (tim30More.getTime() - curTime.getTime()) / (60 * 1000);
+        if (minutes < 30) { 
+                if(Platform.OS == 'ios'){
+                    AlertIOS.alert(
+                        "Warning",
+                        "Please give at least 30 minutes notice before event starts"
+                        );
+                }
+                else{
+                    Toast.show("Please give at least 30 minutes notice before event starts", Toast.LONG)
+                }
             return false;
         }
         this.setState({loading:true});
@@ -629,24 +649,27 @@ class EventsScreen extends Component{
                                             onBlur={()=>this.setState({isFocusedSC:false})}
                                         />
                                     </View>
-                                    <View style={[
-                                        MainStyles.createEventFWI,
-                                        {
-                                            marginTop:10,
-                                            
-                                        },
-                                        (this.state.isFocusedSL == true)?{borderWidth:1,borderColor:'#8da6d4',paddingHorizontal:10}:''
-                                        ]}>
-                                        <Icon name="map-marker" style={MainStyles.cEFWIIcon}/>
-                                        <TextInput style={MainStyles.cEFWITF} 
-                                            placeholder="Places Near Me" 
-                                            placeholderTextColor="#03163a" 
-                                            underlineColorAndroid="transparent"
-                                            onChangeText={this.onChangeSLDelayed}
-                                            onFocus={()=>this.setState({isFocusedSL:true})}
-                                            onBlur={()=>this.setState({isFocusedSL:false})}
-                                        />
-                                    </View>
+                                    {
+                                        this.state.isSelectedCity != '' && 
+                                        <View style={[
+                                            MainStyles.createEventFWI,
+                                            {
+                                                marginTop:10,
+                                                
+                                            },
+                                            (this.state.isFocusedSL == true)?{borderWidth:1,borderColor:'#8da6d4',paddingHorizontal:10}:''
+                                            ]}>
+                                            <Icon name="map-marker" style={MainStyles.cEFWIIcon}/>
+                                            <TextInput style={MainStyles.cEFWITF} 
+                                                placeholder="Places " 
+                                                placeholderTextColor="#03163a" 
+                                                underlineColorAndroid="transparent"
+                                                onChangeText={this.onChangeSLDelayed}
+                                                onFocus={()=>this.setState({isFocusedSL:true})}
+                                                onBlur={()=>this.setState({isFocusedSL:false})}
+                                            />
+                                        </View>
+                                    }
                                     <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
                                         <Text style={{color:'#0947b9',fontFamily:'Roboto-Medium'}}>Add location</Text>
                                     </View>
@@ -769,7 +792,28 @@ class EventsScreen extends Component{
                                             confirmBtnText="Confirm"
                                             cancelBtnText="Cancel"
                                             showIcon={false} 
-                                            onDateChange={(time) => {this.setState({NET: time})}}
+                                            onDateChange={(time) => {
+                                                var curTime = new Date();
+                                                var choosenDate = this.state.NED.split('/');
+                                                var tim30More = new Date((choosenDate[1]) + "/" + choosenDate[0] + "/" + choosenDate[2] + " " + time+':00');
+                                                var minutes = (tim30More.getTime() - curTime.getTime()) / (60 * 1000);
+                                                if (minutes > 30) { 
+                                                    this.setState({NET: time})
+                                                }
+                                                else{
+                                                    setTimeout(()=>{
+                                                        if(Platform.OS == 'ios'){
+                                                            AlertIOS.alert(
+                                                                "Warning",
+                                                                "Please give at least 30 minutes notice before event starts"
+                                                               );
+                                                        }
+                                                        else{
+                                                            Toast.show("Please give at least 30 minutes notice before event starts", Toast.LONG)
+                                                        }
+                                                    },400)
+                                                    
+                                                }}}
                                             customStyles={{
                                                 dateInput:MainStyles.cEFWIDF
                                             }}

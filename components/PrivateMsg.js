@@ -10,7 +10,6 @@ import Loader from './Loader';
 import { HeaderButton } from './Navigation/HeaderButton';
 import {SERVER_URL} from '../Constants';
 import ProgressiveImage from './AsyncModules/ImageComponent';
-import Footer from './Navigation/Footer';
 var clearTime = '';
 class PrivatMsgScreen extends Component{
     _isMounted = false;
@@ -78,7 +77,7 @@ class PrivatMsgScreen extends Component{
                 <View style={[MainStyles.eventsHeader,{justifyContent:'center'}]}>
                     <TouchableOpacity style={{alignItems:'center',flexDirection:'row', paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
                         <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
-                        <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>CHAT LIST</Text>
+                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>CHAT LIST</Text>
                     </TouchableOpacity>
                 </View>
                 {
@@ -87,17 +86,16 @@ class PrivatMsgScreen extends Component{
                         data={this.state.chatList} 
                         renderItem={({item})=>(
                             <TouchableOpacity style={[MainStyles.UserListItem,{backgroundColor:'#d1dbed'}]} onPress={()=>{this.props.navigation.navigate('Private Chat',{event_id:item.chat_id})}}>
-                                <View style={{overflow:'hidden',width:70,height:70}}>
+                                <View style={{overflow:'hidden',width:70,height:70,borderWidth: 3,
+                                        borderColor: '#FFF'}}>
                                     <ProgressiveImage source={{uri:item.user_pic}} style={{
-                                        width: 70, 
-                                        height: 70,
-                                        borderRadius:100,
-                                        borderWidth: 3,
-                                        borderColor: '#FFF'
+                                        width: 80, 
+                                        height:80,
+                                        
                                     }} resizeMode="cover"/>
                                 </View>
                                 <View style={MainStyles.userListItemTextWrapper}>
-                                    <Text style={[MainStyles.ULITWName,{fontFamily:'Roboto-Meduim',color:'#03163a'}]}>{item.name}</Text>
+                                    <Text style={[MainStyles.ULITWName,{fontFamily:'Roboto-Medium',color:'#03163a'}]}>{item.name}</Text>
                                     <Text style={[MainStyles.ULITWTitle,{color:'#416bb9'}]}>{item.msg_text.split(" ").splice(0,4).join(" ")}</Text>
                                 </View>
                                 <View style={[MainStyles.ChatIconWrapper,{flexDirection:'row'}]}>
@@ -110,33 +108,46 @@ class PrivatMsgScreen extends Component{
                                     }}>{this.formatAMPM(item.timestamp)}</Text>
                                     {
                                         item.unread_count > 0 && 
+                                        <View
+                                        style={{
+                                            width:30,
+                                            height:30,
+                                            justifyContent:'center',
+                                            alignItems:'center',
+                                            borderRadius:100,
+                                            backgroundColor:'#5cc06c',
+                                        }}
+                                        >
                                         <Text style={{
                                             color:'#FFF',
                                             fontFamily:'Roboto-Medium',
                                             fontSize:12,
-                                            backgroundColor:'#5cc06c',
-                                            width:30,
-                                            height:30,
                                             textAlign:'center',
-                                            textAlignVertical:'center',
-                                            borderRadius:100
+                                            textAlignVertical:'center'
                                         }}>{item.unread_count}</Text>
+                                        </View>
                                     }
                                     {
                                         item.unread_count == 0 && 
-                                        <Text style={{
+                                        <View
+                                        style={{
+                                            width:30,
+                                            height:30,
+                                            justifyContent:'center',
+                                            alignItems:'center',
+                                            borderRadius:100,
+                                            backgroundColor:'#c4d1e9',
+                                        }}
+                                        ><Text style={{
                                             color:'#FFF',
                                             fontFamily:'Roboto-Medium',
                                             fontSize:12,
-                                            backgroundColor:'#c4d1e9',
-                                            width:30,
-                                            height:30,
                                             textAlign:'center',
-                                            textAlignVertical:'center',
-                                            borderRadius:100
+                                            textAlignVertical:'center'
                                         }}>
                                             <Icon name="check" />
                                         </Text>
+                                        </View>
                                     }
                                 </View>
                             </TouchableOpacity>
@@ -155,7 +166,6 @@ class PrivatMsgScreen extends Component{
                         viewabilityConfig={this.viewabilityConfig}
                     />
                 }
-                <Footer />
             </SafeAreaView>
         );
     }

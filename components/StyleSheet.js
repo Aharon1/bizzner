@@ -232,7 +232,8 @@ const MainStyles = StyleSheet.create({
         fontSize:20
     },
     confirmPopup:{
-        padding:0
+        padding:0,
+        marginTop:30
     },
     confirmPopupHeader:{
         height:50,

@@ -15,7 +15,7 @@ class EventChatListScreen extends Component{
     constructor(props){
         super(props);
         this.state={
-            loading:false,
+            loading:true,
             isRefreshing:false,
             chatList:{}
         }
@@ -62,10 +62,11 @@ class EventChatListScreen extends Component{
         .then(res=>res.json())
         .then(response=>{
             if (this._isMounted) {
-                if(response.code != 404){
+                if(response.code == 200){
                     this.setState({chatList:response.body.results});
                 }
-                this.setState({loading:false,isRefreshing:false})
+                this.setState({loading:false,isRefreshing:false});
+                console.log(this.state.chatList.length);
             }
         })
         .catch()
@@ -81,22 +82,24 @@ class EventChatListScreen extends Component{
                     </TouchableOpacity>
                 </View>
                 {
-                    this.state && this.state.chatList && this.state.chatList.length > 0 && 
+                    this.state.chatList.length > 0 && 
                     <FlatList 
-                        data={this.state.chatList} 
-                        renderItem={({item})=>(
+                    contentContainerStyle={{
+                        flex:1
+                    }}
+                    data={this.state.chatList} 
+                    renderItem={({item})=>(
                             <TouchableOpacity style={[MainStyles.UserListItem,{backgroundColor:'#d1dbed'}]} onPress={()=>{this.props.navigation.navigate('Event Chat',{event_id:item.chat_id})}}>
-                                <View style={{overflow:'hidden',width:70,height:70}}>
+                                <View style={{overflow:'hidden',width:80,height:80,borderWidth: 3,
+                                        borderColor: '#FFF'}}>
                                     <ProgressiveImage source={{uri:item.event_pic}} style={{
-                                        width: 70, 
-                                        height: 70,
-                                        borderRadius:100,
-                                        borderWidth: 3,
-                                        borderColor: '#FFF'
+                                        width: 80, 
+                                        height: 80,
+                                        
                                     }} resizeMode="cover"/>
                                 </View>
                                 <View style={MainStyles.userListItemTextWrapper}>
-                                    <Text style={[MainStyles.ULITWName,{fontFamily:'Roboto-Meduim',color:'#03163a'}]}>{item.event_name}</Text>
+                                    <Text style={[MainStyles.ULITWName,{fontFamily:'Roboto-Medium',color:'#03163a'}]}>{item.event_name}</Text>
                                     <Text style={[MainStyles.ULITWTitle,{color:'#416bb9'}]}>{item.msg_text.split(" ").splice(0,4).join(" ")}</Text>
                                 </View>
                                 <View style={[MainStyles.ChatIconWrapper,{flexDirection:'row'}]}>
@@ -109,33 +112,46 @@ class EventChatListScreen extends Component{
                                     }}>{this.formatAMPM(item.send_on)}</Text>
                                     {
                                         item.unread_count > 0 && 
-                                        <Text style={{
+                                        <View
+                                        style={{
+                                            width:30,
+                                            height:30,
+                                            justifyContent:'center',
+                                            alignItems:'center',
+                                            borderRadius:100,
+                                            backgroundColor:'#5cc06c',
+                                        }}
+                                        ><Text style={{
                                             color:'#FFF',
                                             fontFamily:'Roboto-Medium',
                                             fontSize:12,
-                                            backgroundColor:'#5cc06c',
-                                            width:30,
-                                            height:30,
+                                            
+                                            
                                             textAlign:'center',
                                             textAlignVertical:'center',
-                                            borderRadius:100
-                                        }}>{item.unread_count}</Text>
+                                            
+                                        }}>{item.unread_count}</Text></View>
                                     }
                                     {
                                         item.unread_count == 0 && 
-                                        <Text style={{
+                                        <View
+                                        style={{
+                                            width:30,
+                                            height:30,
+                                            justifyContent:'center',
+                                            alignItems:'center',
+                                            borderRadius:100,
+                                            backgroundColor:'#c4d1e9',
+                                        }}
+                                        ><Text style={{
                                             color:'#FFF',
                                             fontFamily:'Roboto-Medium',
                                             fontSize:12,
-                                            backgroundColor:'#c4d1e9',
-                                            width:30,
-                                            height:30,
                                             textAlign:'center',
                                             textAlignVertical:'center',
-                                            borderRadius:100
                                         }}>
                                             <Icon name="check" />
-                                        </Text>
+                                        </Text></View>
                                     }
                                 </View>
                             </TouchableOpacity>
@@ -151,8 +167,12 @@ class EventChatListScreen extends Component{
                         />
                     }
                     keyExtractor={(item) => 'key-'+item.chat_id}
-                        viewabilityConfig={this.viewabilityConfig}
+                    viewabilityConfig={this.viewabilityConfig}
                     />
+                }
+                {
+                    this.state.chatList.length == 0 &&
+                    <Text>No Data Found</Text>
                 }
             </SafeAreaView>
         );

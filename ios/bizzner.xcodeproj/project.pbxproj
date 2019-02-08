@@ -66,8 +66,6 @@
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		C23BC415DA114DAEB6D4169D /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A079A17DDED7498F8BCDA9D3 /* MaterialIcons.ttf */; };
 		CE4570F121E4DE5500613B63 /* bizzner.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4570F021E4DE5500613B63 /* bizzner.swift */; };
-		CEED595F21E60FCD00F317A8 /* RNLinkedInSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEED595D21E60FCC00F317A8 /* RNLinkedInSessionManager.swift */; };
-		CEED596021E60FCD00F317A8 /* RNLinkedInSessionManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = CEED595E21E60FCC00F317A8 /* RNLinkedInSessionManagerBridge.m */; };
 		D3BAC898C36E4BE4B528976F /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4B313331DA0B492AB58C22AC /* Ionicons.ttf */; };
 		D6D322DA8C8F3C6B768E0683 /* libPods-bizzner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4A5C9E8E7F52D1E31BED3EC /* libPods-bizzner.a */; };
 		EAC130CE5B584ACA9B86CF64 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 75ADB2E669394A59A0172154 /* AntDesign.ttf */; };
@@ -464,8 +462,6 @@
 		CE4570EF21E4DE5400613B63 /* bizzner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bizzner-Bridging-Header.h"; sourceTree = "<group>"; };
 		CE4570F021E4DE5500613B63 /* bizzner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bizzner.swift; sourceTree = "<group>"; };
 		CE77501A21E4EC1B00C9F269 /* libReactNativePermissions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReactNativePermissions.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		CEED595D21E60FCC00F317A8 /* RNLinkedInSessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RNLinkedInSessionManager.swift; sourceTree = "<group>"; };
-		CEED595E21E60FCC00F317A8 /* RNLinkedInSessionManagerBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNLinkedInSessionManagerBridge.m; sourceTree = "<group>"; };
 		CEFE979721E3897000DC27B2 /* ReactNativePermissions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativePermissions.xcodeproj; path = "../node_modules/react-native-permissions/ios/ReactNativePermissions.xcodeproj"; sourceTree = "<group>"; };
 		CEFE97C521E38A7F00DC27B2 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		E8898C8CCBEF4A5E85839D0A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
@@ -752,7 +748,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				CEED595C21E60FCC00F317A8 /* RNLinkedInSessionManager */,
 				13B07FAE1A68108700A75B9A /* bizzner */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* bizznerTests */,
@@ -796,23 +791,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-
 		CEE699A521FF6D5E0003C5F3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				CEE699A921FF6D5E0003C5F3 /* libLRDRCTSimpleToast.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		CEED595C21E60FCC00F317A8 /* RNLinkedInSessionManager */ = {
-			isa = PBXGroup;
-			children = (
-				CEED595D21E60FCC00F317A8 /* RNLinkedInSessionManager.swift */,
-				CEED595E21E60FCC00F317A8 /* RNLinkedInSessionManagerBridge.m */,
-			);
-			name = RNLinkedInSessionManager;
-			path = "../node_modules/react-native-linkedin-sdk/ios/RNLinkedInSessionManager";
 			sourceTree = "<group>";
 		};
 		CEFE979821E3897000DC27B2 /* Products */ = {
@@ -1518,8 +1502,6 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				CE4570F121E4DE5500613B63 /* bizzner.swift in Sources */,
-				CEED596021E60FCD00F317A8 /* RNLinkedInSessionManagerBridge.m in Sources */,
-				CEED595F21E60FCD00F317A8 /* RNLinkedInSessionManager.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

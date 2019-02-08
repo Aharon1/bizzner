@@ -274,7 +274,7 @@ export default class EventDetail extends Component{
                                 {
                                     item.user_id != this.state.userID && 
                                     <TouchableOpacity style={MainStyles.ChatIconWrapper} onPress={()=>{this.startPrivateChat(item.user_id)}}>
-                                        <Icon name="comments"style={MainStyles.ChatIcon}/>
+                                        <Icon name="comment"style={MainStyles.ChatIcon}/>
                                     </TouchableOpacity>
                                 }
                             </View>

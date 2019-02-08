@@ -54,7 +54,7 @@ class SignIn extends Component{
                 setTimeout(()=>{
                     this.setState({loading:false});
                     this.props.navigation.navigate('Current Events');
-                  },500)
+                  },1500)
             }
             else{
                 Toast.show(response.message, Toast.SHORT);

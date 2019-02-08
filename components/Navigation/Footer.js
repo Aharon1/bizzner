@@ -9,7 +9,8 @@ class Footer extends Component {
     constructor(props){
         super(props);
         this.state={
-            pcCount:0
+            pcCount:0,
+            ecCount:0
         }
     }
     async setUserId(){
@@ -32,12 +33,7 @@ class Footer extends Component {
         .then(res=>res.json())
         .then(response=>{
             if (this._isMounted) {
-                this.setState({pcCount:response.pcCount});
-                const setInboxLabel = NavigationActions.setParams({
-                    params: { privateCount: response.pcCount},
-                    key: 'Messages',
-                });
-                this.props.navigation.dispatch(setInboxLabel);
+                this.setState({pcCount:response.pcCount,ecCount:response.ecCount});
             }
         })
         .catch(err=>{
@@ -64,24 +60,26 @@ class Footer extends Component {
                 paddingBottom:5}} onPress={()=>this.props.navigation.navigate('EventChatList')}>
                     <View>
                         <Icon name="comments" style={{ fontSize: 27, color: '#8da6d5' }} />
-                        {/* <View style={{
+                        { 
+                            this.state.ecCount > 0 && 
+                            <View style={{
                                 position:'absolute',
                                 right:-12,
                                 top:-8,
                                 alignItems:'center',
                                 alignContent:'center',
                                 justifyContent:'center',
-                                backgroundColor:'#0846b8',
+                                backgroundColor:'#e74c3c',
                                 borderRadius:100,
                                 width:20,
                                 height:20,
                             }}>
                             <Text style={{
-                                fontSize:10,
-                                fontFamily:'Roboto-Light',
-                                color:'#FFFFFF',
-                            }}>99+</Text>
-                        </View> */}
+                                 fontSize:12,
+                                 fontFamily:'Roboto-Medium',
+                                 color:'#FFFFFF',
+                            }}>{this.state.ecCount}</Text>
+                        </View> }
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={{alignItems:'center',
@@ -105,8 +103,8 @@ class Footer extends Component {
                                 height:20,
                             }}>
                                 <Text style={{
-                                    fontSize:10,
-                                    fontFamily:'Roboto-Light',
+                                    fontSize:12,
+                                    fontFamily:'Roboto-Medium',
                                     color:'#FFFFFF',
                                 }}>{this.state.pcCount}</Text>
                             </View>

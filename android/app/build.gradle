@@ -137,6 +137,11 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-vector-icons')
+    compile project(':react-native-push-notification')
+    compile project(':react-native-maps')
+    compile project(':react-native-linkedin-sdk')
+    compile project(':react-native-gesture-handler')
     compile project(':react-native-geolocation-service')
     compile project(':react-native-image-picker')
     implementation project(':react-native-push-notification')

@@ -129,13 +129,13 @@ class ProfileScreen extends Component{
     formData.append('file', this.state.imageData);
     formData.append('gps_on', this.state.gpsOn);
     console.log(formData);
-    let data = new FormData();
-    /*data.append('action', 'ADD');
+    /*let data = new FormData();
+    data.append('action', 'ADD');
     data.append('param', 0);
     data.append('secondParam', 0);
     data.append('file', new Blob([payload], { type: 'text/csv' }));*/
     // this works
-    let request = new XMLHttpRequest();
+    /*let request = new XMLHttpRequest();
     request.onreadystatechange = (e) => {
       console.log(request);
       if (request.readyState !== 4) {
@@ -148,7 +148,7 @@ class ProfileScreen extends Component{
       }
     };
     request.open('POST', fetchData+params);
-    request.send(formData);
+    request.send(formData);*/
     /*axios.post(fetchData+params,{
       headers: {
         Accept: 'application/json',
@@ -159,7 +159,7 @@ class ProfileScreen extends Component{
     .then(res=>{
       console.log(res.data);
     })*/
-    /*fetch(fetchData+params,{
+    fetch(fetchData+params,{
         method:'POST',
         headers: {
           Accept: 'application/json',
@@ -172,11 +172,11 @@ class ProfileScreen extends Component{
       console.log(postResponse);
         Toast.show(postResponse.message,Toast.SHORT);
         this.setState({loading:false})
-        //this.props.navigation.navigate('Home');
+        this.props.navigation.navigate('Current Events');
     })
     .catch(err=>{
       console.log(err);
-    })*/
+    })
   }
   capturePhoto = async function(){
     if (this.useCamera) {
