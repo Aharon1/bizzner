@@ -111,7 +111,7 @@ class EventsScreen extends Component{
         }
         var curTime = new Date();
         var choosenDate = this.state.NED.split('/');
-        var tim30More = new Date((choosenDate[1]) + "/" + choosenDate[0] + "/" + choosenDate[2] + " " + time+':00');
+        var tim30More = new Date((choosenDate[1]) + "/" + choosenDate[0] + "/" + choosenDate[2] + " " + this.state.NET.replace(':00','')+':00');
         var minutes = (tim30More.getTime() - curTime.getTime()) / (60 * 1000);
         if (minutes < 30) { 
                 if(Platform.OS == 'ios'){

@@ -161,8 +161,6 @@ class EventChatListScreen extends Component{
                             refreshing={this.state.isRefreshing}
                             onRefresh={()=>{this.setState({isRefreshing:true}),this.refreshList()}}
                             title="Pull to refresh"
-                            tintColor="#fff"
-                            titleColor="#fff"
                             colors={["#2e4d85","red", "green", "blue"]}
                         />
                     }

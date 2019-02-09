@@ -563,8 +563,9 @@ const MainStyles = StyleSheet.create({
         borderBottomWidth:1,
         marginBottom:15,
         paddingBottom:8,
+        
     },
-    profileTextItemIcon:{color:'#416bb9',marginRight:15,marginTop:5},
+    profileTextItemIcon:{color:'#416bb9',marginRight:15,marginTop:5,flexWrap:'wrap'},
     PTIText:{
         fontFamily:'Roboto-Regular',
         fontSize:16,

@@ -42,6 +42,8 @@ target 'bizzner' do
 
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
+  pod 'react-native-add-calendar-event', :path => '../node_modules/react-native-add-calendar-event'
+
 end
 
 post_install do |installer|

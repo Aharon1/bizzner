@@ -137,34 +137,30 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-vector-icons')
-    compile project(':react-native-push-notification')
-    compile project(':react-native-maps')
-    compile project(':react-native-linkedin-sdk')
-    compile project(':react-native-gesture-handler')
+    compile project(':react-native-add-calendar-event')
     compile project(':react-native-geolocation-service')
     compile project(':react-native-image-picker')
-    implementation project(':react-native-push-notification')
-    implementation "com.android.support:exifinterface:+"
-    implementation "com.android.support:support-annotations:+"
-    implementation "com.android.support:support-v4:+"
-    implementation project(':linkedin-sdk')
-    implementation project(':react-native-vector-icons')
-    implementation project(':react-native-linkedin-sdk')
-    implementation project(':react-native-gesture-handler')
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation "com.google.android.gms:play-services-gcm:+"
-    implementation 'me.leolin:ShortcutBadger:1.1.8@aar'
-    implementation "com.google.firebase:firebase-messaging:+"
-    implementation(project(':react-native-maps')) {
+    compile project(':react-native-push-notification')
+    compile "com.android.support:exifinterface:+"
+    compile "com.android.support:support-annotations:+"
+    compile "com.android.support:support-v4:+"
+    compile project(':linkedin-sdk')
+    compile project(':react-native-vector-icons')
+    compile project(':react-native-linkedin-sdk')
+    compile project(':react-native-gesture-handler')
+    compile fileTree(dir: "libs", include: ["*.jar"])
+    compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    compile "com.facebook.react:react-native:+"  // From node_modules
+    compile "com.google.android.gms:play-services-gcm:+"
+    compile 'me.leolin:ShortcutBadger:1.1.8@aar'
+    compile "com.google.firebase:firebase-messaging:+"
+    compile(project(':react-native-maps')) {
       exclude group: 'com.android.support'
       exclude module: 'appcompat-v7'
       exclude module: 'support-v4'
     }
-    implementation 'com.google.android.gms:play-services-base:+'
-    implementation 'com.google.android.gms:play-services-maps:+'
+    compile 'com.google.android.gms:play-services-base:+'
+    compile 'com.google.android.gms:play-services-maps:+'
 }
 configurations.all {
     resolutionStrategy {
