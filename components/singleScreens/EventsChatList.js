@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, TextInput, 
     Platform,FlatList,ActivityIndicator,AsyncStorage,
-    RefreshControl,SafeAreaView
+    RefreshControl,SafeAreaView,StyleSheet,Alert
 } from 'react-native';
 import {SERVER_URL} from '../../Constants';
 import MainStyles from '../StyleSheet';
@@ -25,6 +25,7 @@ class EventChatListScreen extends Component{
         }
         this.fetchList = this._fetchList.bind(this);
         this.refreshList = this._refreshList.bind(this);
+        this.hideChat = this._hideChat.bind(this);
     }
     async setUserId(){
         var userID =  await AsyncStorage.getItem('userID');
@@ -57,6 +58,16 @@ class EventChatListScreen extends Component{
         var strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
     }
+    formatDate(date){
+        var date = new Date(date);
+        var dateStr = '';
+        dateStr += (date.getDate() < 10)?'0'+date.getDate()+' ':date.getDate()+' ';
+        var monthArray = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var month = monthArray[date.getMonth()];
+        dateStr += month+' ';
+        dateStr += date.getFullYear();
+        return dateStr;
+    }
     _fetchList= async ()=>{ 
         await fetch(SERVER_URL+'?action=EventMsgsList&user_id='+this.state.userID)
         .then(res=>res.json())
@@ -66,12 +77,25 @@ class EventChatListScreen extends Component{
                     this.setState({chatList:response.body.results});
                 }
                 this.setState({loading:false,isRefreshing:false});
-                console.log(this.state.chatList.length);
             }
         })
         .catch()
     }
+    async _hideChat(chatId){
+        await fetch(SERVER_URL+'?action=hide_user_chat&chat_id='+chatId+'&isgrp=1&user_id='+this.state.userID)
+        .then(res=>{console.log(res);return res.json()})
+        .then(response=>{
+            if(response.code ==200){
+                Toast.show("Chat hidden successfully",Toast.SHORT);
+            }
+            this.fetchList();
+        })
+        .catch(err=>{
+
+        });
+    }
     render(){
+        
         return(
             <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
@@ -88,74 +112,76 @@ class EventChatListScreen extends Component{
                         flex:1
                     }}
                     data={this.state.chatList} 
-                    renderItem={({item})=>(
-                            <TouchableOpacity style={[MainStyles.UserListItem,{backgroundColor:'#d1dbed'}]} onPress={()=>{this.props.navigation.navigate('Event Chat',{event_id:item.chat_id})}}>
-                                <View style={{overflow:'hidden',width:80,height:80,borderWidth: 3,
-                                        borderColor: '#FFF'}}>
-                                    <ProgressiveImage source={{uri:item.event_pic}} style={{
-                                        width: 80, 
-                                        height: 80,
-                                        
-                                    }} resizeMode="cover"/>
-                                </View>
-                                <View style={MainStyles.userListItemTextWrapper}>
-                                    <Text style={[MainStyles.ULITWName,{fontFamily:'Roboto-Medium',color:'#03163a'}]}>{item.event_name}</Text>
-                                    <Text style={[MainStyles.ULITWTitle,{color:'#416bb9'}]}>{item.msg_text.split(" ").splice(0,4).join(" ")}</Text>
-                                </View>
-                                <View style={[MainStyles.ChatIconWrapper,{flexDirection:'row'}]}>
-                                    <Text 
-                                    style={{
-                                        color:'#416bb9',
-                                        fontFamily:'Roboto-Regular',
-                                        fontSize:12,
-                                        marginRight:7
-                                    }}>{this.formatAMPM(item.send_on)}</Text>
-                                    {
-                                        item.unread_count > 0 && 
-                                        <View
+                    renderItem={({item})=>{ 
+                        var todaysDate = new Date();
+                        var todaysFormated = todaysDate.getDate()+'/'+(todaysDate.getMonth()+1)+'/'+todaysDate.getFullYear();
+                        var chatDate = new Date(item.send_on);
+                        var chatDateFormated = chatDate.getDate()+'/'+(chatDate.getMonth()+1)+'/'+chatDate.getFullYear();
+                        var dateFormated = (todaysFormated != chatDateFormated)?this.formatDate(item.send_on)+' '+this.formatAMPM(item.send_on):"Today "+this.formatAMPM(item.send_on);
+                        return(
+                            <View>
+                            { !item.isHidden && 
+                                <TouchableOpacity style={[
+                                curStyle.UserListItem,
+                                (item.unread_count > 0)?{backgroundColor:'rgba(209, 219, 237, 0.4)'}:''
+                                ]} onPress={()=>{this.props.navigation.navigate('Event Chat',{event_id:item.chat_id})}}>
+                                    <View style={{overflow:'hidden',width:60,height:60,borderWidth: 2,borderColor: '#FFF'}}>
+                                        <ProgressiveImage source={{uri:item.event_pic}} style={{
+                                            width: 60, 
+                                            height: 60,
+                                        }} resizeMode="cover"/>
+                                    </View>
+                                    <View style={MainStyles.userListItemTextWrapper}>
+                                        <Text style={[MainStyles.ULITWName,{fontFamily:'Roboto-Medium',color:'#416bb9'}]}>{item.event_name}</Text>
+                                        <Text 
                                         style={{
-                                            width:30,
-                                            height:30,
-                                            justifyContent:'center',
-                                            alignItems:'center',
-                                            borderRadius:100,
-                                            backgroundColor:'#5cc06c',
+                                            color:'#999',
+                                            fontFamily:'Roboto-Regular',
+                                            fontSize:8,
+                                            marginBottom:3,
+                                        }}>{dateFormated}</Text>
+                                        <Text style={[MainStyles.ULITWTitle,{color:'#03163a'}]}>{item.msg_text.split(" ").splice(0,4).join(" ")}</Text>
+                                    </View>
+                                    <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                                        {
+                                            item.unread_count > 0 && 
+                                            <View
+                                            style={[curStyle.IconStyle,{backgroundColor:'#5cc06c'}]}
+                                            >
+                                                <Text style={curStyle.IconTextStyle}>{item.unread_count}</Text>
+                                            </View>
+                                        }
+                                        <TouchableOpacity
+                                        onPress={()=>{
+                                        Alert.alert(
+                                            'Hide this chat',
+                                            'Temporarily hide this chat',
+                                            [
+                                                {
+                                                    text: 'No',
+                                                    onPress: () => console.log('Cancel Pressed'),
+                                                    style: 'cancel',
+                                                },
+                                                {
+                                                    text: 'Yes',
+                                                    onPress: () => {
+                                                        this.hideChat(item.chat_id);
+                                                    }
+                                                }
+                                            ],
+                                            {cancelable: true},
+                                            );
                                         }}
-                                        ><Text style={{
-                                            color:'#FFF',
-                                            fontFamily:'Roboto-Medium',
-                                            fontSize:12,
-                                            
-                                            
-                                            textAlign:'center',
-                                            textAlignVertical:'center',
-                                            
-                                        }}>{item.unread_count}</Text></View>
-                                    }
-                                    {
-                                        item.unread_count == 0 && 
-                                        <View
-                                        style={{
-                                            width:30,
-                                            height:30,
-                                            justifyContent:'center',
-                                            alignItems:'center',
-                                            borderRadius:100,
-                                            backgroundColor:'#c4d1e9',
-                                        }}
-                                        ><Text style={{
-                                            color:'#FFF',
-                                            fontFamily:'Roboto-Medium',
-                                            fontSize:12,
-                                            textAlign:'center',
-                                            textAlignVertical:'center',
-                                        }}>
-                                            <Icon name="check" />
-                                        </Text></View>
-                                    }
-                                </View>
-                            </TouchableOpacity>
-                        )}
+                                        style={[curStyle.IconStyle,{marginLeft:5,backgroundColor:'#c0392b'}]}>
+                                            <Text style={curStyle.IconTextStyle}>
+                                                <Icon name="times" />
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </TouchableOpacity> 
+                            }
+                            </View>
+                        )}}
                     refreshControl={
                         <RefreshControl
                             refreshing={this.state.isRefreshing}
@@ -176,4 +202,27 @@ class EventChatListScreen extends Component{
         );
     }
 }
+const curStyle = StyleSheet.create({
+    UserListItem:{
+        paddingHorizontal:15,
+        paddingVertical: 10,
+        borderBottomColor:'#8da6d4',
+        borderBottomWidth:1,
+        flexDirection:'row',
+    },
+    IconStyle:{
+        width:20,
+        height:20,
+        justifyContent:'center',
+        alignItems:'center',
+        borderRadius:100,
+    },
+    IconTextStyle:{
+        color:'#FFF',
+        fontFamily:'Roboto-Medium',
+        fontSize:10,
+        textAlign:'center',
+        textAlignVertical:'center'
+    }
+});
 export default EventChatListScreen;

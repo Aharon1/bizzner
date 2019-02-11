@@ -89,7 +89,7 @@ export default class EventDetail extends Component{
             'It will remind you',
             [
                 {
-                    text: 'Cancel',
+                    text: 'No',
                     onPress: () => console.log('Cancel Pressed'),
                     style: 'cancel',
                 },

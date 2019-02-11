@@ -52,7 +52,8 @@ class EventsScreen extends Component{
             isSearchOpen:false,
             noFilterData:false,
             isFiltering:false,
-            no_Attendees:'No. of Attendees'
+            no_Attendees:'No. of Attendees',
+            keyword:''
         }
         this.viewabilityConfig = {
             waitForInteraction: true,
@@ -108,6 +109,10 @@ class EventsScreen extends Component{
         if(this.state.NEUsersCount == ''){
             Toast.show('Please choose number of attendee',Toast.SHORT);
             return false;
+        }
+        console.log(typeof(this.state.NEUsersCount));
+        if(typeof(this.state.NEUsersCount) == 'undefined'){
+            this.setState({NEUsersCount:10});
         }
         var curTime = new Date();
         var choosenDate = this.state.NED.split('/');
@@ -219,12 +224,12 @@ class EventsScreen extends Component{
                     (position) => {
                         let Latitude = position.coords.latitude;
                         let Longitude = position.coords.longitude;
-                        this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
+                        this._fetchLists('getFromCountry=0&user_id='+this.state.userID+'&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
                     },
                     (error) => {
                         // See error code charts below.
                         console.log(error.code, error.message);
-                        this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                        this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
                     },
                     { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
                 );
@@ -238,23 +243,23 @@ class EventsScreen extends Component{
                                 console.log(position);
                                 let Latitude = position.coords.latitude;
                                 let Longitude = position.coords.longitude;
-                                this._fetchLists('latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
+                                this._fetchLists('getFromCountry=0&user_id='+this.state.userID+'&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
                             },
                             (error) => {
                                 // See error code charts below.
                                 console.log(error.code, error.message);
-                                this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                                this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
                             },
                             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
                         );
                     }
                     else{
-                        this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                        this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
                     }
                 });
             }
             else{
-                this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
             }
         })
     }
@@ -270,8 +275,11 @@ class EventsScreen extends Component{
         })
         .then(res=>res.json())
         .then(response=>{
-            var results = response.results
+            console.log(response);
+            var results = response.results;
+            var myEvResults = response.myEvents;
             const placesArray = [];
+            const myPlacesArray = [];
             for (const bodyKey in results){
                 placesArray.push({
                     name:results[bodyKey].group_name,
@@ -293,16 +301,30 @@ class EventsScreen extends Component{
                     timestamp:results[bodyKey].timestamp,
                 });
             }
-            var MyEvents = placesArray.filter((item,key)=>{
-                for(const uid in response.usersIds[key]){
-                    if(response.usersIds[key][uid].user_id == this.state.userID){
-                        return true;
-                    }
-                }
-            })
-            this.setState({loading:false,locationList:placesArray,MyEvents:MyEvents,isRefreshing:false});
+            for (const myBodyKey in myEvResults){
+                myPlacesArray.push({
+                    name:myEvResults[myBodyKey].group_name,
+                    address:myEvResults[myBodyKey].group_address,
+                    isStarted:myEvResults[myBodyKey].group_status,
+                    photoUrl:myEvResults[myBodyKey].photoUrl,
+                    key:myEvResults[myBodyKey].key,
+                    event_date:myEvResults[myBodyKey].event_date,
+                    event_time:myEvResults[myBodyKey].event_time,
+                    event_subject:myEvResults[myBodyKey].event_subject,
+                    event_note:myEvResults[myBodyKey].event_note,
+                    latitude:myEvResults[myBodyKey].latitude,
+                    longitude:myEvResults[myBodyKey].longitude,
+                    place_id:myEvResults[myBodyKey].place_id,
+                    group_id:myEvResults[myBodyKey].group_id,
+                    usersPlace:myEvResults[myBodyKey].usersPlace,
+                    usersCount:myEvResults[myBodyKey].usersCount,
+                    userIds:myEvResults[myBodyKey].usersIds,
+                    timestamp:myEvResults[myBodyKey].timestamp,
+                });
+            }
+            this.setState({loading:false,locationList:placesArray,MyEvents:myPlacesArray,isRefreshing:false,isFiltering:false});
         }).catch(err => {
-            this.setState({loading:false,locationList:{},MyEvents:{},isRefreshing:false});
+            this.setState({loading:false,locationList:{},MyEvents:{},isRefreshing:false,isFiltering:false});
             console.log('Error What is this',err);
         }).done()
     }
@@ -358,31 +380,24 @@ class EventsScreen extends Component{
         this.props.navigation.navigate('Home');
     }
     searchText = (e) => {
-        if(e.length>0){this.setState({isFiltering:true})}
-        else{this.setState({isFiltering:false})}
-        let text = e.toLowerCase()
-        let fullList = this.state.locationList;
-        let filteredList = fullList.filter((item) => { // search from a full list, and not from a previous search results list
-        if(item.event_subject.toLowerCase().match(text) || item.name.toLowerCase().match(text))
-            return item;
-        })
-        if (!text || text === '') {
-        this.setState({
-            renderedListData: fullList,
-            noFilterData:false,
-        })
-        } else if (!filteredList.length) {
-        // set no data flag to true so as to render flatlist conditionally
-        this.setState({
-            noFilterData: true
-        })
+        if(e.length>3){
+            this.setState({isFiltering:true});
+            let text = e.toLowerCase();
+            this.setState({keyword:text});
+            var dateNow = new Date();
+            var curMonth = ((dateNow.getMonth()+1) >= 10)?(dateNow.getMonth()+1):'0'+(dateNow.getMonth()+1);
+            var curDate = (dateNow.getDate() >= 10)?dateNow.getDate():'0'+dateNow.getDate();
+            var curDate = dateNow.getFullYear()+'-'+curMonth+'-'+curDate;
+            var curMinute = (dateNow.getMinutes() >= 10)?dateNow.getMinutes():'0'+dateNow.getMinutes();
+            var curSeconds = (dateNow.getSeconds() >= 10)?dateNow.getSeconds():'0'+dateNow.getSeconds();
+            var curHours = (dateNow.getHours() >= 10)?dateNow.getHours():'0'+dateNow.getHours();
+            var curTime = curHours+':'+curMinute+':'+curSeconds;
+            this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime+'&keyword='+this.state.keyword);
         }
-        else if (Array.isArray(filteredList)) {
-        this.setState({
-            noFilterData: false,
-            renderedListData: filteredList
-        })
+        else{
+            this.setState({isFiltering:false});
         }
+        
     }
     pickerIos = ()=>{
         ActionSheetIOS.showActionSheetWithOptions({
@@ -532,7 +547,7 @@ class EventsScreen extends Component{
                     this.state.locationList && 
                     this.state.locationList.length > 0 &&  
                     this.state.noFilterData==false && 
-                    <FlatList data={(this.state.renderedListData && this.state.renderedListData.length > 0)?this.state.renderedListData:this.state.locationList}
+                    <FlatList data={this.state.locationList}
                         renderItem={({item}) => (
                             <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID} refresh={this.refreshList}/>
                             )}

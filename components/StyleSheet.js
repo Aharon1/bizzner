@@ -489,14 +489,14 @@ const MainStyles = StyleSheet.create({
     },
     ULITWName:{
         fontFamily:'Roboto-Regular',
-        fontSize:16,
+        fontSize:14,
         marginTop:5,
         color:'#03163a',
         alignItems:'flex-start'
     },
     ULITWTitle:{
         fontFamily:'Roboto-Light',
-        fontSize:14,
+        fontSize:11,
         color:'#03163a',
         paddingRight:5,
         flexWrap: 'wrap',
@@ -523,7 +523,7 @@ const MainStyles = StyleSheet.create({
     },
     ChatIconWrapper:{
         justifyContent:'center',
-        alignItems: 'center',
+        alignItems: 'flex-end',
     },
     ChatIcon:{
         fontSize:35,
