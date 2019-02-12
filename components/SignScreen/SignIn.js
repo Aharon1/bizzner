@@ -36,6 +36,7 @@ class SignIn extends Component{
         fetch(SERVER_URL+'?action=login_user&lg_email='+this.state.emailAddress+'&lg_pass='+this.state.password)
         .then(res=>res.json())
         .then(response=>{
+            console.log(response);
             if(response.code == 200){
                 this.saveDetails('isUserLoggedin','true');
                 this.saveDetails('userID',response.body.ID);

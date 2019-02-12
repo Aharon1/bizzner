@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import { View,Text,TouchableOpacity,FlatList,ActivityIndicator,
+import { View,Text,TouchableOpacity,FlatList,ActivityIndicator,Share,Alert,
     AsyncStorage,RefreshControl,ScrollView,SafeAreaView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
@@ -8,6 +8,8 @@ import Loader from '../Loader';
 import ProgressiveImage from '../../components/AsyncModules/ImageComponent';
 import Dialog, { SlideAnimation } from 'react-native-popup-dialog';
 import Toast from 'react-native-simple-toast';
+import * as AddCalendarEvent from 'react-native-add-calendar-event';
+import moment from 'moment';
 export default class EventDetail extends Component{
     constructor(props){
         super(props);
@@ -49,6 +51,7 @@ export default class EventDetail extends Component{
         fetch(SERVER_URL+'?action=getEventUsers&event_id='+eventId+'&user_id='+user_id)
         .then(response=>response.json())
         .then(res=>{
+            console.log(res);
             this.setState({loading:false,isRefreshing:false,userList:res.users,eventData:res.event_data,curStatus:res.curStatus});
         })
     }
@@ -73,9 +76,43 @@ export default class EventDetail extends Component{
         dateStr += date.getFullYear();
         return dateStr;
     }
+    utcDateToString = (momentInUTC) => {
+        let s = moment.utc(momentInUTC).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+        // console.warn(s);
+        return s;
+    };
     setUserEventStatus =  async (statusValue)=>{
         var curItem = this.state.eventData;
         var user_id = this.state.userID;
+        Alert.alert(
+            'Add to Calendar?',
+            'It will remind you',
+            [
+                {
+                    text: 'No',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                {text: 'Yes', onPress: () => {
+                var m = moment(new Date(this.state.eventData.unix_event));
+                var mUTC = m.utc();
+                const eventConfig = {
+                    title:this.state.eventData.event_subject,
+                    startDate: this.utcDateToString(mUTC),
+                    endDate: this.utcDateToString(moment.utc(mUTC).add(1, 'hours')),
+                    notes: 'tasty!',
+                    navigationBarIOS: {
+                    tintColor: '#416bb9',
+                    backgroundColor: '#8da6d5',
+                    titleColor: '#2e4d85',
+                    },
+                };
+                AddCalendarEvent.presentEventCreatingDialog(eventConfig)
+                .then((eventInfo) => {})
+                .catch((error) => {console.warn(error);});
+            }}],
+            {cancelable: true},
+          );
         fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
         .then(response=>{
             this.fetchNewDetails();
@@ -115,6 +152,27 @@ export default class EventDetail extends Component{
 
         });
     }
+    async shareThis(){
+        try {
+            const result = await Share.share({
+                message:this.state.eventData.event_subject+' http://bizzner.com/event/'+this.state.event_id,
+            },{
+                dialogTitle: 'Share '+this.state.eventData.event_subject,
+            })
+      
+            if (result.action === Share.sharedAction) {
+              if (result.activityType) {
+                // shared with activity type of result.activityType
+              } else {
+                // shared
+              }
+            } else if (result.action === Share.dismissedAction) {
+              // dismissed
+            }
+          } catch (error) {
+            alert(error.message);
+          }
+    }
     render(){
         return(
             <SafeAreaView style={MainStyles.normalContainer}>
@@ -131,7 +189,7 @@ export default class EventDetail extends Component{
                         <Icon name="user-plus" style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveIcon,{fontSize:14}]}/>
                         <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText,{fontSize:14}]}>Invited to event</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[
+                    <TouchableOpacity onPress={()=>{this.shareThis()}} style={[
                         MainStyles.tabItem,
                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
                         ]}>
