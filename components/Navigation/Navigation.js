@@ -1,83 +1,96 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * Bizzner App
+ * http://bizzner.com
  *
  * @format
  * @flow
  */
-
 import React from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import { ScrollView, TouchableOpacity,View,SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createDrawerNavigator, DrawerItems, createStackNavigator } from 'react-navigation';
 import { SettingsScreen, ComplainScreen, CurrentEventsScreen, HistoryScreen, EditProfileScreen, MessagesScreen, LogoutScreen } from './Screens';
 import MainScreen from '../Main';
 import SplashScreen from '../Splash';
 import EventDetail from '../singleScreens/EventDetail';
-const drawerItemStyle = { borderBottomWidth: 1, borderBottomColor: '#f3f3f3', height: 60, textAlign: 'left' };
-const drawerLabelStyle = { margin: 0, fontSize: 16, fontFamily: 'Roboto-Medium' };
-
+import EventChatScreen from '../singleScreens/EventChatScreen';
+import PrivateChatScreen from '../singleScreens/PrivateChat';
+import SignUp from '../SignScreen/SignUp';
+import ConfirmScreen from '../SignScreen/ConfirmScreen';
+import SignIn from '../SignScreen/SignIn';
+import ForgotPassword from '../SignScreen/ForgotPassword';
+import Interests from '../Interests';
+import EventChatListScreen from '../singleScreens/EventsChatList';
+const drawerItemStyle = { 
+    borderBottomWidth: 1, 
+    borderBottomColor: '#8da6d5', 
+    height: 60, 
+    textAlign: 'left' 
+};
+const drawerLabelStyle = { 
+    margin: 0, 
+    fontSize: 15, 
+    fontFamily: 'Roboto-Medium',
+    paddingHorizontal:20
+};
 const Drawer = createDrawerNavigator({
-    ['CURRENT EVENTS']: {
+    ['Current Events']: {
         screen: CurrentEventsScreen
     },
-    ['MESSAGES']: {
-        screen: MessagesScreen
-    },
-    ['PROFILE']: {
+    ['Profile']: {
         screen: EditProfileScreen,
     },
-    ['HISTORY']: {
+    ['History']: {
         screen: HistoryScreen
     },
-    [`COMPLAIN`]: {
+    [`Complain`]: {
         screen: ComplainScreen,
     },
-    [`SETTINGS`]: {
+    [`Settings`]: {
         screen: SettingsScreen,
     },
-    [`LOGOUT`]: {
-        screen: LogoutScreen
+    [`Logout`]: {
+        screen:LogoutScreen
     },
-    ['EventDetail']: {
-        screen: EventDetail
-    }
+    
 },
     {
-        initialRouteName: 'CURRENT EVENTS',
-        overlayColor: 'rgba(0, 0, 0, 0.2)',
-        drawerWidth: 300,
+        initialRouteName: 'Current Events',
+        overlayColor: 'rgba(0, 0, 0, 0.5)',
+        drawerWidth: 250,
         contentComponent: props =>
-            <ScrollView>
-                <TouchableOpacity style={{ paddingLeft: 12 }} onPress={props.navigation.closeDrawer}>
-                    <Icon name="bars" style={{ fontSize: 22, color: '#8da6d5' }} />
+            <SafeAreaView>
+            <ScrollView style={{marginTop:10,padding:0}}>
+                <TouchableOpacity style={{ paddingLeft: 20,justifyContent:'flex-end' }} onPress={props.navigation.closeDrawer}>
+                    <Icon name="bars" style={{ fontSize: 20, color: '#8da6d5' }} />
                 </TouchableOpacity>
                 <DrawerItems
                     {...props}
                     itemStyle={drawerItemStyle}
                     inactiveTintColor={'#3d6cba'}
-                    itemsContainerStyle={{ paddingHorizontal: 20 }}
+                    itemsContainerStyle={{ paddingHorizontal: 0 }}
                     labelStyle={drawerLabelStyle}
-                    iconContainerStyle={{ marginHorizontal: 0, marginRight: 16 }}
+                    iconContainerStyle={{ marginHorizontal: 0, marginLeft: 16 }}
                     activeBackgroundColor={'#fff'}
                 />
 
             </ScrollView>
-    });
-
+            </SafeAreaView>
+});
 const shadow = {
     shadowColor: '#000', shadowRadius: 5, shadowOpacity: 0.6, shadowOffset: {
         width: 5, height: 0
     }
 }
-
 const Navigation = createStackNavigator({
-
     Auth: {
         screen: MainScreen
     },
     Home: {
         screen: Drawer,
+    },
+    ['Messages']: {
+        screen: MessagesScreen
     },
     Profile: {
         screen: EditProfileScreen,
@@ -85,14 +98,40 @@ const Navigation = createStackNavigator({
     Splash: {
         screen: SplashScreen
     },
-
+    SignUp:{
+        screen:SignUp
+    },
+    ConfirmScreen:{
+        screen:ConfirmScreen
+    },
+    SignIn:{
+        screen:SignIn
+    },
+    ForgotPassword:{
+        screen:ForgotPassword
+    },
+    InterestsScreen:{
+        screen:Interests
+    },
+    ['EventDetail']:{
+        screen:EventDetail
+    },
+    ['Event Chat']:{
+        screen:EventChatScreen
+    },
+    ['Private Chat']:{
+        screen:PrivateChatScreen
+    },
+    EventChatList:{
+        screen:EventChatListScreen
+    }
 }, {
-        headerMode: 'none',
-        initialRouteName: 'Home',
-        containerOptions: {
-            style: {
-                backgroundColor: '#f00',
-                flex: 1
+    headerMode: 'none',
+    initialRouteName: 'Splash',
+    containerOptions: {
+        style: {
+            backgroundColor: '#f00',
+            flex: 1
 
             }
         }

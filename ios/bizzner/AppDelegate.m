@@ -20,7 +20,7 @@
   NSURL *jsCodeLocation;
   [GMSServices provideAPIKey:@"AIzaSyDxEvhzNHkgOlKkrX9xSIrZhoYWE7UfN5A"]; // add this line using the api key obtained from Google Console
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-
+//jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"bizzner"
                                                initialProperties:nil
@@ -60,5 +60,16 @@
  {
   [RCTPushNotificationManager didReceiveLocalNotification:notification];
  }
-
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+  if ([LinkedinSwiftHelper shouldHandleUrl:url]) {
+    return [LinkedinSwiftHelper application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
+  }
+  
+  // ... your code
+  
+  return YES;
+}
 @end

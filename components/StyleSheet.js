@@ -61,8 +61,8 @@ const MainStyles = StyleSheet.create({
         width:win.width
     },
     orImg:{
-        marginTop:40,
-        marginBottom:40
+        marginTop:20,
+        marginBottom:20
     },
     btnWrapper:{
         width:'100%',
@@ -93,7 +93,8 @@ const MainStyles = StyleSheet.create({
         paddingTop: 20,
         overflow: 'visible',
         paddingLeft:30,
-        flexDirection:'row'
+        flexDirection:'row',
+        marginBottom:60
     },
     pHeadPicWrapper:{
         position:'relative'
@@ -103,6 +104,7 @@ const MainStyles = StyleSheet.create({
         height:130,
         borderWidth: 5,
         borderColor: '#FFF',
+        backgroundColor:'#d1dbed',
         borderRadius: 70,
         marginBottom:20,
         overflow: 'hidden',
@@ -132,7 +134,8 @@ const MainStyles = StyleSheet.create({
     pHeadPicOptions:{
         position:"absolute",
         width: 120,
-        top: 40,
+        top: 0,
+        left:35,
         backgroundColor:'#FFF',
         borderRadius:5,
         elevation:3,
@@ -164,7 +167,6 @@ const MainStyles = StyleSheet.create({
     },
     profileBody:{
         flex:1,
-        marginTop:60,
         backgroundColor:'#fff',
         paddingHorizontal:30,
     },
@@ -230,7 +232,8 @@ const MainStyles = StyleSheet.create({
         fontSize:20
     },
     confirmPopup:{
-        padding:0
+        padding:0,
+        marginTop:30
     },
     confirmPopupHeader:{
         height:50,
@@ -291,13 +294,32 @@ const MainStyles = StyleSheet.create({
     },
     tabItemActiveIcon:{color:'#05296c',},
     tabItemActiveText:{color:'#05296c',},
+    EventScreenTabWrapper:{
+        backgroundColor:'#d1dbed',
+        paddingHorizontal:10,
+        paddingVertical:5,
+        flexDirection:'row',
+        justifyContent:'space-evenly',
+        alignItems:'center'
+    },
+    ESTWItem:{
+        width:'48%',
+        alignItems:'center',
+        backgroundColor:'#2e4d85',
+        paddingHorizontal:15,
+        paddingVertical:5,
+        borderRadius:10
+    },
+    ESTWIText:{
+        fontFamily:'Roboto-Medium',
+        fontSize:16,
+        
+    },
     EventItem:{
         padding:15,
-        borderBottomColor:'#8da6d4',
-        borderBottomWidth:1,
+        
         flexDirection:'row'
     },
-
     EIOnline:{
         backgroundColor:'#e8edf6',
     },
@@ -337,21 +359,38 @@ const MainStyles = StyleSheet.create({
     },
     EITWActionText:{
         fontSize:16,
-        fontFamily:'Robot-Medium'
+        fontFamily:'Roboto-Medium'
     },
     EITWAIOnline:{color:'#39b549'},
     EITWATOnline:{color:'#39b549'},
     EITWAIOffline:{color:'#8da6d5'},
     EITWATOffline:{color:'#2f4d85'},
+    EIAButtonsWrapper:{
+        flex:1,
+        flexDirection:'row',
+        justifyContent:'space-between',
+        marginBottom:10,
+        paddingHorizontal:10
+    },
+    EIAButtons:{
+        flex:1,
+        flexDirection:'row',
+        paddingHorizontal:10,
+        paddingVertical:5,
+        backgroundColor:'#bbcae6',
+        justifyContent:'center',
+        alignItems:'center',
+        borderRadius:15,
+    },
     createEventFWI:{
         borderBottomColor:'#8da6d4',
         borderBottomWidth: 1,
-        paddingBottom: 15,
+        paddingBottom: 0,
         flex:1,
         flexDirection:'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop:60,
+        marginTop:20,
         position:'relative',
         overflow:'visible'
     },
@@ -365,15 +404,37 @@ const MainStyles = StyleSheet.create({
         height:45
     },
     cEFWITF:{
-        height:60,
+        height:50,
         flex: 1,
         flexDirection:'row',
-        paddingTop: 10,
-        paddingRight: 10,
-        paddingBottom: 10,
+        paddingTop: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
         paddingLeft: 0,
-        fontSize:18,
-        fontFamily:'RobotoLight'
+        fontSize:17,
+        fontFamily:'Roboto-Light'
+    },
+    cEFWIPF:{
+        height:50,
+        flex: 1,
+        flexDirection:'row',
+        paddingTop: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
+        paddingLeft: 0,
+    },
+    cEFWIDF:{
+        borderWidth: 0,
+        paddingTop:0,
+        paddingBottom: 0,
+        paddingRight: 0,
+        paddingLeft: 0,
+        marginLeft:0,
+        height:'auto',
+        flex:1,
+        flexDirection:'row',
+        justifyContent:'flex-start',
+        color:'#03163a'
     },
     locationItemBtn:{
        borderBottomColor:'#8da6d4',
@@ -386,19 +447,145 @@ const MainStyles = StyleSheet.create({
        alignContent: 'flex-start',
     },
     locationItemWrapper:{
-        width:'100%',
-        left:0,
+        width:'91%',
+        marginHorizontal: 'auto',
+        justifyContent:'center',
+        left:15,
         maxHeight: 250,
-        //position:'absolute',
+        position:'absolute',
         backgroundColor:'#FFF',
         zIndex: 4000,
         borderColor:'#8da6d4',
         borderWidth:1,
-        //top:15,
+        top:123,
         marginBottom:0,
         borderTopWidth: 0,
         elevation:3,
-        overflow:'hidden'
+    },
+    UserListItem:{
+        padding:15,
+        borderBottomColor:'#8da6d4',
+        borderBottomWidth:1,
+        flexDirection:'row',
+        backgroundColor:'#e8edf6'
+    },
+    userListItemImageWrapper:{
+        overflow:'hidden',
+        width:90,
+        height:90,
+    },
+    userListItemIWImage:{
+        width: 90, 
+        height: 90,
+        borderRadius:100,
+        borderWidth: 3,
+        borderColor: '#FFF'
+    },
+    userListItemTextWrapper:{
+        marginLeft:15,
+        flexGrow: 1,
+        width: 0,
+        alignItems:'flex-start'
+    },
+    ULITWName:{
+        fontFamily:'Roboto-Regular',
+        fontSize:16,
+        marginTop:5,
+        color:'#03163a',
+        alignItems:'flex-start'
+    },
+    ULITWTitle:{
+        fontFamily:'Roboto-Light',
+        fontSize:14,
+        color:'#03163a',
+        paddingRight:5,
+        flexWrap: 'wrap',
+        alignItems:'flex-start'
+    },
+    ULITWAction : {
+        flexDirection:'row',
+        marginTop:10,
+        paddingVertical:2,
+        paddingHorizontal:8,
+        alignItems:'center',
+        borderRadius:15,
+        backgroundColor:'#88d392',
+    },
+    ULITWActionIcon:{
+        fontSize:11,
+        color:'#FFF',
+        marginRight:5
+    },
+    ULITWActionText:{
+        fontSize:11,
+        color:'#FFF',
+        fontFamily:'Roboto-Medium'
+    },
+    ChatIconWrapper:{
+        justifyContent:'center',
+        alignItems: 'center',
+    },
+    ChatIcon:{
+        fontSize:35,
+        color:'#8da6d5'
+    },
+    eventDataHeader:{
+        backgroundColor:'#fff',
+        flexDirection:'row',
+        paddingVertical:5,
+        paddingHorizontal:15,
+        shadowRadius:2,
+        shadowOpacity:0.3,
+        shadowOffset:{width:2,height:2},
+        elevation:5,
+        shadowColor:'#232323'
+    },
+    MessageContainer:{
+        flex:1
+    },
+    MessageContainerTextInput:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        paddingHorizontal:5,
+        paddingVertical:10,
+        backgroundColor:'#FFF'
+    },
+    MsgBtnDisable:{
+        opacity:0.6
+    },
+    MsgBtnEnable:{
+        opacity:1
+    },
+    profileTextItem:{
+        flexDirection:'row',
+        marginTop:10,
+        borderBottomColor:'#8da6d4',
+        borderBottomWidth:1,
+        marginBottom:15,
+        paddingBottom:8,
+    },
+    profileTextItemIcon:{color:'#416bb9',marginRight:15,marginTop:5},
+    PTIText:{
+        fontFamily:'Roboto-Regular',
+        fontSize:16,
+        color:'#03163a'
+    },
+    tagsContent:{
+        marginTop:20
+    },
+    InterestsTags:{
+        paddingVertical:10,
+        paddingHorizontal:15,
+        borderColor:'#0846b8',
+        borderRadius:30,
+        borderWidth:1,
+        textAlign:"center",
+        margin:5,
+    },
+    ITText:{
+        color:'#0846b8',
+        fontFamily:'Roboto-Regular',
+        fontSize:15
     }
 });
 
