@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { View,Text,Image,TouchableOpacity} from 'react-native';
+import { View,Text,Image,Alert,TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
 import ProgressiveImage from './ImageComponent';
 import { withNavigation } from 'react-navigation';
 import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
+import * as AddCalendarEvent from 'react-native-add-calendar-event';
+import moment from 'moment';
 let userStatus = '';
  class ListItem extends Component{
     constructor(props){
@@ -19,9 +21,43 @@ let userStatus = '';
     checkEvent = ()=>{
         this.props.navigation.navigate('EventDetail',{event_id:this.state.eventId});
     }
+    utcDateToString = (momentInUTC) => {
+        let s = moment.utc(momentInUTC).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+        // console.warn(s);
+        return s;
+    };
     setUserEventStatus =  async (statusValue)=>{
         var curItem = await this.props.item;
         var user_id = this.props.userID;
+        Alert.alert(
+            'Add to Calendar?',
+            'It will remind you',
+            [
+                {
+                    text: 'No',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                {text: 'Yes', onPress: () => {
+                var m = moment(new Date(curItem.unix_event));
+                var mUTC = m.utc();
+                const eventConfig = {
+                    title:curItem.event_subject,
+                    startDate: this.utcDateToString(mUTC),
+                    endDate: this.utcDateToString(moment.utc(mUTC).add(1, 'hours')),
+                    notes: 'tasty!',
+                    navigationBarIOS: {
+                    tintColor: '#416bb9',
+                    backgroundColor: '#8da6d5',
+                    titleColor: '#2e4d85',
+                    },
+                };
+                AddCalendarEvent.presentEventCreatingDialog(eventConfig)
+                .then((eventInfo) => {})
+                .catch((error) => {console.warn(error);});
+            }}],
+            {cancelable: true},
+        );
         if(this.state.userStatus == statusValue){
             statusValue = 0;
         }

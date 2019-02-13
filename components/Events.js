@@ -299,6 +299,7 @@ class EventsScreen extends Component{
                     usersCount:results[bodyKey].usersCount,
                     userIds:results[bodyKey].usersIds,
                     timestamp:results[bodyKey].timestamp,
+                    unix_event:results[bodyKey].unix_event,
                     event_date_formated:myEvResults[bodyKey].event_date_formated
                 });
             }
@@ -321,6 +322,7 @@ class EventsScreen extends Component{
                     usersCount:myEvResults[myBodyKey].usersCount,
                     userIds:myEvResults[myBodyKey].usersIds,
                     timestamp:myEvResults[myBodyKey].timestamp,
+                    unix_event:myEvResults[myBodyKey].unix_event,
                     event_date_formated:myEvResults[myBodyKey].event_date_formated
                 });
             }
@@ -381,11 +383,9 @@ class EventsScreen extends Component{
         this.setState({TabComponent:''});
         this.props.navigation.navigate('Home');
     }
-    searchText = (e) => {
-        if(e.length>2){
-            this.setState({isFiltering:true});
-            let text = e.toLowerCase();
-            this.setState({keyword:text});
+    searchText = (keyword) => {
+        if(keyword.length>2){
+            this.setState({isFiltering:true,keyword});
             var dateNow = new Date();
             var curMonth = ((dateNow.getMonth()+1) >= 10)?(dateNow.getMonth()+1):'0'+(dateNow.getMonth()+1);
             var curDate = (dateNow.getDate() >= 10)?dateNow.getDate():'0'+dateNow.getDate();
@@ -394,12 +394,11 @@ class EventsScreen extends Component{
             var curSeconds = (dateNow.getSeconds() >= 10)?dateNow.getSeconds():'0'+dateNow.getSeconds();
             var curHours = (dateNow.getHours() >= 10)?dateNow.getHours():'0'+dateNow.getHours();
             var curTime = curHours+':'+curMinute+':'+curSeconds;
-            this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime+'&keyword='+this.state.keyword);
+            this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime+'&keyword='+keyword);
         }
         else{
             this.setState({isFiltering:false});
         }
-        
     }
     pickerIos = ()=>{
         ActionSheetIOS.showActionSheetWithOptions({
@@ -493,7 +492,7 @@ class EventsScreen extends Component{
                             ref={input=>this.searchInput = input}
                             onChangeText={text=>{this.searchText(text)}}
                             />
-                            <TouchableOpacity onPress={()=>{this.setState({isSearchOpen:false,isFiltering:false,noFilterData:false,renderedListData:[]})}} 
+                            <TouchableOpacity onPress={()=>{this.setState({isSearchOpen:false,isFiltering:false,noFilterData:false,renderedListData:[]});this.refreshList();}} 
                             style={{
                                 height:'100%',
                                 alignItems:'center',

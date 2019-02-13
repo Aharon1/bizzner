@@ -108,9 +108,7 @@ class EventChatListScreen extends Component{
                 {
                     this.state.chatList.length > 0 && 
                     <FlatList 
-                    contentContainerStyle={{
-                        flex:1
-                    }}
+                   
                     data={this.state.chatList} 
                     renderItem={({item})=>{ 
                         var todaysDate = new Date();
