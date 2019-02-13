@@ -27,6 +27,10 @@ export default class EventDetail extends Component{
         }
         this.fetchNewDetails = this._fetchNewDetails.bind(this);
         this.fetchUserData = this._fetchUserData.bind(this);
+        this.viewabilityConfig = {
+            waitForInteraction: true,
+            viewAreaCoveragePercentThreshold: 95
+        }
         //this.getEventUsers();
     }
     async setUserId(){
@@ -347,6 +351,7 @@ export default class EventDetail extends Component{
                             />
                         }
                         keyExtractor={(item) => item.key}
+                        viewabilityConfig={this.viewabilityConfig}
                     />
                 }
                 <Dialog
