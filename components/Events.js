@@ -299,6 +299,7 @@ class EventsScreen extends Component{
                     usersCount:results[bodyKey].usersCount,
                     userIds:results[bodyKey].usersIds,
                     timestamp:results[bodyKey].timestamp,
+                    event_date_formated:myEvResults[bodyKey].event_date_formated
                 });
             }
             for (const myBodyKey in myEvResults){
@@ -320,6 +321,7 @@ class EventsScreen extends Component{
                     usersCount:myEvResults[myBodyKey].usersCount,
                     userIds:myEvResults[myBodyKey].usersIds,
                     timestamp:myEvResults[myBodyKey].timestamp,
+                    event_date_formated:myEvResults[myBodyKey].event_date_formated
                 });
             }
             this.setState({loading:false,locationList:placesArray,MyEvents:myPlacesArray,isRefreshing:false,isFiltering:false});
@@ -380,7 +382,7 @@ class EventsScreen extends Component{
         this.props.navigation.navigate('Home');
     }
     searchText = (e) => {
-        if(e.length>3){
+        if(e.length>2){
             this.setState({isFiltering:true});
             let text = e.toLowerCase();
             this.setState({keyword:text});
@@ -586,7 +588,7 @@ class EventsScreen extends Component{
                 }
                 {
                     this.state.locationList.length == 0 && 
-                    this.state.MyEvents.length == 0 &&
+                    this.state.isCurrentTab == 'all-events' && 
                     <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
                         <Text style={{fontFamily:'Roboto-Medium',color:'#2e4d85',fontSize:18}}>No events right now!</Text>
                         <TouchableOpacity 

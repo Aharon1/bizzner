@@ -106,7 +106,7 @@ let userStatus = '';
                         <Text style={[MainStyles.EITWAddress,{marginLeft:14}]}>{Address}</Text>
                         <View style={{flexDirection:'row', alignItems:'center'}}>
                             <Icon name="clock-o" style={{color:'#8da6d4',marginRight:5}} size={13} />
-                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.formatDate(new Date(Item.timestamp))}, {this.formatAMPM(new Date(Item.timestamp))}</Text>
+                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>Local Time : {Item.event_date_formated}</Text>
                         </View>
                         <View style={MainStyles.EITWAction}>
                             <Image source={require('../../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>

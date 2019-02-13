@@ -15,7 +15,7 @@ export class Modal extends PureComponent {
     return (
       <View
         style={{
-          width: 250,
+          width: 290,
           height: 300,
           paddingBottom: 20,
           borderRadius: 10,
@@ -86,22 +86,25 @@ export class Modal extends PureComponent {
                 alignItems: "center"
               }}
             >
-              <Icon
+              {/* <Icon
                 name="clock-o"
                 style={{ marginRight: 5, color: "#8da6d5" }}
                 size={14}
-              />
+              /> */}
               <Text
                 style={{
                   fontFamily: "Roboto-Regular",
                   fontSize: 14,
                   color: "#8da6d5"
                 }}
-              >
-                {formatDate(eventData.event_date,eventData.event_time)}{" "}
+              >Local Time:
+                {/* {formatDate(eventData.event_date,eventData.event_time)}{" "}
                 -{" "}
                 {formatAMPM(eventData.event_date,eventData.event_time
-                )}
+                )} */}
+                {
+                  eventData.event_date_formated
+                }
               </Text>
             </View>
             <TouchableOpacity
@@ -109,7 +112,7 @@ export class Modal extends PureComponent {
               style={{
                 borderRadius: 20,
                 paddingVertical: 5,
-                paddingHorizontal: 15,
+                paddingHorizontal: 10,
                 backgroundColor: "#416bb9"
               }}
             >
@@ -117,7 +120,7 @@ export class Modal extends PureComponent {
                 style={{
                   color: "#FFF",
                   fontFamily: "Roboto-Regular",
-                  fontSize: 13
+                  fontSize: 11
                 }}
               >
                 INFO

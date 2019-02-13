@@ -477,7 +477,6 @@ const MainStyles = StyleSheet.create({
     userListItemIWImage:{
         width: 90, 
         height: 90,
-        borderRadius:100,
         borderWidth: 3,
         borderColor: '#FFF'
     },

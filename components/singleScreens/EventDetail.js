@@ -190,8 +190,7 @@ export default class EventDetail extends Component{
                         <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText,{fontSize:14}]}>Invited to event</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{this.shareThis()}} style={[
-                        MainStyles.tabItem,
-                        (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
+                        MainStyles.tabItem
                         ]}>
                         <Icon name="share-alt" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
                         <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>Share</Text>
@@ -285,7 +284,7 @@ export default class EventDetail extends Component{
                             <Text  style={{fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}> {this.state.eventData.group_address}</Text>
                             <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:11,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
                             <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
-                            <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>{this.formatDate(this.state.eventData.event_date+' '+this.state.eventData.event_time)} {this.formatAMPM(this.state.eventData.event_date+' '+this.state.eventData.event_time)}</Text>
+                            <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>Local Time : {this.state.eventData.event_date_formated}</Text>
                         </View>
                     </View>
                 }
@@ -299,7 +298,7 @@ export default class EventDetail extends Component{
                                 (item.status == "1")?{backgroundColor:'#d1dbed'}:''
                             ]}>
                                 <TouchableOpacity style={MainStyles.userListItemImageWrapper}  onPress={()=>this.fetchUserData(item.user_id)}>
-                                        <ProgressiveImage source={{uri:item.picUrl}} style={MainStyles.userListItemIWImage} resizeMode="cover"/>
+                                    <ProgressiveImage source={{uri:item.picUrl}} style={MainStyles.userListItemIWImage} resizeMode="cover"/>
                                 </TouchableOpacity>
                                 <View style={MainStyles.userListItemTextWrapper}>
                                     <Text style={MainStyles.ULITWName}>{item.name}</Text>

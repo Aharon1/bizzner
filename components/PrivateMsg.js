@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, 
-    Platform,FlatList,AsyncStorage,
+    Platform,FlatList,AsyncStorage,Image,
     RefreshControl,SafeAreaView,StyleSheet,Alert
 } from 'react-native';
 import { DrawerActions } from 'react-navigation';
@@ -166,11 +166,15 @@ class PrivatMsgScreen extends Component{
                                             {cancelable: true},
                                             );
                                     }}
-                                    style={[curStyle.IconStyle,{backgroundColor:'#c0392b'}]}
+                                    style={[curStyle.IconStyle,{marginLeft:5}]}
                                     >
-                                        <Text style={curStyle.IconTextStyle}>
+                                        <Image
+                                            source={require("../assets/close-button-large.png")}
+                                            style={{ width: 20, height: 20 }}
+                                        />
+                                        {/* <Text style={curStyle.IconTextStyle}>
                                             <Icon name="times" />
-                                        </Text>
+                                        </Text> */}
                                     </TouchableOpacity>
                                 </View>
                             </TouchableOpacity>

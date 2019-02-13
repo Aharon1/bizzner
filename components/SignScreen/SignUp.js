@@ -10,6 +10,8 @@ import countryList from 'react-select-country-list'
 class SignUp extends Component{
     constructor(props){
         super(props);
+        var cOptionsList = countryList().getLabels();
+        cOptionsList.unshift('Cancel');
         this.state={
             loading:false,
             animation: new Animated.Value(30),
@@ -20,7 +22,8 @@ class SignUp extends Component{
             job:'',
             password:'',
             confirmPassword:'',
-            CountryList:countryList().getLabels()
+            CountryList:countryList().getLabels(),
+            cOptions:cOptionsList
         }
     }
     togglePicOption = () => {  
@@ -34,15 +37,13 @@ class SignUp extends Component{
         })
     }
     pickerIos = ()=>{
-        var options = new Array('Cancel');
-        options.push(this.state.CountryList);
         ActionSheetIOS.showActionSheetWithOptions({
-            options: options,
+            options: this.state.cOptions,
             cancelButtonIndex: 0,
           },
           (buttonIndex) => {
             if(buttonIndex != 0){
-              this.setState({country: options[buttonIndex]})
+              this.setState({country: this.state.cOptions[buttonIndex]})
             }
           });
       }
@@ -223,7 +224,7 @@ class SignUp extends Component{
                                 }}
                                 itemStyle={[MainStyles.cEFWIPF,{fontSize: 17,fontFamily:'Roboto-Light'}]}
                                 onValueChange={(itemValue, itemIndex) => this.setState({country: itemValue})}>
-                                    <Picker.Item label="Choose " value="" />
+                                    <Picker.Item label="Select Country" value="" />
                                     {
                                     this.state.CountryList.map(item=>{
                                         return (
@@ -236,7 +237,14 @@ class SignUp extends Component{
                             {
                                 Platform.OS == 'ios' && 
                                 <TouchableOpacity style={[MainStyles.cEFWITF,{alignItems:'center'}]} onPress={()=>{this.pickerIos()}}>
-                                    <Text style={{color:'#03163a',fontFamily:'Roboto-Light'}}>{this.state.country}</Text>
+                                    {
+                                        this.state.country != '' && 
+                                        <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:18}}>{this.state.country}</Text>
+                                    }
+                                    {
+                                        this.state.country == '' && 
+                                        <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:18}}>Select Country</Text>
+                                    }
                                 </TouchableOpacity>
                                 
                             }
