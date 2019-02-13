@@ -300,7 +300,7 @@ class EventsScreen extends Component{
                     userIds:results[bodyKey].usersIds,
                     timestamp:results[bodyKey].timestamp,
                     unix_event:results[bodyKey].unix_event,
-                    event_date_formated:myEvResults[bodyKey].event_date_formated
+                    event_date_formated:results[bodyKey].event_date_formated
                 });
             }
             for (const myBodyKey in myEvResults){

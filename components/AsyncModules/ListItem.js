@@ -15,7 +15,8 @@ let userStatus = '';
         this.state={
             userStatus:'',
             eventId:'',
-            userID:this.props.userID
+            userID:this.props.userID,
+            curItem:this.props.item
         }
     }
     checkEvent = ()=>{
@@ -115,6 +116,7 @@ let userStatus = '';
         var N = 7;
         var Address = Item.address;//.split(" ").splice(0,N).join(" ");
         var eventTime = this.formatAMPM(eventDate);
+        console.log(this.state.curItem);
         return (
             <View
             style={[
@@ -126,34 +128,34 @@ let userStatus = '';
                     MainStyles.EventItem,
                 ]} onPress={this.checkEvent}>
                     <View style={MainStyles.EventItemImageWrapper}>
-                        <ProgressiveImage source={{uri:Item.photoUrl}} style={{ width: 70, height: 70 }} resizeMode="cover"/>
+                        <ProgressiveImage source={{uri:this.state.curItem.photoUrl}} style={{ width: 70, height: 70 }} resizeMode="cover"/>
                     </View>
                     <View style={MainStyles.EventItemTextWrapper}>
                         <View style={{flexDirection:'row', alignItems:'center'}}>
                             <Icon name="thumb-tack" style={{color:'#8da6d4',marginRight:5}} size={13} />
                             <Text style={[MainStyles.EITWName,
                                 (Item.isStarted === true)?{color:'#39b549'}:''
-                            ]}>{Item.event_subject}</Text>
+                            ]}>{this.state.curItem.event_subject}</Text>
                         </View>
                         <View style={{flexDirection:'row', alignItems:'center'}}>
                             <Icon name="map-marker" style={{color:'#8da6d4',marginRight:5}} size={13} />
-                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{Item.name}</Text>
+                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.state.curItem.name}</Text>
                         </View>
                         <Text style={[MainStyles.EITWAddress,{marginLeft:14}]}>{Address}</Text>
                         <View style={{flexDirection:'row', alignItems:'center'}}>
                             <Icon name="clock-o" style={{color:'#8da6d4',marginRight:5}} size={13} />
-                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>Local Time : {Item.event_date_formated}</Text>
+                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>Local Time : {this.state.curItem.event_date_formated}</Text>
                         </View>
                         <View style={MainStyles.EITWAction}>
                             <Image source={require('../../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
-                            <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({Item.usersCount}) </Text>
+                            <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({this.state.curItem.usersCount}) </Text>
                             <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>Info</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
                 { 
                     this.state.userStatus != 3 && 
-                    Item.usersCount < Item.usersPlace
+                    this.state.curItem.usersCount < this.state.curItem.usersPlace
                     && 
                     <View style={MainStyles.EIAButtonsWrapper}>
                         <TouchableOpacity style={[
@@ -197,7 +199,7 @@ let userStatus = '';
                     </View>
                 }
                 {
-                    Item.usersCount == Item.usersPlace
+                    this.state.curItem.usersCount == this.state.curItem.usersPlace
                     && 
                     <View style={[{paddingVertical:5,backgroundColor:'#8da6d4',justifyContent:'center',alignItems:'center'}]}>
                         <Text style={{color:'#FFF',fontFamily:'Roboto-Medium',fontSize:15}}>No more places available</Text>
