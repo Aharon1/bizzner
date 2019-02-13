@@ -284,7 +284,7 @@ export default class EventDetail extends Component{
                             <Text  style={{fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}> {this.state.eventData.group_address}</Text>
                             <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:11,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
                             <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
-                            <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>{this.formatDate(this.state.eventData.event_date+' '+this.state.eventData.event_time)} {this.formatAMPM(this.state.eventData.event_date+' '+this.state.eventData.event_time)}</Text>
+                            <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>Local Time : {this.state.eventData.event_date_formated}</Text>
                         </View>
                     </View>
                 }
