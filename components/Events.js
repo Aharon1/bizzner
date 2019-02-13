@@ -380,7 +380,7 @@ class EventsScreen extends Component{
         this.props.navigation.navigate('Home');
     }
     searchText = (e) => {
-        if(e.length>3){
+        if(e.length>2){
             this.setState({isFiltering:true});
             let text = e.toLowerCase();
             this.setState({keyword:text});
@@ -586,7 +586,7 @@ class EventsScreen extends Component{
                 }
                 {
                     this.state.locationList.length == 0 && 
-                    this.state.MyEvents.length == 0 &&
+                    this.state.isCurrentTab == 'all-events' && 
                     <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
                         <Text style={{fontFamily:'Roboto-Medium',color:'#2e4d85',fontSize:18}}>No events right now!</Text>
                         <TouchableOpacity 

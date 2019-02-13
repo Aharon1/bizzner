@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View,Text,TouchableOpacity, TextInput, 
+import { View,Text,TouchableOpacity, TextInput,Image,
     Platform,FlatList,ActivityIndicator,AsyncStorage,
     RefreshControl,SafeAreaView,StyleSheet,Alert
 } from 'react-native';
@@ -172,10 +172,14 @@ class EventChatListScreen extends Component{
                                             {cancelable: true},
                                             );
                                         }}
-                                        style={[curStyle.IconStyle,{marginLeft:5,backgroundColor:'#c0392b'}]}>
-                                            <Text style={curStyle.IconTextStyle}>
+                                        style={[curStyle.IconStyle,{marginLeft:5}]}>
+                                            {/* <Text style={curStyle.IconTextStyle}>
                                                 <Icon name="times" />
-                                            </Text>
+                                            </Text> */}
+                                            <Image
+                                                source={require("../../assets/close-button-large.png")}
+                                                style={{ width: 20, height: 20 }}
+                                            />
                                         </TouchableOpacity>
                                     </View>
                                 </TouchableOpacity> 

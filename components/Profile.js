@@ -20,6 +20,8 @@ import countryList from 'react-select-country-list'
 class ProfileScreen extends Component{
   constructor(props){
     super(props);
+    var cOptionsList = countryList().getLabels();
+    cOptionsList.unshift('Cancel');
     this.state = {
       loading:true,
       visible: false,
@@ -39,7 +41,8 @@ class ProfileScreen extends Component{
       usersInteretsIds:{},
       isOpenCamera:false,
       base64Image:'',
-      CountryList:countryList().getLabels()
+      CountryList:countryList().getLabels(),
+      cOptions:cOptionsList
     };
   }
   componentDidMount(){
@@ -268,15 +271,13 @@ class ProfileScreen extends Component{
     }
   }
   pickerIos = ()=>{
-    var options = new Array('Cancel');
-    options.push(this.state.CountryList);
     ActionSheetIOS.showActionSheetWithOptions({
-        options: options,
+        options: this.state.cOptions,
         cancelButtonIndex: 0,
       },
       (buttonIndex) => {
         if(buttonIndex != 0){
-          this.setState({location: options[buttonIndex]})
+          this.setState({location: this.state.cOptions[buttonIndex]})
         }
       });
   }
@@ -355,7 +356,7 @@ class ProfileScreen extends Component{
                     itemTextStyle= {{
                         fontSize: 17,fontFamily:'Roboto-Light',
                     }}
-                    itemStyle={[MainStyles.cEFWIPF,{fontSize: 17,fontFamily:'Roboto-Light'}]}
+                    itemStyle={[MainStyles.cEFWIPF,{fontSize: 18,fontFamily:'Roboto-Light'}]}
                     onValueChange={(itemValue, itemIndex) => this.setState({location: itemValue})}>
                         <Picker.Item label="Choose " value="" />
                         {
@@ -370,7 +371,7 @@ class ProfileScreen extends Component{
                 {
                     Platform.OS == 'ios' && 
                     <TouchableOpacity style={[MainStyles.cEFWITF,{alignItems:'center'}]} onPress={()=>{this.pickerIos()}}>
-                        <Text style={{color:'#03163a',fontFamily:'Roboto-Light'}}>{this.state.location}</Text>
+                        <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:18}}>{this.state.location}</Text>
                     </TouchableOpacity>
                     
                 }

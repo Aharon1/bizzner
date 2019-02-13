@@ -190,8 +190,7 @@ export default class EventDetail extends Component{
                         <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText,{fontSize:14}]}>Invited to event</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>{this.shareThis()}} style={[
-                        MainStyles.tabItem,
-                        (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
+                        MainStyles.tabItem
                         ]}>
                         <Icon name="share-alt" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
                         <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>Share</Text>
@@ -299,7 +298,7 @@ export default class EventDetail extends Component{
                                 (item.status == "1")?{backgroundColor:'#d1dbed'}:''
                             ]}>
                                 <TouchableOpacity style={MainStyles.userListItemImageWrapper}  onPress={()=>this.fetchUserData(item.user_id)}>
-                                        <ProgressiveImage source={{uri:item.picUrl}} style={MainStyles.userListItemIWImage} resizeMode="cover"/>
+                                    <ProgressiveImage source={{uri:item.picUrl}} style={MainStyles.userListItemIWImage} resizeMode="cover"/>
                                 </TouchableOpacity>
                                 <View style={MainStyles.userListItemTextWrapper}>
                                     <Text style={MainStyles.ULITWName}>{item.name}</Text>
