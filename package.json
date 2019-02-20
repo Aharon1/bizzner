@@ -7,8 +7,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "body-parser": "^1.18.3",
     "moment": "^2.23.0",
     "react": "^16.6.1",
     "react-dom": "^16.6.3",

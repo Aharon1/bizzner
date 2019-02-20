@@ -14,7 +14,6 @@ import Permissions from 'react-native-permissions';
 import Toast from 'react-native-simple-toast';
 import PushNotification from 'react-native-push-notification';
 import FormData from 'FormData';
-import axios from 'axios';
 import ImagePicker from 'react-native-image-picker';
 import countryList from 'react-select-country-list'
 class ProfileScreen extends Component{
@@ -76,7 +75,9 @@ class ProfileScreen extends Component{
     },200)
   }
   GoToNextScreen(){
-    if(this.state.gpsOn){
+    this.setState({visible:false,loading:false});
+    this._saveProfile();
+    /*if(this.state.gpsOn){
       Permissions.check('location', { type: 'always' }).then(response => {
         if(response == "undetermined"){
           Permissions.request('location', { type: 'always' }).then(response => {
@@ -93,7 +94,7 @@ class ProfileScreen extends Component{
           this._saveProfile();
         }
       })
-    }
+    }*/
     
     /*PushNotification.configure({
         onRegister: function(token) {
@@ -130,8 +131,7 @@ class ProfileScreen extends Component{
     var formData = new FormData();
     //formData.append("userPic", this.state.base64Image);
     formData.append('file', this.state.imageData);
-    formData.append('gps_on', this.state.gpsOn);
-    console.log(formData);
+    formData.append('gps_on_file', this.state.gpsOn);
     /*let data = new FormData();
     data.append('action', 'ADD');
     data.append('param', 0);
@@ -162,19 +162,19 @@ class ProfileScreen extends Component{
     .then(res=>{
       console.log(res.data);
     })*/
+    this.setState({loading:true});
     fetch(fetchData+params,{
         method:'POST',
         headers: {
-          Accept: 'application/json',
+          //Accept: 'application/json',
           'Content-Type': 'multipart/form-data'
         },
         body: formData
     })
-    .then(res=>{console.log(res);return res.json()})
+    .then(res=>res.json())
     .then(postResponse=>{
-      console.log(postResponse);
         Toast.show(postResponse.message,Toast.SHORT);
-        this.setState({loading:false})
+        this.setState({loading:false});
         this.props.navigation.navigate('Current Events');
     })
     .catch(err=>{
@@ -379,11 +379,11 @@ class ProfileScreen extends Component{
               </View>
               <View style={MainStyles.inputFieldWithIcon}>
                 <Icon name="adn" style={MainStyles.iFWIIcon}/>
-                <TextInput style={MainStyles.ifWITI} placeholder="Occupation" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.headline}/>
+                <TextInput style={MainStyles.ifWITI} placeholder="Occupation" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.headline} onChangeText={(text)=>{this.setState({headline:text})}}/>
               </View>
               <View style={MainStyles.inputFieldWithIcon}>
                 <Icon name="briefcase" style={MainStyles.iFWIIcon}/>
-                <TextInput style={MainStyles.ifWITI} placeholder="Current position" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.position}/>
+                <TextInput style={MainStyles.ifWITI} placeholder="Current position" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.position} onChangeText={(text)=>{this.setState({position:text})}}/>
               </View>
               <View style={MainStyles.inputFieldWithIcon}>
                 <Icon name="camera-retro" style={MainStyles.iFWIIcon}/>
@@ -443,7 +443,7 @@ class ProfileScreen extends Component{
             </View>
           
             <View style={[MainStyles.btnWrapper,{flex:1,justifyContent:'flex-end',flexDirection: 'row'}]}>
-              <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.setState({ visible: true });}}>
+              <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.GoToNextScreen();}}>
                 <Text style={MainStyles.btnSaveText}>SAVE</Text>
               </TouchableOpacity>
             </View>

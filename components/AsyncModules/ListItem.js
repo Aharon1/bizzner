@@ -30,37 +30,40 @@ let userStatus = '';
     setUserEventStatus =  async (statusValue)=>{
         var curItem = await this.props.item;
         var user_id = this.props.userID;
-        Alert.alert(
-            'Add to Calendar?',
-            'It will remind you',
-            [
-                {
-                    text: 'No',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                },
-                {text: 'Yes', onPress: () => {
-                var m = moment(new Date(curItem.unix_event));
-                var mUTC = m.utc();
-                const eventConfig = {
-                    title:curItem.event_subject,
-                    startDate: this.utcDateToString(mUTC),
-                    endDate: this.utcDateToString(moment.utc(mUTC).add(1, 'hours')),
-                    notes: 'tasty!',
-                    navigationBarIOS: {
-                    tintColor: '#416bb9',
-                    backgroundColor: '#8da6d5',
-                    titleColor: '#2e4d85',
-                    },
-                };
-                AddCalendarEvent.presentEventCreatingDialog(eventConfig)
-                .then((eventInfo) => {})
-                .catch((error) => {console.warn(error);});
-            }}],
-            {cancelable: true},
-        );
+        
         if(this.state.userStatus == statusValue){
             statusValue = 0;
+        }
+        if(this.state.userStatus == statusValue){
+            Alert.alert(
+                'Add to Calendar?',
+                'It will remind you',
+                [
+                    {
+                        text: 'No',
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel',
+                    },
+                    {text: 'Yes', onPress: () => {
+                    var m = moment(new Date(curItem.unix_event));
+                    var mUTC = m.utc();
+                    const eventConfig = {
+                        title:curItem.event_subject,
+                        startDate: this.utcDateToString(mUTC),
+                        endDate: this.utcDateToString(moment.utc(mUTC).add(1, 'hours')),
+                        notes: 'tasty!',
+                        navigationBarIOS: {
+                        tintColor: '#416bb9',
+                        backgroundColor: '#8da6d5',
+                        titleColor: '#2e4d85',
+                        },
+                    };
+                    AddCalendarEvent.presentEventCreatingDialog(eventConfig)
+                    .then((eventInfo) => {})
+                    .catch((error) => {console.warn(error);});
+                }}],
+                {cancelable: true},
+            );
         }
         fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
         .then(response=>{
@@ -116,7 +119,6 @@ let userStatus = '';
         var N = 7;
         var Address = Item.address;//.split(" ").splice(0,N).join(" ");
         var eventTime = this.formatAMPM(eventDate);
-        console.log(this.state.curItem);
         return (
             <View
             style={[
@@ -149,47 +151,57 @@ let userStatus = '';
                         <View style={MainStyles.EITWAction}>
                             <Image source={require('../../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
                             <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({this.state.curItem.usersCount}) </Text>
-                            <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>Info</Text>
+                            <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',marginLeft:8}}>Info</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
+                {/* (this.state.userStatus == 2) */}
                 { 
                     this.state.userStatus != 3 && 
                     this.state.curItem.usersCount < this.state.curItem.usersPlace
                     && 
+
                     <View style={MainStyles.EIAButtonsWrapper}>
-                        <TouchableOpacity style={[
-                        MainStyles.EIAButtons,
-                        (this.state.userStatus == 2)?{backgroundColor:'#87d292'}:''
-                        ]}
-                        onPress={()=>this.setUserEventStatus(2)}
-                        >
-                            <Icon name="check" size={15} style={{color:'#FFF',marginRight:5,}}/>
-                            <Text style={{
-                                color:'#FFF',
-                                fontFamily:'Roboto-Medium',
-                                fontSize:14
-                            }}>Join</Text>
+                        <TouchableOpacity style={[MainStyles.EIAButtons,{backgroundColor:'#87d292',borderRadius:0}]}
+                        onPress={()=>this.setUserEventStatus(2)}>
+                            {
+                                this.state.userStatus == 2 && 
+                                <Icon name="check" size={15} style={{color:'#FFF',marginRight:5}}/>
+                            }
+                            {
+                                this.state.userStatus != 2 && 
+                                <Text style={{
+                                    color:'#FFF',
+                                    fontFamily:'Roboto-Medium',
+                                    fontSize:14
+                                }}>Join</Text>
+                            }
                         </TouchableOpacity>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{marginHorizontal:5},
-                        (this.state.userStatus == 1)?{backgroundColor:'#8da6d5'}:''
+                        MainStyles.EIAButtons,{backgroundColor:'#8da6d5',marginHorizontal:5,borderRadius:0},
+                        
                         ]}
                             onPress={()=>this.setUserEventStatus(1)}
                         >
-                            <Icon name="star" size={15} style={{color:'#FFF',marginRight:5,}}/>
-                            <Text style={{
-                                color:'#FFF',
-                                fontFamily:'Roboto-Medium',
-                                fontSize:14
-                            }}>Interested</Text>
+                            {
+                                this.state.userStatus == 1 && 
+                                <Icon name="star" size={15} style={{color:'#FFF',marginRight:5}}/>
+                            }
+                            {
+                                this.state.userStatus != 1 && 
+                                <Text style={{
+                                    color:'#FFF',
+                                    fontFamily:'Roboto-Medium',
+                                    fontSize:14
+                                }}>Interested</Text>
+                            }
                         </TouchableOpacity>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons       
+                        MainStyles.EIAButtons,{borderRadius:0}   
                         ]}
                             onPress={()=>this.setUserEventStatus(3)}
                             >
-                            <Icon name="ban" size={15} style={{color:'#FFF',marginRight:5,}}/>
+                            <Icon name="ban" size={15} style={{color:'#FFF',marginRight:5}}/>
                             <Text style={{
                                 color:'#FFF',
                                 fontFamily:'Roboto-Medium',

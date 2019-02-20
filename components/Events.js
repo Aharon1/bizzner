@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, TextInput,ImageBackground, 
-    Platform,FlatList,ActivityIndicator,AsyncStorage,AlertIOS,
+    Platform,FlatList,ActivityIndicator,AsyncStorage,AlertIOS,KeyboardAvoidingView,
     RefreshControl,Picker,ScrollView,SafeAreaView,ActionSheetIOS
 } from 'react-native';
 import { DrawerActions,NavigationActions } from 'react-navigation';
@@ -20,6 +20,7 @@ import Permissions from 'react-native-permissions'
 import Toast from 'react-native-simple-toast';
 import Geolocation from 'react-native-geolocation-service';
 class EventsScreen extends Component{
+    
     constructor(props){
         super(props);
         var curDate = new Date();
@@ -53,7 +54,8 @@ class EventsScreen extends Component{
             noFilterData:false,
             isFiltering:false,
             no_Attendees:'No. of Attendees',
-            keyword:''
+            keyword:'',
+            isGPSGranted:''
         }
         this.viewabilityConfig = {
             waitForInteraction: true,
@@ -65,6 +67,7 @@ class EventsScreen extends Component{
         this.hSC = this.handleSC.bind(this);
         this.onChangeSLDelayed = _.debounce(this.hSL, 200);
         this.onChangeSCDelayed = _.debounce(this.hSC, 200);
+
     }
     async setUserId(){
         var userID =  await AsyncStorage.getItem('userID');
@@ -102,15 +105,10 @@ class EventsScreen extends Component{
             Toast.show('Event Subject cannot be blank',Toast.SHORT);
             return false;
         }
-        if(this.state.NEN == ''){
-            Toast.show('Event Not cannot be blank',Toast.SHORT);
-            return false;
-        }
         if(this.state.NEUsersCount == ''){
             Toast.show('Please choose number of attendee',Toast.SHORT);
             return false;
         }
-        console.log(typeof(this.state.NEUsersCount));
         if(typeof(this.state.NEUsersCount) == 'undefined'){
             this.setState({NEUsersCount:10});
         }
@@ -182,25 +180,26 @@ class EventsScreen extends Component{
                     userIds:rBody.usersIds,
                 }
                 locList.unshift(eventAdded);
-                this.setState({
+                /*this.setState({
                     locationList:locList,
                     loading:false,
                     CreateEventVisible:false,
                     NES:'',
                     NEN:'',
-                });
+                });*/
                 Toast.show('Event created successfully',Toast.SHORT);
             }
             else{
                 Toast.show('Event not created',Toast.SHORT);
-                this.setState({
-                    loading:false,
-                    CreateEventVisible:false,
-                    NES:'',
-                    NEN:'',
-                });
+                
             }
-            this.refreshList();
+            this.setState({
+                loading:false,
+                CreateEventVisible:false,
+                NES:'',
+                NEN:'',
+            });
+            this._refreshList();
         })
     }
     componentDidMount(){
@@ -218,50 +217,70 @@ class EventsScreen extends Component{
         var curSeconds = (dateNow.getSeconds() >= 10)?dateNow.getSeconds():'0'+dateNow.getSeconds();
         var curHours = (dateNow.getHours() >= 10)?dateNow.getHours():'0'+dateNow.getHours();
         var curTime = curHours+':'+curMinute+':'+curSeconds;
-        Permissions.check('location', { type: 'always' }).then(response => {
-            if(response == "authorized"){
-                Geolocation.getCurrentPosition(
-                    (position) => {
-                        let Latitude = position.coords.latitude;
-                        let Longitude = position.coords.longitude;
-                        this._fetchLists('getFromCountry=0&user_id='+this.state.userID+'&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
-                    },
-                    (error) => {
-                        // See error code charts below.
-                        console.log(error.code, error.message);
-                        this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
-                    },
-                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-                );
-            }
-            else if(response == 'undetermined'){
-                Permissions.request('location', { type: 'always' }).then(response => {
-                    console.log(response);
-                    if(response == 'authorized'){
-                        Geolocation.getCurrentPosition(
-                            (position) => {
-                                console.log(position);
-                                let Latitude = position.coords.latitude;
-                                let Longitude = position.coords.longitude;
-                                this._fetchLists('getFromCountry=0&user_id='+this.state.userID+'&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
-                            },
-                            (error) => {
-                                // See error code charts below.
-                                console.log(error.code, error.message);
-                                this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
-                            },
-                            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-                        );
-                    }
-                    else{
-                        this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
-                    }
-                });
-            }
-            else{
-                this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
-            }
-        })
+        if(this.state.isGPSGranted != ''){
+            Permissions.check('location', { type: 'always' }).then(response => {
+                if(response == "authorized"){
+                    this.setState({isGPSGranted:true});
+                    Geolocation.getCurrentPosition(
+                        (position) => {
+                            let Latitude = position.coords.latitude;
+                            let Longitude = position.coords.longitude;
+                            this._fetchLists('getFromCountry=0&user_id='+this.state.userID+'&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
+                        },
+                        (error) => {
+                            // See error code charts below.
+                            console.log(error.code, error.message);
+                            this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                        },
+                        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                    );
+                }
+                else if(response == 'undetermined'){
+                    Permissions.request('location', { type: 'always' }).then(response => {
+                        if(response == 'authorized'){
+                            this.setState({isGPSGranted:true});
+                            Geolocation.getCurrentPosition(
+                                (position) => {
+                                    let Latitude = position.coords.latitude;
+                                    let Longitude = position.coords.longitude;
+                                    this._fetchLists('getFromCountry=0&user_id='+this.state.userID+'&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
+                                },
+                                (error) => {
+                                    // See error code charts below.
+                                    console.log(error.code, error.message);
+                                    this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                                },
+                                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                            );
+                        }
+                        else{
+                            this.setState({isGPSGranted:false});
+                            this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                        }
+                    });
+                }
+                else{
+                    this.setState({isGPSGranted:false});
+                    this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                }
+            })
+        }
+        else if(this.state.isGPSGranted){
+            Geolocation.getCurrentPosition(
+                (position) => {
+                    let Latitude = position.coords.latitude;
+                    let Longitude = position.coords.longitude;
+                    this._fetchLists('getFromCountry=0&user_id='+this.state.userID+'&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
+                },
+                (error) => {
+                    this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            );
+        }
+        else if(!this.state.isGPSGranted){
+            this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+        }
     }
     _fetchLists(params){
         var fetchData = 'http://bizzner.com/app?action=search_location_db&'+params;
@@ -423,6 +442,7 @@ class EventsScreen extends Component{
         setTimeout(()=>{this.searchInput.focus();},200);
     }
     render(){
+        var behavior = (Platform.OS == 'ios')?'padding':'';
         return (
             <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
@@ -486,7 +506,7 @@ class EventsScreen extends Component{
                                 fontSize:17,
                                 paddingHorizontal:10
                             }}
-                            placeholder="Search..."
+                            placeholder="Search event/city/place..."
                             placeholderTextColor="#8da6d4"
                             keyboardType="web-search"
                             ref={input=>this.searchInput = input}
@@ -617,233 +637,234 @@ class EventsScreen extends Component{
                         this.setState({ enableScrollViewScroll: true });
                     }}
                     >
-                        <ScrollView 
-                        keyboardShouldPersistTaps={'handled'}
-                        contentContainerStyle={{
-                            paddingHorizontal:0,
-                        }}
-                        scrollEnabled={this.state.enableScrollViewScroll} 
-                        ref={myScroll => (this._myScroll = myScroll)}
-                        >
-                            {
-                                this.state.isLocationSet == true &&
-                                <View style={{width:'100%',marginTop:0,marginBottom:0, height:150,}}>
-                                    <ImageBackground source={{uri:this.state.curLocation.picUrl}} style={{width: '100%', height: 150,flex:1,resizeMode:'center'}} resizeMode="cover">   
-                                        <TouchableOpacity style={{position:'absolute',right:10,top:10}} onPress={()=>{this.setState({isLocationSet:false,curLocation:{}})}}>
-                                            <Icon name="pencil" size={28} color="#FFF" />
-                                        </TouchableOpacity>
-                                        <View style={{
-                                                color: 'white',
-                                                position: 'absolute', // child
-                                                bottom: 0, // position where you want
-                                                left: 0,
-                                                paddingLeft:20,
-                                                paddingRight:40,
-                                                paddingBottom:20
-                                            }}>
-                                            <Text style={{textAlign:'left', color:'#FFF',fontFamily:'Roboto-Regular',fontSize:18}}>{this.state.curLocation.name}</Text>
-                                            <Text style={{textAlign:'left',color:'#FFF',fontFamily:'Roboto-Light',fontSize:16}}>{this.state.curLocation.address}</Text>
-                                        </View>
-                                    </ImageBackground>
-                                </View>
-                            }
-                            {
-                                this.state.isLocationSet == false && 
-                                <View style={{zIndex:40,paddingHorizontal:15}}>
-                                    <View style={[
-                                        MainStyles.createEventFWI,{marginTop:10},
-                                        (this.state.isFocusedSC == true)?{borderWidth:1,borderColor:'#8da6d4',paddingHorizontal:10}:''
-                                        ]}>
-                                        <Icon name="search" style={MainStyles.cEFWIIcon}/>
-                                        <TextInput style={MainStyles.cEFWITF} 
-                                            placeholder="City" 
-                                            placeholderTextColor="#03163a" 
-                                            underlineColorAndroid="transparent"
-                                            onChangeText={(text)=>{this.setState({isSelectedCity:text}),this.onChangeSCDelayed(text)}}
-                                            value={this.state.isSelectedCity}
-                                            onFocus={()=>this.setState({isFocusedSC:true})}
-                                            onBlur={()=>this.setState({isFocusedSC:false})}
-                                        />
+                        <KeyboardAvoidingView behavior={behavior}>
+                            <ScrollView 
+                            keyboardShouldPersistTaps={'handled'}
+                            contentContainerStyle={{
+                                paddingHorizontal:0,
+                            }}
+                            scrollEnabled={this.state.enableScrollViewScroll} 
+                            ref={myScroll => (this._myScroll = myScroll)}
+                            >
+                                {
+                                    this.state.isLocationSet == true &&
+                                    <View style={{width:'100%',marginTop:0,marginBottom:0, height:150,}}>
+                                        <ImageBackground source={{uri:this.state.curLocation.picUrl}} style={{width: '100%', height: 150,flex:1,resizeMode:'center'}} resizeMode="cover">   
+                                            <TouchableOpacity style={{position:'absolute',right:10,top:10}} onPress={()=>{this.setState({isLocationSet:false,curLocation:{}})}}>
+                                                <Icon name="pencil" size={28} color="#FFF" />
+                                            </TouchableOpacity>
+                                            <View style={{
+                                                    color: 'white',
+                                                    position: 'absolute', // child
+                                                    bottom: 0, // position where you want
+                                                    left: 0,
+                                                    paddingLeft:20,
+                                                    paddingRight:40,
+                                                    paddingBottom:20
+                                                }}>
+                                                <Text style={{textAlign:'left', color:'#FFF',fontFamily:'Roboto-Regular',fontSize:18}}>{this.state.curLocation.name}</Text>
+                                                <Text style={{textAlign:'left',color:'#FFF',fontFamily:'Roboto-Light',fontSize:16}}>{this.state.curLocation.address}</Text>
+                                            </View>
+                                        </ImageBackground>
                                     </View>
-                                    {
-                                        this.state.isSelectedCity != '' && 
+                                }
+                                {
+                                    this.state.isLocationSet == false && 
+                                    <View style={{zIndex:40,paddingHorizontal:15}}>
                                         <View style={[
-                                            MainStyles.createEventFWI,
-                                            {
-                                                marginTop:10,
-                                                
-                                            },
-                                            (this.state.isFocusedSL == true)?{borderWidth:1,borderColor:'#8da6d4',paddingHorizontal:10}:''
+                                            MainStyles.createEventFWI,{marginTop:10},
+                                            (this.state.isFocusedSC == true)?{borderWidth:1,borderColor:'#8da6d4',paddingHorizontal:10}:''
                                             ]}>
-                                            <Icon name="map-marker" style={MainStyles.cEFWIIcon}/>
+                                            <Icon name="search" style={MainStyles.cEFWIIcon}/>
                                             <TextInput style={MainStyles.cEFWITF} 
-                                                placeholder="Places " 
+                                                placeholder="City" 
                                                 placeholderTextColor="#03163a" 
                                                 underlineColorAndroid="transparent"
-                                                onChangeText={this.onChangeSLDelayed}
-                                                onFocus={()=>this.setState({isFocusedSL:true})}
-                                                onBlur={()=>this.setState({isFocusedSL:false})}
+                                                onChangeText={(text)=>{this.setState({isSelectedCity:text}),this.onChangeSCDelayed(text)}}
+                                                value={this.state.isSelectedCity}
+                                                onFocus={()=>this.setState({isFocusedSC:true})}
+                                                onBlur={()=>this.setState({isFocusedSC:false})}
                                             />
                                         </View>
-                                    }
-                                    <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
-                                        <Text style={{color:'#0947b9',fontFamily:'Roboto-Medium'}}>Add location</Text>
-                                    </View>
-                                </View>
-                            }
-                            {
-                                this.state.SCValue &&  
-                                <View style={[MainStyles.locationItemWrapper,{top:61}]} onStartShouldSetResponderCapture={() => {
-                                    this.setState({ enableScrollViewScroll: false });
-                                    if (this._myScroll.contentOffset === 0
-                                        && this.state.enableScrollViewScroll === false) {
-                                        this.setState({ enableScrollViewScroll: true });
-                                    }
-                                    }}>
-                                    {this.state.isLoadingSC && <ActivityIndicator size="large" color="#416bb9"/>}
-                                    {
-                                        this.state.SCItems.length > 0 && 
-                                        <FlatList data={this.state.SCItems}
-                                            keyboardShouldPersistTaps={'handled'}
-                                            renderItem={({item}) => (
-                                                <TouchableOpacity onPress={()=>this.citySet(item.description)} style={[MainStyles.locationItemBtn]}>
-                                                    <View style={{flexWrap: 'wrap',paddingLeft:5,justifyContent:'center', alignItems:'flex-start'}}>
-                                                        <Text style={{writingDirection:'ltr',textAlign:'left',fontFamily:'Roboto-Medium'}}>{item.description}</Text>
-                                                    </View>
-                                                </TouchableOpacity>
-                                            )}
-                                            keyExtractor={(item) => item.place_id}
-                                        />
-                                    }
-                                </View> 
-                            }
-                            {
-                                this.state.SLValue &&  
-                                <View style={[MainStyles.locationItemWrapper]} onStartShouldSetResponderCapture={() => {
-                                    this.setState({ enableScrollViewScroll: false });
-                                    if (this._myScroll.contentOffset === 0
-                                        && this.state.enableScrollViewScroll === false) {
-                                        this.setState({ enableScrollViewScroll: true });
-                                    }
-                                    }}>
-                                    {this.state.isLoading && <ActivityIndicator size="large" color="#416bb9"/>}
-                                    {
-                                        this.state.SLItems.length > 0 && 
-                                        <FlatList data={this.state.SLItems}
-                                            keyboardShouldPersistTaps={'handled'}
-                                            renderItem={({item}) => (
-                                                <LocationItem
-                                                    {...item}
-                                                    fecthDetails={this.fetchDetails}
-                                                />
-                                            )}
-                                            keyExtractor={(item) => item.place_id}
-                                        />
-                                    }
-                                </View> 
-                            }
-                            <View style={{paddingHorizontal:15,marginBottom:15}}>
-                                <View style={[MainStyles.createEventFWI]}>
-                                    <Icon name="thumb-tack" style={MainStyles.cEFWIIcon}/>
-                                    <TextInput style={MainStyles.cEFWITF} placeholder="Subject" onChangeText={(text)=>{this.setState({NES:text})}} returnKeyType="next" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
-                                </View>
-                                <View style={MainStyles.createEventFWI}>
-                                    <Icon name="bell" style={MainStyles.cEFWIIcon}/>
-                                    <TextInput style={MainStyles.cEFWITF} placeholder="Note" onChangeText={(text)=>{this.setState({NEN:text})}} returnKeyType="next" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
-                                </View>
-                                <View style={MainStyles.createEventFWI}>
-                                    <Icon name="users" style={MainStyles.cEFWIIcon}/>
-                                    {
-                                        Platform.OS == 'android' && 
-                                        <Picker
-                                        selectedValue={this.state.NEUsersCount}
-                                        returnKeyType="next"
-                                        style={MainStyles.cEFWIPF}
-                                        textStyle={{fontSize: 17,fontFamily:'Roboto-Light'}}
-                                        itemTextStyle= {{
-                                            fontSize: 17,fontFamily:'Roboto-Light',
-                                        }}
-                                        itemStyle={[MainStyles.cEFWIPF,{fontSize: 17,fontFamily:'Roboto-Light'}]}
-                                        onValueChange={(itemValue, itemIndex) => this.setState({NEUsersCount: itemValue})}>
-                                            <Picker.Item label="Number of Attendees" value="" />
-                                            <Picker.Item label="5-10" value="10" />
-                                            <Picker.Item label="10-15" value="15" />
-                                            <Picker.Item label="15-20" value="20" />
-                                        </Picker>
-                                    }
-                                    {
-                                        Platform.OS == 'ios' && 
-                                        <TouchableOpacity style={[MainStyles.cEFWITF,{alignItems:'center'}]} onPress={()=>{this.pickerIos()}}>
-                                            <Text style={{color:'#03163a',fontFamily:'Roboto-Light'}}>{this.state.no_Attendees}</Text>
-                                        </TouchableOpacity>
-                                        
-                                    }
-                                </View>
-                                <View style={{flexDirection:'row',flex:1,justifyContent:'flex-end',marginBottom:20}}>
-                                    <View style={MainStyles.createEventFWI}>
-                                        <Icon name="calendar" style={MainStyles.cEFWIIcon}/>
-                                        <DatePicker
-                                            style={{width: '75%'}}
-                                            date={this.state.NED}
-                                            mode="date"
-                                            placeholder="Select Date"
-                                            format="DD/MM/YYYY"
-                                            confirmBtnText="Confirm"
-                                            cancelBtnText="Cancel"
-                                            showIcon={false} 
-                                            onDateChange={(date) => {this.setState({NED: date})}}
-                                            customStyles={{
-                                                dateInput:MainStyles.cEFWIDF
-                                            }}
-                                        />
-                                    </View>
-                                    <View style={[MainStyles.createEventFWI]}>
-                                        <Icon name="clock-o" style={MainStyles.cEFWIIcon}/>
-                                        <DatePicker
-                                            style={{width: '75%'}}
-                                            date={this.state.NET}
-                                            mode="time"
-                                            placeholder="Select Time"
-                                            format="HH:mm"
-                                            confirmBtnText="Confirm"
-                                            cancelBtnText="Cancel"
-                                            showIcon={false} 
-                                            onDateChange={(time) => {
-                                                var curTime = new Date();
-                                                var choosenDate = this.state.NED.split('/');
-                                                var tim30More = new Date((choosenDate[1]) + "/" + choosenDate[0] + "/" + choosenDate[2] + " " + time+':00');
-                                                var minutes = (tim30More.getTime() - curTime.getTime()) / (60 * 1000);
-                                                if (minutes > 30) { 
-                                                    this.setState({NET: time})
-                                                }
-                                                else{
-                                                    setTimeout(()=>{
-                                                        if(Platform.OS == 'ios'){
-                                                            AlertIOS.alert(
-                                                                "Warning",
-                                                                "Please give at least 30 minutes notice before event starts"
-                                                               );
-                                                        }
-                                                        else{
-                                                            Toast.show("Please give at least 30 minutes notice before event starts", Toast.LONG)
-                                                        }
-                                                    },400)
+                                        {
+                                            this.state.isSelectedCity != '' && 
+                                            <View style={[
+                                                MainStyles.createEventFWI,
+                                                {
+                                                    marginTop:10,
                                                     
-                                                }}}
-                                            customStyles={{
-                                                dateInput:MainStyles.cEFWIDF
+                                                },
+                                                (this.state.isFocusedSL == true)?{borderWidth:1,borderColor:'#8da6d4',paddingHorizontal:10}:''
+                                                ]}>
+                                                <Icon name="map-marker" style={MainStyles.cEFWIIcon}/>
+                                                <TextInput style={MainStyles.cEFWITF} 
+                                                    placeholder="Places " 
+                                                    placeholderTextColor="#03163a" 
+                                                    underlineColorAndroid="transparent"
+                                                    onChangeText={this.onChangeSLDelayed}
+                                                    onFocus={()=>this.setState({isFocusedSL:true})}
+                                                    onBlur={()=>this.setState({isFocusedSL:false})}
+                                                />
+                                            </View>
+                                        }
+                                        <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
+                                            <Text style={{color:'#0947b9',fontFamily:'Roboto-Medium'}}>Add location</Text>
+                                        </View>
+                                    </View>
+                                }
+                                {
+                                    this.state.SCValue &&  
+                                    <View style={[MainStyles.locationItemWrapper,{top:61}]} onStartShouldSetResponderCapture={() => {
+                                        this.setState({ enableScrollViewScroll: false });
+                                        if (this._myScroll.contentOffset === 0
+                                            && this.state.enableScrollViewScroll === false) {
+                                            this.setState({ enableScrollViewScroll: true });
+                                        }
+                                        }}>
+                                        {this.state.isLoadingSC && <ActivityIndicator size="large" color="#416bb9"/>}
+                                        {
+                                            this.state.SCItems.length > 0 && 
+                                            <FlatList data={this.state.SCItems}
+                                                keyboardShouldPersistTaps={'handled'}
+                                                renderItem={({item}) => (
+                                                    <TouchableOpacity onPress={()=>this.citySet(item.description)} style={[MainStyles.locationItemBtn]}>
+                                                        <View style={{flexWrap: 'wrap',paddingLeft:5,justifyContent:'center', alignItems:'flex-start'}}>
+                                                            <Text style={{writingDirection:'ltr',textAlign:'left',fontFamily:'Roboto-Medium'}}>{item.description}</Text>
+                                                        </View>
+                                                    </TouchableOpacity>
+                                                )}
+                                                keyExtractor={(item) => item.place_id}
+                                            />
+                                        }
+                                    </View> 
+                                }
+                                {
+                                    this.state.SLValue &&  
+                                    <View style={[MainStyles.locationItemWrapper]} onStartShouldSetResponderCapture={() => {
+                                        this.setState({ enableScrollViewScroll: false });
+                                        if (this._myScroll.contentOffset === 0
+                                            && this.state.enableScrollViewScroll === false) {
+                                            this.setState({ enableScrollViewScroll: true });
+                                        }
+                                        }}>
+                                        {this.state.isLoading && <ActivityIndicator size="large" color="#416bb9"/>}
+                                        {
+                                            this.state.SLItems.length > 0 && 
+                                            <FlatList data={this.state.SLItems}
+                                                keyboardShouldPersistTaps={'handled'}
+                                                renderItem={({item}) => (
+                                                    <LocationItem
+                                                        {...item}
+                                                        fecthDetails={this.fetchDetails}
+                                                    />
+                                                )}
+                                                keyExtractor={(item) => item.place_id}
+                                            />
+                                        }
+                                    </View> 
+                                }
+                                <View style={{paddingHorizontal:15,marginBottom:15}}>
+                                    <View style={[MainStyles.createEventFWI]}>
+                                        <Icon name="thumb-tack" style={MainStyles.cEFWIIcon}/>
+                                        <TextInput style={MainStyles.cEFWITF} placeholder="Subject" onChangeText={(text)=>{this.setState({NES:text})}} returnKeyType="next" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                                    </View>
+                                    <View style={MainStyles.createEventFWI}>
+                                        <Icon name="bell" style={MainStyles.cEFWIIcon}/>
+                                        <TextInput style={MainStyles.cEFWITF} placeholder="Note" onChangeText={(text)=>{this.setState({NEN:text})}} returnKeyType="next" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                                    </View>
+                                    <View style={MainStyles.createEventFWI}>
+                                        <Icon name="users" style={MainStyles.cEFWIIcon}/>
+                                        {
+                                            Platform.OS == 'android' && 
+                                            <Picker
+                                            selectedValue={this.state.NEUsersCount}
+                                            returnKeyType="next"
+                                            style={MainStyles.cEFWIPF}
+                                            textStyle={{fontSize: 17,fontFamily:'Roboto-Light'}}
+                                            itemTextStyle= {{
+                                                fontSize: 17,fontFamily:'Roboto-Light',
                                             }}
-                                        />
+                                            itemStyle={[MainStyles.cEFWIPF,{fontSize: 17,fontFamily:'Roboto-Light'}]}
+                                            onValueChange={(itemValue, itemIndex) => this.setState({NEUsersCount: itemValue})}>
+                                                <Picker.Item label="Number of Attendees" value="" />
+                                                <Picker.Item label="5-10" value="10" />
+                                                <Picker.Item label="10-15" value="15" />
+                                                <Picker.Item label="15-20" value="20" />
+                                            </Picker>
+                                        }
+                                        {
+                                            Platform.OS == 'ios' && 
+                                            <TouchableOpacity style={[MainStyles.cEFWITF,{alignItems:'center'}]} onPress={()=>{this.pickerIos()}}>
+                                                <Text style={{color:'#03163a',fontFamily:'Roboto-Light'}}>{this.state.no_Attendees}</Text>
+                                            </TouchableOpacity>
+                                            
+                                        }
+                                    </View>
+                                    <View style={{flexDirection:'row',flex:1,justifyContent:'flex-end',marginBottom:20}}>
+                                        <View style={MainStyles.createEventFWI}>
+                                            <Icon name="calendar" style={MainStyles.cEFWIIcon}/>
+                                            <DatePicker
+                                                style={{width: '75%'}}
+                                                date={this.state.NED}
+                                                mode="date"
+                                                placeholder="Select Date"
+                                                format="DD/MM/YYYY"
+                                                confirmBtnText="Confirm"
+                                                cancelBtnText="Cancel"
+                                                showIcon={false} 
+                                                onDateChange={(date) => {this.setState({NED: date})}}
+                                                customStyles={{
+                                                    dateInput:MainStyles.cEFWIDF
+                                                }}
+                                            />
+                                        </View>
+                                        <View style={[MainStyles.createEventFWI]}>
+                                            <Icon name="clock-o" style={MainStyles.cEFWIIcon}/>
+                                            <DatePicker
+                                                style={{width: '75%'}}
+                                                date={this.state.NET}
+                                                mode="time"
+                                                placeholder="Select Time"
+                                                format="HH:mm"
+                                                confirmBtnText="Confirm"
+                                                cancelBtnText="Cancel"
+                                                showIcon={false} 
+                                                onDateChange={(time) => {
+                                                    var curTime = new Date();
+                                                    var choosenDate = this.state.NED.split('/');
+                                                    var tim30More = new Date((choosenDate[1]) + "/" + choosenDate[0] + "/" + choosenDate[2] + " " + time+':00');
+                                                    var minutes = (tim30More.getTime() - curTime.getTime()) / (60 * 1000);
+                                                    if (minutes > 30) { 
+                                                        this.setState({NET: time})
+                                                    }
+                                                    else{
+                                                        setTimeout(()=>{
+                                                            if(Platform.OS == 'ios'){
+                                                                AlertIOS.alert(
+                                                                    "Warning",
+                                                                    "Please give at least 30 minutes notice before event starts"
+                                                                );
+                                                            }
+                                                            else{
+                                                                Toast.show("Please give at least 30 minutes notice before event starts", Toast.LONG)
+                                                            }
+                                                        },400)
+                                                        
+                                                    }}}
+                                                customStyles={{
+                                                    dateInput:MainStyles.cEFWIDF
+                                                }}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={[MainStyles.btnWrapper,{marginBottom:20}]}>
+                                        <TouchableOpacity style={[MainStyles.btnSave]} onPress={this.createNewEvent}>
+                                            <Text style={MainStyles.btnSaveText}>Create Event</Text>
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
-                                <View style={[MainStyles.btnWrapper,{marginBottom:20}]}>
-                                    <TouchableOpacity style={[MainStyles.btnSave]} onPress={this.createNewEvent}>
-                                        <Text style={MainStyles.btnSaveText}>Create Event</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                            
-                        </ScrollView>
+                            </ScrollView>
+                        </KeyboardAvoidingView>
                     </View>
                 </Dialog>
                 <Footer showSearch={this.showSearchOption}/>

@@ -74,39 +74,39 @@ export class Modal extends PureComponent {
           <View
             style={{
               flexDirection: "row",
-              justifyContent: "space-around",
+              justifyContent: "center",
               alignItems: "center",
               marginTop: 10
             }}
           >
-            <View
+             {/*<View
               style={{
                 flexDirection: "row",
                 justifyContent: "flex-start",
                 alignItems: "center"
               }}
             >
-              {/* <Icon
+              <Icon
                 name="clock-o"
                 style={{ marginRight: 5, color: "#8da6d5" }}
                 size={14}
               /> */}
-              <Text
+              {/*<Text
                 style={{
                   fontFamily: "Roboto-Regular",
                   fontSize: 14,
                   color: "#8da6d5"
                 }}
               >Local Time:
-                {/* {formatDate(eventData.event_date,eventData.event_time)}{" "}
+                 {formatDate(eventData.event_date,eventData.event_time)}{" "}
                 -{" "}
                 {formatAMPM(eventData.event_date,eventData.event_time
-                )} */}
+                )} 
                 {
                   eventData.event_date_formated
                 }
               </Text>
-            </View>
+            </View>*/}
             <TouchableOpacity
               onPress={goToEvent}
               style={{
