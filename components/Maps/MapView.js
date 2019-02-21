@@ -1,5 +1,12 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, ScrollView, Platform } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ImageBackground,
+  ScrollView
+} from "react-native";
 import { MarkerItem } from "./MarkerItem";
 import { MapClustering } from "./MapClustering";
 import { Modal } from "./components/Modal";
@@ -110,13 +117,9 @@ export default class GoogleMapView extends PureComponent {
       eventData: ""
     });
   };
-  formatAMPM(date, time) {
-    fullDate = new Date(date + " " + time);
-    if (Platform.OS == "ios") {
-      fullDate = new Date(date + "T" + time);
-    }
-    var hours = fullDate.getHours();
-    var minutes = fullDate.getMinutes();
+  formatAMPM(date) {
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
     var ampm = hours >= 12 ? "pm" : "am";
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
@@ -124,16 +127,10 @@ export default class GoogleMapView extends PureComponent {
     var strTime = hours + ":" + minutes + " " + ampm;
     return strTime;
   }
-  formatDate(date, time) {
-    fullDate = new Date(date + " " + time);
-    if (Platform.OS == "ios") {
-      fullDate = new Date(date + "T" + time);
-    }
+  formatDate(date) {
     var dateStr = "";
     dateStr +=
-      fullDate.getDate() < 10
-        ? "0" + fullDate.getDate() + " "
-        : fullDate.getDate() + " ";
+      date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
     var monthArray = [
       "Jan",
       "Feb",
@@ -148,23 +145,22 @@ export default class GoogleMapView extends PureComponent {
       "Nov",
       "Dec"
     ];
-    var month = monthArray[fullDate.getMonth()];
+    var month = monthArray[date.getMonth()];
     dateStr += month + " ";
-    dateStr += fullDate.getFullYear();
+    dateStr += date.getFullYear();
     return dateStr;
   }
   onModalClusterOpen = clusterEvents => {
     this.setState({
       isModalClusterOpen: true,
-      isModalOpen: false,
       clusterEvents
     });
   };
-  onModalClusterClose = () => {
-    this.setState({
+onModalClusterClose = () =>{
+  this.setState({
       isModalClusterOpen: false
-    });
-  };
+  })
+}
 }
 
 const styles = StyleSheet.create({
@@ -177,7 +173,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject
   },
   textStyle: {
-    fontSize: 17,
+    fontSize: 20,
     alignSelf: "flex-start",
     flexDirection: "row",
     padding: 5,

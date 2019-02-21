@@ -98,9 +98,20 @@ export class Modal extends PureComponent {
                   color: "#8da6d5"
                 }}
               >
-                {formatDate(eventData.event_date,eventData.event_time)}{" "}
+                {formatDate(
+                  new Date(
+                    eventData.event_date  +
+                      " " +
+                      eventData.event_time 
+                  )
+                )}{" "}
                 -{" "}
-                {formatAMPM(eventData.event_date,eventData.event_time
+                {formatAMPM(
+                  new Date(
+                    eventData.event_date +
+                      " " +
+                      eventData.event_time 
+                  )
                 )}
               </Text>
             </View>
