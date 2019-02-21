@@ -51,7 +51,7 @@ export default class GoogleMapView extends PureComponent {
     return (
       <Modal
             eventData={eventData}
-            goToEvent={() => this.goToEvent(eventData.id)}
+            goToEvent={() => this.goToEvent(eventData.id, eventData.event_coords)}
             onCloseModal={this.onCloseModal}
             formatDate={this.formatDate}
             formatAMPM={this.formatAMPM}
@@ -69,7 +69,7 @@ export default class GoogleMapView extends PureComponent {
               return (
                 <Modal
                   key={id}
-                  goToEvent={() => this.goToEvent(id)}
+                  goToEvent={() => this.goToEvent(id, event.geometry.coordinates)}
                   onCloseModal={this.onModalClusterClose}
                   eventData={event.marker.props}
                   formatDate={this.formatDate}
@@ -86,9 +86,9 @@ export default class GoogleMapView extends PureComponent {
       eventData
     });
   };
-  goToEvent = id => {
+  goToEvent = (id, location) => {
     const event_id = id ? id : this.state.eventData.event_id;
-    this.props.onNavigate({ event_id });
+    this.props.onNavigate({ event_id: event_id, location: location });
 
     this.setState({
       isModalOpen: false,

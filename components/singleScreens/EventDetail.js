@@ -1,12 +1,13 @@
 import React,{Component} from 'react';
 import { View,Text,TouchableOpacity,FlatList,ActivityIndicator,
-    AsyncStorage,RefreshControl,ScrollView} from 'react-native';
+    AsyncStorage,RefreshControl,ScrollView, TouchableHighlight} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
 import {SERVER_URL} from '../../Constants';
 import Loader from '../Loader';
 import ProgressiveImage from '../../components/AsyncModules/ImageComponent';
 import Dialog, { SlideAnimation } from 'react-native-popup-dialog';
+import { MapForEventDetail } from './MapForDetails';
 export default class EventDetail extends Component{
     constructor(props){
         super(props);
@@ -20,7 +21,8 @@ export default class EventDetail extends Component{
             profileDetailShow:false,
             profilePicture:'',
             isLoadingProfile : true,
-            userData:''
+            userData:'',
+            isMapShow: false
         }
         this.fetchNewDetails = this._fetchNewDetails.bind(this);
         this.fetchUserData = this._fetchUserData.bind(this);
@@ -90,7 +92,13 @@ export default class EventDetail extends Component{
             console.log(err);
         })
     }
+    showMap = () => {
+        this.setState({
+          isMapShow: !this.state.isMapShow
+        });
+      };
     render(){
+        const { location } = this.props.navigation.state.params;
         return(
             <View style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
@@ -100,28 +108,30 @@ export default class EventDetail extends Component{
                     </TouchableOpacity>
                     <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>EVENT DETAILS</Text>
                 </View>
-                <View style={[MainStyles.tabContainer,{elevation:0,justifyContent:'space-around',alignItems:'center',flexDirection:'row'}]}>
-                    <TouchableOpacity style={[
-                        MainStyles.tabItem,MainStyles.tabItemActive]} onPress={()=>this.props.navigation.navigate('EventDetail',{event_id:this.state.event_id})}>
-                        <Icon name="user-plus" style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveIcon,{fontSize:14}]}/>
-                        <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText,{fontSize:14}]}>Invited to event</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[
-                        MainStyles.tabItem,
-                        (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
-                        ]}>
-                        <Icon name="share-alt" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
-                        <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>Share</Text>
-                    </TouchableOpacity>
-                    {
-                        this.state.curStatus != ''
-                        && 
-                        <TouchableOpacity style={MainStyles.tabItem} onPress={()=>this.props.navigation.navigate('Event Chat',{event_id:this.state.event_id,note:this.state.eventData.event_note})}>
-                            <Icon name="comments" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
-                            <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>Event chat</Text>
+                <View style={[MainStyles.tabContainer,{elevation:0,justifyContent:'space-around',alignItems:'center',flexDirection:'column', width:'100%'}]}>
+                    <View style={{marginBottom: 10,justifyContent:'space-around',alignItems:'center',flexDirection:'row', width: '100%' }}>
+                        <TouchableOpacity style={[
+                            MainStyles.tabItem,MainStyles.tabItemActive]} onPress={()=>this.props.navigation.navigate('EventDetail',{event_id:this.state.event_id})}>
+                            <Icon name="user-plus" style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveIcon,{fontSize:14}]}/>
+                            <Text style={[MainStyles.tabItemIcon,MainStyles.tabItemActiveText,{fontSize:14}]}>Invited to event</Text>
                         </TouchableOpacity>
-                    }
-                    
+                        <TouchableOpacity style={[
+                            MainStyles.tabItem,
+                            (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
+                            ]}>
+                            <Icon name="share-alt" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
+                            <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>Share</Text>
+                        </TouchableOpacity>
+                        {
+                            this.state.curStatus != ''
+                            && 
+                            <TouchableOpacity style={MainStyles.tabItem} onPress={()=>this.props.navigation.navigate('Event Chat',{event_id:this.state.event_id,note:this.state.eventData.event_note})}>
+                                <Icon name="comments" style={[MainStyles.tabItemIcon,{fontSize:14}]}/>
+                                <Text style={[MainStyles.tabItemIcon,{fontSize:14}]}>Event chat</Text>
+                            </TouchableOpacity>
+                        }
+                    </View>
+                    {this.state.isMapShow ? <MapForEventDetail location={location} /> : null}
                 </View>
                 {
                     (this.state.curStatus != 1
@@ -191,19 +201,21 @@ export default class EventDetail extends Component{
                 }
                 {
                     this.state && this.state.eventData !='' && 
-                    <View style={MainStyles.eventDataHeader}>
-                        <View style={{width:40,height:40,marginRight:10}}>
-                            <ProgressiveImage source={{uri:this.state.eventData.photoUrl}} style={{width:40,height:40}}/>
+                    <TouchableHighlight onPress={this.showMap}>
+                        <View style={MainStyles.eventDataHeader}>
+                            <View style={{width:40,height:40,marginRight:10}}>
+                                <ProgressiveImage source={{uri:this.state.eventData.photoUrl}} style={{width:40,height:40}}/>
+                            </View>
+                            <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column'}}>
+                                <Text style={{color:'#03163a',fontFamily:'Roboto-Regular',fontSize:12,flexWrap: 'wrap'}}>
+                                    {this.state.eventData.group_name}, 
+                                    <Text  style={{fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}> {this.state.eventData.group_address.split(" ").splice(0,5).join(" ")}</Text>
+                                </Text>
+                                <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:11,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
+                                <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
+                            </View>
                         </View>
-                        <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column'}}>
-                            <Text style={{color:'#03163a',fontFamily:'Roboto-Regular',fontSize:12,flexWrap: 'wrap'}}>
-                                {this.state.eventData.group_name}, 
-                                <Text  style={{fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}> {this.state.eventData.group_address.split(" ").splice(0,5).join(" ")}</Text>
-                            </Text>
-                            <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:11,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
-                            <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
-                        </View>
-                    </View>
+                    </TouchableHighlight>
                 }
                 
                 {
