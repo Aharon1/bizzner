@@ -2,10 +2,8 @@ import React, { PureComponent } from "react";
 import {
   StyleSheet,
   View,
-  Text,
-  TouchableOpacity,
-  ImageBackground,
-  ScrollView
+  ScrollView,
+  Platform
 } from "react-native";
 import { MarkerItem } from "./MarkerItem";
 import { MapClustering } from "./MapClustering";

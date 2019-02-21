@@ -34,7 +34,8 @@ export class MarkerItem extends PureComponent {
       event_time: this.props.event_time,
       group_address: this.props.group_address,
       event_id: this.props.id,
-      event_coords: [this.props.group_lng, this.props.group_lat]
+      event_coords: [this.props.group_lng, this.props.group_lat],
+      event_date_formated:this.props.event_date_formated
     });
   };
 

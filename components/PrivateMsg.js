@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, 
-    Platform,FlatList,AsyncStorage,
-    RefreshControl,SafeAreaView
+    Platform,FlatList,AsyncStorage,Image,
+    RefreshControl,SafeAreaView,StyleSheet,Alert
 } from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -10,7 +10,6 @@ import Loader from './Loader';
 import { HeaderButton } from './Navigation/HeaderButton';
 import {SERVER_URL} from '../Constants';
 import ProgressiveImage from './AsyncModules/ImageComponent';
-import Footer from './Navigation/Footer';
 var clearTime = '';
 class PrivatMsgScreen extends Component{
     _isMounted = false;
@@ -19,7 +18,7 @@ class PrivatMsgScreen extends Component{
         this.state={
             loading:true,
             chatList:{},
-            isRefreshing:false
+            isRefreshing:false,
         }
         this.viewabilityConfig = {
             waitForInteraction: true,
@@ -27,6 +26,7 @@ class PrivatMsgScreen extends Component{
         }
         this.fetchList = this._fetchList.bind(this);
         this.refreshList = this._refreshList.bind(this);
+        this.hideChat = this._hideChat.bind(this);
     }
     async setUserId(){
         var userID =  await AsyncStorage.getItem('userID');
@@ -67,9 +67,32 @@ class PrivatMsgScreen extends Component{
         var strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
     }
+    formatDate(date){
+        var date = new Date(date);
+        var dateStr = '';
+        dateStr += (date.getDate() < 10)?'0'+date.getDate()+' ':date.getDate()+' ';
+        var monthArray = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var month = monthArray[date.getMonth()];
+        dateStr += month+' ';
+        dateStr += date.getFullYear();
+        return dateStr;
+    }
     componentWillUnmount(){
         this._isMounted = false;
         clearTimeout(clearTime);
+    }
+    async _hideChat(chatId){
+        await fetch(SERVER_URL+'?action=hide_user_chat&chat_id='+chatId+'&isgrp=0&user_id='+this.state.userID)
+        .then(res=>res.json())
+        .then(response=>{
+            if(response.code ==200){
+                Toast.show("Chat hidden successfully",Toast.SHORT);
+            }
+            this.fetchList();
+        })
+        .catch(err=>{
+
+        });
     }
     render(){
         return(
@@ -78,69 +101,86 @@ class PrivatMsgScreen extends Component{
                 <View style={[MainStyles.eventsHeader,{justifyContent:'center'}]}>
                     <TouchableOpacity style={{alignItems:'center',flexDirection:'row', paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
                         <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
-                        <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>CHAT LIST</Text>
+                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>CHAT LIST</Text>
                     </TouchableOpacity>
                 </View>
                 {
                     this.state && this.state.chatList && this.state.chatList.length > 0 && 
                     <FlatList 
-                        data={this.state.chatList} 
-                        renderItem={({item})=>(
-                            <TouchableOpacity style={[MainStyles.UserListItem,{backgroundColor:'#d1dbed'}]} onPress={()=>{this.props.navigation.navigate('Private Chat',{event_id:item.chat_id})}}>
-                                <View style={{overflow:'hidden',width:70,height:70}}>
-                                    <ProgressiveImage source={{uri:item.user_pic}} style={{
-                                        width: 70, 
-                                        height: 70,
-                                        borderRadius:100,
-                                        borderWidth: 3,
-                                        borderColor: '#FFF'
-                                    }} resizeMode="cover"/>
-                                </View>
-                                <View style={MainStyles.userListItemTextWrapper}>
-                                    <Text style={[MainStyles.ULITWName,{fontFamily:'Roboto-Meduim',color:'#03163a'}]}>{item.name}</Text>
-                                    <Text style={[MainStyles.ULITWTitle,{color:'#416bb9'}]}>{item.msg_text.split(" ").splice(0,4).join(" ")}</Text>
-                                </View>
-                                <View style={[MainStyles.ChatIconWrapper,{flexDirection:'row'}]}>
-                                    <Text 
-                                    style={{
-                                        color:'#416bb9',
-                                        fontFamily:'Roboto-Regular',
-                                        fontSize:12,
-                                        marginRight:7
-                                    }}>{this.formatAMPM(item.timestamp)}</Text>
-                                    {
-                                        item.unread_count > 0 && 
-                                        <Text style={{
-                                            color:'#FFF',
-                                            fontFamily:'Roboto-Medium',
-                                            fontSize:12,
-                                            backgroundColor:'#5cc06c',
-                                            width:30,
-                                            height:30,
-                                            textAlign:'center',
-                                            textAlignVertical:'center',
-                                            borderRadius:100
-                                        }}>{item.unread_count}</Text>
-                                    }
-                                    {
-                                        item.unread_count == 0 && 
-                                        <Text style={{
-                                            color:'#FFF',
-                                            fontFamily:'Roboto-Medium',
-                                            fontSize:12,
-                                            backgroundColor:'#c4d1e9',
-                                            width:30,
-                                            height:30,
-                                            textAlign:'center',
-                                            textAlignVertical:'center',
-                                            borderRadius:100
-                                        }}>
-                                            <Icon name="check" />
-                                        </Text>
-                                    }
+                    data={this.state.chatList} 
+                    renderItem={({item})=>{
+                        var todaysDate = new Date();
+                        var todaysFormated = todaysDate.getDate()+'/'+(todaysDate.getMonth()+1)+'/'+todaysDate.getFullYear();
+                        var chatDate = new Date(item.send_on);
+                        var chatDateFormated = chatDate.getDate()+'/'+(chatDate.getMonth()+1)+'/'+chatDate.getFullYear();
+                        var dateFormated = (todaysFormated != chatDateFormated)?this.formatDate(item.send_on)+' '+this.formatAMPM(item.send_on):"Today "+this.formatAMPM(item.send_on);
+                        return (
+                            <View>
+                                { !item.isHidden && 
+                                <TouchableOpacity style={[curStyle.UserListItem,
+                                (item.unread_count > 0)?{backgroundColor:'rgba(209, 219, 237, 0.4)'}:''
+                                ]} onPress={()=>{this.props.navigation.navigate('Private Chat',{event_id:item.chat_id})}}>
+                                    <View style={{overflow:'hidden',width:60,height:60,borderWidth: 2,
+                                            borderColor: '#FFF'}}>
+                                        <ProgressiveImage source={{uri:item.user_pic}} style={{
+                                            width: 60, 
+                                            height:60,
+                                        }} resizeMode="cover"/>
+                                    </View>
+                                    <View style={MainStyles.userListItemTextWrapper}>
+                                        <Text style={[MainStyles.ULITWName,{fontFamily:'Roboto-Medium',color:'#416bb9'}]}>{item.name}</Text>
+                                        <Text 
+                                        style={{
+                                            color:'#999',
+                                            fontFamily:'Roboto-Regular',
+                                            fontSize:8,
+                                            marginBottom:3,
+                                        }}>{dateFormated}</Text>
+                                        <Text style={[MainStyles.ULITWTitle,{color:'#03163a'}]}>{item.msg_text.split(" ").splice(0,4).join(" ")}</Text>
+                                    </View>
+                                    <View style={{flexDirection:'row',justifyContent:'flex-end',alignItems:'center'}}>
+                                        {
+                                            item.unread_count > 0 && 
+                                            <View style={[curStyle.IconStyle,{backgroundColor:'#5cc06c'}]}>
+                                                <Text style={curStyle.IconTextStyle}>{item.unread_count}</Text>
+                                            </View>
+                                        }
+                                    <TouchableOpacity 
+                                    onPress={()=>{
+                                        Alert.alert(
+                                            'Hide this chat',
+                                            'Temporarily hide this chat',
+                                            [
+                                                {
+                                                    text: 'No',
+                                                    onPress: () => console.log('Cancel Pressed'),
+                                                    style: 'cancel',
+                                                },
+                                                {
+                                                    text: 'Yes',
+                                                    onPress: () => {
+                                                        this.hideChat(item.chat_id);
+                                                    }
+                                                }
+                                            ],
+                                            {cancelable: true},
+                                            );
+                                    }}
+                                    style={[curStyle.IconStyle,{marginLeft:5}]}
+                                    >
+                                        <Image
+                                            source={require("../assets/close-button-large.png")}
+                                            style={{ width: 20, height: 20 }}
+                                        />
+                                        {/* <Text style={curStyle.IconTextStyle}>
+                                            <Icon name="times" />
+                                        </Text> */}
+                                    </TouchableOpacity>
                                 </View>
                             </TouchableOpacity>
-                        )}
+                            }
+                        </View>
+                    )}}
                     refreshControl={
                         <RefreshControl
                             refreshing={this.state.isRefreshing}
@@ -152,12 +192,34 @@ class PrivatMsgScreen extends Component{
                         />
                     }
                     keyExtractor={(item) => 'key-'+item.chat_id}
-                        viewabilityConfig={this.viewabilityConfig}
+                    viewabilityConfig={this.viewabilityConfig}
                     />
                 }
-                <Footer />
             </SafeAreaView>
         );
     }
 }
+const curStyle = StyleSheet.create({
+    UserListItem:{
+        paddingHorizontal:15,
+        paddingVertical: 10,
+        borderBottomColor:'#8da6d4',
+        borderBottomWidth:1,
+        flexDirection:'row',
+    },
+    IconStyle:{
+        width:20,
+        height:20,
+        justifyContent:'center',
+        alignItems:'center',
+        borderRadius:100,
+    },
+    IconTextStyle:{
+        color:'#FFF',
+        fontFamily:'Roboto-Medium',
+        fontSize:10,
+        textAlign:'center',
+        textAlignVertical:'center'
+    }
+});
 export default PrivatMsgScreen;

@@ -7,13 +7,12 @@
     "test": "jest"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "body-parser": "^1.18.3",
     "moment": "^2.23.0",
     "react": "^16.6.1",
     "react-dom": "^16.6.3",
     "react-lifecycles-compat": "^3.0.4",
     "react-native": "0.57.7",
+    "react-native-add-calendar-event": "^2.3.0",
     "react-native-datepicker": "^1.7.2",
     "react-native-dimension": "^1.0.6",
     "react-native-geolocation-service": "^2.0.0",
