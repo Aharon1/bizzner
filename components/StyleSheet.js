@@ -232,7 +232,8 @@ const MainStyles = StyleSheet.create({
         fontSize:20
     },
     confirmPopup:{
-        padding:0
+        padding:0,
+        marginTop:30
     },
     confirmPopupHeader:{
         height:50,
@@ -476,7 +477,6 @@ const MainStyles = StyleSheet.create({
     userListItemIWImage:{
         width: 90, 
         height: 90,
-        borderRadius:100,
         borderWidth: 3,
         borderColor: '#FFF'
     },
@@ -488,14 +488,14 @@ const MainStyles = StyleSheet.create({
     },
     ULITWName:{
         fontFamily:'Roboto-Regular',
-        fontSize:16,
+        fontSize:14,
         marginTop:5,
         color:'#03163a',
         alignItems:'flex-start'
     },
     ULITWTitle:{
         fontFamily:'Roboto-Light',
-        fontSize:14,
+        fontSize:11,
         color:'#03163a',
         paddingRight:5,
         flexWrap: 'wrap',
@@ -522,7 +522,7 @@ const MainStyles = StyleSheet.create({
     },
     ChatIconWrapper:{
         justifyContent:'center',
-        alignItems: 'center',
+        alignItems: 'flex-end',
     },
     ChatIcon:{
         fontSize:35,
@@ -562,8 +562,9 @@ const MainStyles = StyleSheet.create({
         borderBottomWidth:1,
         marginBottom:15,
         paddingBottom:8,
+        
     },
-    profileTextItemIcon:{color:'#416bb9',marginRight:15,marginTop:5},
+    profileTextItemIcon:{color:'#416bb9',marginRight:15,marginTop:5,flexWrap:'wrap'},
     PTIText:{
         fontFamily:'Roboto-Regular',
         fontSize:16,

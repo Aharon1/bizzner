@@ -8,6 +8,10 @@
 	<string>Use to fetch events</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Access your location</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Bizzner wants to add event on your calendar</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Bizzner wants to access your contacts</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -66,7 +70,7 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

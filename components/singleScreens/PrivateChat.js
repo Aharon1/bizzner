@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import { View,Text,TouchableOpacity,
     FlatList,TextInput,Image, Keyboard,ActivityIndicator,
-    AsyncStorage,
+    AsyncStorage,SafeAreaView,
     Platform,KeyboardAvoidingView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
@@ -169,13 +169,13 @@ class PrivateChatScreen extends Component{
             behavior = 'padding';
         }
         return(
-            <View style={MainStyles.normalContainer}>
+            <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View>
                     <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                         <TouchableOpacity style={{alignItems:'center',flexDirection:'row', paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
                             <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
-                            <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>PRIVATE CHAT</Text>
+                            <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>PRIVATE CHAT</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -215,7 +215,7 @@ class PrivateChatScreen extends Component{
                         </TouchableOpacity>
                     </View>
                 </KeyboardAvoidingView>
-            </View>
+            </SafeAreaView>
         );
     }
 }

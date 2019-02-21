@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import { View,Text,TouchableOpacity,
     FlatList,TextInput,Image, Keyboard,ActivityIndicator,
-    AsyncStorage,
+    AsyncStorage,SafeAreaView,
     Platform,KeyboardAvoidingView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
@@ -10,7 +10,7 @@ import { SERVER_URL } from '../../Constants';
 import ChatItem from './ChatItem';
 var clearTime = ''
 class EventChatScreen extends Component{
-    _isMounted = false;
+    _isMounted = false;clearTimeR = '';
     constructor(props){
         super(props);
         this.state = {
@@ -22,6 +22,7 @@ class EventChatScreen extends Component{
             isloadingMsgs:true,
             messages:{}
         }
+        this.readMsgs = this._readMsgs.bind(this);
     }
     async setUserId(){
         var userID =  await AsyncStorage.getItem('userID');
@@ -30,7 +31,13 @@ class EventChatScreen extends Component{
     componentDidMount() {
         this._isMounted = true;
         this.setUserId();
-        setTimeout(()=>{this.update()},200);
+        setTimeout(()=>{
+            this.readMsgs();
+            this.clearTimeR = setInterval(()=>{
+                this.readMsgs();
+            },2000)
+            this.update()
+        },200);
     }
     onStartTyping(newMessage){
         if(newMessage && newMessage.length >= 1){
@@ -39,6 +46,16 @@ class EventChatScreen extends Component{
         else {
             this.setState({disableBtn:true})
         }
+    }
+    _readMsgs = async ()=>{
+        fetch(SERVER_URL+'?action=readMsg&chat_id='+this.state.event_id+'&isgrp=1&userId='+this.state.userID)
+        .then(response=>{
+            console.log(response);
+        })
+        .catch(err=>{
+            console.log(err);
+        });
+        
     }
     sendMsg(){
         const msgs = this.state.messages;
@@ -84,6 +101,7 @@ class EventChatScreen extends Component{
     componentWillUnmount(){
         this._isMounted = false;
         clearTimeout(clearTime);
+        clearInterval(this.clearTimeR)
     }
     renderMsgItem(item,userID){
         return <ChatItem msgItem={item} userID={userID}/>
@@ -151,13 +169,13 @@ class EventChatScreen extends Component{
             behavior = 'padding';
         }
         return(
-            <View style={MainStyles.normalContainer}>
+            <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View>
                     <View style={[MainStyles.eventsHeader,{justifyContent:'center'}]}>
                         <TouchableOpacity style={{alignItems:'center',flexDirection:'row', paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
                             <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
-                            <Text style={{fontSize:20,color:'#8da6d5',marginLeft:20}}>GROUP CHAT</Text>
+                            <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>EVENT CHAT</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={[MainStyles.tabContainer,{justifyContent:'flex-start',paddingHorizontal:15,paddingVertical:15}]}>
@@ -200,7 +218,7 @@ class EventChatScreen extends Component{
                         </TouchableOpacity>
                     </View>
                 </KeyboardAvoidingView>
-            </View>
+            </SafeAreaView>
         );
     }
 }

@@ -8,7 +8,7 @@
 
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { Text, View } from 'react-native';
+import { Text, View,SafeAreaView } from 'react-native';
 import ProfileScreen from '../Profile';
 import EventsScreen from '../Events';
 import Logout from '../AsyncModules/Logout';
@@ -35,7 +35,7 @@ function createScreen(label, icon, Component) {
             return {
                 drawerLabel: ()=>{
                     if(label == 'Private Messages'){
-                        return (<View style={{
+                        return (<SafeAreaView style={{
                             flexDirection:'row',
                             alignItems:'center'
                         }}>
@@ -60,7 +60,7 @@ function createScreen(label, icon, Component) {
                                     borderRadius:100
                                 }}>{params.privateCount}</Text>
                             }       
-                        </View>)
+                        </SafeAreaView >)
                     }
                     else{
                         return label

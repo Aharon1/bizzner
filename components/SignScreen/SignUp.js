@@ -1,14 +1,17 @@
 import React, {Component} from 'react';
-import {Text, View, Image, TouchableOpacity, ScrollView, SafeAreaView,
+import {Text, View, Image, TouchableOpacity, ScrollView, SafeAreaView,Picker,ActionSheetIOS,
     TextInput,KeyboardAvoidingView,Animated,Platform,AlertIOS,ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Loader from '../Loader';
 import MainStyles from '../StyleSheet';
 import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
+import countryList from 'react-select-country-list'
 class SignUp extends Component{
     constructor(props){
         super(props);
+        var cOptionsList = countryList().getLabels();
+        cOptionsList.unshift('Cancel');
         this.state={
             loading:false,
             animation: new Animated.Value(30),
@@ -19,6 +22,8 @@ class SignUp extends Component{
             job:'',
             password:'',
             confirmPassword:'',
+            CountryList:countryList().getLabels(),
+            cOptions:cOptionsList
         }
     }
     togglePicOption = () => {  
@@ -31,7 +36,17 @@ class SignUp extends Component{
           }
         })
     }
-    
+    pickerIos = ()=>{
+        ActionSheetIOS.showActionSheetWithOptions({
+            options: this.state.cOptions,
+            cancelButtonIndex: 0,
+          },
+          (buttonIndex) => {
+            if(buttonIndex != 0){
+              this.setState({country: this.state.cOptions[buttonIndex]})
+            }
+          });
+      }
     registerUser = ()=>{
         var firstName = this.state.firstName;
         var lastName = this.state.lastName;
@@ -106,6 +121,7 @@ class SignUp extends Component{
         })
     }
     render(){
+        var behavior = (Platform.OS == 'ios')?'padding':'';
         return(
             <SafeAreaView style={MainStyles.normalContainer}>
                 {/* <Loader loading={this.state.loading} /> */}
@@ -129,7 +145,7 @@ class SignUp extends Component{
                             zIndex:500,
                                 top: this.state.animation.interpolate({
                                 inputRange: [0, 1],
-                                outputRange: [600, 35]
+                                outputRange: [600, 0]
                                 })
                             }]}>
                             <TouchableOpacity style={MainStyles.pHPOBtn} onPress={this.picPhoto}>
@@ -143,7 +159,7 @@ class SignUp extends Component{
                     </View>
                 </View>
                 {/*Body Section*/}
-                <KeyboardAvoidingView  style={{flex:1}} enabled>
+                <KeyboardAvoidingView  style={{flex:1}} enabled behavior={behavior}>
                     <ScrollView style={[MainStyles.profileBody,{marginBottom: 0}]} keyboardShouldPersistTaps={'handled'}>
                         <View style={MainStyles.inputFieldWithIcon}>
                             <Icon name="user" style={[MainStyles.iFWIIcon,{color:'#6789c6'}]}/>
@@ -193,7 +209,46 @@ class SignUp extends Component{
                         </View>
                         <View style={MainStyles.inputFieldWithIcon}>
                             <Icon name="map-marker" style={[MainStyles.iFWIIcon,{color:'#6789c6'}]}/>
-                            <TextInput 
+                            {
+                                Platform.OS == 'android' && 
+                                <Picker
+                                returnKeyType={"next"} 
+                                ref={(input) => { this.country = input; }} 
+                                onSubmitEditing={() => { this.job.focus(); }} 
+                                blurOnSubmit={false}
+                                selectedValue={this.state.country}
+                                style={MainStyles.cEFWIPF}
+                                textStyle={{fontSize: 17,fontFamily:'Roboto-Light'}}
+                                itemTextStyle= {{
+                                    fontSize: 17,fontFamily:'Roboto-Light',
+                                }}
+                                itemStyle={[MainStyles.cEFWIPF,{fontSize: 17,fontFamily:'Roboto-Light'}]}
+                                onValueChange={(itemValue, itemIndex) => this.setState({country: itemValue})}>
+                                    <Picker.Item label="Select Country" value="" />
+                                    {
+                                    this.state.CountryList.map(item=>{
+                                        return (
+                                        <Picker.Item key={'key-'+item} label={item} value={item} />
+                                        )
+                                    })
+                                    }
+                                </Picker>
+                            }
+                            {
+                                Platform.OS == 'ios' && 
+                                <TouchableOpacity style={[MainStyles.cEFWITF,{alignItems:'center'}]} onPress={()=>{this.pickerIos()}}>
+                                    {
+                                        this.state.country != '' && 
+                                        <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:18}}>{this.state.country}</Text>
+                                    }
+                                    {
+                                        this.state.country == '' && 
+                                        <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:18}}>Select Country</Text>
+                                    }
+                                </TouchableOpacity>
+                                
+                            }
+                            {/* <TextInput 
                                 style={MainStyles.ifWITI} 
                                 placeholder="Country *" 
                                 returnKeyType={"next"} 
@@ -204,7 +259,7 @@ class SignUp extends Component{
                                 placeholderTextColor="#03163a" 
                                 underlineColorAndroid="transparent" 
                                 value={this.state.country}
-                            />
+                            /> */}
                         </View>
                         <View style={MainStyles.inputFieldWithIcon}>
                             <Icon name="briefcase" style={[MainStyles.iFWIIcon,{color:'#6789c6'}]}/>

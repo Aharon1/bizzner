@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { View,Text,Image,TouchableOpacity} from 'react-native';
+import { View,Text,Image,Alert,TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
 import ProgressiveImage from './ImageComponent';
 import { withNavigation } from 'react-navigation';
 import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
+import * as AddCalendarEvent from 'react-native-add-calendar-event';
+import moment from 'moment';
 let userStatus = '';
  class ListItem extends Component{
     constructor(props){
@@ -13,17 +15,55 @@ let userStatus = '';
         this.state={
             userStatus:'',
             eventId:'',
-            userID:this.props.userID
+            userID:this.props.userID,
+            curItem:this.props.item
         }
     }
     checkEvent = ()=>{
         this.props.navigation.navigate('EventDetail',{event_id:this.state.eventId});
     }
+    utcDateToString = (momentInUTC) => {
+        let s = moment.utc(momentInUTC).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+        // console.warn(s);
+        return s;
+    };
     setUserEventStatus =  async (statusValue)=>{
         var curItem = await this.props.item;
         var user_id = this.props.userID;
+        
         if(this.state.userStatus == statusValue){
             statusValue = 0;
+        }
+        if(this.state.userStatus == statusValue){
+            Alert.alert(
+                'Add to Calendar?',
+                'It will remind you',
+                [
+                    {
+                        text: 'No',
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel',
+                    },
+                    {text: 'Yes', onPress: () => {
+                    var m = moment(new Date(curItem.unix_event));
+                    var mUTC = m.utc();
+                    const eventConfig = {
+                        title:curItem.event_subject,
+                        startDate: this.utcDateToString(mUTC),
+                        endDate: this.utcDateToString(moment.utc(mUTC).add(1, 'hours')),
+                        notes: 'tasty!',
+                        navigationBarIOS: {
+                        tintColor: '#416bb9',
+                        backgroundColor: '#8da6d5',
+                        titleColor: '#2e4d85',
+                        },
+                    };
+                    AddCalendarEvent.presentEventCreatingDialog(eventConfig)
+                    .then((eventInfo) => {})
+                    .catch((error) => {console.warn(error);});
+                }}],
+                {cancelable: true},
+            );
         }
         fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
         .then(response=>{
@@ -90,68 +130,78 @@ let userStatus = '';
                     MainStyles.EventItem,
                 ]} onPress={this.checkEvent}>
                     <View style={MainStyles.EventItemImageWrapper}>
-                        <ProgressiveImage source={{uri:Item.photoUrl}} style={{ width: 70, height: 70 }} resizeMode="cover"/>
+                        <ProgressiveImage source={{uri:this.state.curItem.photoUrl}} style={{ width: 70, height: 70 }} resizeMode="cover"/>
                     </View>
                     <View style={MainStyles.EventItemTextWrapper}>
                         <View style={{flexDirection:'row', alignItems:'center'}}>
                             <Icon name="thumb-tack" style={{color:'#8da6d4',marginRight:5}} size={13} />
                             <Text style={[MainStyles.EITWName,
                                 (Item.isStarted === true)?{color:'#39b549'}:''
-                            ]}>{Item.event_subject}</Text>
+                            ]}>{this.state.curItem.event_subject}</Text>
                         </View>
                         <View style={{flexDirection:'row', alignItems:'center'}}>
                             <Icon name="map-marker" style={{color:'#8da6d4',marginRight:5}} size={13} />
-                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{Item.name}</Text>
+                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.state.curItem.name}</Text>
                         </View>
                         <Text style={[MainStyles.EITWAddress,{marginLeft:14}]}>{Address}</Text>
                         <View style={{flexDirection:'row', alignItems:'center'}}>
                             <Icon name="clock-o" style={{color:'#8da6d4',marginRight:5}} size={13} />
-                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.formatDate(new Date(Item.timestamp))}, {this.formatAMPM(new Date(Item.timestamp))}</Text>
+                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>Local Time : {this.state.curItem.event_date_formated}</Text>
                         </View>
                         <View style={MainStyles.EITWAction}>
                             <Image source={require('../../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
-                            <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({Item.usersCount}) </Text>
-                            <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>Info</Text>
+                            <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({this.state.curItem.usersCount}) </Text>
+                            <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',marginLeft:8}}>Info</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
+                {/* (this.state.userStatus == 2) */}
                 { 
                     this.state.userStatus != 3 && 
-                    Item.usersCount < Item.usersPlace
+                    this.state.curItem.usersCount < this.state.curItem.usersPlace
                     && 
+
                     <View style={MainStyles.EIAButtonsWrapper}>
-                        <TouchableOpacity style={[
-                        MainStyles.EIAButtons,
-                        (this.state.userStatus == 2)?{backgroundColor:'#87d292'}:''
-                        ]}
-                        onPress={()=>this.setUserEventStatus(2)}
-                        >
-                            <Icon name="check" size={15} style={{color:'#FFF',marginRight:5,}}/>
-                            <Text style={{
-                                color:'#FFF',
-                                fontFamily:'Roboto-Medium',
-                                fontSize:14
-                            }}>Join</Text>
+                        <TouchableOpacity style={[MainStyles.EIAButtons,{backgroundColor:'#87d292',borderRadius:0}]}
+                        onPress={()=>this.setUserEventStatus(2)}>
+                            {
+                                this.state.userStatus == 2 && 
+                                <Icon name="check" size={15} style={{color:'#FFF',marginRight:5}}/>
+                            }
+                            {
+                                this.state.userStatus != 2 && 
+                                <Text style={{
+                                    color:'#FFF',
+                                    fontFamily:'Roboto-Medium',
+                                    fontSize:14
+                                }}>Join</Text>
+                            }
                         </TouchableOpacity>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{marginHorizontal:5},
-                        (this.state.userStatus == 1)?{backgroundColor:'#8da6d5'}:''
+                        MainStyles.EIAButtons,{backgroundColor:'#8da6d5',marginHorizontal:5,borderRadius:0},
+                        
                         ]}
                             onPress={()=>this.setUserEventStatus(1)}
                         >
-                            <Icon name="star" size={15} style={{color:'#FFF',marginRight:5,}}/>
-                            <Text style={{
-                                color:'#FFF',
-                                fontFamily:'Roboto-Medium',
-                                fontSize:14
-                            }}>Interested</Text>
+                            {
+                                this.state.userStatus == 1 && 
+                                <Icon name="star" size={15} style={{color:'#FFF',marginRight:5}}/>
+                            }
+                            {
+                                this.state.userStatus != 1 && 
+                                <Text style={{
+                                    color:'#FFF',
+                                    fontFamily:'Roboto-Medium',
+                                    fontSize:14
+                                }}>Interested</Text>
+                            }
                         </TouchableOpacity>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons       
+                        MainStyles.EIAButtons,{borderRadius:0}   
                         ]}
                             onPress={()=>this.setUserEventStatus(3)}
                             >
-                            <Icon name="ban" size={15} style={{color:'#FFF',marginRight:5,}}/>
+                            <Icon name="ban" size={15} style={{color:'#FFF',marginRight:5}}/>
                             <Text style={{
                                 color:'#FFF',
                                 fontFamily:'Roboto-Medium',
@@ -161,7 +211,7 @@ let userStatus = '';
                     </View>
                 }
                 {
-                    Item.usersCount == Item.usersPlace
+                    this.state.curItem.usersCount == this.state.curItem.usersPlace
                     && 
                     <View style={[{paddingVertical:5,backgroundColor:'#8da6d4',justifyContent:'center',alignItems:'center'}]}>
                         <Text style={{color:'#FFF',fontFamily:'Roboto-Medium',fontSize:15}}>No more places available</Text>

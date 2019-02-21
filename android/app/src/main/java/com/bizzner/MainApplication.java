@@ -3,10 +3,10 @@ package com.bizzner;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.vonovak.AddCalendarEventPackage;
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
-
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactlibrary.linkedinsdk.RNLinkedInSessionManagerPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -31,6 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new AddCalendarEventPackage(),
             new RNFusedLocationPackage(),
             new ImagePickerPackage(),
             new ReactNativePushNotificationPackage(),

@@ -36,6 +36,7 @@ class SignIn extends Component{
         fetch(SERVER_URL+'?action=login_user&lg_email='+this.state.emailAddress+'&lg_pass='+this.state.password)
         .then(res=>res.json())
         .then(response=>{
+            console.log(response);
             if(response.code == 200){
                 this.saveDetails('isUserLoggedin','true');
                 this.saveDetails('userID',response.body.ID);
@@ -54,7 +55,7 @@ class SignIn extends Component{
                 setTimeout(()=>{
                     this.setState({loading:false});
                     this.props.navigation.navigate('Current Events');
-                  },500)
+                  },1500)
             }
             else{
                 Toast.show(response.message, Toast.SHORT);
