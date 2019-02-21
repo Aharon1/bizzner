@@ -66,7 +66,6 @@ class MapScreen extends Component {
                 fetch('https://maps.googleapis.com/maps/api/geocode/json?address='+response.country+'&key='+MAPKEY)
                 .then(res=>res.json())
                 .then(response=>{
-                    console.log(response);
                     const currentPosition = {
                         latitude:response.results[0].geometry.location.lat,
                         longitude:response.results[0].geometry.location.lng,
@@ -87,16 +86,15 @@ class MapScreen extends Component {
     }
     _loadMap = async () => {
         Permissions.check('location', { type: 'always' }).then(response => {
-            console.log(response);
-            if(response == "authorized"){
+            if(true){
                 Geolocation.getCurrentPosition(
                     (position) => {
-                        console.log(position);
+                        
                         this._getMapData(position);
                     },
-                    (error) => {
+                    (error) => {ƒ
                         // See error code charts below.
-                        console.log(error.code, error.message);
+                      
                         this._loadFromCountry()
                     },
                     { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
@@ -104,16 +102,16 @@ class MapScreen extends Component {
             }
             else if(response == 'undetermined'){
                 Permissions.request('location', { type: 'always' }).then(response => {
-                    console.log(response);
+                    
                     if(response == 'authorized'){
                         Geolocation.getCurrentPosition(
                             (position) => {
-                                console.log(position);
+                                
                                 this._getMapData(position);
                             },
                             (error) => {
                                 // See error code charts below.
-                                console.log(error.code, error.message);
+                               
                                 this._loadFromCountry()
                             },
                             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
