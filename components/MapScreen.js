@@ -86,13 +86,13 @@ class MapScreen extends Component {
     }
     _loadMap = async () => {
         Permissions.check('location', { type: 'always' }).then(response => {
-            if(true){
+            if(response == "authorized"){
                 Geolocation.getCurrentPosition(
                     (position) => {
                         
                         this._getMapData(position);
                     },
-                    (error) => {ƒ
+                    (error) => {
                         // See error code charts below.
                       
                         this._loadFromCountry()
