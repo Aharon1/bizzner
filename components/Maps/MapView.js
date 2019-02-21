@@ -21,7 +21,6 @@ export default class GoogleMapView extends PureComponent {
   };
   render() {
     const { isModalOpen, isModalClusterOpen } = this.state;
-    console.log(this.props)
     return (
       <View style={styles.container}>
         <MapClustering
@@ -50,7 +49,7 @@ export default class GoogleMapView extends PureComponent {
     return (
       <Modal
         eventData={eventData}
-        goToEvent={() => this.goToEvent(eventData.id)}
+        goToEvent={() => this.goToEvent(eventData.id, eventData.event_coords)}
         onCloseModal={this.onCloseModal}
         formatDate={this.formatDate}
         formatAMPM={this.formatAMPM}
@@ -60,11 +59,11 @@ export default class GoogleMapView extends PureComponent {
 
   renderCluster = () => {
     return (
-      <View style={{height: 300}}>
+      <View style={{ height: 300 }}>
         <ScrollView
           horizontal={true}
           contentContainerStyle={{
-            alignSelf: "center",
+            alignSelf: "center"
           }}
         >
           {this.state.clusterEvents.map(event => {
@@ -73,7 +72,7 @@ export default class GoogleMapView extends PureComponent {
             return (
               <Modal
                 key={id}
-                goToEvent={() => this.goToEvent(id)}
+                goToEvent={() => this.goToEvent(id, event.geometry.coordinates)}
                 onCloseModal={this.onModalClusterClose}
                 eventData={eventData}
                 formatDate={this.formatDate}
@@ -101,9 +100,9 @@ export default class GoogleMapView extends PureComponent {
       });
     }
   };
-  goToEvent = id => {
+  goToEvent = (id, location) => {
     const event_id = id ? id : this.state.eventData.event_id;
-    this.props.onNavigate({ event_id });
+    this.props.onNavigate({ event_id: event_id, location: location });
 
     this.setState({
       isModalOpen: false,
@@ -116,13 +115,9 @@ export default class GoogleMapView extends PureComponent {
       eventData: ""
     });
   };
-  formatAMPM(date,time) {
-    fullDate = new Date(date+' '+time);
-    if(Platform.OS == 'ios'){
-      fullDate = new Date(date+'T'+time);
-    }
-    var hours = fullDate.getHours();
-    var minutes = fullDate.getMinutes();
+  formatAMPM(date) {
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
     var ampm = hours >= 12 ? "pm" : "am";
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
@@ -130,14 +125,10 @@ export default class GoogleMapView extends PureComponent {
     var strTime = hours + ":" + minutes + " " + ampm;
     return strTime;
   }
-  formatDate(date,time) {
-    fullDate = new Date(date+' '+time);
-    if(Platform.OS == 'ios'){
-      fullDate = new Date(date+'T'+time);
-    }
+  formatDate(date) {
     var dateStr = "";
     dateStr +=
-    fullDate.getDate() < 10 ? "0" + fullDate.getDate() + " " : fullDate.getDate() + " ";
+      date.getDate() < 10 ? "0" + date.getDate() + " " : date.getDate() + " ";
     var monthArray = [
       "Jan",
       "Feb",
@@ -152,22 +143,22 @@ export default class GoogleMapView extends PureComponent {
       "Nov",
       "Dec"
     ];
-    var month = monthArray[fullDate.getMonth()];
+    var month = monthArray[date.getMonth()];
     dateStr += month + " ";
-    dateStr += fullDate.getFullYear();
+    dateStr += date.getFullYear();
     return dateStr;
-  }onModalClusterOpen = clusterEvents => {
+  }
+  onModalClusterOpen = clusterEvents => {
     this.setState({
       isModalClusterOpen: true,
-      isModalOpen: false,
       clusterEvents
     });
   };
-  onModalClusterClose = () => {
-    this.setState({
+onModalClusterClose = () =>{
+  this.setState({
       isModalClusterOpen: false
-    });
-  };
+  })
+}
 }
 
 const styles = StyleSheet.create({
@@ -180,7 +171,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject
   },
   textStyle: {
-    fontSize: 17,
+    fontSize: 20,
     alignSelf: "flex-start",
     flexDirection: "row",
     padding: 5,
