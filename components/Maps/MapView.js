@@ -156,7 +156,8 @@ export default class GoogleMapView extends PureComponent {
     dateStr += month + " ";
     dateStr += fullDate.getFullYear();
     return dateStr;
-  }onModalClusterOpen = clusterEvents => {
+  }
+  onModalClusterOpen = clusterEvents => {
     this.setState({
       isModalClusterOpen: true,
       isModalOpen: false,

@@ -109,6 +109,15 @@ let userStatus = '';
         }
         this.setState({eventId:this.props.item.group_id});
     }
+    componentWillReceiveProps(){
+        for(const uid in this.props.item.userIds){
+            if(this.props.item.userIds[uid].user_id == this.props.userID){
+                userStatus=this.props.item.userIds[uid].status;
+                this.setState({userStatus:this.props.item.userIds[uid].status});
+            }
+        }
+        this.setState({eventId:this.props.item.group_id});
+    }
     render(){
         var d1 = new Date ();
         var d2 = new Date ( d1 );
@@ -162,7 +171,8 @@ let userStatus = '';
                     && 
 
                     <View style={MainStyles.EIAButtonsWrapper}>
-                        <TouchableOpacity style={[MainStyles.EIAButtons,{backgroundColor:'#87d292',borderRadius:0}]}
+                        <TouchableOpacity style={[MainStyles.EIAButtons,{borderRadius:0},
+                        (this.state.userStatus == 2)?{backgroundColor:'#87d292'}:'']}
                         onPress={()=>this.setUserEventStatus(2)}>
                             {
                                 this.state.userStatus == 2 && 
@@ -178,7 +188,8 @@ let userStatus = '';
                             }
                         </TouchableOpacity>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{backgroundColor:'#8da6d5',marginHorizontal:5,borderRadius:0},
+                        MainStyles.EIAButtons,{marginHorizontal:5,borderRadius:0},
+                        (this.state.userStatus == 1)?{backgroundColor:'#8da6d5'}:''
                         
                         ]}
                             onPress={()=>this.setUserEventStatus(1)}

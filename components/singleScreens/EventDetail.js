@@ -89,14 +89,16 @@ export default class EventDetail extends Component{
         return s;
     };
     setUserEventStatus =  async (statusValue)=>{
-        if(statusValue != this.status.curStatus){
+        if(statusValue != this.state.curStatus){
             Alert.alert(
                 'Add to Calendar?',
                 'It will remind you',
                 [
                     {
                         text: 'No',
-                        onPress: () => console.log('Cancel Pressed'),
+                        onPress: () => {
+                            this.setEventStatusOnServer(statusValue);
+                        },
                         style: 'cancel',
                     },
                     {text: 'Yes', onPress: () => {
@@ -114,15 +116,17 @@ export default class EventDetail extends Component{
                         },
                     };
                     AddCalendarEvent.presentEventCreatingDialog(eventConfig)
-                    .then((eventInfo) => {})
+                    .then((eventInfo) => {this.setEventStatusOnServer(statusValue)})
                     .catch((error) => {console.warn(error);});
                 }}],
                 {cancelable: true},
             );
         }
+        
+    }
+    setEventStatusOnServer(statusValue){
         var curItem = this.state.eventData;
         var user_id = this.state.userID;
-        
         fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
         .then(response=>{
             this.fetchNewDetails();
@@ -151,7 +155,7 @@ export default class EventDetail extends Component{
         })
     }
     startPrivateChat(other_user_id){
-        this.setState({loading:true})
+        this.setState({loading:true});
         fetch(SERVER_URL+'?action=startPrivateChat&user_id='+this.state.userID+'&privateUserId='+other_user_id)
         .then(res=>res.json())
         .then(response=>{
@@ -256,7 +260,8 @@ export default class EventDetail extends Component{
                     &&
                     <View style={[MainStyles.EventScreenTabWrapper,{backgroundColor:'#d1dbed'}]}>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{backgroundColor:'#87d292',borderRadius:0}
+                        MainStyles.EIAButtons,{borderRadius:0},
+                        (this.state.curStatus == 2)?{backgroundColor:'#87d292'}:''
                         ]}
                         onPress={()=>this.setUserEventStatus(2)}
                         >
@@ -280,7 +285,8 @@ export default class EventDetail extends Component{
                             }}>Join</Text> */}
                         </TouchableOpacity>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{marginHorizontal:5},{backgroundColor:'#8da6d5',borderRadius:0}
+                        MainStyles.EIAButtons,{marginHorizontal:5},{borderRadius:0},
+                        (this.state.curStatus == 1)?{backgroundColor:'#8da6d5'}:''
                         ]}
                         onPress={()=>this.setUserEventStatus(1)}
                         >
@@ -597,123 +603,22 @@ export default class EventDetail extends Component{
                             scrollEnabled={this.state.enableScrollViewScroll} 
                             ref={myScroll => (this._myScroll = myScroll)}
                             >
-                                {
-                                    this.state.isLocationSet == true &&
-                                    <View style={{width:'100%',marginTop:0,marginBottom:0, height:150,}}>
-                                        <ImageBackground source={{uri:this.state.curLocation.picUrl}} style={{width: '100%', height: 150,flex:1,resizeMode:'center'}} resizeMode="cover">   
-                                            <TouchableOpacity style={{position:'absolute',right:10,top:10}} onPress={()=>{this.setState({isLocationSet:false,curLocation:{}})}}>
-                                                <Icon name="pencil" size={28} color="#FFF" />
-                                            </TouchableOpacity>
-                                            <View style={{
-                                                    color: 'white',
-                                                    position: 'absolute', // child
-                                                    bottom: 0, // position where you want
-                                                    left: 0,
-                                                    paddingLeft:20,
-                                                    paddingRight:40,
-                                                    paddingBottom:20
-                                                }}>
-                                                <Text style={{textAlign:'left', color:'#FFF',fontFamily:'Roboto-Regular',fontSize:18}}>{this.state.curLocation.name}</Text>
-                                                <Text style={{textAlign:'left',color:'#FFF',fontFamily:'Roboto-Light',fontSize:16}}>{this.state.curLocation.address}</Text>
-                                            </View>
-                                        </ImageBackground>
-                                    </View>
-                                }
-                                {
-                                    this.state.isLocationSet == false && 
-                                    <View style={{zIndex:40,paddingHorizontal:15}}>
-                                        <View style={[
-                                            MainStyles.createEventFWI,{marginTop:10},
-                                            (this.state.isFocusedSC == true)?{borderWidth:1,borderColor:'#8da6d4',paddingHorizontal:10}:''
-                                            ]}>
-                                            <Icon name="search" style={MainStyles.cEFWIIcon}/>
-                                            <TextInput style={MainStyles.cEFWITF} 
-                                                placeholder="City" 
-                                                placeholderTextColor="#03163a" 
-                                                underlineColorAndroid="transparent"
-                                                onChangeText={(text)=>{this.setState({isSelectedCity:text}),this.onChangeSCDelayed(text)}}
-                                                value={this.state.isSelectedCity}
-                                                onFocus={()=>this.setState({isFocusedSC:true})}
-                                                onBlur={()=>this.setState({isFocusedSC:false})}
-                                            />
+                                <View style={{width:'100%',marginTop:0,marginBottom:0, height:150,}}>
+                                    <ImageBackground source={{uri:this.state.eventData.photoUrl}} style={{width: '100%', height: 150,flex:1,resizeMode:'center'}} resizeMode="cover">
+                                        <View style={{
+                                                color: 'white',
+                                                position: 'absolute', // child
+                                                bottom: 0, // position where you want
+                                                left: 0,
+                                                paddingLeft:20,
+                                                paddingRight:40,
+                                                paddingBottom:20
+                                            }}>
+                                            <Text style={{textAlign:'left', color:'#FFF',fontFamily:'Roboto-Regular',fontSize:18}}>{this.state.eventData.group_name}</Text>
+                                            <Text style={{textAlign:'left',color:'#FFF',fontFamily:'Roboto-Light',fontSize:16}}>{this.state.eventData.group_address}</Text>
                                         </View>
-                                        {
-                                            this.state.isSelectedCity != '' && 
-                                            <View style={[
-                                                MainStyles.createEventFWI,
-                                                {
-                                                    marginTop:10,
-                                                    
-                                                },
-                                                (this.state.isFocusedSL == true)?{borderWidth:1,borderColor:'#8da6d4',paddingHorizontal:10}:''
-                                                ]}>
-                                                <Icon name="map-marker" style={MainStyles.cEFWIIcon}/>
-                                                <TextInput style={MainStyles.cEFWITF} 
-                                                    placeholder="Places " 
-                                                    placeholderTextColor="#03163a" 
-                                                    underlineColorAndroid="transparent"
-                                                    onChangeText={this.onChangeSLDelayed}
-                                                    onFocus={()=>this.setState({isFocusedSL:true})}
-                                                    onBlur={()=>this.setState({isFocusedSL:false})}
-                                                />
-                                            </View>
-                                        }
-                                        <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
-                                            <Text style={{color:'#0947b9',fontFamily:'Roboto-Medium'}}>Add location</Text>
-                                        </View>
-                                    </View>
-                                }
-                                {
-                                    this.state.SCValue &&  
-                                    <View style={[MainStyles.locationItemWrapper,{top:61}]} onStartShouldSetResponderCapture={() => {
-                                        this.setState({ enableScrollViewScroll: false });
-                                        if (this._myScroll.contentOffset === 0
-                                            && this.state.enableScrollViewScroll === false) {
-                                            this.setState({ enableScrollViewScroll: true });
-                                        }
-                                        }}>
-                                        {this.state.isLoadingSC && <ActivityIndicator size="large" color="#416bb9"/>}
-                                        {
-                                            this.state.SCItems.length > 0 && 
-                                            <FlatList data={this.state.SCItems}
-                                                keyboardShouldPersistTaps={'handled'}
-                                                renderItem={({item}) => (
-                                                    <TouchableOpacity onPress={()=>this.citySet(item.description)} style={[MainStyles.locationItemBtn]}>
-                                                        <View style={{flexWrap: 'wrap',paddingLeft:5,justifyContent:'center', alignItems:'flex-start'}}>
-                                                            <Text style={{writingDirection:'ltr',textAlign:'left',fontFamily:'Roboto-Medium'}}>{item.description}</Text>
-                                                        </View>
-                                                    </TouchableOpacity>
-                                                )}
-                                                keyExtractor={(item) => item.place_id}
-                                            />
-                                        }
-                                    </View> 
-                                }
-                                {
-                                    this.state.SLValue &&  
-                                    <View style={[MainStyles.locationItemWrapper]} onStartShouldSetResponderCapture={() => {
-                                        this.setState({ enableScrollViewScroll: false });
-                                        if (this._myScroll.contentOffset === 0
-                                            && this.state.enableScrollViewScroll === false) {
-                                            this.setState({ enableScrollViewScroll: true });
-                                        }
-                                        }}>
-                                        {this.state.isLoading && <ActivityIndicator size="large" color="#416bb9"/>}
-                                        {
-                                            this.state.SLItems.length > 0 && 
-                                            <FlatList data={this.state.SLItems}
-                                                keyboardShouldPersistTaps={'handled'}
-                                                renderItem={({item}) => (
-                                                    <LocationItem
-                                                        {...item}
-                                                        fecthDetails={this.fetchDetails}
-                                                    />
-                                                )}
-                                                keyExtractor={(item) => item.place_id}
-                                            />
-                                        }
-                                    </View> 
-                                }
+                                    </ImageBackground>
+                                </View>
                                 <View style={{paddingHorizontal:15,marginBottom:15}}>
                                     <View style={[MainStyles.createEventFWI]}>
                                         <Icon name="thumb-tack" style={MainStyles.cEFWIIcon}/>
@@ -809,8 +714,8 @@ export default class EventDetail extends Component{
                                         </View>
                                     </View>
                                     <View style={[MainStyles.btnWrapper,{marginBottom:20}]}>
-                                        <TouchableOpacity style={[MainStyles.btnSave]} onPress={this.createNewEvent}>
-                                            <Text style={MainStyles.btnSaveText}>Edit Event</Text>
+                                        <TouchableOpacity style={[MainStyles.btnSave]} onPress={this.EditEvent}>
+                                            <Text style={MainStyles.btnSaveText}>Save</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
