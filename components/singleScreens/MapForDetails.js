@@ -18,17 +18,19 @@ export class MapForEventDetail extends React.Component {
   getPolyline = () => {
     const { latitude, longitude } = this.state.myLocation;
     const { location } = this.props;
-    const mode = "walking";
+    const mode = "car";
     const origin = [latitude, longitude];
     const destination = [location[1], location[0]];
     const APIKEY = "AIzaSyBWr5bPPGdOBU9ce8RgchL5sc_U9OC1yL8";
     const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${APIKEY}&mode=${mode}`;
     axios.get(url).then(resp => {
-      this.setState({
-        polylineCoords: this.decode(
-          resp.data.routes[0].overview_polyline.points
-        )
-      });
+      if (resp.data.routes.length) {
+        this.setState({
+          polylineCoords: this.decode(
+            resp.data.routes[0].overview_polyline.points
+          )
+        });
+      }
     });
   };
   getCurrentPosition = () => {
