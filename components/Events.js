@@ -160,33 +160,6 @@ class EventsScreen extends Component{
         .then(response=>response.json())
         .then(response=>{
             if(response.code == 300){
-                var locList = this.state.locationList;
-                var rBody = response.body;
-                var eventAdded = {
-                    name:rBody.group_name,
-                    address:rBody.group_address,
-                    isStarted:rBody.group_status,
-                    photoUrl:rBody.group_pic,
-                    key:rBody.key,
-                    event_date:rBody.event_date,
-                    event_time:rBody.event_time,
-                    event_subject:rBody.event_subject,
-                    event_note:rBody.event_note,
-                    latitude:rBody.latitude,
-                    longitude:rBody.longitude,
-                    place_id:rBody.place_id,
-                    group_id:rBody.group_id,
-                    usersCount:rBody.usersCount,
-                    userIds:rBody.usersIds,
-                }
-                locList.unshift(eventAdded);
-                /*this.setState({
-                    locationList:locList,
-                    loading:false,
-                    CreateEventVisible:false,
-                    NES:'',
-                    NEN:'',
-                });*/
                 Toast.show('Event created successfully',Toast.SHORT);
             }
             else{

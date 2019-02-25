@@ -52,7 +52,7 @@ class MapScreen extends Component {
                 latitudeDelta: 0.05,
                 longitudeDelta: 0.02
             };
-            const events = await fetchEvents();
+            const events = fetchEvents();
             this.setState({
                 currentPosition,
                 events,
@@ -72,7 +72,7 @@ class MapScreen extends Component {
                         latitudeDelta: 0.05,
                         longitudeDelta: 0.02
                     };
-                    const events = await fetchEvents();
+                    const events = fetchEvents();
                     this.setState({
                         currentPosition,
                         events,

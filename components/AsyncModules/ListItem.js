@@ -20,7 +20,10 @@ let userStatus = '';
         }
     }
     checkEvent = ()=>{
-        this.props.navigation.navigate('EventDetail',{event_id:this.state.eventId});
+        const {longitude, latitude } = this.state.curItem;
+        const location = [+longitude, +latitude];
+        
+        this.props.navigation.navigate('EventDetail',{event_id:this.state.eventId, location});
     }
     utcDateToString = (momentInUTC) => {
         let s = moment.utc(momentInUTC).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
@@ -28,20 +31,21 @@ let userStatus = '';
         return s;
     };
     setUserEventStatus =  async (statusValue)=>{
-        var curItem = await this.props.item;
-        var user_id = this.props.userID;
+        
         
         if(this.state.userStatus == statusValue){
             statusValue = 0;
         }
-        if(this.state.userStatus == statusValue){
+        if(this.state.userStatus != statusValue){
             Alert.alert(
                 'Add to Calendar?',
                 'It will remind you',
                 [
                     {
                         text: 'No',
-                        onPress: () => console.log('Cancel Pressed'),
+                        onPress: () => {
+                            this.setEventStatusOnServer(statusValue);
+                        },
                         style: 'cancel',
                     },
                     {text: 'Yes', onPress: () => {
@@ -59,12 +63,16 @@ let userStatus = '';
                         },
                     };
                     AddCalendarEvent.presentEventCreatingDialog(eventConfig)
-                    .then((eventInfo) => {})
+                    .then((eventInfo) => {this.setEventStatusOnServer(statusValue)})
                     .catch((error) => {console.warn(error);});
                 }}],
                 {cancelable: true},
             );
         }
+    }
+    setEventStatusOnServer = async (statusValue) => {
+        var curItem = await this.props.item;
+        var user_id = this.props.userID;
         fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
         .then(response=>{
             userStatus = statusValue;
@@ -80,7 +88,7 @@ let userStatus = '';
             }
             this.props.refresh();
         })
-    }
+      }
     formatAMPM(date) {
         var hours = date.getHours();
         var minutes = date.getMinutes();
@@ -101,6 +109,15 @@ let userStatus = '';
         return dateStr;
     }
     componentDidMount(){
+        for(const uid in this.props.item.userIds){
+            if(this.props.item.userIds[uid].user_id == this.props.userID){
+                userStatus=this.props.item.userIds[uid].status;
+                this.setState({userStatus:this.props.item.userIds[uid].status});
+            }
+        }
+        this.setState({eventId:this.props.item.group_id});
+    }
+    componentWillReceiveProps(){
         for(const uid in this.props.item.userIds){
             if(this.props.item.userIds[uid].user_id == this.props.userID){
                 userStatus=this.props.item.userIds[uid].status;
@@ -162,7 +179,8 @@ let userStatus = '';
                     && 
 
                     <View style={MainStyles.EIAButtonsWrapper}>
-                        <TouchableOpacity style={[MainStyles.EIAButtons,{backgroundColor:'#87d292',borderRadius:0}]}
+                        <TouchableOpacity style={[MainStyles.EIAButtons,{borderRadius:0},
+                        (this.state.userStatus == 2)?{backgroundColor:'#87d292'}:'']}
                         onPress={()=>this.setUserEventStatus(2)}>
                             {
                                 this.state.userStatus == 2 && 
@@ -178,7 +196,8 @@ let userStatus = '';
                             }
                         </TouchableOpacity>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{backgroundColor:'#8da6d5',marginHorizontal:5,borderRadius:0},
+                        MainStyles.EIAButtons,{marginHorizontal:5,borderRadius:0},
+                        (this.state.userStatus == 1)?{backgroundColor:'#8da6d5'}:''
                         
                         ]}
                             onPress={()=>this.setUserEventStatus(1)}
