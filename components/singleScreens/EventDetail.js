@@ -32,7 +32,8 @@ export default class EventDetail extends Component {
       profileDetailShow: false,
       profilePicture: "",
       isLoadingProfile: true,
-      userData: []
+      userData: [],
+      isMapShow: true
     };
     this.fetchNewDetails = this._fetchNewDetails.bind(this);
     this.fetchUserData = this._fetchUserData.bind(this);
@@ -171,7 +172,11 @@ export default class EventDetail extends Component {
       })
       .catch(err => {});
   }
- 
+  closeMap = () =>{
+    this.setState({
+      isMapShow:false
+    })
+  }
   render() {
     const { location } = this.props.navigation.state.params;
     return (
@@ -277,10 +282,13 @@ export default class EventDetail extends Component {
               </TouchableOpacity>
             )}
           </View>
+          {this.state.isMapShow && (
             <MapForEventDetail
               style={{ marginBottom: 20 }}
               location={location}
+              closeMap={this.closeMap}
             />
+          )}
         </View>
 
         {(this.state.curStatus != 1 ||
