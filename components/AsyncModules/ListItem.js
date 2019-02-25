@@ -31,8 +31,7 @@ let userStatus = '';
         return s;
     };
     setUserEventStatus =  async (statusValue)=>{
-        var curItem = await this.props.item;
-        var user_id = this.props.userID;
+        
         
         if(this.state.userStatus == statusValue){
             statusValue = 0;
@@ -44,7 +43,9 @@ let userStatus = '';
                 [
                     {
                         text: 'No',
-                        onPress: () => console.log('Cancel Pressed'),
+                        onPress: () => {
+                            this.setEventStatusOnServer(statusValue);
+                        },
                         style: 'cancel',
                     },
                     {text: 'Yes', onPress: () => {
@@ -62,12 +63,16 @@ let userStatus = '';
                         },
                     };
                     AddCalendarEvent.presentEventCreatingDialog(eventConfig)
-                    .then((eventInfo) => {})
+                    .then((eventInfo) => {this.setEventStatusOnServer(statusValue)})
                     .catch((error) => {console.warn(error);});
                 }}],
                 {cancelable: true},
             );
         }
+    }
+    setEventStatusOnServer = async (statusValue) => {
+        var curItem = await this.props.item;
+        var user_id = this.props.userID;
         fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
         .then(response=>{
             userStatus = statusValue;
@@ -83,7 +88,7 @@ let userStatus = '';
             }
             this.props.refresh();
         })
-    }
+      }
     formatAMPM(date) {
         var hours = date.getHours();
         var minutes = date.getMinutes();
