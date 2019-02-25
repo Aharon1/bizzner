@@ -1,8 +1,10 @@
 import React from "react";
 import MapView, { Polyline, Marker } from "react-native-maps";
+import { TouchableHighlight, Text, StyleSheet } from "react-native";
 import axios from "axios";
 import Icon from "react-native-vector-icons/FontAwesome";
-import {MAPKEY} from '../../Constants'
+import getDirections from "react-native-google-maps-directions";
+import { MAPKEY } from "../../Constants";
 
 export class MapForEventDetail extends React.Component {
   state = {
@@ -11,6 +13,34 @@ export class MapForEventDetail extends React.Component {
       longitude: ""
     },
     polylineCoords: []
+  };
+  handleGetDirections = () => {
+    const { location } = this.props;
+    const {
+      myLocation: { latitude, longitude }
+    } = this.state;
+    const data = {
+      source: {
+        latitude: latitude,
+        longitude: longitude
+      },
+      destination: {
+        latitude: location[1],
+        longitude: location[0]
+      },
+      params: [
+        {
+          key: "travelmode",
+          value: "walking" // may be "driving", "bicycling" or "transit" as well
+        },
+        {
+          key: "dir_action",
+          value: "navigate" // this instantly initializes navigation using the given travel mode
+        }
+      ]
+    };
+
+    getDirections(data);
   };
   componentDidMount() {
     this.getCurrentPosition();
@@ -76,41 +106,65 @@ export class MapForEventDetail extends React.Component {
   };
 
   render() {
-    const { polylineCoords } = this.state;
-    return (
-        polylineCoords.length ? (
-          <MapView
-            style={{ width: "100%", height: 300 }}
-            initialRegion={{
-              latitude: this.state.myLocation.latitude,
-              longitude: this.state.myLocation.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421
-            }}
-          >
-            <Polyline
-              coordinates={this.state.polylineCoords}
-              strokeColor="#33B1FF"
-              strokeWidth={8}
-            />
-            <Marker
-              coordinate={{
-                latitude: this.props.location[1],
-                longitude: this.props.location[0]
-              }}
-            >
-              <Icon name="map-marker" size={40} color="red" />
-            </Marker>
-            <Marker
-              coordinate={{
-                latitude: this.state.myLocation.latitude,
-                longitude: this.state.myLocation.longitude
-              }}
-            >
-              <Icon name="bullseye" size={40} color="grey" />
-            </Marker>
-          </MapView>
-        ) : null
-    );
+    const {
+      polylineCoords,
+      myLocation: { latitude, longitude }
+    } = this.state;
+    const { location } = this.props;
+    return polylineCoords.length ? (
+      <MapView
+        style={{ width: "100%", height: 300, position: "relative" }}
+        initialRegion={{
+          latitude: latitude,
+          longitude: longitude,
+          latitudeDelta: 0.00922,
+          longitudeDelta: 0.00421
+        }}
+      >
+        <Polyline
+          coordinates={polylineCoords}
+          strokeColor="#33B1FF"
+          strokeWidth={8}
+        />
+        <Marker
+          coordinate={{
+            latitude: location[1],
+            longitude: location[0]
+          }}
+        >
+          <Icon name="map-marker" size={40} color="red" />
+        </Marker>
+        <Marker
+          coordinate={{
+            latitude: latitude,
+            longitude: longitude
+          }}
+        >
+          <Icon name="bullseye" size={40} color="grey" />
+        </Marker>
+        <TouchableHighlight
+          onPress={this.handleGetDirections}
+          style={styles.button}
+        >
+          <Text>Get Direction</Text>
+        </TouchableHighlight>
+      </MapView>
+    ) : null;
   }
 }
+
+const styles = StyleSheet.create({
+  button: {
+    position: "absolute",
+    left: "50%",
+    bottom: 0,
+    marginBottom: 20,
+    backgroundColor: "grey",
+    padding: 10,
+    transform: [
+      {
+        translateX: -53
+      }
+    ]
+  }
+});
