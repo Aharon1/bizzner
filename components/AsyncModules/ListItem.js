@@ -37,7 +37,7 @@ let userStatus = '';
         if(this.state.userStatus == statusValue){
             statusValue = 0;
         }
-        if(this.state.userStatus == statusValue){
+        if(this.state.userStatus != statusValue){
             Alert.alert(
                 'Add to Calendar?',
                 'It will remind you',
@@ -104,6 +104,15 @@ let userStatus = '';
         return dateStr;
     }
     componentDidMount(){
+        for(const uid in this.props.item.userIds){
+            if(this.props.item.userIds[uid].user_id == this.props.userID){
+                userStatus=this.props.item.userIds[uid].status;
+                this.setState({userStatus:this.props.item.userIds[uid].status});
+            }
+        }
+        this.setState({eventId:this.props.item.group_id});
+    }
+    componentWillReceiveProps(){
         for(const uid in this.props.item.userIds){
             if(this.props.item.userIds[uid].user_id == this.props.userID){
                 userStatus=this.props.item.userIds[uid].status;
