@@ -29,8 +29,7 @@ export default class EventDetail extends Component {
       profilePicture: "",
       isLoadingProfile: true,
       userData: [],
-      isMapShow: false,
-      EditEventVisible:false,
+      EditEventVisible:false
     };
     this.fetchNewDetails = this._fetchNewDetails.bind(this);
     this.fetchUserData = this._fetchUserData.bind(this);
@@ -206,11 +205,7 @@ export default class EventDetail extends Component {
       })
       .catch(err => {});
   }
-  showMap = () => {
-    this.setState({
-      isMapShow: !this.state.isMapShow
-    });
-  };
+
   async shareThis(){
     try {
         const result = await Share.share({
@@ -393,12 +388,10 @@ export default class EventDetail extends Component {
               </TouchableOpacity>
             )}
           </View>
-          {this.state.isMapShow ? (
             <MapForEventDetail
               style={{ marginBottom: 20 }}
               location={location}
             />
-          ) : null}
         </View>
 
         {
