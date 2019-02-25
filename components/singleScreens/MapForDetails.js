@@ -1,6 +1,6 @@
 import React from "react";
 import MapView, { Polyline, Marker } from "react-native-maps";
-import { TouchableHighlight, Text, StyleSheet } from "react-native";
+import { TouchableHighlight, Text, StyleSheet, View } from "react-native";
 import axios from "axios";
 import Icon from "react-native-vector-icons/FontAwesome";
 import getDirections from "react-native-google-maps-directions";
@@ -108,49 +108,58 @@ export class MapForEventDetail extends React.Component {
   };
 
   render() {
+    console.log(this.props);
     const {
       polylineCoords,
       myLocation: { latitude, longitude }
     } = this.state;
     const { location } = this.props;
     return polylineCoords.length ? (
-      <MapView
-        style={{ width: "100%", height: 300, position: "relative" }}
-        initialRegion={{
-          latitude: latitude,
-          longitude: longitude,
-          latitudeDelta: 0.00922,
-          longitudeDelta: 0.00421
-        }}
-      >
-        <Polyline
-          coordinates={polylineCoords}
-          strokeColor="#33B1FF"
-          strokeWidth={8}
-        />
-        <Marker
-          coordinate={{
-            latitude: location[1],
-            longitude: location[0]
-          }}
-        >
-          <Icon name="map-marker" size={40} color="red" />
-        </Marker>
-        <Marker
-          coordinate={{
+      <View style={{ position: "relative", width: "100%", height: 300 }}>
+        <MapView
+          style={{ width: "100%", height: 300 }}
+          initialRegion={{
             latitude: latitude,
-            longitude: longitude
+            longitude: longitude,
+            latitudeDelta: 0.00922,
+            longitudeDelta: 0.00421
           }}
         >
-          <Icon name="bullseye" size={40} color="grey" />
-        </Marker>
+          <Polyline
+            coordinates={polylineCoords}
+            strokeColor="#33B1FF"
+            strokeWidth={8}
+          />
+          <Marker
+            coordinate={{
+              latitude: location[1],
+              longitude: location[0]
+            }}
+          >
+            <Icon name="map-marker" size={40} color="red" />
+          </Marker>
+          <Marker
+            coordinate={{
+              latitude: latitude,
+              longitude: longitude
+            }}
+          >
+            <Icon name="bullseye" size={40} color="grey" />
+          </Marker>
+        </MapView>
+        <TouchableHighlight
+          onPress={this.props.closeMap}
+          style={styles.closeButton}
+        >
+          <Icon name="close" size={30} color="black" />
+        </TouchableHighlight>
         <TouchableHighlight
           onPress={this.handleGetDirections}
           style={styles.button}
         >
-          <Text>Get Direction</Text>
+          <Text style={{ color: "#8da6d5" }}>Get Direction</Text>
         </TouchableHighlight>
-      </MapView>
+      </View>
     ) : null;
   }
 }
@@ -161,12 +170,17 @@ const styles = StyleSheet.create({
     left: "50%",
     bottom: 0,
     marginBottom: 20,
-    backgroundColor: "grey",
+    backgroundColor: "#2e4d85",
     padding: 10,
     transform: [
       {
         translateX: -53
       }
     ]
+  },
+  closeButton: {
+    position: "absolute",
+    left: "90%",
+    top: "2%"
   }
 });
