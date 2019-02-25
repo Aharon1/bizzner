@@ -179,7 +179,8 @@ let userStatus = '';
                     && 
 
                     <View style={MainStyles.EIAButtonsWrapper}>
-                        <TouchableOpacity style={[MainStyles.EIAButtons,{backgroundColor:'#87d292',borderRadius:0}]}
+                        <TouchableOpacity style={[MainStyles.EIAButtons,{borderRadius:0},
+                        (this.state.userStatus == 2)?{backgroundColor:'#87d292'}:'']}
                         onPress={()=>this.setUserEventStatus(2)}>
                             {
                                 this.state.userStatus == 2 && 
@@ -195,7 +196,8 @@ let userStatus = '';
                             }
                         </TouchableOpacity>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{backgroundColor:'#8da6d5',marginHorizontal:5,borderRadius:0},
+                        MainStyles.EIAButtons,{marginHorizontal:5,borderRadius:0},
+                        (this.state.userStatus == 1)?{backgroundColor:'#8da6d5'}:''
                         
                         ]}
                             onPress={()=>this.setUserEventStatus(1)}
