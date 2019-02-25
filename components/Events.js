@@ -258,6 +258,7 @@ class EventsScreen extends Component{
         }
     }
     _fetchLists(params){
+        this.setState({locationList:[],MyEvents:[]});
         var fetchData = 'http://bizzner.com/app?action=search_location_db&'+params;
         fetch(fetchData,{
             method:'POST',

@@ -34,7 +34,7 @@ let userStatus = '';
         if(this.state.userStatus == statusValue){
             statusValue = 0;
         }
-        if(this.state.userStatus == statusValue){
+        if(this.state.userStatus != statusValue){
             Alert.alert(
                 'Add to Calendar?',
                 'It will remind you',

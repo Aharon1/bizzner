@@ -26,7 +26,7 @@ export default class EventDetail extends Component{
             profilePicture:'',
             isLoadingProfile : true,
             userData:[],
-            EditEventVisible:false
+            EditEventVisible:false,
         }
         this.fetchNewDetails = this._fetchNewDetails.bind(this);
         this.fetchUserData = this._fetchUserData.bind(this);
@@ -59,7 +59,16 @@ export default class EventDetail extends Component{
         .then(response=>response.json())
         .then(res=>{
             console.log(res);
-            this.setState({loading:false,isRefreshing:false,userList:res.users,eventData:res.event_data,curStatus:res.curStatus});
+            this.setState({
+                loading:false,
+                isRefreshing:false,
+                userList:res.users,
+                eventData:res.event_data,
+                curStatus:res.curStatus,
+                NES:res.event_data.event_subject,
+                NEN:res.event_data.event_note,
+                NEUsersCount:res.event_data.usersPlace,
+            });
         })
     }
     formatAMPM(date) {
@@ -215,6 +224,37 @@ export default class EventDetail extends Component{
             ],
             {cancelable: true},
         );
+    }
+    updateEvent = ()=>{
+        this.setState({loading:true});
+        fetch(SERVER_URL+'?action=edit_event&event_id='+this.state.event_id+'&event_subject='+this.state.NES+'&event_note='+this.state.NEN+'&user_place='+this.state.NEUsersCount)
+        .then(res=>{console.log(res);return res.json()})
+        .then(response=>{
+            console.log(response);
+            Toast.show(response.message,Toast.SHORT);
+            this.setState({eventData:response.event_data,EditEventVisible:false,loading:false});
+        })
+        .catch(err=>{
+            console.error(err);
+        })
+    }
+    pickerIos = ()=>{
+        ActionSheetIOS.showActionSheetWithOptions({
+            options: ['Cancel', '5-10','10-15','15-20'],
+            cancelButtonIndex: 0,
+          },
+          (buttonIndex) => {
+            if (buttonIndex === 1) {
+                this.setState({NEUsersCount: 10,no_Attendees:'5-10'})
+            }
+            else if (buttonIndex === 2) {
+                this.setState({NEUsersCount: 15,no_Attendees:'10-15'})
+            }
+            else if (buttonIndex === 3) {
+                this.setState({NEUsersCount: 20,no_Attendees:'15-20'})
+            }
+            
+          });
     }
     render(){
         var behavior = (Platform.OS == 'ios')?'padding':'';
@@ -622,18 +662,18 @@ export default class EventDetail extends Component{
                                 <View style={{paddingHorizontal:15,marginBottom:15}}>
                                     <View style={[MainStyles.createEventFWI]}>
                                         <Icon name="thumb-tack" style={MainStyles.cEFWIIcon}/>
-                                        <TextInput style={MainStyles.cEFWITF} placeholder="Subject" value={this.state.eventData.event_subject} onChangeText={(text)=>{this.setState({NES:text})}} returnKeyType="next" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                                        <TextInput style={MainStyles.cEFWITF} placeholder="Subject" value={this.state.NES} onChangeText={(text)=>{this.setState({NES:text})}} returnKeyType="next" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
                                     </View>
                                     <View style={MainStyles.createEventFWI}>
                                         <Icon name="bell" style={MainStyles.cEFWIIcon}/>
-                                        <TextInput style={MainStyles.cEFWITF} value={this.state.eventData.event_note} placeholder="Note" onChangeText={(text)=>{this.setState({NEN:text})}} returnKeyType="next" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
+                                        <TextInput style={MainStyles.cEFWITF} value={this.state.NEN} placeholder="Note" onChangeText={(text)=>{this.setState({NEN:text})}} returnKeyType="next" placeholderTextColor="#03163a" underlineColorAndroid="transparent"/>
                                     </View>
                                     <View style={MainStyles.createEventFWI}>
                                         <Icon name="users" style={MainStyles.cEFWIIcon}/>
                                         {
                                             Platform.OS == 'android' && 
                                             <Picker
-                                            selectedValue={this.state.eventData.usersPlace}
+                                            selectedValue={this.state.NEUsersCount}
                                             returnKeyType="next"
                                             style={MainStyles.cEFWIPF}
                                             textStyle={{fontSize: 17,fontFamily:'Roboto-Light'}}
@@ -668,7 +708,7 @@ export default class EventDetail extends Component{
                                                 confirmBtnText="Confirm"
                                                 cancelBtnText="Cancel"
                                                 showIcon={false} 
-                                                onDateChange={(date) => {this.setState({NED: date})}}
+                                                //onDateChange={(date) => {this.setState({NED: date})}}
                                                 customStyles={{
                                                     dateInput:MainStyles.cEFWIDF
                                                 }}
@@ -685,7 +725,7 @@ export default class EventDetail extends Component{
                                                 confirmBtnText="Confirm"
                                                 cancelBtnText="Cancel"
                                                 showIcon={false} 
-                                                onDateChange={(time) => {
+                                                /*onDateChange={(time) => {
                                                     var curTime = new Date();
                                                     var choosenDate = this.state.NED.split('/');
                                                     var tim30More = new Date((choosenDate[1]) + "/" + choosenDate[0] + "/" + choosenDate[2] + " " + time+':00');
@@ -706,7 +746,7 @@ export default class EventDetail extends Component{
                                                             }
                                                         },400)
                                                         
-                                                    }}}
+                                                    }}}*/
                                                 customStyles={{
                                                     dateInput:MainStyles.cEFWIDF
                                                 }}
@@ -714,7 +754,7 @@ export default class EventDetail extends Component{
                                         </View>
                                     </View>
                                     <View style={[MainStyles.btnWrapper,{marginBottom:20}]}>
-                                        <TouchableOpacity style={[MainStyles.btnSave]} onPress={this.EditEvent}>
+                                        <TouchableOpacity style={[MainStyles.btnSave]} onPress={()=>this.updateEvent()}>
                                             <Text style={MainStyles.btnSaveText}>Save</Text>
                                         </TouchableOpacity>
                                     </View>
