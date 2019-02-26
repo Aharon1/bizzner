@@ -63,9 +63,6 @@ class MainScreen extends Component {
       }
     );
     const payload = await profile.json();
-
-    console.log(payload);
-
     const {
       emailAddress,
       firstName,

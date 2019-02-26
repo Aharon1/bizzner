@@ -123,8 +123,8 @@ class ProfileScreen extends Component{
     params += '&last_name='+this.state.lastName;
     params += '&user_email='+this.state.emailAddress;
     params += '&country='+this.state.location;
-    params += '&headline='+this.state.firstName;
-    params += '&current_position='+this.state.headline;
+    params += '&headline='+this.state.headline;
+    params += '&current_position='+this.state.position;
     params += '&interests='+encodeURIComponent(interests);
     params += '&notification_on='+this.state.pushOn;
     params += '&gps_on='+this.state.gpsOn;
