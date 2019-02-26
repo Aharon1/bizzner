@@ -59,13 +59,13 @@ class MapScreen extends Component {
                 appState: OK
             });
     }
-    _loadFromCountry =  async ()=>{
+    _loadFromCountry = ()=>{
         fetch(SERVER_URL+'?action=user_country&user_id='+this.state.userID)
             .then(res=>res.json())
             .then(response=>{
                 fetch('https://maps.googleapis.com/maps/api/geocode/json?address='+response.country+'&key='+MAPKEY)
                 .then(res=>res.json())
-                .then(response=>{
+                .then(async response=>{
                     const currentPosition = {
                         latitude:response.results[0].geometry.location.lat,
                         longitude:response.results[0].geometry.location.lng,
