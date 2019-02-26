@@ -49,6 +49,8 @@ PODS:
     - IOSLinkedInAPIFix (>= 2.0.4)
   - React (0.57.7):
     - React/Core (= 0.57.7)
+  - react-native-add-calendar-event (2.3.0):
+    - React
   - react-native-google-maps (0.22.1):
     - Google-Maps-iOS-Utils (= 2.1.0)
     - GoogleMaps (= 2.5.0)
@@ -113,6 +115,7 @@ DEPENDENCIES:
   - Google-Maps-iOS-Utils
   - GoogleMaps
   - LinkedinSwift (~> 1.7.7)
+  - react-native-add-calendar-event (from `../node_modules/react-native-add-calendar-event`)
   - react-native-google-maps (from `../node_modules/react-native-maps`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-maps (from `../node_modules/react-native-maps`)
@@ -150,6 +153,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   React:
     :path: "../node_modules/react-native"
+  react-native-add-calendar-event:
+    :path: "../node_modules/react-native-add-calendar-event"
   react-native-google-maps:
     :path: "../node_modules/react-native-maps"
   react-native-image-picker:
@@ -172,12 +177,13 @@ SPEC CHECKSUMS:
   IOSLinkedInAPIFix: a520fd805a03dade35f42904c7d89ded2a84c752
   LinkedinSwift: bab5724c2b18335233d02fa59a2cb3fbbccd9219
   React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
+  react-native-add-calendar-event: e3415a2d8a782e06899be6fb59427199eba1ab82
   react-native-google-maps: b946d62e25dc66097921ed82520e45b0b081768a
   react-native-image-picker: f42de90075c5b1af53417af927631d909a1a746e
   react-native-maps: 066c2afcc89e18726377bcc685315f989ca22449
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: a24c838ad589ec8be6458603fd348b1e9cd060dd
+PODFILE CHECKSUM: 552a94ed1a9a34366b196b0035aad6d23bc47132
 
-COCOAPODS: 1.6.0
+COCOAPODS: 1.5.3

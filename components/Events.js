@@ -184,14 +184,14 @@ class EventsScreen extends Component{
             this.props.navigation.addListener(
                 'didFocus',
                 payload => {
-                    
+                    this.setState({loading:true,locationList:[],MyEvents:[]});
                     this.refreshList();
                 }
             );
         },200);
     }
     _refreshList(){
-        this.setState({loading:true,locationList:[],MyEvents:[],isRefreshing:true});
+        //this.setState({loading:true,isRefreshing:true});
         var dateNow = new Date();
         var curMonth = ((dateNow.getMonth()+1) >= 10)?(dateNow.getMonth()+1):'0'+(dateNow.getMonth()+1);
         var curDate = (dateNow.getDate() >= 10)?dateNow.getDate():'0'+dateNow.getDate();
