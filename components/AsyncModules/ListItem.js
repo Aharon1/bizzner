@@ -31,11 +31,7 @@ let userStatus = '';
         return s;
     };
     setUserEventStatus =  async (statusValue)=>{
-        
-        
-        if(this.state.userStatus == statusValue){
-            statusValue = 0;
-        }
+        var curItem = await this.props.item;
         if(this.state.userStatus != statusValue){
             Alert.alert(
                 'Add to Calendar?',
@@ -68,6 +64,12 @@ let userStatus = '';
                 }}],
                 {cancelable: true},
             );
+        }
+        else{
+            if(this.state.userStatus == statusValue){
+                statusValue = 0;
+                this.setEventStatusOnServer(statusValue);
+            }
         }
     }
     setEventStatusOnServer = async (statusValue) => {

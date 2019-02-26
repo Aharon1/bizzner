@@ -124,7 +124,7 @@ export default class EventDetail extends Component {
     return dateStr;
   }
   setUserEventStatus = async statusValue => {
-    if(statusValue != this.state.curStatus){
+    if(statusValue != this.state.curStatus && statusValue !=3){
       Alert.alert(
           'Add to Calendar?',
           'It will remind you',
@@ -156,6 +156,12 @@ export default class EventDetail extends Component {
           }}],
           {cancelable: true},
       );
+    }
+    else{
+      if(this.state.userStatus == statusValue){
+          statusValue = 0;
+          this.setEventStatusOnServer(statusValue);
+      }
     }
   };
   setEventStatusOnServer(statusValue){
