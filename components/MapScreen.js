@@ -52,14 +52,14 @@ class MapScreen extends Component {
                 latitudeDelta: 0.05,
                 longitudeDelta: 0.02
             };
-            const events = fetchEvents();
+            const events = await fetchEvents();
             this.setState({
                 currentPosition,
                 events,
                 appState: OK
             });
     }
-    _loadFromCountry = ()=>{
+    _loadFromCountry =  async ()=>{
         fetch(SERVER_URL+'?action=user_country&user_id='+this.state.userID)
             .then(res=>res.json())
             .then(response=>{
@@ -72,7 +72,7 @@ class MapScreen extends Component {
                         latitudeDelta: 0.05,
                         longitudeDelta: 0.02
                     };
-                    const events = fetchEvents();
+                    const events = await fetchEvents();
                     this.setState({
                         currentPosition,
                         events,

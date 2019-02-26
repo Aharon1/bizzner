@@ -211,6 +211,11 @@ export default class EventDetail extends Component {
       isMapShow:false
     })
   }
+  showMap = () =>{
+    this.setState({
+      isMapShow: true
+    })
+  }
 
   async shareThis(){
     try {
@@ -501,12 +506,16 @@ export default class EventDetail extends Component {
                   style={{ width: 40, height: 40 }}
                 />
               </TouchableHighlight>
-              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column',width:'80%'}}>
+              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column',width:'65%'}}>
                 <Text  style={{fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}> {this.state.eventData.group_address.split(" ").splice(0,5).join(" ")}</Text>
                 <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:11,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
                 <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
                 <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>Local Time : {this.state.eventData.event_date_formated}</Text>
               </View>
+              <TouchableHighlight onPress={this.showMap} underlayColor={'transparent'} >
+                <Text>{this.state.isMapShow ? '' : 'Show on map'}</Text>
+              </TouchableHighlight>
+              
               {
                   this.state.userID == this.state.eventData.created_by && 
                   <View style={{
