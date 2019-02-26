@@ -132,7 +132,7 @@ let userStatus = '';
         var d1 = new Date ();
         var d2 = new Date ( d1 );
         d2.setHours ( d1.getHours() + 24 );
-        const Item = this.props.item;
+        let Item = this.props.item;
         var date = Item.event_date+' '+Item.event_time;
         var eventDate = new Date(date);
         var N = 7;

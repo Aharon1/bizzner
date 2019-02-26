@@ -124,8 +124,9 @@ export default class EventDetail extends Component {
     return dateStr;
   }
   setUserEventStatus = async statusValue => {
-    if(statusValue != this.state.curStatus && statusValue !=3){
-      Alert.alert(
+    if(statusValue != this.state.curStatus){
+      if(statusValue != 3){
+        Alert.alert(
           'Add to Calendar?',
           'It will remind you',
           [
@@ -155,13 +156,20 @@ export default class EventDetail extends Component {
               .catch((error) => {console.warn(error);});
           }}],
           {cancelable: true},
-      );
+        );
+      }
+      else{
+        if(this.state.curStatus == statusValue){
+            statusValue = 0;
+        }
+        this.setEventStatusOnServer(statusValue);
+      }
     }
     else{
-      if(this.state.userStatus == statusValue){
+      if(this.state.curStatus == statusValue){
           statusValue = 0;
-          this.setEventStatusOnServer(statusValue);
       }
+      this.setEventStatusOnServer(statusValue);
     }
   };
   setEventStatusOnServer(statusValue){
@@ -171,6 +179,7 @@ export default class EventDetail extends Component {
     .then(response=>{
         this.fetchNewDetails();
         curStatus = statusValue;
+        console.log(statusValue);
         this.setState({curStatus:statusValue});
         if(statusValue == 1){
             Toast.show('You are interested to this event',Toast.SHORT);
@@ -420,8 +429,7 @@ export default class EventDetail extends Component {
                     &&
                     <View style={[MainStyles.EventScreenTabWrapper,{backgroundColor:'#d1dbed'}]}>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{borderRadius:0},
-                        (this.state.curStatus == 2)?{backgroundColor:'#87d292'}:''
+                        MainStyles.EIAButtons,{borderRadius:0,backgroundColor:'#87d292'}
                         ]}
                         onPress={()=>this.setUserEventStatus(2)}
                         >

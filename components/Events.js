@@ -177,11 +177,21 @@ class EventsScreen extends Component{
     }
     componentDidMount(){
         this.setUserId();
-        setTimeout(()=>{
+        /*setTimeout(()=>{
             this.refreshList();
+        },200);*/
+        setTimeout(()=>{
+            this.props.navigation.addListener(
+                'didFocus',
+                payload => {
+                    
+                    this.refreshList();
+                }
+            );
         },200);
     }
     _refreshList(){
+        this.setState({loading:true,locationList:[],MyEvents:[],isRefreshing:true});
         var dateNow = new Date();
         var curMonth = ((dateNow.getMonth()+1) >= 10)?(dateNow.getMonth()+1):'0'+(dateNow.getMonth()+1);
         var curDate = (dateNow.getDate() >= 10)?dateNow.getDate():'0'+dateNow.getDate();
@@ -259,15 +269,14 @@ class EventsScreen extends Component{
         var fetchData = 'http://bizzner.com/app?action=search_location_db&'+params;
         fetch(fetchData,{
             method:'POST',
-            headers:{
+            /*headers:{
                 'Content-Type':'application/json',
                 'Accept':'application/json',
                 'Cache-Control': 'no-cache'
-            }
+            }*/
         })
         .then(res=>res.json())
         .then(response=>{
-            console.log(response);
             var results = response.results;
             var myEvResults = response.myEvents;
             const placesArray = [];
@@ -546,6 +555,7 @@ class EventsScreen extends Component{
                             <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID} refresh={this.refreshList}/>
                             )}
                         keyExtractor={(item) => item.key}
+                        extraData={this.state.locationList}
                         refreshControl={
                             <RefreshControl
                                 refreshing={this.state.isRefreshing}
@@ -566,6 +576,7 @@ class EventsScreen extends Component{
                             <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID} refresh={this.refreshList}/>
                             )}
                         keyExtractor={(item) => item.key}
+                        extraData={this.state.MyEvents}
                         refreshControl={
                             <RefreshControl
                               refreshing={this.state.isRefreshing}
@@ -579,7 +590,7 @@ class EventsScreen extends Component{
                     />
                 }
                 {
-                    this.state.locationList.length == 0 && 
+                    this.state.locationList.length == 0 && !this.state.isRefreshing &&
                     this.state.isCurrentTab == 'all-events' && 
                     <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
                         <Text style={{fontFamily:'Roboto-Medium',color:'#2e4d85',fontSize:18}}>No events right now!</Text>
