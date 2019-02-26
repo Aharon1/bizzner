@@ -52,7 +52,7 @@ class MapScreen extends Component {
                 latitudeDelta: 0.05,
                 longitudeDelta: 0.02
             };
-            const events = fetchEvents();
+            const events = await fetchEvents();
             this.setState({
                 currentPosition,
                 events,
@@ -79,10 +79,8 @@ class MapScreen extends Component {
                         appState: OK
                     });
                 })
-                .catch()
-            }).catch()
-            
-        
+                .catch();
+            }).catch();
     }
     _loadMap = async () => {
         Permissions.check('location', { type: 'always' }).then(response => {

@@ -179,8 +179,7 @@ let userStatus = '';
                     && 
 
                     <View style={MainStyles.EIAButtonsWrapper}>
-                        <TouchableOpacity style={[MainStyles.EIAButtons,{borderRadius:0},
-                        (this.state.userStatus == 2)?{backgroundColor:'#87d292'}:'']}
+                        <TouchableOpacity style={[MainStyles.EIAButtons,{borderRadius:0,backgroundColor:'#87d292'}]}
                         onPress={()=>this.setUserEventStatus(2)}>
                             {
                                 this.state.userStatus == 2 && 

@@ -13,6 +13,7 @@ export const fetchEvents = async () => {
     .then(res=>{
         if(res.code == 200){
             const markers= res.body;
+            console.log(markers);
             return markers.map(el => ({
                 ...el,
                 group_lat: +el.group_lat,
