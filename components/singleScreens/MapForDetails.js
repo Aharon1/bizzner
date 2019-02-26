@@ -151,7 +151,7 @@ export class MapForEventDetail extends React.Component {
           onPress={this.props.closeMap}
           style={styles.closeButton}
         >
-          <Icon name="close" size={30} color="black" />
+          <Icon name="close" size={30} color="#2e4d85" />
         </TouchableHighlight>
         <TouchableHighlight
           onPress={this.handleGetDirections}
