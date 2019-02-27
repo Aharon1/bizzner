@@ -115,9 +115,9 @@ export class MapForEventDetail extends React.Component {
     } = this.state;
     const { location } = this.props;
     return polylineCoords.length ? (
-      <View style={{ position: "relative", width: "100%", height: 180 }}>
+      <View style={{ position: "relative", width: "100%", height: 160 }}>
         <MapView
-          style={{ width: "100%", height: 170 }}
+          style={{ width: "100%", height: 155 }}
           initialRegion={{
             latitude: latitude,
             longitude: longitude,
@@ -151,7 +151,7 @@ export class MapForEventDetail extends React.Component {
           onPress={this.props.closeMap}
           style={styles.closeButton}
         >
-          <Icon name="close" size={30} color="#2e4d85" />
+          <Icon name="close" size={20} color="#2e4d85" />
         </TouchableHighlight>
         <TouchableHighlight
           onPress={this.handleGetDirections}

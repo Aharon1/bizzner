@@ -536,14 +536,14 @@ export default class EventDetail extends Component {
               <TouchableHighlight style={{ width: 40, height: 40, marginRight: 10 }} onPress={this.showMap}>
                 <ProgressiveImage
                   source={{ uri: this.state.eventData.photoUrl }}
-                  style={{ width: 40, height: 40 }}
+                  style={{ width: 60, height: 60 }}
                 />
               </TouchableHighlight>
-              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column',width:'55%'}}>
-                <Text  style={{fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}> {this.state.eventData.group_address.split(" ").splice(0,5).join(" ")}</Text>
-                <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:11,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
-                <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
-                <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>Local Time : {this.state.eventData.event_date_formated}</Text>
+              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column',width:'62%'}}>
+                <Text  style={{fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}> {this.state.eventData.group_address.split(" ").splice(0,5).join(" ")}</Text>
+                <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:13,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
+                <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
+                <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>Local Time : {this.state.eventData.event_date_formated}</Text>
               </View>
               <TouchableHighlight onPress={this.showMap} underlayColor={'transparent'} >
                   <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>{this.state.isMapShow ? '' : 'Show on map'}</Text>
