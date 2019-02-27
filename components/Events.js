@@ -49,7 +49,7 @@ class EventsScreen extends Component{
             isFocusedSC:false,
             isSelectedCity:'',
             isCurrentTab:'all-events',
-            isRefreshing:false,
+            isRefreshing:true,
             isSearchOpen:false,
             noFilterData:false,
             isFiltering:false,
@@ -177,10 +177,10 @@ class EventsScreen extends Component{
     }
     componentDidMount(){
         this.setUserId();
-        /*setTimeout(()=>{
-            this.refreshList();
-        },200);*/
         setTimeout(()=>{
+            this.refreshList();
+        },200);
+        /*setTimeout(()=>{
             this.props.navigation.addListener(
                 'didFocus',
                 payload => {
@@ -188,7 +188,7 @@ class EventsScreen extends Component{
                     this.refreshList();
                 }
             );
-        },200);
+        },200);*/
     }
     _refreshList(){
         //this.setState({loading:true,isRefreshing:true});

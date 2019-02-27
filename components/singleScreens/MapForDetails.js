@@ -115,9 +115,9 @@ export class MapForEventDetail extends React.Component {
     } = this.state;
     const { location } = this.props;
     return polylineCoords.length ? (
-      <View style={{ position: "relative", width: "100%", height: 300 }}>
+      <View style={{ position: "relative", width: "100%", height: 180 }}>
         <MapView
-          style={{ width: "100%", height: 300 }}
+          style={{ width: "100%", height: 170 }}
           initialRegion={{
             latitude: latitude,
             longitude: longitude,
@@ -151,13 +151,13 @@ export class MapForEventDetail extends React.Component {
           onPress={this.props.closeMap}
           style={styles.closeButton}
         >
-          <Icon name="close" size={30} color="#2e4d85" />
+          <Icon name="close" size={20} color="#2e4d85" />
         </TouchableHighlight>
         <TouchableHighlight
           onPress={this.handleGetDirections}
           style={styles.button}
         >
-          <Text style={{ color: "#8da6d5" }}>Get Direction</Text>
+          <Text style={{ color: "#FFFFFF" }}>Directions</Text>
         </TouchableHighlight>
       </View>
     ) : null;
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    left: "90%",
+    left: "95%",
     top: "2%"
   }
 });
