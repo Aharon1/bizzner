@@ -88,7 +88,7 @@ let userStatus = '';
             else if(statusValue ==3){
                 Toast.show('You have ignored this event',Toast.SHORT);
             }
-            this.props.refresh();
+            //this.props.refresh();
         })
       }
     formatAMPM(date) {
@@ -120,13 +120,13 @@ let userStatus = '';
         this.setState({eventId:this.props.item.group_id});
     }
     componentWillReceiveProps(){
-        for(const uid in this.props.item.userIds){
+        /*for(const uid in this.props.item.userIds){
             if(this.props.item.userIds[uid].user_id == this.props.userID){
                 userStatus=this.props.item.userIds[uid].status;
                 this.setState({userStatus:this.props.item.userIds[uid].status});
             }
         }
-        this.setState({eventId:this.props.item.group_id});
+        this.setState({eventId:this.props.item.group_id});*/
     }
     render(){
         var d1 = new Date ();

@@ -20,7 +20,6 @@ import Permissions from 'react-native-permissions'
 import Toast from 'react-native-simple-toast';
 import Geolocation from 'react-native-geolocation-service';
 class EventsScreen extends Component{
-    
     constructor(props){
         super(props);
         var curDate = new Date();
@@ -277,6 +276,7 @@ class EventsScreen extends Component{
         })
         .then(res=>res.json())
         .then(response=>{
+            console.log(response);
             var results = response.results;
             var myEvResults = response.myEvents;
             const placesArray = [];

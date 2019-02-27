@@ -7,17 +7,27 @@ class SplashScreen extends Component{
     constructor(props) {
         super(props);
         this.state={loading:false}
+        this.backButtonListener = null;
+        this.currentRouteName = 'Splash';
+        this.lastBackButtonPress = null;
         //this.authenticateSession();
     }
     async saveDetails(key,value){
         await AsyncStorage.setItem(key,value);
     }
     componentDidMount() { // B
-        this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+        /*this.backHandler = BackAndroid.addEventListener('hardwareBackPress', () => {
             BackHandler.exitApp(); // works best when the goBack is async
             return true;
-          });
-        if (Platform.OS === 'android') {
+          });*/
+        if (Platform.OS == 'android') {
+            this.backButtonListener = BackHandler.addEventListener('hardwareBackPress', () => {
+                if (this.currentRouteName !== 'Splash') {
+                    return false;
+                }
+                BackHandler.exitApp();
+                return true;
+            });
           Linking.getInitialURL().then(url => {
             this.checkToken(url)
           });
@@ -31,7 +41,9 @@ class SplashScreen extends Component{
         }
     }
     componentWillUnmount() { // C
-        this.backHandler.remove();
+        if (Platform.OS == 'android') {
+            this.backButtonListener.remove();
+        }
         Linking.removeEventListener('url', this.handleOpenURL);
     }
     handleOpenURL = (event) => { // D
@@ -134,5 +146,4 @@ class SplashScreen extends Component{
         );
     }
 }
-
 export default SplashScreen;
