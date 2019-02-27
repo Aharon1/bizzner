@@ -190,7 +190,7 @@ class EventsScreen extends Component{
         },200);*/
     }
     _refreshList(){
-        //this.setState({loading:true,isRefreshing:true});
+        this.setState({locationList:[],isRefreshing:true});
         var dateNow = new Date();
         var curMonth = ((dateNow.getMonth()+1) >= 10)?(dateNow.getMonth()+1):'0'+(dateNow.getMonth()+1);
         var curDate = (dateNow.getDate() >= 10)?dateNow.getDate():'0'+dateNow.getDate();
@@ -555,7 +555,7 @@ class EventsScreen extends Component{
                             <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID} refresh={this.refreshList}/>
                             )}
                         keyExtractor={(item) => item.key}
-                        extraData={this.state.locationList}
+                        //extraData={this.state.locationList}
                         refreshControl={
                             <RefreshControl
                                 refreshing={this.state.isRefreshing}
@@ -621,7 +621,7 @@ class EventsScreen extends Component{
                         this.setState({ enableScrollViewScroll: true });
                     }}
                     >
-                        <KeyboardAvoidingView behavior={behavior}>
+                        <KeyboardAvoidingView >
                             <ScrollView 
                             keyboardShouldPersistTaps={'handled'}
                             contentContainerStyle={{

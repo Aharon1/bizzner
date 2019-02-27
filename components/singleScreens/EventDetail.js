@@ -76,6 +76,7 @@ export default class EventDetail extends Component {
     )
       .then(response => response.json())
       .then(res => {
+        
         this.setState({
           loading: false,
           isRefreshing: false,
@@ -86,6 +87,15 @@ export default class EventDetail extends Component {
           NEN:res.event_data.event_note,
           NEUsersCount:res.event_data.usersPlace,
         });
+        if(res.event_data.usersPlace == 10){
+          this.setState({no_Attendees:'5-10'});
+        }
+        else if(res.event_data.usersPlace == 15){
+          this.setState({no_Attendees:'10-15'});
+        }
+        else if(res.event_data.usersPlace == 20){
+          this.setState({no_Attendees:'15-20'});
+        }
       });
   }
   formatAMPM(date) {
@@ -406,9 +416,9 @@ export default class EventDetail extends Component {
               >
                 <Icon
                   name="comments"
-                  style={[MainStyles.tabItemIcon, { fontSize: 14 }]}
+                  style={[MainStyles.tabItemIcon, { color:'#22A54D', fontSize: 14 }]}
                 />
-                <Text style={[MainStyles.tabItemIcon, { fontSize: 14 }]}>
+                <Text style={[MainStyles.tabItemIcon, {color:'#4165C2', fontSize: 14 }]}>
                   Event chat
                 </Text>
               </TouchableOpacity>
@@ -535,9 +545,10 @@ export default class EventDetail extends Component {
                 <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
                 <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:11,flexWrap: 'wrap'}}>Local Time : {this.state.eventData.event_date_formated}</Text>
               </View>
-              <TouchableHighlight onPress={this.showMap} underlayColor={'transparent'}  >
-                <Text style={{fontSize:12}}>{this.state.isMapShow ? '' : 'Show on map'}</Text>
+              <TouchableHighlight onPress={this.showMap} underlayColor={'transparent'} >
+                  <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>{this.state.isMapShow ? '' : 'Show on map'}</Text>
               </TouchableHighlight>
+
               
               {
                   this.state.userID == this.state.eventData.created_by && 

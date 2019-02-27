@@ -15,7 +15,7 @@ export class Modal extends PureComponent {
     return (
       <View
         style={{
-          width: 290,
+          width: 300,
           height: 300,
           paddingBottom: 20,
           borderRadius: 10,
@@ -39,7 +39,7 @@ export class Modal extends PureComponent {
         </View>
         <View
           style={{
-            paddingHorizontal: 15,
+            paddingHorizontal: 10,
             paddingVertical: 10
           }}
         >
@@ -76,40 +76,42 @@ export class Modal extends PureComponent {
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",
-              marginTop: 10
+              marginTop: 10,
+              paddingHorizontal:10
             }}
           >
-             {/*<View
+             <View
               style={{
                 flexDirection: "row",
                 justifyContent: "flex-start",
                 alignItems: "center"
               }}
             >
-              <Icon
+              {/* <Icon
                 name="clock-o"
                 style={{ marginRight: 5, color: "#8da6d5" }}
                 size={14}
-              /> */}
-              {/*<Text
+              />  */}
+            <Text
                 style={{
                   fontFamily: "Roboto-Regular",
                   fontSize: 14,
                   color: "#8da6d5"
                 }}
               >Local Time:
-                 {formatDate(eventData.event_date,eventData.event_time)}{" "}
+                 {/* {formatDate(new Date(eventData.event_date,eventData.event_time))}{" "}
                 -{" "}
-                {formatAMPM(eventData.event_date,eventData.event_time
-                )} 
+                {formatAMPM(new Date(eventData.event_date,eventData.event_time
+                ))}  */}
                 {
                   eventData.event_date_formated
                 }
               </Text>
-            </View>*/}
+            </View>
             <TouchableOpacity
               onPress={goToEvent}
               style={{
+                marginLeft:5,
                 borderRadius: 20,
                 paddingVertical: 5,
                 paddingHorizontal: 10,
