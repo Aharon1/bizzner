@@ -72,7 +72,7 @@ class MainScreen extends Component {
       pictureUrls,
       positions
     } = payload;
-
+    
     var params = "firstName=" + encodeURIComponent(firstName) + "&";
     params += "lastName=" + encodeURIComponent(lastName) + "&";
     params += "emailAddress=" + encodeURIComponent(emailAddress) + "&";

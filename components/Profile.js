@@ -282,6 +282,7 @@ class ProfileScreen extends Component{
       });
   }
   render() {
+    var behavior = (Platform.OS == 'ios')?'padding':'';
     return (
       <SafeAreaView style={MainStyles.normalContainer}>
         <Loader loading={this.state.loading} />
@@ -337,7 +338,7 @@ class ProfileScreen extends Component{
             </View>
         </View>
         {/*Body Section*/}
-        <KeyboardAvoidingView  style={{flex:1}} enabled>
+        <KeyboardAvoidingView  style={{flex:1}} enabled behavior={behavior}>
           <ScrollView style={MainStyles.profileBody}>
           
               <View style={MainStyles.inputFieldWithIcon}>

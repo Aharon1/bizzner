@@ -621,7 +621,7 @@ class EventsScreen extends Component{
                         this.setState({ enableScrollViewScroll: true });
                     }}
                     >
-                        <KeyboardAvoidingView >
+                        <KeyboardAvoidingView enabled behavior={behavior}>
                             <ScrollView 
                             keyboardShouldPersistTaps={'handled'}
                             contentContainerStyle={{
