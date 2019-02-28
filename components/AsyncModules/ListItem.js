@@ -16,7 +16,8 @@ let userStatus = '';
             userStatus:'',
             eventId:'',
             userID:this.props.userID,
-            curItem:this.props.item
+            curItem:this.props.item,
+            currentUsersCount:this.props.item.usersCount
         }
     }
     checkEvent = ()=>{
@@ -78,7 +79,11 @@ let userStatus = '';
         fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
         .then(response=>{
             userStatus = statusValue;
-            this.setState({userStatus:statusValue});
+            
+            if(this.state.userStatus != 2 && this.state.userStatus != 1){
+                this.setState({currentUsersCount:(this.state.currentUsersCount+1),userStatus});
+            }
+            this.setState({userStatus});
             if(statusValue == 1){
                 Toast.show('You are interested to this event',Toast.SHORT);
             }
@@ -88,8 +93,12 @@ let userStatus = '';
             else if(statusValue ==3){
                 Toast.show('You have ignored this event',Toast.SHORT);
             }
+            else{
+                this.setState({currentUsersCount:(this.state.currentUsersCount-1)});
+            }
+            
             //this.props.refresh();
-        })
+        });
       }
     formatAMPM(date) {
         var hours = date.getHours();
@@ -169,7 +178,7 @@ let userStatus = '';
                         </View>
                         <View style={MainStyles.EITWAction}>
                             <Image source={require('../../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
-                            <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({this.state.curItem.usersCount}) </Text>
+                            <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({this.state.currentUsersCount}) </Text>
                             <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',marginLeft:8}}>Info</Text>
                         </View>
                     </View>
