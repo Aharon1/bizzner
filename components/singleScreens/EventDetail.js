@@ -241,7 +241,11 @@ export default class EventDetail extends Component {
       isMapShow: true
     })
   }
-
+  utcDateToString = (momentInUTC) => {
+    let s = moment.utc(momentInUTC).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+    // console.warn(s);
+    return s;
+};
   async shareThis(){
     try {
         const result = await Share.share({
