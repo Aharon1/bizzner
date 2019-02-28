@@ -5,7 +5,7 @@ import axios from "axios";
 import Icon from "react-native-vector-icons/FontAwesome";
 import getDirections from "react-native-google-maps-directions";
 import { MAPKEY } from "../../Constants";
-
+import Geolocation from 'react-native-geolocation-service';
 export class MapForEventDetail extends React.Component {
   state = {
     myLocation: {
@@ -64,17 +64,27 @@ export class MapForEventDetail extends React.Component {
     });
   };
   getCurrentPosition = () => {
-    navigator.geolocation.getCurrentPosition(res => {
-      this.setState(
-        {
-          myLocation: {
-            latitude: res.coords.latitude,
-            longitude: res.coords.longitude
-          }
-        },
-        this.getPolyline
-      );
-    });
+    Geolocation.getCurrentPosition(
+      (position) => {
+          let Latitude = position.coords.latitude;
+          let Longitude = position.coords.longitude;
+          this.setState(
+            {
+              myLocation: {
+                latitude: Latitude,
+                longitude: Longitude
+              }
+            },
+            this.getPolyline
+          );
+      },
+      (error) => {
+          // See error code charts below.
+          console.log(error.code, error.message);
+          
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+  );
   };
   decode = (t, e) => {
     for (

@@ -41,7 +41,7 @@ class SignIn extends Component{
                 this.saveDetails('isUserLoggedin','true');
                 this.saveDetails('userID',response.body.ID);
                 Toast.show('LoggedIn successfully', Toast.SHORT);
-                if(Platform.OS =='android'){
+                /*if(Platform.OS =='android'){
                     RequestPermssions.Location();
                 }
                 else{
@@ -52,10 +52,10 @@ class SignIn extends Component{
                         }
                     });
                 }
-                setTimeout(()=>{
+                setTimeout(()=>{*/
                     this.setState({loading:false});
                     this.props.navigation.navigate('Current Events');
-                  },1500)
+                  //},1500)
             }
             else{
                 Toast.show(response.message, Toast.SHORT);
