@@ -34,37 +34,42 @@ let userStatus = '';
     setUserEventStatus =  async (statusValue)=>{
         var curItem = await this.props.item;
         if(this.state.userStatus != statusValue){
-            Alert.alert(
-                'Add to Calendar?',
-                'It will remind you',
-                [
-                    {
-                        text: 'No',
-                        onPress: () => {
-                            this.setEventStatusOnServer(statusValue);
+            if(statusValue != 3){
+                Alert.alert(
+                    'Add to Calendar?',
+                    'It will remind you',
+                    [
+                        {
+                            text: 'No',
+                            onPress: () => {
+                                this.setEventStatusOnServer(statusValue);
+                            },
+                            style: 'cancel',
                         },
-                        style: 'cancel',
-                    },
-                    {text: 'Yes', onPress: () => {
-                    var m = moment(new Date(curItem.unix_event));
-                    var mUTC = m.utc();
-                    const eventConfig = {
-                        title:curItem.event_subject,
-                        startDate: this.utcDateToString(mUTC),
-                        endDate: this.utcDateToString(moment.utc(mUTC).add(1, 'hours')),
-                        notes: 'tasty!',
-                        navigationBarIOS: {
-                        tintColor: '#416bb9',
-                        backgroundColor: '#8da6d5',
-                        titleColor: '#2e4d85',
-                        },
-                    };
-                    AddCalendarEvent.presentEventCreatingDialog(eventConfig)
-                    .then((eventInfo) => {this.setEventStatusOnServer(statusValue)})
-                    .catch((error) => {console.warn(error);});
-                }}],
-                {cancelable: true},
-            );
+                        {text: 'Yes', onPress: () => {
+                        var m = moment(new Date(curItem.unix_event));
+                        var mUTC = m.utc();
+                        const eventConfig = {
+                            title:curItem.event_subject,
+                            startDate: this.utcDateToString(mUTC),
+                            endDate: this.utcDateToString(moment.utc(mUTC).add(1, 'hours')),
+                            notes: 'tasty!',
+                            navigationBarIOS: {
+                            tintColor: '#416bb9',
+                            backgroundColor: '#8da6d5',
+                            titleColor: '#2e4d85',
+                            },
+                        };
+                        AddCalendarEvent.presentEventCreatingDialog(eventConfig)
+                        .then((eventInfo) => {this.setEventStatusOnServer(statusValue)})
+                        .catch((error) => {console.warn(error);});
+                    }}],
+                    {cancelable: true},
+                );
+            }
+            else{
+                this.setEventStatusOnServer(statusValue);
+            }
         }
         else{
             if(this.state.userStatus == statusValue){
@@ -92,6 +97,7 @@ let userStatus = '';
             }
             else if(statusValue ==3){
                 Toast.show('You have ignored this event',Toast.SHORT);
+                this.setState({currentUsersCount:(this.state.currentUsersCount-1)});
             }
             else{
                 this.setState({currentUsersCount:(this.state.currentUsersCount-1)});

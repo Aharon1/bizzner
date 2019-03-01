@@ -189,7 +189,6 @@ export default class EventDetail extends Component {
     .then(response=>{
         this.fetchNewDetails();
         curStatus = statusValue;
-        console.log(statusValue);
         this.setState({curStatus:statusValue});
         if(statusValue == 1){
             Toast.show('You are interested to this event',Toast.SHORT);
@@ -552,8 +551,6 @@ export default class EventDetail extends Component {
               <TouchableHighlight onPress={this.showMap} underlayColor={'transparent'} >
                   <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>{this.state.isMapShow ? '' : 'Show on map'}</Text>
               </TouchableHighlight>
-
-              
               {
                   this.state.userID == this.state.eventData.created_by && 
                   <View style={{
@@ -637,7 +634,7 @@ export default class EventDetail extends Component {
                       this.startPrivateChat(item.user_id);
                     }}
                   >
-                    <Icon name="comments" style={MainStyles.ChatIcon} />
+                    <Icon name="comment" style={MainStyles.ChatIcon} />
                   </TouchableOpacity>
                 )}
               </View>
