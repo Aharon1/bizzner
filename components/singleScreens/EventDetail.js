@@ -637,7 +637,7 @@ export default class EventDetail extends Component {
                       this.startPrivateChat(item.user_id);
                     }}
                   >
-                    <Icon name="comments" style={MainStyles.ChatIcon} />
+                    <Icon name="comment" style={MainStyles.ChatIcon} />
                   </TouchableOpacity>
                 )}
               </View>
