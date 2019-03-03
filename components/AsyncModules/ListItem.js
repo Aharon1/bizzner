@@ -34,6 +34,7 @@ let userStatus = '';
     setUserEventStatus =  async (statusValue)=>{
         var curItem = await this.props.item;
         if(this.state.userStatus != statusValue){
+            if(statusValue != 3){
             Alert.alert(
                 'Add to Calendar?',
                 'It will remind you',
@@ -66,12 +67,15 @@ let userStatus = '';
                 {cancelable: true},
             );
         }
-        else{
-            if(this.state.userStatus == statusValue){
+        else
+        {
+            if(this.state.userStatus == statusValue)
+            {
                 statusValue = 0;
-                this.setEventStatusOnServer(statusValue);
             }
-        }
+                this.setEventStatusOnServer(statusValue);
+         }
+        } 
     }
     setEventStatusOnServer = async (statusValue) => {
         var curItem = await this.props.item;
