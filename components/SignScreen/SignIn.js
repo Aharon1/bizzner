@@ -10,6 +10,7 @@ import { SERVER_URL } from '../../Constants';
 import NotifService from '../AsyncModules/NotifService';
 import Permissions from 'react-native-permissions';
 import RequestPermssions from '../AsyncModules/Permission';
+import PushNotification from 'react-native-push-notification';
 class SignIn extends Component{
     constructor(props){
         super(props);
@@ -23,7 +24,25 @@ class SignIn extends Component{
     async saveDetails(key,value){
         await AsyncStorage.setItem(key,value);
       }
+    getToken = (onToken)=>{
+        PushNotification.configure({
+            onRegister: onToken,
+            onNotification: function(notification) {
+                console.log('NOTIFICATION:', notification );
+                //notification.finish(PushNotificationIOS.FetchResult.NoData);
+            },
+            senderID: "71450108131",
+            permissions: {
+                alert: true,
+                badge: true,
+                sound: true
+            },
+            popInitialNotification: true,
+            requestPermissions: true,
+        })
+    }
     _signIn = ()=>{
+        var deviceToken = '';
         if(this.state.emailAddress == ''){
             Toast.show('Email address should not be blank',Toast.SHORT)
             return false;
@@ -32,8 +51,11 @@ class SignIn extends Component{
             Toast.show('Password should not be blank',Toast.SHORT)
             return false;
         }
+        this.getToken(this.sendDataToServer.bind(this));
+    }
+    sendDataToServer(token){
         this.setState({loading:true});
-        fetch(SERVER_URL+'?action=login_user&lg_email='+this.state.emailAddress+'&lg_pass='+this.state.password)
+        fetch(SERVER_URL+'?action=login_user&lg_email='+this.state.emailAddress+'&lg_pass='+this.state.password+'&device_token='+token.token+'&platform='+Platform.OS)
         .then(res=>res.json())
         .then(response=>{
             console.log(response);
@@ -41,21 +63,10 @@ class SignIn extends Component{
                 this.saveDetails('isUserLoggedin','true');
                 this.saveDetails('userID',response.body.ID);
                 Toast.show('LoggedIn successfully', Toast.SHORT);
-                /*if(Platform.OS =='android'){
-                    RequestPermssions.Location();
-                }
-                else{
-                    Permissions.check('location').then(response => {
-                        if(response == 'undetermined'){
-                            Permissions.request('location').then(response => {
-                            })
-                        }
-                    });
-                }
-                setTimeout(()=>{*/
+                setTimeout(()=>{
                     this.setState({loading:false});
                     this.props.navigation.navigate('Current Events');
-                  //},1500)
+                },1500)
             }
             else{
                 Toast.show(response.message, Toast.SHORT);
@@ -64,7 +75,7 @@ class SignIn extends Component{
         })
         .catch(err=>{
             console.log(err);
-        })
+        });
     }
     render(){
         return(
