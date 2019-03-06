@@ -23,8 +23,8 @@ let userStatus = '';
     checkEvent = ()=>{
         const {longitude, latitude } = this.state.curItem;
         const location = [+longitude, +latitude];
-        
-        this.props.navigation.navigate('EventDetail',{event_id:this.state.eventId, location});
+        if (this.state.curItem.usersCount < this.state.curItem.usersPlace)
+            this.props.navigation.navigate('EventDetail',{event_id:this.state.eventId, location});
     }
     utcDateToString = (momentInUTC) => {
         let s = moment.utc(momentInUTC).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
