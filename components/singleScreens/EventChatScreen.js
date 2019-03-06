@@ -55,7 +55,6 @@ class EventChatScreen extends Component{
     _readMsgs = async ()=>{
         fetch(SERVER_URL+'?action=readMsg&chat_id='+this.state.event_id+'&isgrp=1&userId='+this.state.userID)
         .then(response=>{
-            console.log(response);
         })
         .catch(err=>{
             console.log(err);
@@ -157,7 +156,7 @@ class EventChatScreen extends Component{
                 this.scrollToTheBottom();
             }
             fetch( SERVER_URL + '?action=msgSend&user_id='+this.state.userID+'&grp_id='+this.state.event_id+'&is_grp_msg=1&msg_text=' + message)
-            .then((response) => response.json())
+            .then((response) => {console.log(response);return response.json()})
             .then((responseData) => {
             })
             .done();
