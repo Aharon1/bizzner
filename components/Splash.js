@@ -54,6 +54,7 @@ class SplashScreen extends Component{
             console.log(url);
             var fullUrl = url.split('/');
             var tokenString = fullUrl[fullUrl.length - 2];
+            console.log(tokenString);
             if(tokenString == 'token'){
                 var token = fullUrl[fullUrl.length - 1];
                 fetch(SERVER_URL+'?action=check-token&token='+token)
@@ -73,6 +74,10 @@ class SplashScreen extends Component{
                 .catch(err=>{
                     console.log(err)
                 })
+            }
+            else if(tokenString == 'event'){
+                var eventId = fullUrl[fullUrl.length - 1];
+                this.props.navigation.navigate('EventDetail',{event_id:eventId,});
             }
             else{
                 this.authenticateSession()   

@@ -33,6 +33,9 @@
             <data android:scheme="http"
                 android:host="bizzner.com"
                 android:pathPrefix="/check-email" />
+                <data android:scheme="http"
+                android:host="bizzner.com"
+                android:pathPrefix="/event" />
             <!-- note that the leading "/" is required for pathPrefix-->
         </intent-filter>
         <intent-filter>
