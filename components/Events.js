@@ -170,6 +170,9 @@ class EventsScreen extends Component{
                 CreateEventVisible:false,
                 NES:'',
                 NEN:'',
+                isLocationSet:false,
+                curLocation:{},
+                SLValue:false
             });
             this._refreshList();
         })
@@ -178,7 +181,9 @@ class EventsScreen extends Component{
         this.setUserId();
         setTimeout(()=>{
             this.refreshList();
+            
         },200);
+        //setInterval(()=>{this.refreshList();},2000);
         /*setTimeout(()=>{
             this.props.navigation.addListener(
                 'didFocus',
