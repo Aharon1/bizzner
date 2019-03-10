@@ -51,7 +51,7 @@ export class MapForEventDetail extends React.Component {
     const mode = "car";
     const origin = [latitude, longitude];
     const destination = [location[1], location[0]];
-    const APIKEY = "AIzaSyBWr5bPPGdOBU9ce8RgchL5sc_U9OC1yL8";
+    const APIKEY = MAPKEY;//"AIzaSyBWr5bPPGdOBU9ce8RgchL5sc_U9OC1yL8";
     const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${APIKEY}&mode=${mode}`;
     axios.get(url).then(resp => {
       if (resp.data.routes.length) {
