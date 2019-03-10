@@ -543,8 +543,8 @@ export default class EventDetail extends Component {
                   style={{ width: 60, height: 60 }}
                 />
               </TouchableHighlight>
-              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column',width:'62%'}}>
-                <Text  style={{fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}> {this.state.eventData.group_address.split(" ").splice(0,5).join(" ")}</Text>
+              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column',width:'50%'}}>
+                <Text  style={{fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>{this.state.eventData.group_address.split(" ").splice(0,5).join(" ")}</Text>
                 <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:13,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
                 <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
                 <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>Local Time : {this.state.eventData.event_date_formated}</Text>

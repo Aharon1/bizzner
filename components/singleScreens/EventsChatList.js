@@ -176,7 +176,7 @@ class EventChatListScreen extends Component{
                                             </Text> */}
                                             <Image
                                                 source={require("../../assets/close-button-large.png")}
-                                                style={{ width: 20, height: 20 }}
+                                                style={{ width: 25, height: 25 }}
                                             />
                                         </TouchableOpacity>
                                     </View>
