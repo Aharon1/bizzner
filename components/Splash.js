@@ -21,12 +21,13 @@ class SplashScreen extends Component{
             return true;
           });*/
         if (Platform.OS == 'android') {
-            this.backButtonListener = BackHandler.addEventListener('hardwareBackPress', () => {
-                if (this.currentRouteName !== 'Splash') {
+            this.backButtonListener = BackHandler.addEventListener('hardwareBackPress', (event) => {
+                console.log(event);
+                /*if (this.currentRouteName !== 'Splash') {
                     return false;
                 }
                 BackHandler.exitApp();
-                return true;
+                return true;*/
             });
           Linking.getInitialURL().then(url => {
             this.checkToken(url)
@@ -41,9 +42,17 @@ class SplashScreen extends Component{
         }
     }
     componentWillUnmount() { // C
-        if (Platform.OS == 'android') {
-            this.backButtonListener.remove();
-        }
+        /*if (Platform.OS == 'android') {
+            //this.backButtonListener.remove();
+            BackHandler.removeEventListener('hardwareBackPress', ()=>{
+                console.log(this.currentRouteName);
+                if (this.currentRouteName !== 'Splash') {
+                    return false;
+                }
+                BackHandler.exitApp();
+                return true;
+            });
+        }*/
         Linking.removeEventListener('url', this.handleOpenURL);
     }
     handleOpenURL = (event) => { // D

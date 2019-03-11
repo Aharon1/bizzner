@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, TextInput,ImageBackground, 
     Platform,FlatList,ActivityIndicator,AsyncStorage,AlertIOS,KeyboardAvoidingView,
-    RefreshControl,Picker,ScrollView,SafeAreaView,ActionSheetIOS
+    RefreshControl,Picker,ScrollView,SafeAreaView,ActionSheetIOS,BackHandler
 } from 'react-native';
 import { DrawerActions,NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -56,6 +56,7 @@ class EventsScreen extends Component{
             keyword:'',
             isGPSGranted:''
         }
+        this.currentRouteName = 'Main';
         this.viewabilityConfig = {
             waitForInteraction: true,
             viewAreaCoveragePercentThreshold: 95
@@ -183,6 +184,16 @@ class EventsScreen extends Component{
             this.refreshList();
             
         },200);
+        /*if (Platform.OS == 'android') {
+            BackHandler.addEventListener('hardwareBackPress', () => {
+                console.log(this.currentRouteName);
+                if (this.currentRouteName !== 'Splash') {
+                    return false;
+                }
+                BackHandler.exitApp();
+                return true;
+            });
+        }*/
         //setInterval(()=>{this.refreshList();},2000);
         /*setTimeout(()=>{
             this.props.navigation.addListener(
@@ -204,7 +215,7 @@ class EventsScreen extends Component{
         var curSeconds = (dateNow.getSeconds() >= 10)?dateNow.getSeconds():'0'+dateNow.getSeconds();
         var curHours = (dateNow.getHours() >= 10)?dateNow.getHours():'0'+dateNow.getHours();
         var curTime = curHours+':'+curMinute+':'+curSeconds;
-        if(this.state.isGPSGranted != ''){
+        if(this.state.isGPSGranted == ''){
             Permissions.check('location', { type: 'always' }).then(response => {
                 if(response == "authorized"){
                     this.setState({isGPSGranted:true});
@@ -281,7 +292,6 @@ class EventsScreen extends Component{
         })
         .then(res=>res.json())
         .then(response=>{
-            console.log(response);
             var results = response.results;
             var myEvResults = response.myEvents;
             const placesArray = [];
@@ -427,6 +437,19 @@ class EventsScreen extends Component{
     showSearchOption = ()=>{
         this.setState({isSearchOpen:true});
         setTimeout(()=>{this.searchInput.focus();},200);
+    }
+    componentWillUnmount(){
+        /*if (Platform.OS == 'android') {
+            //this.backButtonListener.remove();
+            BackHandler.removeEventListener('hardwareBackPress', ()=>{
+                console.log(this.currentRouteName);
+                if (this.currentRouteName !== 'Splash') {
+                    return false;
+                }
+                BackHandler.exitApp();
+                return true;
+            });
+        }*/
     }
     render(){
         var behavior = (Platform.OS == 'ios')?'padding':'';

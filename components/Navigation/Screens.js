@@ -14,6 +14,7 @@ import EventsScreen from '../Events';
 import Logout from '../AsyncModules/Logout';
 import PrivateMsgScreen from '../PrivateMsg';
 import HistoryPageScreen from '../History';
+import ComplainPageScreen from '../Complain';
 function createEmptyScreen(label, icon) {
     return class extends React.Component {
         static navigationOptions = {
@@ -78,7 +79,7 @@ function createScreen(label, icon, Component) {
 }
 
 export const SettingsScreen = createEmptyScreen('Settings', 'cog');
-export const ComplainScreen = createEmptyScreen('Complain', 'pen');
+export const ComplainScreen = createScreen('Complain', 'pen',ComplainPageScreen);
 export const HistoryScreen = createScreen('Events History', 'history',HistoryPageScreen);
 export const EditProfileScreen = createScreen('Edit Profile', 'user', ProfileScreen);
 export const MessagesScreen = createScreen('Private Messages', 'comment',PrivateMsgScreen);

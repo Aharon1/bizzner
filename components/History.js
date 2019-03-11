@@ -138,7 +138,12 @@ class HistoryPageScreen extends Component{
                                     (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#FFFFFF'}:'']}>
                                     <TouchableOpacity style={[
                                         MainStyles.EventItem,
-                                    ]}>
+                                    ]} onPress={() =>
+                                        this.props.navigation.navigate("Event Chat", {
+                                          event_id: item.event_id,
+                                          note: item.event_note
+                                        })
+                                      }>
                                         <View style={MainStyles.EventItemImageWrapper}>
                                             <ProgressiveImage source={{uri:item.photoUrl}} style={{ width: 70, height: 70 }} resizeMode="cover"/>
                                         </View>
