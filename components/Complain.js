@@ -46,8 +46,10 @@ class ComplainPageScreen extends Component{
                 <Loader loading={this.state.loading} />
                 {/*Header Section*/}
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                    <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
-                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>COMPLAIN</Text>
+                    <TouchableOpacity style={{ alignItems:'center',paddingLeft: 12,flexDirection:'row' }} onPress={() => this.props.navigation.goBack() }>
+                        <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
+                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>COMPLAIN</Text>
+                    </TouchableOpacity>
                 </View>
                 {/*Body Section*/}
                 <KeyboardAvoidingView  style={{flex:1}} enabled behavior={behavior}>

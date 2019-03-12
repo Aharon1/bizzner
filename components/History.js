@@ -113,8 +113,10 @@ class HistoryPageScreen extends Component{
             <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                    <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
-                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>EVENTS HISTORY</Text>
+                    <TouchableOpacity style={{ alignItems:'center',paddingLeft: 12,flexDirection:'row' }} onPress={() => this.props.navigation.goBack() }>
+                        <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
+                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>EVENTS HISTORY</Text>
+                    </TouchableOpacity>
                 </View>
                 {
                     this.state.locationList && 

@@ -46,9 +46,9 @@ const Drawer = createDrawerNavigator({
     [`Complain`]: {
         screen: ComplainScreen,
     },
-    [`Settings`]: {
+    /*[`Settings`]: {
         screen: SettingsScreen,
-    },
+    },*/
     [`Logout`]: {
         screen:LogoutScreen
     },

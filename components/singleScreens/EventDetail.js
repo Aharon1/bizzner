@@ -86,6 +86,8 @@ export default class EventDetail extends Component {
           NES:res.event_data.event_subject,
           NEN:res.event_data.event_note,
           NEUsersCount:res.event_data.usersPlace,
+          NED:res.event_data.event_date,
+          NET:res.event_data.event_time
         });
         if(res.event_data.usersPlace == 10){
           this.setState({no_Attendees:'5-10'});
@@ -148,7 +150,9 @@ export default class EventDetail extends Component {
                   style: 'cancel',
               },
               {text: 'Yes', onPress: () => {
+                console.log(new Date(this.state.eventData.unix_event));
               var m = moment(new Date(this.state.eventData.unix_event));
+              console.log(m);
               var mUTC = m.utc();
               const eventConfig = {
                   title:this.state.eventData.event_subject,
@@ -249,11 +253,11 @@ export default class EventDetail extends Component {
   async shareThis(){
     try {
         const result = await Share.share({
-            message:this.state.eventData.event_subject+' http://bizzner.com/event/'+this.state.event_id,
+            message:this.state.eventData.event_subject+'  http://bizzner.com/event/'+this.state.event_id+' ',
         },{
             dialogTitle: 'Share '+this.state.eventData.event_subject,
         })
-  
+        console.log(result);
         if (result.action === Share.sharedAction) {
           if (result.activityType) {
             // shared with activity type of result.activityType
@@ -978,14 +982,14 @@ export default class EventDetail extends Component {
                                     <Icon name="calendar" style={MainStyles.cEFWIIcon}/>
                                     <DatePicker
                                         style={{width: '75%'}}
-                                        date={this.state.eventData.event_date}
+                                        date={this.state.NED}
                                         mode="date"
                                         placeholder="Select Date"
                                         format="DD/MM/YYYY"
                                         confirmBtnText="Confirm"
                                         cancelBtnText="Cancel"
                                         showIcon={false} 
-                                        //onDateChange={(date) => {this.setState({NED: date})}}
+                                        onDateChange={(date) => {this.setState({NED: date})}}
                                         customStyles={{
                                             dateInput:MainStyles.cEFWIDF
                                         }}
@@ -995,14 +999,14 @@ export default class EventDetail extends Component {
                                     <Icon name="clock-o" style={MainStyles.cEFWIIcon}/>
                                     <DatePicker
                                         style={{width: '75%'}}
-                                        date={this.state.eventData.event_time}
+                                        date={this.state.NET}
                                         mode="time"
                                         placeholder="Select Time"
                                         format="HH:mm"
                                         confirmBtnText="Confirm"
                                         cancelBtnText="Cancel"
                                         showIcon={false} 
-                                        /*onDateChange={(time) => {
+                                        onDateChange={(time) => {
                                             var curTime = new Date();
                                             var choosenDate = this.state.NED.split('/');
                                             var tim30More = new Date((choosenDate[1]) + "/" + choosenDate[0] + "/" + choosenDate[2] + " " + time+':00');
@@ -1023,7 +1027,7 @@ export default class EventDetail extends Component {
                                                     }
                                                 },400)
                                                 
-                                            }}}*/
+                                            }}}
                                         customStyles={{
                                             dateInput:MainStyles.cEFWIDF
                                         }}
