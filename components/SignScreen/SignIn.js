@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, View, TouchableOpacity,Image,ScrollView,
+import {Text, View, TouchableOpacity,Image,ScrollView,PushNotificationIOS,
     TextInput,KeyboardAvoidingView,Platform,Alert,SafeAreaView,
     AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -7,9 +7,6 @@ import Loader from '../Loader';
 import MainStyles from '../StyleSheet';
 import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
-import NotifService from '../AsyncModules/NotifService';
-import Permissions from 'react-native-permissions';
-import RequestPermssions from '../AsyncModules/Permission';
 import PushNotification from 'react-native-push-notification';
 class SignIn extends Component{
     constructor(props){
@@ -25,21 +22,30 @@ class SignIn extends Component{
         await AsyncStorage.setItem(key,value);
       }
     getToken = (onToken)=>{
-        PushNotification.configure({
-            onRegister: onToken,
-            onNotification: function(notification) {
-                console.log('NOTIFICATION:', notification );
-                //notification.finish(PushNotificationIOS.FetchResult.NoData);
-            },
-            senderID: "71450108131",
-            permissions: {
-                alert: true,
-                badge: true,
-                sound: true
-            },
-            popInitialNotification: true,
-            requestPermissions: true,
-        })
+        if(Platform.OS == 'ios'){
+            console.log(PushNotificationIOS);
+            this.sendDataToServer({token:''});
+            PushNotificationIOS.addEventListener('register',(token)=>{
+                console.log(token);
+            })
+        }
+        else{
+            PushNotification.configure({
+                onRegister: onToken,
+                onNotification: function(notification) {
+                    console.log('NOTIFICATION:', notification );
+                    //notification.finish(PushNotificationIOS.FetchResult.NoData);
+                },
+                senderID: "71450108131",
+                permissions: {
+                    alert: true,
+                    badge: true,
+                    sound: true
+                },
+                popInitialNotification: true,
+                requestPermissions: true,
+            });
+        }
     }
     _signIn = ()=>{
         var deviceToken = '';
@@ -51,10 +57,11 @@ class SignIn extends Component{
             Toast.show('Password should not be blank',Toast.SHORT)
             return false;
         }
+        this.setState({loading:true});
         this.getToken(this.sendDataToServer.bind(this));
     }
     sendDataToServer(token){
-        this.setState({loading:true});
+        console.log(token);
         fetch(SERVER_URL+'?action=login_user&lg_email='+this.state.emailAddress+'&lg_pass='+this.state.password+'&device_token='+token.token+'&platform='+Platform.OS)
         .then(res=>res.json())
         .then(response=>{
@@ -82,10 +89,10 @@ class SignIn extends Component{
             <SafeAreaView style={{backgroundColor:'#FFF',flex:1}}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                    <TouchableOpacity style={{ paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
+                    <TouchableOpacity style={{ paddingLeft: 12,flexDirection:'row' }} onPress={() => this.props.navigation.goBack() }>
                         <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
+                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>SIGN IN</Text>
                     </TouchableOpacity>
-                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>SIGN IN</Text>
                 </View>
                 <KeyboardAvoidingView style={{
                     flex:1,
