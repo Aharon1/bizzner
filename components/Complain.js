@@ -60,13 +60,7 @@ class ComplainPageScreen extends Component{
                             <TextInput style={MainStyles.ifWITI} placeholder="Subject" placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.subject} onChangeText={(text)=>{this.setState({subject:text})}}/>
                         </View>
                         <View style={MainStyles.inputFieldWithIcon}>
-                            <TextInput style={{
-                                flex: 2,paddingRight: 10,
-                                textAlign:'left',
-                                paddingLeft: 0,
-                                fontSize:18,
-                                fontFamily:'Roboto-Light'
-                            }} placeholder="Message" multiline={true} placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.message} numberOfLines = {6} onChangeText={(text)=>{this.setState({message:text})}}/>
+                            <TextInput style={MainStyles.ifWITI} placeholder="Message" multiline={true} placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.message} numberOfLines = {6} onChangeText={(text)=>{this.setState({message:text})}}/>
                         </View>
                         <View style={[MainStyles.btnWrapper,{flex:1,justifyContent:'flex-end',flexDirection: 'row'}]}>
                             <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.sendComplain();}}>
