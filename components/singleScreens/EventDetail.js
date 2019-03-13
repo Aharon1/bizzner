@@ -87,7 +87,7 @@ export default class EventDetail extends Component {
           NEN:res.event_data.event_note,
           NEUsersCount:res.event_data.usersPlace,
           NED:res.event_data.event_date,
-          NET:res.event_data.event_time
+          NET:res.event_data.event_time,
         });
         if(res.event_data.usersPlace == 10){
           this.setState({no_Attendees:'5-10'});
@@ -302,7 +302,7 @@ export default class EventDetail extends Component {
   }
   updateEvent = ()=>{
       this.setState({loading:true});
-      fetch(SERVER_URL+'?action=edit_event&event_id='+this.state.event_id+'&event_subject='+this.state.NES+'&event_note='+this.state.NEN+'&user_place='+this.state.NEUsersCount)
+      fetch(SERVER_URL+'?action=edit_event&event_id='+this.state.event_id+'&event_subject='+this.state.NES+'&event_note='+this.state.NEN+'&user_place='+this.state.NEUsersCount+'&event_date='+this.state.NED+'&event_time='+this.state.NET)
       .then(res=>{console.log(res);return res.json()})
       .then(response=>{
           console.log(response);
@@ -541,13 +541,13 @@ export default class EventDetail extends Component {
                         elevation:5,
                         shadowColor:'#232323',
                         justifyContent: 'space-between'}}>
-              <TouchableHighlight style={{ width: 40, height: 40, marginRight: 10 }} onPress={this.showMap}>
+              <TouchableHighlight style={{ width: 35, height: 35, marginRight: 7 }} onPress={this.showMap}>
                 <ProgressiveImage
                   source={{ uri: this.state.eventData.photoUrl }}
-                  style={{ width: 60, height: 60 }}
+                  style={{ width: 40, height: 40 }}
                 />
               </TouchableHighlight>
-              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column',width:'50%'}}>
+              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column',width:'63%'}}>
                 <Text  style={{fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>{this.state.eventData.group_address.split(" ").splice(0,5).join(" ")}</Text>
                 <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:13,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
                 <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
@@ -580,7 +580,16 @@ export default class EventDetail extends Component {
                   </View>
               }
           </View>
+
         }
+
+            <View
+                style={{
+                  borderBottomColor: 'Blue',
+                  borderBottomWidth: 2,
+                }}
+              />
+
 
         {this.state && this.state.userList && this.state.userList.length > 0 && (
           <FlatList

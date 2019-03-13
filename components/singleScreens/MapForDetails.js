@@ -1,6 +1,6 @@
 import React from "react";
 import MapView, { Polyline, Marker } from "react-native-maps";
-import { TouchableHighlight, Text, StyleSheet, View } from "react-native";
+import { TouchableHighlight,TouchableOpacity, Text, StyleSheet, View, Image } from "react-native";
 import axios from "axios";
 import Icon from "react-native-vector-icons/FontAwesome";
 import getDirections from "react-native-google-maps-directions";
@@ -125,9 +125,9 @@ export class MapForEventDetail extends React.Component {
     } = this.state;
     const { location } = this.props;
     return polylineCoords.length ? (
-      <View style={{ position: "relative", width: "100%", height: 160 }}>
+      <View style={{ position: "relative", width: "100%", height: 140 }}>
         <MapView
-          style={{ width: "100%", height: 155 }}
+          style={{ width: "100%", height: 135 }}
           initialRegion={{
             latitude: latitude,
             longitude: longitude,
@@ -161,14 +161,13 @@ export class MapForEventDetail extends React.Component {
           onPress={this.props.closeMap}
           style={styles.closeButton}
         >
-          <Icon name="close" size={20} color="#2e4d85" />
+          <Icon name="close" size={15} color="#2e4d85" />
         </TouchableHighlight>
-        <TouchableHighlight
-          onPress={this.handleGetDirections}
-          style={styles.button}
-        >
-          <Text style={{ color:'#FFFFFF',fontFamily:'Roboto-Light',fontSize:15 }}>Directions</Text>
-        </TouchableHighlight>
+      
+          <TouchableOpacity onPress={this.handleGetDirections} style={[{justifyContent:'center',alignItems:'center'}]}>
+                 <Image source={require('../../assets/directions2.png')} style={[{width:80,height:30, position: "absolute",left: "75%",bottom: 5 }]}/>
+          </TouchableOpacity>       
+           
       </View>
     ) : null;
   }

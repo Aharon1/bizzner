@@ -15,5 +15,7 @@ include ':react-native-linkedin-sdk'
 project(':react-native-linkedin-sdk').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-linkedin-sdk/android')
 include ':react-native-gesture-handler'
 project(':react-native-gesture-handler').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-gesture-handler/android')
+include ':react-native-uploader'
+project(':react-native-uploader').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-uploader/android')
 include ':linkedin-sdk'
 include ':app'

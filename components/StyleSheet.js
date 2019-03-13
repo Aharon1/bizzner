@@ -463,7 +463,7 @@ const MainStyles = StyleSheet.create({
         elevation:3,
     },
     UserListItem:{
-        padding:15,
+        padding:10,
         borderBottomColor:'#8da6d4',
         borderBottomWidth:1,
         flexDirection:'row',
@@ -478,6 +478,7 @@ const MainStyles = StyleSheet.create({
         width: 90, 
         height: 90,
         borderWidth: 3,
+        borderRadius:15,
         borderColor: '#FFF'
     },
     userListItemTextWrapper:{
