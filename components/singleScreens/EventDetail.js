@@ -541,20 +541,23 @@ export default class EventDetail extends Component {
                         elevation:5,
                         shadowColor:'#232323',
                         justifyContent: 'space-between'}}>
-              <TouchableHighlight style={{ width: 35, height: 35, marginRight: 7 }} onPress={this.showMap}>
+           { /*  <TouchableHighlight style={{ width: 35, height: 35, marginRight: 7 }} onPress={this.showMap}>
                 <ProgressiveImage
                   source={{ uri: this.state.eventData.photoUrl }}
                   style={{ width: 40, height: 40 }}
                 />
-              </TouchableHighlight>
-              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column',width:'63%'}}>
+               
+              </TouchableHighlight>   */ }
+
+               
+              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column',width:'70%'}}>
                 <Text  style={{fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>{this.state.eventData.group_address.split(" ").splice(0,5).join(" ")}</Text>
                 <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:13,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
                 <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
                 <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>Local Time : {this.state.eventData.event_date_formated}</Text>
               </View>
               <TouchableHighlight onPress={this.showMap} underlayColor={'transparent'} >
-                  <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>{this.state.isMapShow ? '' : 'Show on map'}</Text>
+                  <Text style={{color:'#000000',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>{this.state.isMapShow ? '' : 'Show on map'}</Text>
               </TouchableHighlight>
 
               
@@ -622,7 +625,7 @@ export default class EventDetail extends Component {
                       ]}
                     >
                       <Icon name="user" style={MainStyles.ULITWActionIcon} />
-                      <Text style={MainStyles.ULITWActionText}>OWNER</Text>
+                      <Text style={MainStyles.ULITWActionText}>    OWNER     </Text>
                     </View>
                   )}
                   {item.status == "1" && (
@@ -633,7 +636,7 @@ export default class EventDetail extends Component {
                       ]}
                     >
                       <Icon name="star" style={MainStyles.ULITWActionIcon} />
-                      <Text style={MainStyles.ULITWActionText}>INTRESTED</Text>
+                      <Text style={MainStyles.ULITWActionText}>INTERESTED</Text>
                     </View>
                   )}
                   {item.status == "2" && (

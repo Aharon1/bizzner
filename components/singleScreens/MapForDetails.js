@@ -125,9 +125,9 @@ export class MapForEventDetail extends React.Component {
     } = this.state;
     const { location } = this.props;
     return polylineCoords.length ? (
-      <View style={{ position: "relative", width: "100%", height: 140 }}>
+      <View style={{ position: "relative", width: "100%", height: 135 }}>
         <MapView
-          style={{ width: "100%", height: 135 }}
+          style={{ width: "100%", height: 130 }}
           initialRegion={{
             latitude: latitude,
             longitude: longitude,
@@ -137,8 +137,8 @@ export class MapForEventDetail extends React.Component {
         >
           <Polyline
             coordinates={polylineCoords}
-            strokeColor="#33B1FF"
-            strokeWidth={8}
+            strokeColor="#0066ff"
+            strokeWidth={2}
           />
           <Marker
             coordinate={{
