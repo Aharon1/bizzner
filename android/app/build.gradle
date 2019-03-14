@@ -137,7 +137,6 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-uploader')
     compile project(':react-native-add-calendar-event')
     compile project(':react-native-geolocation-service')
     compile project(':react-native-image-picker')

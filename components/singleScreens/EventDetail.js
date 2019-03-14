@@ -609,7 +609,7 @@ export default class EventDetail extends Component {
                   onPress={() => this.fetchUserData(item.user_id)}
                 >
                   <ProgressiveImage
-                    source={{ uri: item.picUrl }}
+                    source={{ uri: item.originalPic }}
                     style={MainStyles.userListItemIWImage}
                     resizeMode="cover"
                   />
@@ -764,7 +764,7 @@ export default class EventDetail extends Component {
                       }}
                     >
                       <ProgressiveImage
-                        source={{ uri: this.state.userData.user_pic_thumb }}
+                        source={{ uri: this.state.userData.user_pic_full }}
                         style={{ width: 120, height: 120 }}
                       />
                     </View>

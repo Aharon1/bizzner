@@ -6,7 +6,8 @@ import Loader from '../Loader';
 import MainStyles from '../StyleSheet';
 import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
-import countryList from 'react-select-country-list'
+import countryList from 'react-select-country-list';
+import ImagePicker from 'react-native-image-picker';
 class SignUp extends Component{
     constructor(props){
         super(props);
@@ -23,7 +24,8 @@ class SignUp extends Component{
             password:'',
             confirmPassword:'',
             CountryList:countryList().getLabels(),
-            cOptions:cOptionsList
+            cOptions:cOptionsList,
+            profilePicture:''
         }
     }
     togglePicOption = () => {  
@@ -120,6 +122,62 @@ class SignUp extends Component{
             console.error(err);
         })
     }
+    takePicture = async function() {
+        var options = {
+          maxWidth:1024,
+          maxHeight:1024,
+          mediaType:'photo',
+          quality:1,
+          allowsEditing:true,
+          noData:false,
+          storageOptions:{
+            skipBackup:true,
+            cameraRoll:false,
+          }
+        }
+        ImagePicker.launchCamera(options, (response) => {
+          console.log(response);
+          // Same code as in above section!
+          if(!response.didCancel){
+            this.setState({ imageData:{
+              name:response.fileName,
+              type:response.type,
+              uri:response.uri,
+              base64:response.data,
+              size:response.fileSize
+            },profilePicture:response.uri  });
+          }
+        this.togglePicOption();
+        });
+    };
+    picPhoto = ()=>{
+        //if(RequestPermssions.Camera()){
+        var options = {
+            maxWidth:1024,
+            maxHeight:1024,
+            mediaType:'photo',
+            quality:1,
+            allowsEditing:true,
+            noData:false,
+            storageOptions:{
+                skipBackup:true,
+                cameraRoll:false,
+            }
+        }
+        ImagePicker.launchImageLibrary(options, (response) => {
+        // Same code as in above section!
+        if(!response.didCancel){
+            this.setState({ imageData:{
+            name:response.fileName,
+            type:response.type,
+            uri:response.path,
+            base64:response.data,
+            size:response.fileSize
+            },profilePicture:response.uri  });
+        }
+        this.togglePicOption();
+        });
+    };
     render(){
         var behavior = (Platform.OS == 'ios')?'padding':'';
         return(
@@ -133,9 +191,16 @@ class SignUp extends Component{
                     {/*Header Profile Picture Section*/}
                     <View style={MainStyles.pHeadPicWrapper}>
                         <View style={MainStyles.pHeadPic}>
-                            <View>
-                                <Icon name="image" size={40} style={{color:'#FFF'}}/>
-                            </View>
+                            {
+                                this.state.profilePicture == ''
+                                && 
+                                <Image source={require('../../assets/dummy.jpg')} style={{width:130,height:130}}/>
+                            }
+                            {
+                                this.state.profilePicture != ''
+                                && 
+                                <Image source={{uri:this.state.profilePicture}} style={{width:130,height:130}}/>
+                            }
                         </View>
                         <View style={MainStyles.pHeadPicEditBtnWrapper}>
                             <TouchableOpacity  style={MainStyles.pHeadPicEditBtn} onPress={this.togglePicOption}>
@@ -148,10 +213,10 @@ class SignUp extends Component{
                                 outputRange: [600, 0]
                                 })
                             }]}>
-                            <TouchableOpacity style={MainStyles.pHPOBtn} onPress={this.picPhoto}>
+                            <TouchableOpacity style={MainStyles.pHPOBtn} onPress={()=>{this.takePicture()}}>
                                 <Text>Take a Photo</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={MainStyles.pHPOBtn} onPress={()=>{alert('This');}}>
+                            <TouchableOpacity style={MainStyles.pHPOBtn} onPress={()=>{this.picPhoto()}}>
                                 <Text>Pick Photo</Text>
                             </TouchableOpacity>
                             </Animated.View>

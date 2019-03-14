@@ -15,7 +15,6 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.airbnb.android.react.maps.MapsPackage;
-import com.burlap.filetransfer.FileTransferPackage;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,7 +37,6 @@ public class MainApplication extends Application implements ReactApplication {
             new VectorIconsPackage(),
             new RNLinkedInSessionManagerPackage(),
             new RNGestureHandlerPackage(),
-            new FileTransferPackage(),
             new MapsPackage()
       );
     }

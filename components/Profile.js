@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {SERVER_URL} from '../Constants';
 import { Text, View, Image, TouchableOpacity, ScrollView,
   TextInput,KeyboardAvoidingView,Animated,DeviceEventEmitter,
-  AsyncStorage,SafeAreaView,ActionSheetIOS,Picker,Platform,NativeModules
+  AsyncStorage,SafeAreaView,ActionSheetIOS,Picker,Platform
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
@@ -16,9 +16,6 @@ import PushNotification from 'react-native-push-notification';
 import FormData from 'FormData';
 import ImagePicker from 'react-native-image-picker';
 import countryList from 'react-select-country-list';
-//import RNUploader from 'react-native-uploader';
-//var RNUploader = require('react-native-uploader');
-
 class ProfileScreen extends Component{
   constructor(props){
     super(props);
@@ -49,13 +46,6 @@ class ProfileScreen extends Component{
   }
   componentDidMount(){
     this.get_usersDetails();
-    DeviceEventEmitter.addListener('RNUploaderProgress', (data)=>{
-      let bytesWritten = data.totalBytesWritten;
-      let bytesTotal   = data.totalBytesExpectedToWrite;
-      let progress     = data.progress;
-      
-      console.log( "upload progress: " + progress + "%",bytesWritten, bytesTotal);
-    });
   }
   get_usersDetails = async ()=>{
     var UserID = await AsyncStorage.getItem('userID');
@@ -74,13 +64,12 @@ class ProfileScreen extends Component{
             location : body.country,
             headline : body.headline,
             position : body.current_position,
-            profilePicture : body.user_pic_thumb,
+            profilePicture : body.originalPic,
             interests:body.interests,
             InterestsTags:response.interestTags,
             usersInteretsIds:response.usersInteretsIds
           });
         }
-        else{}
       })
     },200)
   }
@@ -126,7 +115,7 @@ class ProfileScreen extends Component{
     
   }
   _saveProfile = ()=>{
-    var FileUpload = NativeModules.FileUpload;
+    
     var interests = this.state.usersInteretsIds.join(',');
     var fetchData = SERVER_URL+'?action=save_profile';
     var params = '&ID='+this.state.UserID;
@@ -139,59 +128,38 @@ class ProfileScreen extends Component{
     params += '&interests='+encodeURIComponent(interests);
     params += '&notification_on='+this.state.pushOn;
     params += '&gps_on='+this.state.gpsOn;
-    let opts = {
-      url: fetchData,
-      files: [{
-        name: 'file[]',
-        filename: this.state.imageData.name,
-        filepath: this.state.imageData.base64,  // image from camera roll/assets library
-        filetype: this.state.imageData.type,
-        filesize: this.state.imageData.size,
-      }], 
-      method: 'POST',                             // optional: POST or PUT
-      //headers: { 'Accept': 'application/json' },  // optional
-      //params: params,                   // optional
-    };
-    var obj = {
-      uploadUrl: fetchData,
-      method: 'POST', // default 'POST',support 'POST' and 'PUT'
-      headers: {
-        'Accept': 'application/json',
-      },
-      // fields: {
-      //     'hello': 'world',
-      // },
-      files: [
-        {
-          name: 'file[]',
-          filename: this.state.imageData.name,
-          filepath: this.state.imageData.base64,  // image from camera roll/assets library
-          filetype: this.state.imageData.type,
-          filesize: this.state.imageData.size,
-        },
-      ]
-    };
-    console.log(obj);
-    FileUpload.upload(obj, function(err, result) {
-      console.log('upload:', err, result);
-    })
-    /*RNUploader.upload( opts, (err, response) => {
+    this.setState({loading:true});
+    fetch(SERVER_URL+'/media-upload.php', {
+      method: 'POST',
+      headers:{'Content-Type':'application/json'},
+      mode: 'cors',
+      cache: 'default',
+      body: JSON.stringify({
+        file:this.state.imageData,
+        ID:this.state.UserID,
+        first_name:this.state.firstName,
+        last_name:this.state.lastName,
+        user_email:this.state.emailAddress,
+        country:this.state.location,
+        headline:this.state.headline,
+        current_position:this.state.position,
+        interests:this.state.interests,
+        notification_on:this.state.pushOn,
+        gps_on:this.state.gpsOn,
+      })
+    }).then((res) => res.json())
+    .then(response=>{
       console.log(response);
-      if( err ){
-        console.log(err);
-        return;
-      }
-    
-      let status = response.status;
-      let responseString = response.data;
-      let json = JSON.parse( responseString );
-  
-      console.log('upload complete with status ' + status);
-    });*/
-    /*var formData = new FormData();
-    //formData.append("userPic", this.state.base64Image);
-    formData.append('file', this.state.imageData);
-    formData.append('gps_on_file', this.state.gpsOn);*/
+      Toast.show(response.message,Toast.SHORT);
+      this.setState({loading:false});
+      this.props.navigation.navigate('Current Events');
+    })
+    .catch(err=>{
+      console.log(err)
+    });/* (progressEvent) => {
+      const progress = progressEvent.loaded / progressEvent.total;
+      console.log(progress);
+    })*/
     /*let data = new FormData();
     data.append('action', 'ADD');
     data.append('param', 0);
@@ -252,8 +220,8 @@ class ProfileScreen extends Component{
   picPhoto = ()=>{
     //if(RequestPermssions.Camera()){
       var options = {
-        maxWidth:400,
-        maxHeight:400,
+        maxWidth:1024,
+        maxHeight:1024,
         mediaType:'photo',
         quality:1,
         allowsEditing:true,
@@ -289,10 +257,10 @@ class ProfileScreen extends Component{
   }
   takePicture = async function() {
     var options = {
-      maxWidth:400,
-      maxHeight:400,
+      maxWidth:1024,
+      maxHeight:1024,
       mediaType:'photo',
-      quality:0.1,
+      quality:1,
       allowsEditing:true,
       noData:false,
       storageOptions:{
@@ -307,7 +275,7 @@ class ProfileScreen extends Component{
         this.setState({ imageData:{
           name:response.fileName,
           type:response.type,
-          uri:response.path,
+          uri:response.uri,
           base64:response.data,
           size:response.fileSize
         },profilePicture:response.uri  });
