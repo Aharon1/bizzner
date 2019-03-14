@@ -98,7 +98,32 @@ class SignUp extends Component{
         params += '&rg_job='+job;
         params += '&rg_device='+Platform.OS;
         params += '&rg_from=normal';
-
+        fetch(SERVER_URL+'/media-upload-register.php', {
+            method: 'POST',
+            headers:{'Content-Type':'application/json'},
+            mode: 'cors',
+            cache: 'default',
+            body: JSON.stringify({
+              file:this.state.imageData,
+              rg_fname:firstName,
+              rg_lname:emailAddress,
+              rg_pass:password,
+              rg_country:country,
+              rg_job:job,
+              rg_device:Platform.OS,
+              rg_from:'normal',
+              
+            })
+        }).then((res) => res.json())
+        .then(response=>{
+        console.log(response);
+        Toast.show(response.message,Toast.SHORT);
+        this.setState({loading:false});
+        this.props.navigation.navigate('Current Events');
+        })
+        .catch(err=>{
+        console.log(err)
+        });
         fetch(SERVER_URL+'?action=register_user'+params)
         .then(res=>res.json())
         .then(response=>{

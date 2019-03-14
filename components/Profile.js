@@ -56,6 +56,7 @@ class ProfileScreen extends Component{
       .then(response=>{
         if(response.code == 200){
           var body = response.body;
+          console.log(body);
           this.setState({
             loading:false,
             firstName:body.first_name,
@@ -64,7 +65,7 @@ class ProfileScreen extends Component{
             location : body.country,
             headline : body.headline,
             position : body.current_position,
-            profilePicture : body.originalPic,
+            profilePicture : body.user_pic_full,
             interests:body.interests,
             InterestsTags:response.interestTags,
             usersInteretsIds:response.usersInteretsIds
