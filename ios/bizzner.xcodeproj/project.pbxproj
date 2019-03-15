@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -14,7 +15,6 @@
 		00E356F31AD99517003FC87E /* bizznerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* bizznerTests.m */; };
 		04DE3B4CCB8F463CA0ACDF51 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2D97E7D5446F4F25A60A30D2 /* SimpleLineIcons.ttf */; };
 		09A4A6665793459AAD72E639 /* Roboto-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1D51AD0AEAA3431296663FAE /* Roboto-Light.otf */; };
-		0B4FD4E674C2498CB55164DA /* libRNUploader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0FECAEB34D44E17AD774F9E /* libRNUploader.a */; };
 		0F6FEF9DDF694648A2536FA9 /* libRNVectorIcons-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBBD9B2AE4404E4B945F7278 /* libRNVectorIcons-tvOS.a */; };
 		11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
@@ -504,7 +504,6 @@
 				64B553E0869D475DB8F11E46 /* libRNVectorIcons.a in Frameworks */,
 				6321C2F6465A4F38BDF32ADE /* libLRDRCTSimpleToast.a in Frameworks */,
 				37D033884CF64A54F45692FF /* libPods-bizzner.a in Frameworks */,
-				0B4FD4E674C2498CB55164DA /* libRNUploader.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -946,6 +945,9 @@
 						LastSwiftMigration = 1010;
 						SystemCapabilities = {
 							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.SafariKeychain = {
 								enabled = 1;
 							};
 						};
@@ -1650,7 +1652,10 @@
 					ode_modules,
 					"eact-native-vector-iconsRNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-linkedin-sdk/ios/RNLinkedInSessionManager",
-					"$(SRCROOT)..\node_modules\neact-native-simple-toastiosLRDRCTSimpleToast",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-simple-toastiosLRDRCTSimpleToast",
+					"$(SRCROOT)/node_modules/react-native/Libraries/**",
 				);
 				INFOPLIST_FILE = bizzner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1689,7 +1694,10 @@
 					ode_modules,
 					"eact-native-vector-iconsRNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-linkedin-sdk/ios/RNLinkedInSessionManager",
-					"$(SRCROOT)..\node_modules\neact-native-simple-toastiosLRDRCTSimpleToast",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-simple-toastiosLRDRCTSimpleToast",
+					"$(SRCROOT)/node_modules/react-native/Libraries/**",
 				);
 				INFOPLIST_FILE = bizzner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

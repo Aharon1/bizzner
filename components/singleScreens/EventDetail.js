@@ -150,14 +150,12 @@ export default class EventDetail extends Component {
                   style: 'cancel',
               },
               {text: 'Yes', onPress: () => {
-                console.log(new Date(this.state.eventData.unix_event));
-              var m = moment(new Date(this.state.eventData.unix_event));
-              console.log(m);
+              var m = moment(new Date(this.state.eventData.event_date_formated));
               var mUTC = m.utc();
               const eventConfig = {
                   title:this.state.eventData.event_subject,
                   startDate: this.utcDateToString(mUTC),
-                  endDate: this.utcDateToString(moment.utc(mUTC).add(1, 'hours')),
+                  endDate: this.utcDateToString(moment.utc(mUTC).add(2, 'hours')),
                   notes: 'tasty!',
                   navigationBarIOS: {
                   tintColor: '#416bb9',

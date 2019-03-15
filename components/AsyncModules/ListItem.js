@@ -33,7 +33,6 @@ let userStatus = '';
     };
     setUserEventStatus =  async (statusValue)=>{
         var curItem = await this.props.item;
-        
         if(this.state.userStatus != statusValue){
             if(statusValue != 3){
             Alert.alert(
@@ -48,8 +47,7 @@ let userStatus = '';
                         style: 'cancel',
                     },
                     {text: 'Yes', onPress: () => {
-                    var m = moment(new Date(curItem.unix_event));
-                    console.log(m);
+                    var m = moment(new Date(curItem.event_date_formated));
                     var mUTC = m.utc();
                     const eventConfig = {
                         title:curItem.event_subject,

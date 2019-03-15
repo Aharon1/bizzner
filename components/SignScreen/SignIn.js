@@ -23,11 +23,11 @@ class SignIn extends Component{
       }
     getToken = (onToken)=>{
         if(Platform.OS == 'ios'){
-            console.log(PushNotificationIOS);
+            //console.log(PushNotificationIOS);
             this.sendDataToServer({token:''});
             PushNotificationIOS.addEventListener('register',(token)=>{
                 console.log(token);
-            })
+            });
         }
         else{
             PushNotification.configure({
@@ -57,7 +57,7 @@ class SignIn extends Component{
             Toast.show('Password should not be blank',Toast.SHORT)
             return false;
         }
-        this.setState({loading:true});
+        //this.setState({loading:true});
         this.getToken(this.sendDataToServer.bind(this));
     }
     sendDataToServer(token){

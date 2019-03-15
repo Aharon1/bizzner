@@ -89,8 +89,8 @@ const MainStyles = StyleSheet.create({
     },
     profileHeader:{
         backgroundColor:'#2e4d85',
-        height:100,
-        paddingTop: 20,
+        height:130,
+        paddingTop: 30,
         overflow: 'visible',
         paddingLeft:30,
         flexDirection:'row',
@@ -140,7 +140,8 @@ const MainStyles = StyleSheet.create({
         borderRadius:5,
         elevation:3,
         borderWidth:1,
-        borderColor:'#dedede'
+        borderColor:'#dedede',
+        zIndex:503214563
     },
     pHPOBtn:{
         width:'100%',
@@ -151,8 +152,9 @@ const MainStyles = StyleSheet.create({
         fontFamily:'Roboto-Medium',
     },
     profileTextWrapper:{
-        paddingLeft:20,
-        width:150
+        paddingLeft:40,
+        width:150,
+        marginBottom:30
     },
     pTWText:{
         color:'#8da6d5',

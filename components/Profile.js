@@ -348,11 +348,16 @@ class ProfileScreen extends Component{
               <TouchableOpacity  style={MainStyles.pHeadPicEditBtn} onPress={this.togglePicOption}>
                 <Icon name="pencil" style={MainStyles.pHeadPicEditBtnI}/>
               </TouchableOpacity>
+              {/*Header Profile Name Section*/}
+              <View style={MainStyles.profileTextWrapper}>
+                <Text style={MainStyles.pTWText}>PROFILE</Text>
+                <Text style={MainStyles.pTWNameText}>{this.state.firstName} {this.state.lastName}</Text>
+              </View>
               <Animated.View style={[MainStyles.pHeadPicOptions,{
               zIndex:500000,
                 top: this.state.animation.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [600, 0]
+                  outputRange: [650, 0]
                 })
               }]}>
                 <TouchableOpacity style={MainStyles.pHPOBtn} onPress={()=>{this.takePicture()}}>
@@ -364,11 +369,7 @@ class ProfileScreen extends Component{
               </Animated.View>
             </View>
           </View>
-          {/*Header Profile Name Section*/}
-          <View style={MainStyles.profileTextWrapper}>
-            <Text style={MainStyles.pTWText}>PROFILE</Text>
-            <Text style={MainStyles.pTWNameText}>{this.state.firstName} {this.state.lastName}</Text>
-            </View>
+          
         </View>
         {/*Body Section*/}
         <KeyboardAvoidingView  style={{flex:1}} enabled behavior={behavior}>
