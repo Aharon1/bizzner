@@ -57,7 +57,7 @@ class SignIn extends Component{
             Toast.show('Password should not be blank',Toast.SHORT)
             return false;
         }
-        //this.setState({loading:true});
+        this.setState({loading:true});
         this.getToken(this.sendDataToServer.bind(this));
     }
     sendDataToServer(token){

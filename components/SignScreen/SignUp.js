@@ -106,7 +106,8 @@ class SignUp extends Component{
             body: JSON.stringify({
               file:this.state.imageData,
               rg_fname:firstName,
-              rg_lname:emailAddress,
+              rg_lname:lastName,
+              rg_email:emailAddress,
               rg_pass:password,
               rg_country:country,
               rg_job:job,
@@ -114,17 +115,27 @@ class SignUp extends Component{
               rg_from:'normal',
               
             })
-        }).then((res) => res.json())
+        }).then((res) => {console.log(res);return res.json()})
         .then(response=>{
-        console.log(response);
-        Toast.show(response.message,Toast.SHORT);
-        this.setState({loading:false});
-        this.props.navigation.navigate('Current Events');
+            this.setState({loading:false});
+            if(response.code==200){
+                this.props.navigation.navigate('Auth');
+            }
+            if(Platform.OS == 'ios'){
+                AlertIOS.alert(
+                    response.title,
+                    response.message
+                   );
+            }
+            else{
+                Toast.show(response.message, Toast.SHORT);
+            }
+            console.log(response);
         })
         .catch(err=>{
         console.log(err)
         });
-        fetch(SERVER_URL+'?action=register_user'+params)
+        /*fetch(SERVER_URL+'?action=register_user'+params)
         .then(res=>res.json())
         .then(response=>{
             this.setState({loading:false});
@@ -145,7 +156,7 @@ class SignUp extends Component{
         })
         .catch(err=>{
             console.error(err);
-        })
+        })*/
     }
     takePicture = async function() {
         var options = {

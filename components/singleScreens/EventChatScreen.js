@@ -322,7 +322,7 @@ class EventChatScreen extends Component{
                                 }}
                                 >
                                 <ProgressiveImage
-                                    source={{ uri: this.state.userData.user_pic_thumb }}
+                                    source={{ uri: this.state.userData.user_pic_full }}
                                     style={{ width: 120, height: 120 }}
                                 />
                                 </View>

@@ -145,6 +145,14 @@ class PrivatMsgScreen extends Component{
                                                 <Text style={curStyle.IconTextStyle}>{item.unread_count}</Text>
                                             </View>
                                         }
+                                        {
+                                            item.unread_count == 0 && 
+                                            <View
+                                            style={[curStyle.IconStyle,{backgroundColor:'#416bb9'}]}
+                                            >
+                                                <Icon name="check" style={curStyle.IconTextStyle} />
+                                            </View>
+                                        }
                                     <TouchableOpacity 
                                     onPress={()=>{
                                         Alert.alert(

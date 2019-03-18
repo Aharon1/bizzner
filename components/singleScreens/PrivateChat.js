@@ -1,13 +1,15 @@
 import React,{Component} from 'react';
 import { View,Text,TouchableOpacity,
     FlatList,TextInput,Image, Keyboard,ActivityIndicator,
-    AsyncStorage,SafeAreaView,
+    AsyncStorage,SafeAreaView,ScrollView,
     Platform,KeyboardAvoidingView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
 import Loader from '../Loader';
 import { SERVER_URL } from '../../Constants';
 import ChatItem from './ChatItem';
+import Dialog, { SlideAnimation } from "react-native-popup-dialog";
+import ProgressiveImage from '../AsyncModules/ImageComponent';
 class PrivateChatScreen extends Component{
     _isMounted = false;
     clearTimeR = '';
@@ -20,9 +22,12 @@ class PrivateChatScreen extends Component{
             disableBtn:true,
             newMessage:'',
             isloadingMsgs:true,
-            messages:{}
+            messages:{},
+            profileDetailShow: false,
+            isLoadingProfile: true
         }
         this.readMsgs = this._readMsgs.bind(this);
+        this.fetchUserData = this._fetchUserData.bind(this);
     }
     async setUserId(){
         var userID =  await AsyncStorage.getItem('userID');
@@ -104,7 +109,7 @@ class PrivateChatScreen extends Component{
         clearTimeout(this.clearTimeR);
     }
     renderMsgItem(item,userID){
-        return <ChatItem msgItem={item} userID={userID}/>
+        return <ChatItem msgItem={item} userID={userID} fetchUserData={this.fetchUserData}/>
     }
     keyExtractor = (item,index) => item.key;
     /********
@@ -113,6 +118,17 @@ class PrivateChatScreen extends Component{
     scrollToTheBottom() {
         this.list.getScrollResponder().scrollTo({x:0,y:0,animate:true});
     }
+    _fetchUserData = user_id => {
+        this.setState({ isLoadingProfile: true, profileDetailShow: true });
+        fetch(SERVER_URL + "?action=get_user_data&user_id=" + user_id)
+        .then(res => res.json())
+        .then(response => {
+            this.setState({ userData: response.body, isLoadingProfile: false });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    };
     /********
      * Sending Message To Database
     */
@@ -215,6 +231,241 @@ class PrivateChatScreen extends Component{
                         </TouchableOpacity>
                     </View>
                 </KeyboardAvoidingView>
+                <Dialog
+                    visible={this.state.profileDetailShow}
+                    dialogStyle={[
+                        MainStyles.confirmPopup,
+                        { width: "95%", padding: 0, maxHeight: "95%" }
+                    ]}
+                    dialogAnimation={new SlideAnimation()}
+                    containerStyle={{
+                        zIndex: 10,
+                        flex: 1,
+                        justifyContent: "space-between"
+                    }}
+                    rounded={false}
+                    >
+                    <View
+                        style={[
+                        MainStyles.confirmPopupHeader,
+                        {
+                            alignItems: "center",
+                            justifyContent: "flex-start",
+                            flexDirection: "row",
+                            backgroundColor: "#416bb9"
+                        }
+                        ]}
+                    >
+                        <TouchableOpacity
+                        onPress={() =>
+                            this.setState({
+                            profileDetailShow: false,
+                            isLoadingProfile: true,
+                            userData: ""
+                            })
+                        }
+                        >
+                        <Icon name="times" style={{ fontSize: 20, color: "#FFF" }} />
+                        </TouchableOpacity>
+                        <Text
+                        style={{
+                            color: "#FFF",
+                            fontFamily: "Roboto-Medium",
+                            fontSize: 17,
+                            marginLeft: 20
+                        }}
+                        >
+                        PROFILE DETAILS
+                        </Text>
+                    </View>
+                    <View
+                        style={{
+                        padding: 0,
+                        borderWidth: 0,
+                        backgroundColor: "#FFF",
+                        overflow: "visible"
+                        }}
+                    >
+                        <ScrollView
+                        contentContainerStyle={{
+                            paddingHorizontal: 0
+                        }}
+                        >
+                        {this.state.isLoadingProfile && (
+                            <ActivityIndicator
+                            size="large"
+                            color="#0947b9"
+                            animating={true}
+                            />
+                        )}
+                        {!this.state.isLoadingProfile && this.state.userData && (
+                            <View>
+                            <View
+                                style={{
+                                backgroundColor: "#2e4d85",
+                                height: 100,
+                                paddingTop: 20,
+                                overflow: "visible",
+                                alignItems: "center"
+                                }}
+                            >
+                                <View
+                                style={{
+                                    width: 120,
+                                    height: 120,
+                                    borderWidth: 5,
+                                    borderColor: "#FFF",
+                                    borderRadius: 100,
+                                    overflow: "hidden",
+                                    position: "relative"
+                                }}
+                                >
+                                <ProgressiveImage
+                                    source={{ uri: this.state.userData.user_pic_full }}
+                                    style={{ width: 120, height: 120 }}
+                                />
+                                </View>
+                            </View>
+                            <View
+                                style={{
+                                marginTop: 50,
+                                alignItems: "center",
+                                justifyContent: "center"
+                                }}
+                            >
+                                <Text
+                                style={{
+                                    fontFamily: "Roboto-Light",
+                                    fontSize: 20,
+                                    color: "#0947b9"
+                                }}
+                                >
+                                {this.state.userData.first_name}{" "}
+                                {this.state.userData.last_name}
+                                </Text>
+                            </View>
+                            <View
+                                style={{
+                                paddingHorizontal: 40,
+                                flex: 1
+                                }}
+                            >
+                                <View style={MainStyles.profileTextItem}>
+                                <Icon
+                                    name="map-marker"
+                                    size={16}
+                                    style={MainStyles.profileTextItemIcon}
+                                />
+                                <Text style={MainStyles.PTIText}>
+                                    {this.state.userData.country}{" "}
+                                </Text>
+                                </View>
+                                <View style={MainStyles.profileTextItem}>
+                                <Icon
+                                    name="adn"
+                                    size={16}
+                                    style={MainStyles.profileTextItemIcon}
+                                />
+                                <Text style={MainStyles.PTIText}>
+                                    {this.state.userData.headline}{" "}
+                                </Text>
+                                </View>
+                                <View style={MainStyles.profileTextItem}>
+                                <Icon
+                                    name="briefcase"
+                                    size={16}
+                                    style={MainStyles.profileTextItemIcon}
+                                />
+                                <Text style={MainStyles.PTIText}>
+                                    {this.state.userData.current_position}{" "}
+                                </Text>
+                                </View>
+                                <View style={MainStyles.profileTextItem}>
+                                <Icon
+                                    name="camera-retro"
+                                    size={16}
+                                    style={MainStyles.profileTextItemIcon}
+                                />
+                                <View
+                                    style={{ alignItems: "flex-start", flexWrap: "wrap" }}
+                                >
+                                    {this.state.userData.interests.length > 0 && (
+                                    <View
+                                        style={{
+                                        flex: 9,
+                                        flexDirection: "row",
+                                        flexWrap: "wrap",
+                                        alignItems: "center",
+                                        justifyContent: "flex-start"
+                                        }}
+                                    >
+                                        {this.state.userData.interests.map((item, key) => (
+                                        <View
+                                            key={key}
+                                            style={{
+                                            backgroundColor: "#0846b8",
+                                            paddingVertical: 5,
+                                            paddingHorizontal: 10,
+                                            borderColor: "#0846b8",
+                                            borderRadius: 30,
+                                            borderWidth: 1,
+                                            textAlign: "center",
+                                            margin: 2
+                                            }}
+                                        >
+                                            <Text
+                                            style={{
+                                                color: "#FFF",
+                                                fontFamily: "Roboto-Regular",
+                                                fontSize: 13
+                                            }}
+                                            >
+                                            {item.tag_name}
+                                            </Text>
+                                        </View>
+                                        ))}
+                                    </View>
+                                    )}
+                                </View>
+                                </View>
+                            </View>
+                            <View
+                                style={{
+                                marginVertical: 15,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                marginBottom: 70
+                                }}
+                            >
+                                {this.state.userData.ID != this.state.userID && (
+                                <TouchableOpacity
+                                    style={{
+                                    paddingHorizontal: 40,
+                                    paddingVertical: 20,
+                                    borderRadius: 35,
+                                    backgroundColor: "#0947b9"
+                                    }}
+                                    onPress={() => {
+                                    this.startPrivateChat(this.state.userData.ID);
+                                    }}
+                                >
+                                    <Text
+                                    style={{
+                                        color: "#FFF",
+                                        fontFamily: "Roboto-Regular",
+                                        fontSize: 18
+                                    }}
+                                    >
+                                    CHAT
+                                    </Text>
+                                </TouchableOpacity>
+                                )}
+                            </View>
+                            </View>
+                        )}
+                        </ScrollView>
+                    </View>
+                </Dialog>
             </SafeAreaView>
         );
     }

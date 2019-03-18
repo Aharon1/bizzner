@@ -178,6 +178,26 @@ class EventsScreen extends Component{
             this._refreshList();
         })
     }
+    componentWillMount(){
+        Permissions.check('location', { type: 'always' }).then(response => {
+            if(response == "authorized"){
+                this.setState({isGPSGranted:true});
+            }
+            else if(response == 'undetermined'){
+                Permissions.request('location', { type: 'always' }).then(response => {
+                    if(response == 'authorized'){
+                        this.setState({isGPSGranted:true});
+                    }
+                    else{
+                        this.setState({isGPSGranted:false});
+                    }
+                });
+            }
+            else{
+                this.setState({isGPSGranted:false});
+            }
+        })
+    }
     componentDidMount(){
         this.setUserId();
         setTimeout(()=>{
@@ -215,7 +235,7 @@ class EventsScreen extends Component{
         var curSeconds = (dateNow.getSeconds() >= 10)?dateNow.getSeconds():'0'+dateNow.getSeconds();
         var curHours = (dateNow.getHours() >= 10)?dateNow.getHours():'0'+dateNow.getHours();
         var curTime = curHours+':'+curMinute+':'+curSeconds;
-        if(this.state.isGPSGranted == ''){
+        /*if(this.state.isGPSGranted == ''){
             Permissions.check('location', { type: 'always' }).then(response => {
                 if(response == "authorized"){
                     this.setState({isGPSGranted:true});
@@ -263,7 +283,8 @@ class EventsScreen extends Component{
                 }
             })
         }
-        else if(this.state.isGPSGranted){
+        else*/
+        if(this.state.isGPSGranted){
             Geolocation.getCurrentPosition(
                 (position) => {
                     let Latitude = position.coords.latitude;

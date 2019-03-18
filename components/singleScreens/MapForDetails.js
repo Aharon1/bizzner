@@ -164,8 +164,8 @@ export class MapForEventDetail extends React.Component {
           <Icon name="close" size={15} color="#2e4d85" />
         </TouchableHighlight>
       
-          <TouchableOpacity onPress={this.handleGetDirections} style={[{justifyContent:'center',alignItems:'center'}]}>
-                 <Image source={require('../../assets/directions2.png')} style={[{width:80,height:30, position: "absolute",left: "75%",bottom: 5 }]}/>
+          <TouchableOpacity onPress={this.handleGetDirections} style={[{width:80,height:30,justifyContent:'center',alignItems:'center',zIndex:50, position: "absolute",left: "75%",bottom: 5}]}>
+            <Image source={require('../../assets/directions2.png')} style={[{width:80,height:30 }]}/>
           </TouchableOpacity>       
            
       </View>
