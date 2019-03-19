@@ -1,4 +1,5 @@
 import React, { PureComponent } from "react";
+import {Image} from "react-native";
 import { Marker } from "react-native-maps";
 import moment from "moment";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -16,11 +17,21 @@ export class MarkerItem extends PureComponent {
         onPress={this.onMarkerPress}
         stopPropagation={true}
       >
-        <Icon
-          name="map-marker"
-          size={40}
-          color={this.isToday() ? "#5ac268" : "#0645ba"}
-        />
+        {
+          this.isToday() && 
+          <Image source={require('../../assets/24hs.png')} width={15} height={15}/>
+          //{ ? "#5ac268" : 
+        }
+        {
+          !this.isToday() && 
+          <Icon
+            name="map-marker"
+            size={40}
+            color="#0645ba"
+          />
+          //{ ? "#5ac268" : 
+        }
+        
       </Marker>
     );
   }
