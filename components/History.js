@@ -142,7 +142,7 @@ class HistoryPageScreen extends Component{
                                         MainStyles.EventItem,
                                     ]} onPress={() =>
                                         this.props.navigation.navigate("Event Chat", {
-                                          event_id: item.event_id,
+                                          event_id: item.group_id,
                                           note: item.event_note
                                         })
                                       }>
