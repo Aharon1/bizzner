@@ -18,8 +18,8 @@ export class MarkerItem extends PureComponent {
         stopPropagation={true}
       >
         {
-          this.isToday() && 
-          <Image source={require('../../assets/24hs4.jpg')} style={{width: 40, height: 40}}/>
+          !this.isToday() && 
+          <Image source={require('../../assets/events.png')} style={{width: 40, height: 40}}/>
           //{ ? "#5ac268" : 
         }
         {
