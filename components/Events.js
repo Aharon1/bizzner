@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View,Text,TouchableOpacity, TextInput,ImageBackground, 
+import { View,Text,TouchableOpacity, TextInput,ImageBackground, Image,
     Platform,FlatList,ActivityIndicator,AsyncStorage,AlertIOS,KeyboardAvoidingView,
     RefreshControl,Picker,ScrollView,SafeAreaView,ActionSheetIOS,BackHandler
 } from 'react-native';
@@ -477,9 +477,14 @@ class EventsScreen extends Component{
         return (
             <SafeAreaView style={MainStyles.normalContainer}>
                 <Loader loading={this.state.loading} />
-                <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                    <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
-                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>EVENTS</Text>
+                <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row',justifyContent:'space-between'}]}>
+                    <View style={{alignItems:'center',flexDirection:'row'}}>
+                        <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
+                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>EVENTS</Text>
+                    </View>
+                    <View style={{marginRight:15}}>
+                        <Image source={require('../assets/bizzner-white-icon.png')} style={{width:25,height:34}}/>
+                    </View>
                 </View>
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[MainStyles.tabItem,(this.state.TabComponent == '') ? MainStyles.tabItemActive : null]} onPress={()=>this.gotEventsList()}>
