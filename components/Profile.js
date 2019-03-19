@@ -144,7 +144,7 @@ class ProfileScreen extends Component{
         country:this.state.location,
         headline:this.state.headline,
         current_position:this.state.position,
-        interests:this.state.interests.join(','),
+        interests:interests,
         notification_on:this.state.pushOn,
         gps_on:this.state.gpsOn,
       })

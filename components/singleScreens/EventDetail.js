@@ -545,26 +545,32 @@ export default class EventDetail extends Component {
                   style={{ width: 40, height: 40 }}
                 />
                
-              </TouchableHighlight>   */ }
+              </TouchableHighlight>   .split(" ").splice(0,5).join(" ")*/ }
 
                
-              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column',width:'70%'}}>
-                <Text  style={{fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>{this.state.eventData.group_address.split(" ").splice(0,5).join(" ")}</Text>
+              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column',width:'80%'}}>
+                <Text  style={{fontFamily:'Roboto-Light',fontSize:13}}>{this.state.eventData.group_address}</Text>
                 <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:13,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
                 <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
                 <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>Local Time : {this.state.eventData.event_date_formated}</Text>
               </View>
-              <TouchableHighlight onPress={this.showMap} underlayColor={'transparent'} >
-                  <Text style={{color:'#000000',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>{this.state.isMapShow ? '' : 'Show on map'}</Text>
-              </TouchableHighlight>
-
-              
               {
                   this.state.userID == this.state.eventData.created_by && 
                   <View style={{
                       justifyContent:'center',
                       alignItems:'center'
                   }}>
+                    {!this.state.isMapShow && 
+                      <TouchableHighlight onPress={this.showMap} underlayColor={'transparent'}  style={{
+                          marginBottom:10
+                      }}>
+                          {/* <Text style={{color:'#000000',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>{this.state.isMapShow ? '' : 'Show on map'}</Text> */}
+                          <Icon name="map-marker" style={{
+                              fontSize:20,
+
+                          }}/>
+                      </TouchableHighlight>
+                    }
                       <TouchableOpacity onPress={()=>this.setState({EditEventVisible:true})} style={{
                           marginBottom:10
                       }}>
