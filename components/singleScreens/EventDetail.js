@@ -76,7 +76,7 @@ export default class EventDetail extends Component {
     )
       .then(response => response.json())
       .then(res => {
-        
+        console.log(res);
         this.setState({
           loading: false,
           isRefreshing: false,
@@ -87,7 +87,7 @@ export default class EventDetail extends Component {
           NEN:res.event_data.event_note,
           NEUsersCount:res.event_data.usersPlace,
           NED:res.event_data.event_date,
-          NET:res.event_data.event_time,
+          NET:res.event_data.event_time
         });
         if(res.event_data.usersPlace == 10){
           this.setState({no_Attendees:'5-10'});
@@ -226,7 +226,7 @@ export default class EventDetail extends Component {
     )
       .then(res => res.json())
       .then(response => {
-        this.setState({ loading: false });
+        this.setState({ loading: false,profileDetailShow:false });
         this.props.navigation.navigate("Private Chat", {
           event_id: response.privateChatId
         });

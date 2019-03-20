@@ -135,11 +135,11 @@ export class MapForEventDetail extends React.Component {
             longitudeDelta: 0.00421
           }}
         >
-          <Polyline
+          {/* <Polyline
             coordinates={polylineCoords}
             strokeColor="#0066ff"
             strokeWidth={2}
-          />
+          /> */}
           <Marker
             coordinate={{
               latitude: location[1],
