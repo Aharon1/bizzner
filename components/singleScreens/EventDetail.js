@@ -76,7 +76,7 @@ export default class EventDetail extends Component {
     )
       .then(response => response.json())
       .then(res => {
-        
+        console.log(res);
         this.setState({
           loading: false,
           isRefreshing: false,
@@ -86,8 +86,8 @@ export default class EventDetail extends Component {
           NES:res.event_data.event_subject,
           NEN:res.event_data.event_note,
           NEUsersCount:res.event_data.usersPlace,
-          NED:res.eventData.event_date,
-          NET:res.eventData.event_time
+          NED:res.event_data.event_date,
+          NET:res.event_data.event_time
         });
         if(res.event_data.usersPlace == 10){
           this.setState({no_Attendees:'5-10'});
