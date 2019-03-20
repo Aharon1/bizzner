@@ -484,7 +484,7 @@ class EventsScreen extends Component{
                         <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>EVENTS</Text>
                     </View>
                     <View style={{marginRight:15}}>
-                        <Image source={require('../assets/bizzner-white-icon.png')} style={{width:25,height:34}}/>
+                        <Image source={require('../assets/bizzner-white-icon.png')} style={{width:19,height:27}}/>
                     </View>
                 </View>
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>

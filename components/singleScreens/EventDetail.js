@@ -416,7 +416,8 @@ export default class EventDetail extends Component {
                 onPress={() =>
                   this.props.navigation.navigate("Event Chat", {
                     event_id: this.state.event_id,
-                    note: this.state.eventData.event_note
+                    note: this.state.eventData.event_note,
+                    subject: this.state.eventData.event_subject
                   })
                 }
               >

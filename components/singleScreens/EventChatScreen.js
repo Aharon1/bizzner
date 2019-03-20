@@ -19,6 +19,7 @@ class EventChatScreen extends Component{
             loading:false,
             event_id:this.props.navigation.getParam('event_id'),
             event_note:this.props.navigation.getParam('note'),
+            event_subject:this.props.navigation.getParam('subject'),
             disableBtn:true,
             newMessage:'',
             isloadingMsgs:true,
@@ -193,7 +194,7 @@ class EventChatScreen extends Component{
                         </TouchableOpacity>
                     </View>
                     <View style={[MainStyles.tabContainer,{justifyContent:'flex-start',paddingHorizontal:15,paddingVertical:15}]}>
-                        <Text style={{fontSize:16,fontFamily:'Roboto-Medium',color:'#05296d'}}>Note: {this.state.event_note}</Text>
+                        <Text style={{fontSize:16,fontFamily:'Roboto-Medium',color:'#05296d'}}>Subject: {this.state.event_subject}</Text>
                     </View>
                 </View>
                 <View style={{

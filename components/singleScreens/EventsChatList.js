@@ -122,7 +122,7 @@ class EventChatListScreen extends Component{
                                 <TouchableOpacity style={[
                                 curStyle.UserListItem,
                                 (item.unread_count > 0)?{backgroundColor:'rgba(209, 219, 237, 0.4)'}:''
-                                ]} onPress={()=>{this.props.navigation.navigate('Event Chat',{event_id:item.chat_id,note:item.event_note})}}>
+                                ]} onPress={()=>{this.props.navigation.navigate('Event Chat',{event_id:item.chat_id,note:item.event_note,subject:item.event_name})}}>
                                     <View style={{overflow:'hidden',width:60,height:60,borderWidth: 2,borderColor: '#FFF'}}>
                                         <ProgressiveImage source={{uri:item.event_pic}} style={{
                                             width: 60, 
