@@ -194,7 +194,7 @@ class EventChatScreen extends Component{
                         </TouchableOpacity>
                     </View>
                     <View style={[MainStyles.tabContainer,{justifyContent:'flex-start',paddingHorizontal:15,paddingVertical:15}]}>
-                        <Text style={{fontSize:16,fontFamily:'Roboto-Medium',color:'#05296d'}}>Subject: {this.state.event_subject}</Text>
+                        <Text style={{fontSize:14,fontFamily:'Roboto-Medium',color:'#05296d'}}>Subject: {this.state.event_subject}</Text>
                     </View>
                 </View>
                 <View style={{
