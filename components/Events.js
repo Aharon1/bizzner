@@ -313,6 +313,7 @@ class EventsScreen extends Component{
         })
         .then(res=>res.json())
         .then(response=>{
+           // console.log(response.locationQuery);
             var results = response.results;
             var myEvResults = response.myEvents;
             const placesArray = [];
