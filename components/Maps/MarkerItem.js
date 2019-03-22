@@ -19,19 +19,22 @@ export class MarkerItem extends PureComponent {
       >
         {
           !this.isToday() && 
-          <Image source={require('../../assets/events.png')} style={{width: 40, height: 40}}/>
+          
+          <Icon
+            name="map-marker"
+            size={40}
+            color="#0645ba"
+          />
           //{ ? "#5ac268" : 
         }
         {
-          !this.isToday() && 
-          <Image source={require('../../assets/events.png')} style={{width: 40, height: 40}}/>
+          this.isToday() && 
+          <Image source={require('../../assets/24hs4.jpg')} style={{width: 40, height: 40}}/>
           //{ ? "#5ac268" : 
         }
-        
       </Marker>
     );
   }
-
   onMarkerPress = () => {
     this.props.onOpenModal({
       group_name: this.props.group_name,
