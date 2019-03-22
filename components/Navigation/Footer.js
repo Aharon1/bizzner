@@ -45,9 +45,12 @@ class Footer extends Component {
         clearTimeout(this.clearTime);
     }
     render(){
+        var isSearchShow = (this.props.showSearch)?true:false;
+        var spaceBetween = (isSearchShow)?'space-between':'space-around';
+        var widthShow = (isSearchShow)?'33%':'50%';
         return (
             <View style={{
-                justifyContent:'space-between',
+                justifyContent:spaceBetween,
                 alignItems:'center',
                 flexDirection:'row',
                 borderTopWidth:1,
@@ -55,7 +58,7 @@ class Footer extends Component {
                 paddingTop:5,
                 paddingBottom:5
             }}>
-                <TouchableOpacity style={{alignItems:'center',width:'33%',
+                <TouchableOpacity style={{alignItems:'center',width:widthShow,
                 paddingTop:5,
                 paddingBottom:5}} onPress={()=>this.props.navigation.navigate('EventChatList')}>
                     <View>
@@ -85,7 +88,7 @@ class Footer extends Component {
                 <TouchableOpacity style={{alignItems:'center',
                 borderLeftColor:'#8da6d5',
                 borderLeftWidth:1,
-                width:'33%'}}  onPress={()=>this.props.navigation.navigate('Messages')} >
+                width:widthShow}}  onPress={()=>this.props.navigation.navigate('Messages')} >
                     <View>
                         <Icon name="comment" style={{ fontSize: 27, color: '#8da6d5' }} />
                         {
@@ -111,12 +114,16 @@ class Footer extends Component {
                         }
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={{alignItems:'center',
-                borderLeftColor:'#8da6d5',
-                borderLeftWidth:1,
-                width:'33%'}} onPress={()=>{this.props.showSearch()}}>
-                    <Icon name="search"  style={{ fontSize: 27, color: '#8da6d5' }}/>
-                </TouchableOpacity>
+                {
+                    isSearchShow && 
+                    <TouchableOpacity style={{alignItems:'center',
+                    borderLeftColor:'#8da6d5',
+                    borderLeftWidth:1,
+                    width:'33%'}} onPress={()=>{this.props.showSearch()}}>
+                        <Icon name="search"  style={{ fontSize: 27, color: '#8da6d5' }}/>
+                    </TouchableOpacity>
+                }
+                
             </View>
         )
     }

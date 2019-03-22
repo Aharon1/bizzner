@@ -429,38 +429,6 @@ class PrivateChatScreen extends Component{
                                 </View>
                                 </View>
                             </View>
-                            <View
-                                style={{
-                                marginVertical: 15,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                marginBottom: 70
-                                }}
-                            >
-                                {this.state.userData.ID != this.state.userID && (
-                                <TouchableOpacity
-                                    style={{
-                                    paddingHorizontal: 40,
-                                    paddingVertical: 20,
-                                    borderRadius: 35,
-                                    backgroundColor: "#0947b9"
-                                    }}
-                                    onPress={() => {
-                                    this.startPrivateChat(this.state.userData.ID);
-                                    }}
-                                >
-                                    <Text
-                                    style={{
-                                        color: "#FFF",
-                                        fontFamily: "Roboto-Regular",
-                                        fontSize: 18
-                                    }}
-                                    >
-                                    CHAT
-                                    </Text>
-                                </TouchableOpacity>
-                                )}
-                            </View>
                             </View>
                         )}
                         </ScrollView>

@@ -173,6 +173,9 @@ class EventsScreen extends Component{
                 NEN:'',
                 isLocationSet:false,
                 curLocation:{},
+                SLItems:{},
+                SCItems:{},
+                isSelectedCity:'',
                 SLValue:false
             });
             this._refreshList();
@@ -509,59 +512,62 @@ class EventsScreen extends Component{
                         <Icon name="search" style={MainStyles.tabItemIcon}/>
                         <Text style={MainStyles.tabItemText}>Search</Text>
                     </TouchableOpacity> */}
-                    {
-                        this.state.isSearchOpen && 
-                        <View style={{
-                            position:'absolute',
-                            width:'109.1%',
+                </View>
+                {
+                    this.state.isSearchOpen && 
+                    <KeyboardAvoidingView>
+                        <ScrollView behavior='padding'>
+                            <View style={{
+                            height:50,
+                            width:'100%',
                             backgroundColor:'#FFF',
-                            left:0,
-                            right:0,
                             flexDirection:'row',
                             justifyContent:'space-between',
                             alignItems:'center',
-                            height:'100%',
                             borderColor:'#8da6d4',
                             borderTopWidth:2,
                             borderBottomWidth:2,
-                        }}>
-                            <View style={{
-                                height:'100%',
-                                alignItems:'center',
-                                justifyContent: 'center',
-                                backgroundColor:'#8da6d4',
-                                paddingHorizontal:8
                             }}>
-                                <Icon name="search" size={17} style={{color:'#FFF'}}/>
+                                <View style={{
+                                    height:50,
+                                    alignItems:'center',
+                                    justifyContent: 'center',
+                                    backgroundColor:'#8da6d4',
+                                    paddingHorizontal:8
+                                }}>
+                                    <Icon name="search" size={17} style={{color:'#FFF'}}/>
+                                </View>
+                                    <TextInput  
+                                    style={{
+                                        fontFamily:'Roboto-Regular',
+                                        color:'#8da6d4',
+                                        fontSize:17,
+                                        flex:1,
+                                        width:'100%',
+                                        justifyContent:'flex-start',
+                                        height:50,
+                                    }}
+                                    placeholder="Search event/city/place..."
+                                    placeholderTextColor="#8da6d4"
+                                    keyboardType="web-search"
+                                    ref={input=>this.searchInput = input}
+                                    onChangeText={text=>{this.searchText(text)}}
+                                    />
+                                <TouchableOpacity onPress={()=>{this.setState({isSearchOpen:false,isFiltering:false,noFilterData:false,renderedListData:[]});this.refreshList();}} 
+                                style={{
+                                    height:50,
+                                    alignItems:'center',
+                                    justifyContent: 'center',
+                                    backgroundColor:'#8da6d4',
+                                    paddingHorizontal:8
+                                }}
+                                >
+                                    <Icon name="times" size={20} style={{color:'#FFF'}}/>
+                                </TouchableOpacity>
                             </View>
-                            <TextInput  
-                            style={{
-                                flex:1,
-                                fontFamily:'Roboto-Regular',
-                                color:'#8da6d4',
-                                fontSize:17,
-                                paddingHorizontal:10
-                            }}
-                            placeholder="Search event/city/place..."
-                            placeholderTextColor="#8da6d4"
-                            keyboardType="web-search"
-                            ref={input=>this.searchInput = input}
-                            onChangeText={text=>{this.searchText(text)}}
-                            />
-                            <TouchableOpacity onPress={()=>{this.setState({isSearchOpen:false,isFiltering:false,noFilterData:false,renderedListData:[]});this.refreshList();}} 
-                            style={{
-                                height:'100%',
-                                alignItems:'center',
-                                justifyContent: 'center',
-                                backgroundColor:'#8da6d4',
-                                paddingHorizontal:8
-                            }}
-                            >
-                                <Icon name="times" size={20} style={{color:'#FFF'}}/>
-                            </TouchableOpacity>
-                        </View>
-                    }
-                </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
+                }
                 {
                     this.state.TabComponent != '' &&
                     <TabContainer showContainer={{

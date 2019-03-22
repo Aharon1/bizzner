@@ -1060,7 +1060,7 @@ export default class EventDetail extends Component {
                 </KeyboardAvoidingView>
             </View>
         </Dialog>
-        <Footer />
+        <Footer showSearch={false}/>
       </SafeAreaView>
     );
   }

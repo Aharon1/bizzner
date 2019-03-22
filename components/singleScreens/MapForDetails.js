@@ -129,8 +129,8 @@ export class MapForEventDetail extends React.Component {
         <MapView
           style={{ width: "100%", height: 130 }}
           initialRegion={{
-            latitude: latitude,
-            longitude: longitude,
+            latitude: location[1],
+            longitude: location[0],
             latitudeDelta: 0.00922,
             longitudeDelta: 0.00421
           }}
