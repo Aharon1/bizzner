@@ -148,14 +148,14 @@ export class MapForEventDetail extends React.Component {
           >
             <Icon name="map-marker" size={40} color="red" />
           </Marker>
-          <Marker
-            coordinate={{
-              latitude: latitude,
-              longitude: longitude
-            }}
-          >
-            <Icon name="bullseye" size={40} color="grey" />
-          </Marker>
+        {/* <Marker
+          coordinate={{
+            latitude: latitude,
+            longitude: longitude
+          }}
+        >
+          <Icon name="bullseye" size={40} color="grey" />
+        </Marker> */}
         </MapView>
         <TouchableHighlight
           onPress={this.props.closeMap}
