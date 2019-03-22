@@ -24,11 +24,7 @@ export class MarkerItem extends PureComponent {
         }
         {
           !this.isToday() && 
-          <Icon
-            name="map-marker"
-            size={40}
-            color="#0645ba"
-          />
+          <Image source={require('../../assets/events.png')} style={{width: 40, height: 40}}/>
           //{ ? "#5ac268" : 
         }
         
