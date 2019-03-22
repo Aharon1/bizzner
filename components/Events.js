@@ -547,6 +547,7 @@ class EventsScreen extends Component{
                                         width:'100%',
                                         justifyContent:'flex-start',
                                         height:50,
+                                        paddingHorizontal:15
                                     }}
                                     placeholder="Search event/city/place..."
                                     placeholderTextColor="#8da6d4"
