@@ -515,7 +515,7 @@ class EventsScreen extends Component{
                     </TouchableOpacity> */}
                 </View>
                 {
-                    this.state.isSearchOpen && 
+                    this.state.isSearchOpen && this.state.TabComponent == '' && 
                     <KeyboardAvoidingView>
                         <ScrollView behavior='padding'>
                             <View style={{
