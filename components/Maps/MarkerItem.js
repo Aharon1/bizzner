@@ -17,19 +17,14 @@ export class MarkerItem extends PureComponent {
         onPress={this.onMarkerPress}
         stopPropagation={true}
       >
-        {
-          !this.isToday() && 
-          
-          <Icon
-            name="map-marker"
-            size={40}
-            color="#0645ba"
-          />
+         {
+          this.isToday() && 
+          <Image source={require('../../assets/events4.png')} style={{width: 40, height: 40}}/>
           //{ ? "#5ac268" : 
         }
         {
-          this.isToday() && 
-          <Image source={require('../../assets/24hs4.jpg')} style={{width: 40, height: 40}}/>
+          !this.isToday() && 
+          <Image source={require('../../assets/events3.png')} style={{width: 40, height: 40}}/>
           //{ ? "#5ac268" : 
         }
       </Marker>
