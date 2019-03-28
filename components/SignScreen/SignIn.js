@@ -8,6 +8,7 @@ import MainStyles from '../StyleSheet';
 import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
 import PushNotification from 'react-native-push-notification';
+import HardText from '../../HardText';
 class SignIn extends Component{
     constructor(props){
         super(props);
@@ -91,7 +92,7 @@ class SignIn extends Component{
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={{ paddingLeft: 12,flexDirection:'row' }} onPress={() => this.props.navigation.goBack() }>
                         <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
-                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>SIGN IN</Text>
+                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>{HardText.s_signin_title}</Text>
                     </TouchableOpacity>
                 </View>
                 <KeyboardAvoidingView style={{
@@ -106,7 +107,7 @@ class SignIn extends Component{
                             fontSize:21,
                             color:'#0947b9',
                             textAlign:'center'
-                        }}>Sign in</Text>
+                        }}>{HardText.s_signin_text}</Text>
                         <View style={{
                             borderBottomColor:'#8da6d4',
                             borderBottomWidth: 1,
@@ -176,7 +177,7 @@ class SignIn extends Component{
                                     fontSize:14,
                                     color:'#0947b9',
                                 }}>
-                                    Forgot password?
+                                    {HardText.s_forgot_pass}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -187,7 +188,7 @@ class SignIn extends Component{
                         }}>
                             <TouchableOpacity style={MainStyles.btnSave} onPress={this.signIn}>
                                 <Text style={MainStyles.btnSaveText}>
-                                    LOGIN
+                                    {HardText.s_login}
                                 </Text>
                             </TouchableOpacity>
                         </View>

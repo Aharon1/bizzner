@@ -14,7 +14,7 @@ import Loader from "./Loader";
 import Toast from "react-native-simple-toast";
 import { SERVER_URL } from "../Constants";
 import LinkedInModal from "react-native-linkedin";
-
+import HardText from '../HardText';
 class MainScreen extends Component {
   constructor(props) {
     super(props);
@@ -102,7 +102,6 @@ class MainScreen extends Component {
         console.error(err);
       });
   }
-
   componentDidMount() {
     // B
     if (Platform.OS === "android") {
@@ -169,7 +168,8 @@ class MainScreen extends Component {
           />
           <Text style={MainStyles.mPHeading}>
             {" "}
-            Your daily dose of inspiring people to meet{" "}
+            {HardText.auth_heading}
+            {" "}
           </Text>
         </View>
         <View style={[MainStyles.btn, MainStyles.linBtn]}>

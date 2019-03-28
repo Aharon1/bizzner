@@ -8,6 +8,7 @@ import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
 import countryList from 'react-select-country-list';
 import ImagePicker from 'react-native-image-picker';
+import HardText from '../../HardText';
 class SignUp extends Component{
     constructor(props){
         super(props);
@@ -250,10 +251,10 @@ class SignUp extends Component{
                                 })
                             }]}>
                             <TouchableOpacity style={MainStyles.pHPOBtn} onPress={()=>{this.takePicture()}}>
-                                <Text>Take a Photo</Text>
+                                <Text>{HardText.r_take_photo}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={MainStyles.pHPOBtn} onPress={()=>{this.picPhoto()}}>
-                                <Text>Pick Photo</Text>
+                                <Text>{HardText.r_pic_photo}</Text>
                             </TouchableOpacity>
                             </Animated.View>
                         </View>
@@ -410,7 +411,7 @@ class SignUp extends Component{
                         <View style={[MainStyles.btnWrapper,{flex:1,justifyContent:'flex-end',flexDirection: 'row'}]}>
                             <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.registerUser();}}>
                                 {this.state.loading && <ActivityIndicator size="large" color="#FFFFFF" />}
-                                {!this.state.loading && <Text style={MainStyles.btnSaveText}>SIGN UP</Text>}
+                                {!this.state.loading && <Text style={MainStyles.btnSaveText}>{HardText.r_signup_text}</Text>}
                             </TouchableOpacity>
                         </View>
                     </ScrollView>

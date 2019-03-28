@@ -181,7 +181,8 @@ class EventsScreen extends Component{
             this._refreshList();
         })
     }
-    componentWillMount(){
+    componentDidMount(){
+        this.setUserId();
         Permissions.check('location', { type: 'always' }).then(response => {
             if(response == "authorized"){
                 this.setState({isGPSGranted:true});
@@ -200,12 +201,8 @@ class EventsScreen extends Component{
                 this.setState({isGPSGranted:false});
             }
         })
-    }
-    componentDidMount(){
-        this.setUserId();
         setTimeout(()=>{
             this.refreshList();
-            
         },200);
         /*if (Platform.OS == 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => {

@@ -7,6 +7,7 @@ import Loader from '../Loader';
 import MainStyles from '../StyleSheet';
 import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
+import HardText from '../../HardText';
 class ForgotPassword extends Component{
     constructor(props){
         super(props);
@@ -92,7 +93,7 @@ class ForgotPassword extends Component{
                     <TouchableOpacity style={{ paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
                         <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
                     </TouchableOpacity>
-                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>FORGOT PASSWORD</Text>
+                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>{HardText.f_forgot_title}</Text>
                 </View>
                 <KeyboardAvoidingView style={{
                     flex:1,
