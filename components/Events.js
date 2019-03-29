@@ -289,6 +289,16 @@ class EventsScreen extends Component{
                 (position) => {
                     let Latitude = position.coords.latitude;
                     let Longitude = position.coords.longitude;
+                    this.setState({curLat:Latitude,curLng:Longitude});
+                    fetch("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+Latitude+","+Longitude+"&rankby=distance&type=food&key="+MAPKEY)
+                    .then(res=>res.json())
+                    .then(response=>{
+                        var getCity = response.results[0].vicinity.split(', ');
+                        this.setState({isSelectedCity:getCity[getCity.length-1]})
+                    })
+                    .catch(err=>{
+                        console.log(err);
+                    });
                     this._fetchLists('getFromCountry=0&user_id='+this.state.userID+'&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
                 },
                 (error) => {
@@ -652,13 +662,13 @@ class EventsScreen extends Component{
                     this.state.locationList.length == 0 && !this.state.isRefreshing &&
                     this.state.isCurrentTab == 'all-events' && 
                     <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                        <Text style={{fontFamily:'Roboto-Medium',color:'#2e4d85',fontSize:18}}>No events right now!</Text>
+                        <Text style={{fontFamily:'Roboto-Medium',color:'#2e4d85',fontSize:18}}>Be the first one to create an event!</Text>
                         <TouchableOpacity 
-                        onPress={this.refreshList}
+                        onPress={()=>{this.setState({CreateEventVisible:true})}}
                         style={{flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'#2e4d85',paddingHorizontal:15,marginTop:10,paddingVertical:5,borderRadius:50}}
                         >
                             <Icon name="repeat" style={{marginRight:10,color:'#FFF'}} size={16}/>
-                            <Text style={{fontFamily:'Roboto-Regular',color:'#FFF',fontSize:16}}>Retry</Text>
+                            <Text style={{fontFamily:'Roboto-Regular',color:'#FFF',fontSize:16}}>Create Event</Text>
                         </TouchableOpacity>
                     </View> 
                 }
