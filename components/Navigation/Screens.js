@@ -15,6 +15,8 @@ import Logout from '../AsyncModules/Logout';
 import PrivateMsgScreen from '../PrivateMsg';
 import HistoryPageScreen from '../History';
 import ComplainPageScreen from '../Complain';
+import HardText from '../../HardText';
+
 function createEmptyScreen(label, icon) {
     return class extends React.Component {
         static navigationOptions = {
@@ -79,9 +81,10 @@ function createScreen(label, icon, Component) {
 }
 
 export const SettingsScreen = createEmptyScreen('Settings', 'cog');
-export const ComplainScreen = createScreen('Complain', 'pen',ComplainPageScreen);
-export const HistoryScreen = createScreen('Events History', 'history',HistoryPageScreen);
-export const EditProfileScreen = createScreen('Edit Profile', 'user', ProfileScreen);
+export const ComplainScreen = createScreen(HardText.m_complain, 'pen',ComplainPageScreen);
+export const HistoryScreen = createScreen(HardText.m_events_history, 'history',HistoryPageScreen);
+export const EditProfileScreen = createScreen(HardText.m_edit_profile, 'user', ProfileScreen);
 export const MessagesScreen = createScreen('Private Messages', 'comment',PrivateMsgScreen);
-export const CurrentEventsScreen = createScreen('Current Events', 'calendar-check', EventsScreen);
-export const LogoutScreen = createScreen('Logout', 'sign-out-alt', Logout);
+export const CurrentEventsScreen = createScreen(HardText.m_curr_events, 'calendar-check', EventsScreen);
+export const LogoutScreen = createScreen(HardText.m_logout, 'sign-out-alt', Logout);
+
