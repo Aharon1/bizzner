@@ -53,8 +53,7 @@ class Footer extends Component {
                 justifyContent:spaceBetween,
                 alignItems:'center',
                 flexDirection:'row',
-                borderTopWidth:1,
-                borderTopColor:'#8da6d5',
+                backgroundColor:'#e8edf6',
                 paddingTop:5,
                 paddingBottom:5
             }}>
@@ -86,11 +85,9 @@ class Footer extends Component {
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={{alignItems:'center',
-                borderLeftColor:'#8da6d5',
-                borderLeftWidth:1,
                 width:widthShow}}  onPress={()=>this.props.navigation.navigate('Messages')} >
                     <View>
-                        <Icon name="comment" style={{ fontSize: 27, color: '#8da6d5' }} />
+                        <Icon name="commenting" style={{ fontSize: 27, color: '#8da6d5' }} />
                         {
                             this.state.pcCount > 0 &&  
                             <View style={{
@@ -117,8 +114,6 @@ class Footer extends Component {
                 {
                     isSearchShow && 
                     <TouchableOpacity style={{alignItems:'center',
-                    borderLeftColor:'#8da6d5',
-                    borderLeftWidth:1,
                     width:'33%'}} onPress={()=>{this.props.showSearch()}}>
                         <Icon name="search"  style={{ fontSize: 27, color: '#8da6d5' }}/>
                     </TouchableOpacity>

@@ -17,7 +17,7 @@ const MainStyles = StyleSheet.create({
         width:'100%'
     },
     normalContainer:{
-        backgroundColor:'#FFF',
+        backgroundColor:'#FEFEFE',
         flex:1
     },
     btn:{
@@ -262,7 +262,7 @@ const MainStyles = StyleSheet.create({
     eventsHeader:{
         height:60,
         backgroundColor:'#2e4d85',
-
+        
     },
     tabContainer:{
         backgroundColor:'#fff',
@@ -279,6 +279,7 @@ const MainStyles = StyleSheet.create({
         flexDirection:'row',
         justifyContent:'center',
         alignItems:'center',
+        textAlign:'center'
     },
     tabItemIcon:{
         color:'#8da6d5',
@@ -297,30 +298,29 @@ const MainStyles = StyleSheet.create({
     tabItemActiveIcon:{color:'#05296c',},
     tabItemActiveText:{color:'#05296c',},
     EventScreenTabWrapper:{
-        backgroundColor:'#d1dbed',
+        //backgroundColor:'#d1dbed',
         paddingHorizontal:10,
-        paddingVertical:5,
+        paddingVertical:10,
         flexDirection:'row',
-        justifyContent:'space-evenly',
+        justifyContent:'space-between',
         alignItems:'center'
     },
     ESTWItem:{
-        width:'48%',
         alignItems:'center',
-        backgroundColor:'#2e4d85',
+        borderColor:'#c6d2e9',
+        borderWidth:1,
         paddingHorizontal:15,
         paddingVertical:5,
         borderRadius:10
     },
     ESTWIText:{
         fontFamily:'Roboto-Medium',
-        fontSize:16,
+        fontSize:15,
         
     },
     EventItem:{
-        padding:15,
-        
-        flexDirection:'row'
+        paddingVertical:0,
+        marginBottom:15
     },
     EIOnline:{
         backgroundColor:'#e8edf6',
@@ -330,17 +330,24 @@ const MainStyles = StyleSheet.create({
     },
     EventItemImageWrapper:{
         overflow:'hidden',
-        width:70,
-        height:70,
-        backgroundColor:'#8da6d4'
-        //alignItems:'center',
-        //justifyContent:'center'
+        width:'100%',
+        height:200,
+        backgroundColor:'#8da6d4',
     },
-    EventItemTextWrapper:{marginLeft:15,flexGrow: 1,width: 0,alignItems:'flex-start'},
+    EventItemTextWrapper:{
+        paddingHorizontal:20,
+        marginTop:10,
+        paddingBottom:15,
+        flex:1,
+        borderBottomColor:'#aec0e0',
+        borderBottomWidth:1,
+        flexDirection:'row',
+        justifyContent: 'space-around',
+    },
     EITWName:{
         fontFamily:'Roboto-Regular',
-        fontSize:15,
-        color:'#03163a',
+        fontSize:17,
+        color:'#39b549',
         alignItems:'flex-start'
     },
     EITWAddress:{
@@ -354,7 +361,8 @@ const MainStyles = StyleSheet.create({
     EITWAction:{
         flexDirection:'row',
         marginTop:10,
-        alignItems:'center'
+        alignItems:'center',
+        justifyContent:'center'
     },
     EITWActionIcon:{
         marginRight:5,
@@ -372,14 +380,19 @@ const MainStyles = StyleSheet.create({
         flexDirection:'row',
         justifyContent:'space-between',
         marginBottom:10,
-        paddingHorizontal:10
+        paddingHorizontal:10,
+        // shadowRadius:5,
+        // shadowOpacity:0.3,
+        // shadowOffset:{width:3,height:3},
+        // elevation:5,
+        // shadowColor:'#000'
     },
     EIAButtons:{
         flex:1,
         flexDirection:'row',
         paddingHorizontal:10,
         paddingVertical:5,
-        backgroundColor:'#bbcae6',
+        //backgroundColor:'#bbcae6',
         justifyContent:'center',
         alignItems:'center',
         borderRadius:15,

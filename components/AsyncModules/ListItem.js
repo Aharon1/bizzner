@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View,Text,Image,Alert,TouchableOpacity} from 'react-native';
+import { View,Text,Image,Alert,TouchableOpacity,ImageBackground} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from '../StyleSheet';
 import ProgressiveImage from './ImageComponent';
@@ -154,36 +154,53 @@ let userStatus = '';
         return (
             <View
             style={[
+                {shadowRadius:5,
+                    shadowOpacity:0.8,
+                    shadowOffset:{width:5,height:5},
+                    elevation:5,
+                    shadowColor:'#000',marginBottom:30},
                 (this.state.userStatus == 3)?{opacity:0.5}:'',
-                {borderBottomColor:'#8da6d4',borderBottomWidth:1},
-                (Item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
+                //(Item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
                 (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#FFFFFF'}:'']}>
                 <TouchableOpacity style={[
                     MainStyles.EventItem,
                 ]} onPress={this.checkEvent}>
                     <View style={MainStyles.EventItemImageWrapper}>
-                        <ProgressiveImage source={{uri:this.state.curItem.photoUrl}} style={{ width: 70, height: 70 }} resizeMode="cover"/>
+                        <ProgressiveImage source={{uri:this.state.curItem.photoUrl}} style={{ width: '100%', height: 200 }} resizeMode="cover"/>
+                        <ImageBackground source={require('../../assets/box-shadow.png')} style={{
+                            position:'absolute',
+                            height:'100%',
+                            width:'100%',
+                        }}>
+                            <View style={{
+                                flex:1,
+                                paddingBottom: 30,
+                                paddingHorizontal:20,
+                                justifyContent:'flex-end',
+                            }}>
+                                <Text style={{fontFamily:'Roboto-Regular',fontSize:25,color:'#FFFFFF'}}>{this.state.curItem.name}</Text>
+                                <Text style={{fontFamily:'Roboto-Light',fontSize:18,color:'#FFFFFF'}}>{Address}</Text>
+                            </View>
+                        </ImageBackground>
                     </View>
                     <View style={MainStyles.EventItemTextWrapper}>
-                        <View style={{flexDirection:'row', alignItems:'center'}}>
-                            <Icon name="thumb-tack" style={{color:'#8da6d4',marginRight:5}} size={13} />
-                            <Text style={[MainStyles.EITWName,
-                                (Item.isStarted === true)?{color:'#39b549'}:''
-                            ]}>{this.state.curItem.event_subject}</Text>
-                        </View>
-                        <View style={{flexDirection:'row', alignItems:'center'}}>
-                            <Icon name="map-marker" style={{color:'#8da6d4',marginRight:5}} size={13} />
-                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.state.curItem.name}</Text>
-                        </View>
-                        <Text style={[MainStyles.EITWAddress,{marginLeft:14}]}>{Address}</Text>
-                        <View style={{flexDirection:'row', alignItems:'center'}}>
-                            <Icon name="clock-o" style={{color:'#8da6d4',marginRight:5}} size={13} />
-                            <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>Local Time : {this.state.curItem.event_date_formated}</Text>
+                        <View>
+                            <View style={{flexDirection:'row', alignItems:'center'}}>
+                                <Icon name="thumb-tack" style={{color:'#8da6d4',marginRight:5}} size={17} />
+                                <Text style={[MainStyles.EITWName,
+                                ]}>{this.state.curItem.event_subject}</Text>
+                            </View>
+                            <View style={{flexDirection:'row', alignItems:'center'}}>
+                                <Icon name="clock-o" style={{color:'#8da6d4',marginRight:5}} size={13} />
+                                <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.state.curItem.event_date_formated}</Text>
+                            </View>
                         </View>
                         <View style={MainStyles.EITWAction}>
                             <Image source={require('../../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
                             <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({this.state.currentUsersCount}) </Text>
-                            <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',marginLeft:8}}>Info</Text>
+                            <TouchableOpacity onPress={()=>{}} style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',marginLeft:8,borderRadius:15}}>
+                                <Text style={{fontFamily:'Roboto-Medium',color:'#FFF'}}>Chat</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -194,51 +211,43 @@ let userStatus = '';
                     && 
 
                     <View style={MainStyles.EIAButtonsWrapper}>
-                        <TouchableOpacity style={[MainStyles.EIAButtons,{borderRadius:0,backgroundColor:'#87d292'}]}
+                        <TouchableOpacity style={[MainStyles.EIAButtons,{backgroundColor:'#FFFFFF'}]}
                         onPress={()=>this.setUserEventStatus(2)}>
-                            {
-                                this.state.userStatus == 2 && 
-                                <Icon name="check" size={15} style={{color:'#FFF',marginRight:5}}/>
-                            }
+                            <Icon name="check" size={17} style={{color:'#87d292',marginRight:5}}/>
                             {
                                 this.state.userStatus != 2 && 
                                 <Text style={{
-                                    color:'#FFF',
+                                    color:'#87d292',
                                     fontFamily:'Roboto-Medium',
-                                    fontSize:14
+                                    fontSize:17
                                 }}>Join</Text>
                             }
                         </TouchableOpacity>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{marginHorizontal:5,borderRadius:0},
-                        (this.state.userStatus == 1)?{backgroundColor:'#8da6d5'}:''
-                        
+                        MainStyles.EIAButtons,{marginHorizontal:5,borderRadius:0,backgroundColor:'#FFFFFF'}
                         ]}
                             onPress={()=>this.setUserEventStatus(1)}
                         >
-                            {
-                                this.state.userStatus == 1 && 
-                                <Icon name="star" size={15} style={{color:'#FFF',marginRight:5}}/>
-                            }
+                            <Icon name="star" size={17} style={{color:'#8da6d5',marginRight:5}}/>
                             {
                                 this.state.userStatus != 1 && 
                                 <Text style={{
-                                    color:'#FFF',
+                                    color:'#8da6d5',
                                     fontFamily:'Roboto-Medium',
-                                    fontSize:14
+                                    fontSize:17
                                 }}>Interested</Text>
                             }
                         </TouchableOpacity>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{borderRadius:0}   
+                        MainStyles.EIAButtons,{borderRadius:0,backgroundColor:'#FFFFFF'}   
                         ]}
                             onPress={()=>this.setUserEventStatus(3)}
                             >
-                            <Icon name="ban" size={15} style={{color:'#FFF',marginRight:5}}/>
+                            <Icon name="ban" size={17} style={{color:'#8da6d5',marginRight:5}}/>
                             <Text style={{
-                                color:'#FFF',
+                                color:'#8da6d5',
                                 fontFamily:'Roboto-Medium',
-                                fontSize:14
+                                fontSize:17
                             }}>Ignore</Text>
                         </TouchableOpacity>
                     </View>

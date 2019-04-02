@@ -494,25 +494,22 @@ class EventsScreen extends Component{
                         <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>EVENTS</Text>
                     </View>
                     <View style={{marginRight:15}}>
-                        <Image source={require('../assets/bizzner-white-icon.png')} style={{width:19,height:27}}/>
+                        <Image source={require('../assets/bizzner-white-icon.png')} style={{width:30,height:33}}/>
                     </View>
                 </View>
-                <View style={[MainStyles.tabContainer,{justifyContent:'space-between',alignItems:'center',flexDirection:'row'}]}>
+                <View style={[MainStyles.tabContainer,{justifyContent:'space-evenly',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[MainStyles.tabItem,(this.state.TabComponent == '') ? MainStyles.tabItemActive : null]} onPress={()=>this.gotEventsList()}>
                         <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveIcon : null]}/>
-                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveText : null]}>List</Text>
+                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveText : null]}>LIST</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[
                         MainStyles.tabItem,
                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
                         ]} onPress={()=>this.changeTab('map')}>
                         <Icon name="globe" style={[MainStyles.tabItemIcon,(this.state.TabComponent == 'map') ? MainStyles.tabItemActiveIcon : null]}/>
-                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == 'map') ? MainStyles.tabItemActiveText : null]}>Map</Text>
+                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == 'map') ? MainStyles.tabItemActiveText : null]}>MAP</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={MainStyles.tabItem} onPress={()=>this.setState({CreateEventVisible:true})}>
-                        <Icon name="calendar-o" style={MainStyles.tabItemIcon}/>
-                        <Text style={MainStyles.tabItemIcon}>Create Event</Text>
-                    </TouchableOpacity>
+                    
                     {/* <TouchableOpacity style={MainStyles.tabItem} onPress={()=>{
                         this.setState({isSearchOpen:true});
                         setTimeout(()=>{this.searchInput.focus();},200);
@@ -587,10 +584,13 @@ class EventsScreen extends Component{
                 }
                 <View style={MainStyles.EventScreenTabWrapper}>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('all-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>Near Events</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#2f4d85'}:{color:'#8da6d5'}]}>NEAR EVENT</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('my-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#FFF'}:{color:'#8da6d5'}]}>My Events</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#2f4d85'}:{color:'#8da6d5'}]}>MY EVENT</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[MainStyles.ESTWItem,{borderColor:'#39b54a'}]} onPress={()=>this.setState({CreateEventVisible:true})}>
+                        <Text style={[MainStyles.ESTWIText,{color:'#39b54a'}]}>CREATE EVENT</Text>
                     </TouchableOpacity>
                 </View>
                 {
