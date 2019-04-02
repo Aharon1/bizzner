@@ -283,7 +283,7 @@ const MainStyles = StyleSheet.create({
     },
     tabItemIcon:{
         color:'#8da6d5',
-        fontSize:16,
+        fontSize:14,
         marginRight: 6,
     },
     tabItemText:{
@@ -315,7 +315,7 @@ const MainStyles = StyleSheet.create({
     },
     ESTWIText:{
         fontFamily:'Roboto-Medium',
-        fontSize:15,
+        fontSize:13,
         
     },
     EventItem:{

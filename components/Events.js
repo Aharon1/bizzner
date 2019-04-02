@@ -491,7 +491,7 @@ class EventsScreen extends Component{
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row',justifyContent:'space-between'}]}>
                     <View style={{alignItems:'center',flexDirection:'row'}}>
                         <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
-                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>EVENTS</Text>
+                        <Text style={{fontSize:14,color:'#8da6d5',marginLeft:18}}>EVENTS</Text>
                     </View>
                     <View style={{marginRight:15}}>
                         <Image source={require('../assets/bizzner-white-icon.png')} style={{width:30,height:33}}/>
@@ -610,7 +610,7 @@ class EventsScreen extends Component{
                             paddingVertical:10,
                             paddingHorizontal:15,
                             borderRadius:50,
-                            elevation:8
+                            elevation:0
                         }}>NO DATA</Text>
                     </View>
                 }
