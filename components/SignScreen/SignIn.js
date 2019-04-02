@@ -23,14 +23,15 @@ class SignIn extends Component{
         await AsyncStorage.setItem(key,value);
       }
     getToken = (onToken)=>{
-        if(Platform.OS == 'ios'){
+        /*if(Platform.OS == 'ios'){
             //console.log(PushNotificationIOS);
-            this.sendDataToServer({token:''});
+            
             PushNotificationIOS.addEventListener('register',(token)=>{
-                console.log(token);
+                console.log('token',token);
+                this.sendDataToServer({token:token});
             });
         }
-        else{
+        else{*/
             PushNotification.configure({
                 onRegister: onToken,
                 onNotification: function(notification) {
@@ -46,7 +47,7 @@ class SignIn extends Component{
                 popInitialNotification: true,
                 requestPermissions: true,
             });
-        }
+        //}
     }
     _signIn = ()=>{
         var deviceToken = '';
@@ -62,7 +63,7 @@ class SignIn extends Component{
         this.getToken(this.sendDataToServer.bind(this));
     }
     sendDataToServer(token){
-        console.log(token);
+        console.log('token',token);
         fetch(SERVER_URL+'?action=login_user&lg_email='+this.state.emailAddress+'&lg_pass='+this.state.password+'&device_token='+token.token+'&platform='+Platform.OS)
         .then(res=>res.json())
         .then(response=>{

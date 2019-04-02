@@ -11,11 +11,13 @@
 #import <React/RCTRootView.h>
 #import <React/RCTPushNotificationManager.h>
 #import <GoogleMaps/GoogleMaps.h>
+@import Firebase;
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [FIRApp configure];
   
   NSURL *jsCodeLocation;
   [GMSServices provideAPIKey:@"AIzaSyCJRgtLQrTsiDSPvz0hzKlEXisjf2UsBbM"]; // add this line using the api key obtained from Google Console

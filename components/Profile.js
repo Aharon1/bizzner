@@ -270,7 +270,7 @@ class ProfileScreen extends Component{
       }
     }
     ImagePicker.launchCamera(options, (response) => {
-      console.log(response);
+      console.log('response',response);
       // Same code as in above section!
       if(!response.didCancel){
         this.setState({ imageData:{

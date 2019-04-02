@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -67,6 +68,7 @@
 		C23BC415DA114DAEB6D4169D /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A079A17DDED7498F8BCDA9D3 /* MaterialIcons.ttf */; };
 		CE4570F121E4DE5500613B63 /* bizzner.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4570F021E4DE5500613B63 /* bizzner.swift */; };
 		CE4A264B223792220089AD32 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CEFE97CB21E38A8000DC27B2 /* libRCTPushNotification.a */; };
+		CEBA9FB0225232D3004CE0EF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CEBA9F83225232D3004CE0EF /* GoogleService-Info.plist */; };
 		D3BAC898C36E4BE4B528976F /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4B313331DA0B492AB58C22AC /* Ionicons.ttf */; };
 		EAC130CE5B584ACA9B86CF64 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 75ADB2E669394A59A0172154 /* AntDesign.ttf */; };
 		EEE58EC18085475FB24C840D /* RobotoLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = A3F2559FF8BB402BB7F0284A /* RobotoLight.otf */; };
@@ -463,6 +465,7 @@
 		CE4570F021E4DE5500613B63 /* bizzner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bizzner.swift; sourceTree = "<group>"; };
 		CE4A26502237A4AB0089AD32 /* bizzner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = bizzner.entitlements; path = bizzner/bizzner.entitlements; sourceTree = "<group>"; };
 		CE77501A21E4EC1B00C9F269 /* libReactNativePermissions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReactNativePermissions.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEBA9F83225232D3004CE0EF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Users/user/Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CEFE979721E3897000DC27B2 /* ReactNativePermissions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativePermissions.xcodeproj; path = "../node_modules/react-native-permissions/ios/ReactNativePermissions.xcodeproj"; sourceTree = "<group>"; };
 		CEFE97C521E38A7F00DC27B2 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		E8898C8CCBEF4A5E85839D0A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
@@ -615,6 +618,7 @@
 		13B07FAE1A68108700A75B9A /* bizzner */ = {
 			isa = PBXGroup;
 			children = (
+				CEBA9F83225232D3004CE0EF /* GoogleService-Info.plist */,
 				CE4A26502237A4AB0089AD32 /* bizzner.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -1393,6 +1397,7 @@
 				FAC3D4AE062243019F95360C /* FontAwesome5_Regular.ttf in Resources */,
 				4102EB107F8E47219DFAE886 /* FontAwesome5_Solid.ttf in Resources */,
 				446B726D9BDD467EB2207A74 /* Foundation.ttf in Resources */,
+				CEBA9FB0225232D3004CE0EF /* GoogleService-Info.plist in Resources */,
 				D3BAC898C36E4BE4B528976F /* Ionicons.ttf in Resources */,
 				708DA2903D70487D988DCA1A /* MaterialCommunityIcons.ttf in Resources */,
 				C23BC415DA114DAEB6D4169D /* MaterialIcons.ttf in Resources */,
