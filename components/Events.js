@@ -497,12 +497,12 @@ class EventsScreen extends Component{
                         <Image source={require('../assets/bizzner-white-icon.png')} style={{width:30,height:33}}/>
                     </View>
                 </View>
-                <View style={[MainStyles.tabContainer,{justifyContent:'space-evenly',alignItems:'center',flexDirection:'row'}]}>
-                    <TouchableOpacity style={[MainStyles.tabItem,(this.state.TabComponent == '') ? MainStyles.tabItemActive : null]} onPress={()=>this.gotEventsList()}>
+                <View style={[MainStyles.tabContainer,{justifyContent:'space-around',alignItems:'center',flexDirection:'row'}]}>
+                    <TouchableOpacity style={[{width:'48%'},MainStyles.tabItem,(this.state.TabComponent == '') ? MainStyles.tabItemActive : null]} onPress={()=>this.gotEventsList()}>
                         <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveIcon : null]}/>
                         <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveText : null]}>LIST</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[
+                    <TouchableOpacity style={[{width:'48%'},
                         MainStyles.tabItem,
                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
                         ]} onPress={()=>this.changeTab('map')}>

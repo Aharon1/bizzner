@@ -154,11 +154,11 @@ let userStatus = '';
         return (
             <View
             style={[
-                {shadowRadius:5,
+                {marginBottom:20,shadowRadius:3,
                     shadowOpacity:0.8,
-                    shadowOffset:{width:5,height:5},
-                    elevation:5,
-                    shadowColor:'#000',marginBottom:30},
+                    shadowOffset:{width:3,height:3},
+                    elevation:3,
+                    shadowColor:'#000000',flex:1},
                 (this.state.userStatus == 3)?{opacity:0.5}:'',
                 //(Item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
                 (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#FFFFFF'}:'']}>
@@ -166,7 +166,7 @@ let userStatus = '';
                     MainStyles.EventItem,
                 ]} onPress={this.checkEvent}>
                     <View style={MainStyles.EventItemImageWrapper}>
-                        <ProgressiveImage source={{uri:this.state.curItem.photoUrl}} style={{ width: '100%', height: 200 }} resizeMode="cover"/>
+                        <ProgressiveImage source={{uri:this.state.curItem.photoUrl}} style={{ width: '100%', height: 170 }} resizeMode="cover"/>
                         <ImageBackground source={require('../../assets/box-shadow.png')} style={{
                             position:'absolute',
                             height:'100%',
@@ -178,14 +178,14 @@ let userStatus = '';
                                 paddingHorizontal:20,
                                 justifyContent:'flex-end',
                             }}>
-                                <Text style={{fontFamily:'Roboto-Regular',fontSize:25,color:'#FFFFFF'}}>{this.state.curItem.name}</Text>
-                                <Text style={{fontFamily:'Roboto-Light',fontSize:18,color:'#FFFFFF'}}>{Address}</Text>
+                                <Text style={{fontFamily:'Roboto-Regular',fontSize:20,color:'#FFFFFF'}}>{this.state.curItem.name}</Text>
+                                <Text style={{fontFamily:'Roboto-Light',fontSize:15,color:'#FFFFFF'}}>{Address}</Text>
                             </View>
                         </ImageBackground>
                     </View>
                     <View style={MainStyles.EventItemTextWrapper}>
                         <View>
-                            <View style={{flexDirection:'row', alignItems:'center'}}>
+                            <View style={{flexDirection:'row', alignItems:'center',justifyContent:'flex-start'}}>
                                 <Icon name="thumb-tack" style={{color:'#8da6d4',marginRight:5}} size={17} />
                                 <Text style={[MainStyles.EITWName,
                                 ]}>{this.state.curItem.event_subject}</Text>
@@ -198,7 +198,13 @@ let userStatus = '';
                         <View style={MainStyles.EITWAction}>
                             <Image source={require('../../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
                             <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({this.state.currentUsersCount}) </Text>
-                            <TouchableOpacity onPress={()=>{}} style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',marginLeft:8,borderRadius:15}}>
+                            <TouchableOpacity onPress={()=>{
+                                this.props.navigation.navigate("Event Chat", {
+                                    event_id: this.state.eventId,
+                                    note: this.state.curItem.event_note,
+                                    subject: this.state.curItem.event_subject
+                                  })
+                            }} style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',marginLeft:8,borderRadius:15}}>
                                 <Text style={{fontFamily:'Roboto-Medium',color:'#FFF'}}>Chat</Text>
                             </TouchableOpacity>
                         </View>
@@ -211,7 +217,7 @@ let userStatus = '';
                     && 
 
                     <View style={MainStyles.EIAButtonsWrapper}>
-                        <TouchableOpacity style={[MainStyles.EIAButtons,{backgroundColor:'#FFFFFF'}]}
+                        <TouchableOpacity style={[MainStyles.EIAButtons,{backgroundColor:'#FFFFFF',borderRadius:0}]}
                         onPress={()=>this.setUserEventStatus(2)}>
                             <Icon name="check" size={17} style={{color:'#87d292',marginRight:5}}/>
                             {

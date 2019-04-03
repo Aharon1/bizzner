@@ -331,7 +331,7 @@ const MainStyles = StyleSheet.create({
     EventItemImageWrapper:{
         overflow:'hidden',
         width:'100%',
-        height:200,
+        height:170,
         backgroundColor:'#8da6d4',
     },
     EventItemTextWrapper:{
@@ -381,11 +381,7 @@ const MainStyles = StyleSheet.create({
         justifyContent:'space-between',
         marginBottom:10,
         paddingHorizontal:10,
-        // shadowRadius:5,
-        // shadowOpacity:0.3,
-        // shadowOffset:{width:3,height:3},
-        // elevation:5,
-        // shadowColor:'#000'
+        backgroundColor:'#FFFFFF'
     },
     EIAButtons:{
         flex:1,
