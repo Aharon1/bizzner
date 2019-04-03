@@ -604,16 +604,17 @@ class ProfileScreen extends Component{
                   alignItems:'center',
               }}>
                   <TextInput style={{
-                    height:50,
+                    height:40,
                     width:'100%',
-                    fontSize:18,
+                    fontSize:16,
                     textAlign:'left',
                     paddingHorizontal: 15,
                     paddingVertical: 0,
                     fontFamily:'Roboto-Light',
                     borderColor:'#0846b8',
                     borderWidth:1,
-                    marginBottom:15
+                    marginBottom:15,
+                    borderRadius:20
                   }} placeholder="Search Interests..." placeholderTextColor="#0846b8" keyboardType="web-search"
                   ref={input=>this.searchInput = input}
                   onChangeText={text=>{this.searchInterest(text)}}/>

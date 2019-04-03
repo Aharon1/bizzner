@@ -500,14 +500,14 @@ class EventsScreen extends Component{
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-around',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[{width:'48%'},MainStyles.tabItem,(this.state.TabComponent == '') ? MainStyles.tabItemActive : null]} onPress={()=>this.gotEventsList()}>
                         <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveIcon : null]}/>
-                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveText : null]}>LIST</Text>
+                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveText : null]}>List</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[{width:'48%'},
                         MainStyles.tabItem,
                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
                         ]} onPress={()=>this.changeTab('map')}>
                         <Icon name="globe" style={[MainStyles.tabItemIcon,(this.state.TabComponent == 'map') ? MainStyles.tabItemActiveIcon : null]}/>
-                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == 'map') ? MainStyles.tabItemActiveText : null]}>MAP</Text>
+                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == 'map') ? MainStyles.tabItemActiveText : null]}>Map</Text>
                     </TouchableOpacity>
                     
                     {/* <TouchableOpacity style={MainStyles.tabItem} onPress={()=>{

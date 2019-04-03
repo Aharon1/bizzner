@@ -174,7 +174,7 @@ let userStatus = '';
                                 paddingHorizontal:20,
                                 justifyContent:'flex-end',
                             }}>
-                                <Text style={{fontFamily:'Roboto-Regular',fontSize:18,color:'#FFFFFF'}}>{this.state.curItem.name}</Text>
+                                <Text style={{fontFamily:'Roboto-Regular',fontSize:16,color:'#FFFFFF'}}>{this.state.curItem.name}</Text>
                                 <Text style={{fontFamily:'Roboto-Light',fontSize:14,color:'#FFFFFF'}}>{Address}</Text>
                             </View>
                         </ImageBackground>
@@ -201,7 +201,7 @@ let userStatus = '';
                                     subject: this.state.curItem.event_subject
                                   })
                             }} style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',marginLeft:8,borderRadius:15}}>
-                                <Text style={{fontFamily:'Roboto-Medium',color:'#FFF'}}>Chat</Text>
+                                <Text style={{fontFamily:'Roboto-Medium',color:'#FFF'}}>Chat now</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

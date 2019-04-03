@@ -344,7 +344,7 @@ const MainStyles = StyleSheet.create({
     },
     EITWName:{
         fontFamily:'Roboto-Regular',
-        fontSize:17,
+        fontSize:15,
         color:'#39b549',
         alignItems:'flex-start'
     },
@@ -419,7 +419,7 @@ const MainStyles = StyleSheet.create({
         paddingRight: 0,
         paddingBottom: 0,
         paddingLeft: 0,
-        fontSize:17,
+        fontSize:15,
         fontFamily:'Roboto-Light'
     },
     cEFWIPF:{
