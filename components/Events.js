@@ -587,7 +587,7 @@ class EventsScreen extends Component{
                         <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#2f4d85'}:{color:'#8da6d5'}]}>NEAR EVENT</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('my-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#2f4d85'}:{color:'#8da6d5'}]}>MY EVENT</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#2f4d85'}:{color:'#8da6d5'}]}>MY EVENTS</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[MainStyles.ESTWItem,{borderColor:'#39b54a'}]} onPress={()=>this.setState({CreateEventVisible:true})}>
                         <Text style={[MainStyles.ESTWIText,{color:'#39b54a'}]}>CREATE EVENT</Text>

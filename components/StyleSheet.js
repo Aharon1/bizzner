@@ -315,7 +315,7 @@ const MainStyles = StyleSheet.create({
     },
     ESTWIText:{
         fontFamily:'Roboto-Medium',
-        fontSize:13,
+        fontSize:12,
         
     },
     EventItem:{
