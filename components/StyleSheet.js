@@ -320,7 +320,6 @@ const MainStyles = StyleSheet.create({
     },
     EventItem:{
         paddingVertical:0,
-        marginBottom:15
     },
     EIOnline:{
         backgroundColor:'#e8edf6',
@@ -379,7 +378,6 @@ const MainStyles = StyleSheet.create({
         flex:1,
         flexDirection:'row',
         justifyContent:'space-between',
-        marginBottom:10,
         paddingHorizontal:10,
         backgroundColor:'#FFFFFF'
     },

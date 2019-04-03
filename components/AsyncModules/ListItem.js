@@ -154,11 +154,7 @@ let userStatus = '';
         return (
             <View
             style={[
-                {marginBottom:20,shadowRadius:3,
-                    shadowOpacity:0.8,
-                    shadowOffset:{width:3,height:3},
-                    elevation:3,
-                    shadowColor:'#000000',flex:1},
+                {marginBottom:10,flex:1},
                 (this.state.userStatus == 3)?{opacity:0.5}:'',
                 //(Item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
                 (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#FFFFFF'}:'']}>
@@ -178,8 +174,8 @@ let userStatus = '';
                                 paddingHorizontal:20,
                                 justifyContent:'flex-end',
                             }}>
-                                <Text style={{fontFamily:'Roboto-Regular',fontSize:20,color:'#FFFFFF'}}>{this.state.curItem.name}</Text>
-                                <Text style={{fontFamily:'Roboto-Light',fontSize:15,color:'#FFFFFF'}}>{Address}</Text>
+                                <Text style={{fontFamily:'Roboto-Regular',fontSize:18,color:'#FFFFFF'}}>{this.state.curItem.name}</Text>
+                                <Text style={{fontFamily:'Roboto-Light',fontSize:14,color:'#FFFFFF'}}>{Address}</Text>
                             </View>
                         </ImageBackground>
                     </View>
@@ -195,7 +191,7 @@ let userStatus = '';
                                 <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.state.curItem.event_date_formated}</Text>
                             </View>
                         </View>
-                        <View style={MainStyles.EITWAction}>
+                        <View style={[MainStyles.EITWAction]}>
                             <Image source={require('../../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
                             <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({this.state.currentUsersCount}) </Text>
                             <TouchableOpacity onPress={()=>{
@@ -216,44 +212,51 @@ let userStatus = '';
                     this.state.curItem.usersCount < this.state.curItem.usersPlace
                     && 
 
-                    <View style={MainStyles.EIAButtonsWrapper}>
-                        <TouchableOpacity style={[MainStyles.EIAButtons,{backgroundColor:'#FFFFFF',borderRadius:0}]}
+                    <View style={[MainStyles.EIAButtonsWrapper,{
+                        shadowRadius:3,
+                    shadowOpacity:0.8,
+                    shadowOffset:{width:3,height:3},
+                    elevation:3,
+                    shadowColor:'#CCCCCC',
+                    flex:1
+                    }]}>
+                        <TouchableOpacity style={[MainStyles.EIAButtons,{backgroundColor:'#FFFFFF',borderRadius:0,paddingVertical:10}]}
                         onPress={()=>this.setUserEventStatus(2)}>
-                            <Icon name="check" size={17} style={{color:'#87d292',marginRight:5}}/>
+                            <Icon name="check" size={15} style={{color:'#87d292',marginRight:5}}/>
                             {
                                 this.state.userStatus != 2 && 
                                 <Text style={{
                                     color:'#87d292',
                                     fontFamily:'Roboto-Medium',
-                                    fontSize:17
+                                    fontSize:15
                                 }}>Join</Text>
                             }
                         </TouchableOpacity>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{marginHorizontal:5,borderRadius:0,backgroundColor:'#FFFFFF'}
+                        MainStyles.EIAButtons,{marginHorizontal:5,borderRadius:0,backgroundColor:'#FFFFFF',paddingVertical:10}
                         ]}
                             onPress={()=>this.setUserEventStatus(1)}
                         >
-                            <Icon name="star" size={17} style={{color:'#8da6d5',marginRight:5}}/>
+                            <Icon name="star" size={15} style={{color:'#8da6d5',marginRight:5}}/>
                             {
                                 this.state.userStatus != 1 && 
                                 <Text style={{
                                     color:'#8da6d5',
                                     fontFamily:'Roboto-Medium',
-                                    fontSize:17
+                                    fontSize:15
                                 }}>Interested</Text>
                             }
                         </TouchableOpacity>
                         <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{borderRadius:0,backgroundColor:'#FFFFFF'}   
+                        MainStyles.EIAButtons,{borderRadius:0,backgroundColor:'#FFFFFF',paddingVertical:10}   
                         ]}
                             onPress={()=>this.setUserEventStatus(3)}
                             >
-                            <Icon name="ban" size={17} style={{color:'#8da6d5',marginRight:5}}/>
+                            <Icon name="ban" size={15} style={{color:'#8da6d5',marginRight:5}}/>
                             <Text style={{
                                 color:'#8da6d5',
                                 fontFamily:'Roboto-Medium',
-                                fontSize:17
+                                fontSize:15
                             }}>Ignore</Text>
                         </TouchableOpacity>
                     </View>
