@@ -393,7 +393,7 @@ export default class EventDetail extends Component {
                 style={[
                   MainStyles.tabItemIcon,
                   MainStyles.tabItemActiveText,
-                  { fontSize: 14 }
+                  { fontSize: 14,fontFamily:'Roboto-Medium' }
                 ]}
               >
                 Invited to event
@@ -406,7 +406,7 @@ export default class EventDetail extends Component {
                 name="share-alt"
                 style={[MainStyles.tabItemIcon, { fontSize: 14 }]}
               />
-              <Text style={[MainStyles.tabItemIcon, { fontSize: 14 }]}>
+              <Text style={[MainStyles.tabItemIcon, { fontSize: 14,fontFamily:'Roboto-Medium' }]}>
                 Share
               </Text>
             </TouchableOpacity>
@@ -425,95 +425,163 @@ export default class EventDetail extends Component {
                   name="comments"
                   style={[MainStyles.tabItemIcon, { color:'#22A54D', fontSize: 14 }]}
                 />
-                <Text style={[MainStyles.tabItemIcon, {color:'#4165C2', fontSize: 14 }]}>
+                <Text style={[MainStyles.tabItemIcon, {color:'#22A54D', fontSize: 14,fontFamily:'Roboto-Medium' }]}>
                   Event chat
                 </Text>
               </TouchableOpacity>
             )}
           </View>
-          {this.state.isMapShow && (
-            <MapForEventDetail
-              style={{ marginBottom: 20 }}
-              location={location}
-              closeMap={this.closeMap}
-            />
-          )}
+          
         </View>
+        <View style={{flexDirection:'row'}}>
+          {this.state.isMapShow && (
+            <View style={{width:'50%'}}>
+              <MapForEventDetail
+                location={location}
+                closeMap={this.closeMap}
+              />
+            </View>
+          )}
+          {this.state && this.state.eventData != "" && 
+          <View style={{backgroundColor:'#fff',
+                        width:'50%',
+                        paddingVertical:5,
+                        paddingHorizontal:15,
+                        
+                        justifyContent: 'space-between'}}>
+           { /*  <TouchableHighlight style={{ width: 35, height: 35, marginRight: 7 }} onPress={this.showMap}>
+                <ProgressiveImage
+                  source={{ uri: this.state.eventData.photoUrl }}
+                  style={{ width: 40, height: 40 }}
+                />
+               
+              </TouchableHighlight>   .split(" ").splice(0,5).join(" ")*/ }
 
+               
+              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column'}}>
+                <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:13,flexWrap: 'wrap',textAlign:'left'}}>{this.state.eventData.event_subject}</Text>
+                <Text style={{color:'#03163a',fontFamily:'Roboto-Regular',fontSize:13,flexWrap: 'wrap',textAlign:'left',marginTop:5}}>{this.state.eventData.group_name}</Text>
+                <Text  style={{fontFamily:'Roboto-Light',fontSize:13,textAlign:'left'}}>{this.state.eventData.group_address}</Text>
+                <View style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-start',marginTop:5}}>
+                  <Icon name="thumb-tack" style={{color:'#8da6d5',marginRight:5}} size={13} />
+                  <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap',textAlign:'left'}}>{this.state.eventData.event_note}</Text>
+                </View>
+                <View style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-start'}}>
+                  <Icon name="clock-o" style={{color:'#8da6d5',marginRight:5}} size={13} />
+                  <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap',textAlign:'left'}}>{this.state.eventData.event_date_formated}</Text>
+                  </View>
+              </View>
+              {
+                  this.state.userID == this.state.eventData.created_by && 
+                  <View style={{
+                      justifyContent:'flex-start',
+                      alignItems:'center',
+                      flexDirection:'row',
+                      marginVertical:10
+                  }}>
+                    {/*!this.state.isMapShow && 
+                      <TouchableHighlight onPress={this.showMap} underlayColor={'transparent'}  style={{
+                          marginBottom:10,marginRight:15
+                      }}>
+                          <Text style={{color:'#000000',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>{this.state.isMapShow ? '' : 'Show on map'}</Text> 
+                          <Icon name="map-marker" style={{ color:'#8da6d5'
+                          }} size={15}/>
+                      </TouchableHighlight>
+                    */}
+                      <TouchableOpacity onPress={()=>this.setState({EditEventVisible:true})} style={{
+                          marginRight:15,
+                          alignItems:'center'
+                      }}>
+                          <Icon name="pencil" style={{
+                              color:'#8da6d5'
+
+                          }}  size={17}/>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={()=>{this.deleteEvent()}}>
+                          <Icon name="trash" style={{
+                              color:'#8da6d5'
+                          }} size={17}/>
+                      </TouchableOpacity>
+                  </View>
+              }
+          </View>
+          }
+        </View>
         {
-                    (this.state.curStatus != 1
-                    ||
-                    this.state.curStatus != 2
-                    ||
-                    this.state.curStatus != 3)
-                    &&
-                    this.state.eventData.usersCount < this.state.eventData.usersPlace 
-                    &&
-                    <View style={[MainStyles.EventScreenTabWrapper,{backgroundColor:'#d1dbed'}]}>
-                        <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{borderRadius:0,backgroundColor:'#87d292'}
-                        ]}
-                        onPress={()=>this.setUserEventStatus(2)}
-                        >
-                            {
-                                this.state.curStatus == 2 && 
-                                <Icon name="check" size={15} style={{color:'#FFF',marginRight:5}}/>
-                            }
-                            {
-                                this.state.curStatus != 2 && 
-                                <Text style={{
-                                    color:'#FFF',
-                                    fontFamily:'Roboto-Medium',
-                                    fontSize:14
-                                }}>Join</Text>
-                            }
-                            {/* <Icon name="check" size={15} style={{color:'#FFF',marginRight:5,}}/>
-                            <Text style={{
-                                color:'#FFF',
-                                fontFamily:'Roboto-Medium',
-                                fontSize:14
-                            }}>Join</Text> */}
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{marginHorizontal:5},{borderRadius:0},
-                        (this.state.curStatus == 1)?{backgroundColor:'#8da6d5'}:''
-                        ]}
-                        onPress={()=>this.setUserEventStatus(1)}
-                        >
-                            {
-                                this.state.curStatus == 1 && 
-                                <Icon name="star" size={15} style={{color:'#FFF',marginRight:5}}/>
-                            }
-                            {
-                                this.state.curStatus != 1 && 
-                                <Text style={{
-                                    color:'#FFF',
-                                    fontFamily:'Roboto-Medium',
-                                    fontSize:14
-                                }}>Interested</Text>
-                            }
-                            {/* <Icon name="star" size={15} style={{color:'#FFF',marginRight:5,}}/>
-                            <Text style={{
-                                color:'#FFF',
-                                fontFamily:'Roboto-Medium',
-                                fontSize:14
-                            }}>Interested</Text> */}
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[
-                        MainStyles.EIAButtons,{borderRadius:0},
-                        (this.state.curStatus == 3)?{backgroundColor:'#d28787'}:''
-                        ]}
-                            onPress={()=>this.setUserEventStatus(3)}
-                            >
-                            <Icon name="ban" size={15} style={{color:'#FFF',marginRight:5,}}/>
-                            <Text style={{
-                                color:'#FFF',
-                                fontFamily:'Roboto-Medium',
-                                fontSize:14
-                            }}>Ignore</Text>
-                        </TouchableOpacity>
-                    </View>
-                }
+            (this.state.curStatus != 1
+            ||
+            this.state.curStatus != 2
+            ||
+            this.state.curStatus != 3)
+            &&
+            this.state.eventData.usersCount < this.state.eventData.usersPlace 
+            &&
+            <View style={[MainStyles.EventScreenTabWrapper,{backgroundColor:'#FFFFFF',
+            borderTopColor:'#c6d2e9',
+            borderTopWidth:1,
+            shadowRadius:5,
+            shadowOpacity:0.8,
+            shadowOffset:{width:5,height:5},
+            elevation:5,
+            shadowColor:'#232323',}]}>
+                <TouchableOpacity style={[
+                MainStyles.EIAButtons,{borderRadius:0,paddingHorizontal:10,
+                paddingVertical:10}
+                ]}
+                onPress={()=>this.setUserEventStatus(2)}
+                >
+                  <Icon name="check" size={15} style={{color:'#87d292',marginRight:5}}/>
+                    {
+                        this.state.curStatus != 2 && 
+                        <Text style={{
+                            color:'#87d292',
+                            fontFamily:'Roboto-Medium',
+                            fontSize:14
+                        }}>Join</Text>
+                    }
+                    {/* <Icon name="check" size={15} style={{color:'#FFF',marginRight:5,}}/>
+                    <Text style={{
+                        color:'#FFF',
+                        fontFamily:'Roboto-Medium',
+                        fontSize:14
+                    }}>Join</Text> */}
+                </TouchableOpacity>
+                <TouchableOpacity style={[
+                MainStyles.EIAButtons,{marginHorizontal:5,borderRadius:0,paddingHorizontal:10,
+                  paddingVertical:10},
+                ]}
+                onPress={()=>this.setUserEventStatus(1)}
+                >
+                  <Icon name="star" size={15} style={{color:'#8da6d5',marginRight:5}}/>
+                    {
+                        this.state.curStatus != 1 && 
+                        <Text style={{
+                            color:'#8da6d5',
+                            fontFamily:'Roboto-Medium',
+                            fontSize:14
+                        }}>Interested</Text>
+                    }
+                    {/* <Icon name="star" size={15} style={{color:'#FFF',marginRight:5,}}/>
+                    <Text style={{
+                        color:'#FFF',
+                        fontFamily:'Roboto-Medium',
+                        fontSize:14
+                    }}>Interested</Text> */}
+                </TouchableOpacity>
+                <TouchableOpacity style={[
+                MainStyles.EIAButtons,{borderRadius:0,paddingHorizontal:10,
+                  paddingVertical:10}]}
+                    onPress={()=>this.setUserEventStatus(3)}
+                    >
+                    <Icon name="ban" size={15} style={{color:'#8da6d5',marginRight:5,}}/>
+                    <Text style={{
+                        color:'#8da6d5',
+                        fontFamily:'Roboto-Medium',
+                        fontSize:14
+                    }}>Ignore</Text>
+                </TouchableOpacity>
+            </View>
+        }
         {
             this.state.eventData.usersCount == 0
             && 
@@ -529,76 +597,6 @@ export default class EventDetail extends Component {
                 <Text style={{color:'#FFF',fontFamily:'Roboto-Medium',fontSize:15}}>No more places available</Text>
             </View>
         }
-        {this.state && this.state.eventData != "" && 
-          <View style={{backgroundColor:'#fff',
-                        flexDirection:'row',
-                        paddingVertical:5,
-                        paddingHorizontal:15,
-                        shadowRadius:2,
-                        shadowOpacity:0.3,
-                        shadowOffset:{width:2,height:2},
-                        elevation:5,
-                        shadowColor:'#232323',
-                        justifyContent: 'space-between'}}>
-           { /*  <TouchableHighlight style={{ width: 35, height: 35, marginRight: 7 }} onPress={this.showMap}>
-                <ProgressiveImage
-                  source={{ uri: this.state.eventData.photoUrl }}
-                  style={{ width: 40, height: 40 }}
-                />
-               
-              </TouchableHighlight>   .split(" ").splice(0,5).join(" ")*/ }
-
-               
-              <View style={{justifyContent:'flex-start',paddingRight:10,flexDirection:'column',width:'80%'}}>
-                <Text  style={{fontFamily:'Roboto-Light',fontSize:13}}>{this.state.eventData.group_address}</Text>
-                <Text style={{color:'#39b54a',fontFamily:'Roboto-Medium',fontSize:13,flexWrap: 'wrap'}}>{this.state.eventData.event_subject}</Text>
-                <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>Note: {this.state.eventData.event_note}</Text>
-                <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>Local Time : {this.state.eventData.event_date_formated}</Text>
-              </View>
-              {
-                  this.state.userID == this.state.eventData.created_by && 
-                  <View style={{
-                      justifyContent:'center',
-                      alignItems:'center'
-                  }}>
-                    {!this.state.isMapShow && 
-                      <TouchableHighlight onPress={this.showMap} underlayColor={'transparent'}  style={{
-                          marginBottom:10
-                      }}>
-                          {/* <Text style={{color:'#000000',fontFamily:'Roboto-Light',fontSize:13,flexWrap: 'wrap'}}>{this.state.isMapShow ? '' : 'Show on map'}</Text> */}
-                          <Icon name="map-marker" style={{
-                              fontSize:20,
-
-                          }}/>
-                      </TouchableHighlight>
-                    }
-                      <TouchableOpacity onPress={()=>this.setState({EditEventVisible:true})} style={{
-                          marginBottom:10
-                      }}>
-                          <Icon name="pencil" style={{
-                              fontSize:20,
-
-                          }}/>
-                      </TouchableOpacity>
-                      <TouchableOpacity onPress={()=>{this.deleteEvent()}}>
-                          <Icon name="trash" style={{
-                              fontSize:20,
-                          }}/>
-                      </TouchableOpacity>
-                  </View>
-              }
-          </View>
-
-        }
-
-            <View
-                style={{
-                  borderBottomColor: 'Blue',
-                  borderBottomWidth: 2,
-                }}
-              />
-
-
         {this.state && this.state.userList && this.state.userList.length > 0 && (
           <FlatList
             data={this.state.userList}
@@ -606,7 +604,6 @@ export default class EventDetail extends Component {
               <View
                 style={[
                   MainStyles.UserListItem,
-                  item.status == "1" ? { backgroundColor: "#d1dbed" } : ""
                 ]}
               >
                 <TouchableOpacity
@@ -622,26 +619,27 @@ export default class EventDetail extends Component {
                 <View style={MainStyles.userListItemTextWrapper}>
                   <Text style={MainStyles.ULITWName}>{item.name}</Text>
                   <Text style={MainStyles.ULITWTitle}>{item.title}</Text>
+                  <View style={{flexDirection:'row'}}>
                   {this.state.eventData.created_by == item.user_id && (
                     <View
                       style={[
                         MainStyles.ULITWAction,
-                        { backgroundColor: "#8da6d5" }
+                        { borderColor: "#8da6d5",marginRight:15 }
                       ]}
                     >
-                      <Icon name="user" style={MainStyles.ULITWActionIcon} />
-                      <Text style={MainStyles.ULITWActionText}>    OWNER     </Text>
+                      <Icon name="user" style={[MainStyles.ULITWActionIcon,{color:'#8da6d5'}]} />
+                      <Text style={[MainStyles.ULITWActionText,{color:'#8da6d5'}]}>    OWNER     </Text>
                     </View>
                   )}
                   {item.status == "1" && (
                     <View
                       style={[
                         MainStyles.ULITWAction,
-                        { backgroundColor: "#8da6d5" }
+                        { borderColor: "#8da6d5" }
                       ]}
                     >
-                      <Icon name="star" style={MainStyles.ULITWActionIcon} />
-                      <Text style={MainStyles.ULITWActionText}>INTERESTED</Text>
+                      <Icon name="star" style={[MainStyles.ULITWActionIcon,{color:'#8da6d5'}]} />
+                      <Text style={[MainStyles.ULITWActionText,{color:'#8da6d5'}]}>INTERESTED</Text>
                     </View>
                   )}
                   {item.status == "2" && (
@@ -650,6 +648,8 @@ export default class EventDetail extends Component {
                       <Text style={MainStyles.ULITWActionText}>ACCEPTED</Text>
                     </View>
                   )}
+                  </View>
+                  
                 </View>
                 {item.user_id != this.state.userID && (
                   <TouchableOpacity
@@ -658,7 +658,7 @@ export default class EventDetail extends Component {
                       this.startPrivateChat(item.user_id);
                     }}
                   >
-                    <Icon name="comment" style={MainStyles.ChatIcon} />
+                    <Icon name="comment-o" style={MainStyles.ChatIcon} />
                   </TouchableOpacity>
                 )}
               </View>

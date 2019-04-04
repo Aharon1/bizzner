@@ -125,9 +125,9 @@ export class MapForEventDetail extends React.Component {
     } = this.state;
     const { location } = this.props;
     return polylineCoords.length ? (
-      <View style={{ position: "relative", width: "100%", height: 135 }}>
+      <View style={{ position: "relative", width: "100%", height: 175,paddingHorizontal: 10,paddingVertical: 10, }}>
         <MapView
-          style={{ width: "100%", height: 130 }}
+          style={{ width: "100%", height: 155 }}
           initialRegion={{
             latitude: location[1],
             longitude: location[0],
@@ -146,7 +146,7 @@ export class MapForEventDetail extends React.Component {
               longitude: location[0]
             }}
           >
-            <Icon name="map-marker" size={40} color="red" />
+            <Icon name="map-marker" size={40} color="#0947b9" />
           </Marker>
         {/* <Marker
           coordinate={{
@@ -157,15 +157,15 @@ export class MapForEventDetail extends React.Component {
           <Icon name="bullseye" size={40} color="grey" />
         </Marker> */}
         </MapView>
-        <TouchableHighlight
+        {/* <TouchableHighlight
           onPress={this.props.closeMap}
           style={styles.closeButton}
         >
           <Icon name="close" size={15} color="#2e4d85" />
-        </TouchableHighlight>
+        </TouchableHighlight> */}
       
-          <TouchableOpacity onPress={this.handleGetDirections} style={[{width:80,height:30,justifyContent:'center',alignItems:'center',zIndex:50, position: "absolute",left: "75%",bottom: 5}]}>
-            <Image source={require('../../assets/directions2.png')} style={[{width:80,height:30 }]}/>
+          <TouchableOpacity onPress={this.handleGetDirections} style={[{width:41,height:42,justifyContent:'center',alignItems:'center',zIndex:50, position: "absolute",right: 20,bottom: 20}]}>
+            <Image source={require('../../assets/dir-icon.png')} style={[{width:41,height:42 }]}/>
           </TouchableOpacity>       
            
       </View>

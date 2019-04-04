@@ -299,8 +299,8 @@ const MainStyles = StyleSheet.create({
     tabItemActiveText:{color:'#05296c',},
     EventScreenTabWrapper:{
         //backgroundColor:'#d1dbed',
+        padding:0,
         paddingHorizontal:10,
-        paddingVertical:10,
         flexDirection:'row',
         justifyContent:'space-between',
         alignItems:'center'
@@ -475,18 +475,19 @@ const MainStyles = StyleSheet.create({
         borderBottomColor:'#8da6d4',
         borderBottomWidth:1,
         flexDirection:'row',
-        backgroundColor:'#e8edf6'
+        //backgroundColor:'#e8edf6'
     },
     userListItemImageWrapper:{
         overflow:'hidden',
         width:90,
         height:90,
+        borderRadius:100,
     },
     userListItemIWImage:{
         width: 90, 
         height: 90,
         borderWidth: 3,
-        borderRadius:15,
+        borderRadius:100,
         borderColor: '#FFF'
     },
     userListItemTextWrapper:{
@@ -517,16 +518,17 @@ const MainStyles = StyleSheet.create({
         paddingHorizontal:8,
         alignItems:'center',
         borderRadius:15,
-        backgroundColor:'#88d392',
+        borderColor:'#88d392',
+        borderWidth:1,
     },
     ULITWActionIcon:{
         fontSize:11,
-        color:'#FFF',
+        color:'#88d392',
         marginRight:5
     },
     ULITWActionText:{
         fontSize:11,
-        color:'#FFF',
+        color:'#88d392',
         fontFamily:'Roboto-Medium'
     },
     ChatIconWrapper:{

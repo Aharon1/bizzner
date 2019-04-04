@@ -582,14 +582,26 @@ class EventsScreen extends Component{
                     navigation={this.props.navigation}
                     />
                 }
-                <View style={MainStyles.EventScreenTabWrapper}>
+                <View style={[MainStyles.EventScreenTabWrapper,{paddingVertical:10}]}>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('all-events')}>
                         <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#2f4d85'}:{color:'#8da6d5'}]}>Near events</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('my-events')}>
                         <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#2f4d85'}:{color:'#8da6d5'}]}>My events</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[MainStyles.ESTWItem,{borderColor:'#39b54a'}]} onPress={()=>this.setState({CreateEventVisible:true})}>
+                    <TouchableOpacity style={[MainStyles.ESTWItem,{borderColor:'#39b54a'}]} onPress={()=>{this.setState({CreateEventVisible:true});
+                        if(this.state.isGPSGranted){
+                            fetch("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+this.state.curLat+","+this.state.curLng+"&rankby=distance&type=food&key="+MAPKEY)
+                            .then(res=>res.json())
+                            .then(response=>{
+                                var getCity = response.results[0].vicinity.split(', ');
+                                this.setState({isSelectedCity:getCity[getCity.length-1]})
+                            })
+                            .catch(err=>{
+                                console.log(err);
+                            });
+                        }
+                    }}>
                         <Text style={[MainStyles.ESTWIText,{color:'#39b54a'}]}>Create event</Text>
                     </TouchableOpacity>
                 </View>
