@@ -24,7 +24,7 @@ export class MarkerItem extends PureComponent {
         }
         {
           !this.isToday() && 
-          <Image source={require('../../assets/events3.png')} style={{width: 40, height: 40}}/>
+          <Image source={require('../../assets/events1.png')} style={{width: 40, height: 40}}/>
           //{ ? "#5ac268" : 
         }
       </Marker>

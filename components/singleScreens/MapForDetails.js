@@ -31,7 +31,7 @@ export class MapForEventDetail extends React.Component {
       params: [
         {
           key: "travelmode",
-          value: "walking" // may be "driving", "bicycling" or "transit" as well
+          value: "driving" // may be "driving", "bicycling" or "transit" as well
         },
         {
           key: "dir_action",
