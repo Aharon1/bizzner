@@ -28,7 +28,12 @@ const HardText = {
   'm_edit_profile'      :'Edit profile',
   'm_events_history'    :'Events history',
   'm_complain'          :'Complain',
-  'm_logout'            :'Logout'
-
+  'm_logout'            :'Logout',
+  /* Profile Screen */
+  'profile':'PROFILE',
+  'take_photo':'Take a Photo',
+  'pick_photo':'Pick a Photo',
+  'save':'SAVE',
+  'add_interests':'Add Interests'
 }
 export default HardText;

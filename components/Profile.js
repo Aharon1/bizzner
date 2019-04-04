@@ -16,6 +16,7 @@ import PushNotification from 'react-native-push-notification';
 import FormData from 'FormData';
 import ImagePicker from 'react-native-image-picker';
 import countryList from 'react-select-country-list';
+import HardText from '../HardText';
 class ProfileScreen extends Component{
   constructor(props){
     super(props);
@@ -383,7 +384,7 @@ class ProfileScreen extends Component{
               </TouchableOpacity>
               {/*Header Profile Name Section*/}
               <View style={MainStyles.profileTextWrapper}>
-                <Text style={MainStyles.pTWText}>PROFILE</Text>
+                <Text style={MainStyles.pTWText}>{HardText.profile}</Text>
                 <Text style={MainStyles.pTWNameText}>{this.state.firstName} {this.state.lastName}</Text>
               </View>
               <Animated.View style={[MainStyles.pHeadPicOptions,{
@@ -394,10 +395,10 @@ class ProfileScreen extends Component{
                 })
               }]}>
                 <TouchableOpacity style={MainStyles.pHPOBtn} onPress={()=>{this.takePicture()}}>
-                  <Text>Take a Photo</Text>
+                  <Text>{HardText.take_photo}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={MainStyles.pHPOBtn} onPress={()=>{this.picPhoto()}}>
-                  <Text>Pick Photo</Text>
+                  <Text>{HardText.pick_photo}</Text>
                 </TouchableOpacity>
               </Animated.View>
             </View>
@@ -512,7 +513,7 @@ class ProfileScreen extends Component{
           
             <View style={[MainStyles.btnWrapper,{flex:1,justifyContent:'flex-end',flexDirection: 'row'}]}>
               <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.GoToNextScreen();}}>
-                <Text style={MainStyles.btnSaveText}>SAVE</Text>
+                <Text style={MainStyles.btnSaveText}>{HardText.save}</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>
@@ -592,7 +593,7 @@ class ProfileScreen extends Component{
               rounded={true}
         >
             <View style={[MainStyles.confirmPopupHeader,{alignItems:'center',justifyContent:'space-between',flexDirection:'row'}]}>
-                <Text style={{color:'#8da6d5',fontFamily: 'Roboto-Medium',fontSize:16}}>Add Interests</Text>
+                <Text style={{color:'#8da6d5',fontFamily: 'Roboto-Medium',fontSize:16}}>{HardText.add_interests}</Text>
                 <TouchableOpacity onPress={()=>{this.setState({IShow:false,renderedListData:[]})}}>
                     <Image source={require('../assets/close-icon.png')} style={{width:25,height:25}}/>
                 </TouchableOpacity>
