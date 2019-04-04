@@ -593,13 +593,15 @@ class ProfileScreen extends Component{
         >
             <View style={[MainStyles.confirmPopupHeader,{alignItems:'center',justifyContent:'space-between',flexDirection:'row'}]}>
                 <Text style={{color:'#8da6d5',fontFamily: 'Roboto-Medium',fontSize:16}}>Add Interests</Text>
-                <TouchableOpacity onPress={()=>{this.setState({IShow:false})}}>
+                <TouchableOpacity onPress={()=>{this.setState({IShow:false,renderedListData:[]})}}>
                     <Image source={require('../assets/close-icon.png')} style={{width:25,height:25}}/>
                 </TouchableOpacity>
             </View>
             <DialogContent style={{padding:0,borderWidth: 0,backgroundColor:'#d1dbed'}}>
               <View style={MainStyles.confirmPopupContent}>
-              <ScrollView style={MainStyles.tagsContent} contentContainerStyle={{
+              <ScrollView style={MainStyles.tagsContent} 
+              keyboardShouldPersistTaps={'handled'} 
+               contentContainerStyle={{
                   justifyContent:"center",
                   alignItems:'center',
               }}>
@@ -656,14 +658,14 @@ class ProfileScreen extends Component{
                         )
                       }
                   </View>
-                  <TouchableOpacity style={{
+                  {/* <TouchableOpacity style={{
                       backgroundColor:'#3a6cc7',
                       padding:15,
                       marginTop:15,
                       borderRadius:50,
                   }} onPress={this.loadMoreTags}>
                       <Icon name="chevron-down" style={{color:'#FFF'}} size={15}/>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                   <View style={{
                       marginTop:30
                   }}>
