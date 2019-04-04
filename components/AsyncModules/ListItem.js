@@ -175,7 +175,7 @@ let userStatus = '';
                                 justifyContent:'flex-end',
                             }}>
                                 <Text style={{fontFamily:'Roboto-Regular',fontSize:16,color:'#FFFFFF'}}>{this.state.curItem.name}</Text>
-                                <Text style={{fontFamily:'Roboto-Light',fontSize:14,color:'#FFFFFF'}}>{Address}</Text>
+                                <Text style={{fontFamily:'Roboto-Light',fontSize:14,color:'#FFFFFF',textAlign:'left'}}>{Address}</Text>
                             </View>
                         </ImageBackground>
                     </View>
