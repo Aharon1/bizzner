@@ -620,17 +620,7 @@ export default class EventDetail extends Component {
                   <Text style={MainStyles.ULITWName}>{item.name}</Text>
                   <Text style={MainStyles.ULITWTitle}>{item.title}</Text>
                   <View style={{flexDirection:'row'}}>
-                  {this.state.eventData.created_by == item.user_id && (
-                    <View
-                      style={[
-                        MainStyles.ULITWAction,
-                        { borderColor: "#8da6d5",marginRight:15 }
-                      ]}
-                    >
-                      <Icon name="user" style={[MainStyles.ULITWActionIcon,{color:'#8da6d5'}]} />
-                      <Text style={[MainStyles.ULITWActionText,{color:'#8da6d5'}]}>    OWNER     </Text>
-                    </View>
-                  )}
+                  
                   {item.status == "1" && (
                     <View
                       style={[
@@ -646,6 +636,17 @@ export default class EventDetail extends Component {
                     <View style={MainStyles.ULITWAction}>
                       <Icon name="check" style={MainStyles.ULITWActionIcon} />
                       <Text style={MainStyles.ULITWActionText}>ACCEPTED</Text>
+                    </View>
+                  )}
+                  {this.state.eventData.created_by == item.user_id && (
+                    <View
+                      style={[
+                        MainStyles.ULITWAction,
+                        { borderColor: "#8da6d5",marginLeft:15 }
+                      ]}
+                    >
+                      <Icon name="user" style={[MainStyles.ULITWActionIcon,{color:'#8da6d5'}]} />
+                      <Text style={[MainStyles.ULITWActionText,{color:'#8da6d5'}]}>    OWNER     </Text>
                     </View>
                   )}
                   </View>

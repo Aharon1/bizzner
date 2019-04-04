@@ -479,16 +479,13 @@ const MainStyles = StyleSheet.create({
     },
     userListItemImageWrapper:{
         overflow:'hidden',
-        width:90,
-        height:90,
+        width:80,
+        height:80,
         borderRadius:100,
     },
     userListItemIWImage:{
-        width: 90, 
-        height: 90,
-        borderWidth: 3,
-        borderRadius:100,
-        borderColor: '#FFF'
+        width: 80, 
+        height: 80,
     },
     userListItemTextWrapper:{
         marginLeft:15,
