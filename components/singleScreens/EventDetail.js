@@ -15,6 +15,7 @@ import * as AddCalendarEvent from 'react-native-add-calendar-event';
 import moment from 'moment';
 import Footer from '../Navigation/Footer';
 import DatePicker from 'react-native-datepicker';
+import HardText from "../../HardText";
 export default class EventDetail extends Component {
   constructor(props) {
     super(props);
@@ -349,7 +350,7 @@ export default class EventDetail extends Component {
               style={{ fontSize: 24, color: "#8da6d5" }}
             />
             <Text style={{ fontSize: 16, color: "#8da6d5", marginLeft: 20 }}>
-              EVENT DETAILS
+              {HardText.event_details}
             </Text>
           </TouchableOpacity>
         </View>
@@ -396,7 +397,7 @@ export default class EventDetail extends Component {
                   { fontSize: 14,fontFamily:'Roboto-Medium' }
                 ]}
               >
-                Invited to event
+                {HardText.invited_to_event}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={()=>{this.shareThis()}} style={[
@@ -407,7 +408,7 @@ export default class EventDetail extends Component {
                 style={[MainStyles.tabItemIcon, { fontSize: 14 }]}
               />
               <Text style={[MainStyles.tabItemIcon, { fontSize: 14,fontFamily:'Roboto-Medium' }]}>
-                Share
+                {HardText.event_share}
               </Text>
             </TouchableOpacity>
             {this.state.curStatus != "" && (
@@ -426,7 +427,7 @@ export default class EventDetail extends Component {
                   style={[MainStyles.tabItemIcon, { color:'#22A54D', fontSize: 14 }]}
                 />
                 <Text style={[MainStyles.tabItemIcon, {color:'#22A54D', fontSize: 14,fontFamily:'Roboto-Medium' }]}>
-                  Event chat
+                  {HardText.event_chat}
                 </Text>
               </TouchableOpacity>
             )}
@@ -537,7 +538,7 @@ export default class EventDetail extends Component {
                             color:'#87d292',
                             fontFamily:'Roboto-Medium',
                             fontSize:14
-                        }}>Join</Text>
+                        }}>{HardText.event_join}</Text>
                     }
                     {/* <Icon name="check" size={15} style={{color:'#FFF',marginRight:5,}}/>
                     <Text style={{
@@ -559,7 +560,7 @@ export default class EventDetail extends Component {
                             color:'#8da6d5',
                             fontFamily:'Roboto-Medium',
                             fontSize:14
-                        }}>Interested</Text>
+                        }}>{HardText.event_interested}</Text>
                     }
                     {/* <Icon name="star" size={15} style={{color:'#FFF',marginRight:5,}}/>
                     <Text style={{
@@ -578,7 +579,7 @@ export default class EventDetail extends Component {
                         color:'#8da6d5',
                         fontFamily:'Roboto-Medium',
                         fontSize:14
-                    }}>Ignore</Text>
+                    }}>{HardText.event_ignore}</Text>
                 </TouchableOpacity>
             </View>
         }
@@ -594,7 +595,7 @@ export default class EventDetail extends Component {
             this.state.eventData.usersCount == this.state.eventData.usersPlace 
             && 
             <View style={[{paddingVertical:5,backgroundColor:'#8da6d4',justifyContent:'center',alignItems:'center'}]}>
-                <Text style={{color:'#FFF',fontFamily:'Roboto-Medium',fontSize:15}}>No more places available</Text>
+                <Text style={{color:'#FFF',fontFamily:'Roboto-Medium',fontSize:15}}>{HardText.event_no_place}</Text>
             </View>
         }
         {this.state && this.state.userList && this.state.userList.length > 0 && (
@@ -629,13 +630,13 @@ export default class EventDetail extends Component {
                       ]}
                     >
                       <Icon name="star" style={[MainStyles.ULITWActionIcon,{color:'#8da6d5'}]} />
-                      <Text style={[MainStyles.ULITWActionText,{color:'#8da6d5'}]}>INTERESTED</Text>
+                      <Text style={[MainStyles.ULITWActionText,{color:'#8da6d5'}]}>{HardText.e_i_caps}</Text>
                     </View>
                   )}
                   {item.status == "2" && (
                     <View style={MainStyles.ULITWAction}>
                       <Icon name="check" style={MainStyles.ULITWActionIcon} />
-                      <Text style={MainStyles.ULITWActionText}>ACCEPTED</Text>
+                      <Text style={MainStyles.ULITWActionText}>{HardText.e_a_caps}</Text>
                     </View>
                   )}
                   {this.state.eventData.created_by == item.user_id && (
@@ -646,7 +647,7 @@ export default class EventDetail extends Component {
                       ]}
                     >
                       <Icon name="user" style={[MainStyles.ULITWActionIcon,{color:'#8da6d5'}]} />
-                      <Text style={[MainStyles.ULITWActionText,{color:'#8da6d5'}]}>    OWNER     </Text>
+                      <Text style={[MainStyles.ULITWActionText,{color:'#8da6d5'}]}>{HardText.e_o_caps}</Text>
                     </View>
                   )}
                   </View>
@@ -724,7 +725,7 @@ export default class EventDetail extends Component {
                 marginLeft: 20
               }}
             >
-              PROFILE DETAILS
+              {HardText.profile_details}
             </Text>
           </View>
           <View
@@ -905,7 +906,7 @@ export default class EventDetail extends Component {
                             fontSize: 18
                           }}
                         >
-                          CHAT
+                          {HardText.e_p_chat}
                         </Text>
                       </TouchableOpacity>
                     )}
@@ -926,7 +927,7 @@ export default class EventDetail extends Component {
                 <TouchableOpacity onPress={()=>{this.setState({EditEventVisible:false,isLocationSet:false,curLocation:{}})}}>
                     <Icon name="times" style={{fontSize:20,color:'#FFF'}}/>
                 </TouchableOpacity>
-                <Text style={{color:'#FFF',fontFamily: 'Roboto-Medium',fontSize:17,marginLeft:20}}>EDIT EVENT</Text>
+                <Text style={{color:'#FFF',fontFamily: 'Roboto-Medium',fontSize:17,marginLeft:20}}>{HardText.edit_event}</Text>
             </View>
             <View style={{padding:0,borderWidth: 0,backgroundColor:'#FFF',overflow:'visible'}} 
             onStartShouldSetResponderCapture={() => {
@@ -1054,7 +1055,7 @@ export default class EventDetail extends Component {
                             </View>
                             <View style={[MainStyles.btnWrapper,{marginBottom:20}]}>
                                 <TouchableOpacity style={[MainStyles.btnSave]} onPress={()=>this.updateEvent()}>
-                                    <Text style={MainStyles.btnSaveText}>Save</Text>
+                                    <Text style={MainStyles.btnSaveText}>{HardText.save}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

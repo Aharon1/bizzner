@@ -7,6 +7,7 @@ import MainStyles from './StyleSheet';
 import {SERVER_URL} from '../Constants';
 import Loader from './Loader';
 import Toast from 'react-native-simple-toast';
+import HardText from '../HardText';
 class Interests extends Component{
     constructor(props){
         super(props);
@@ -78,7 +79,7 @@ class Interests extends Component{
                             elevation:7
                 }]}>
                     <View style={{justifyContent:'flex-start'}}>
-                        <Text style={{fontSize:16,color:'#FFF',marginLeft:18,fontFamily:'Roboto-Medium',textAlign:'left'}}>SKIP AND FILL LATER</Text>
+                        <Text style={{fontSize:16,color:'#FFF',marginLeft:18,fontFamily:'Roboto-Medium',textAlign:'left'}}>{HardText.skip_fill_later}</Text>
                     </View>
                     <View style={{justifyContent:'flex-end',paddingRight:20}}>
                         <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Home')}}>
@@ -87,14 +88,14 @@ class Interests extends Component{
                     </View>
                 </View>
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>SELECT YOUR INTERESTS</Text>
+                    <Text style={{fontSize:16,color:'#8da6d5',marginLeft:18}}>{HardText.select_your_interests}</Text>
                 </View>
                 <View style={{
                     justifyContent:'center',
                     alignItems:'center',
                     marginTop:30
                 }}>
-                    <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:16,maxWidth:180,textAlign:'center'}}>Click on tags that define what you like</Text>
+                    <Text style={{color:'#03163a',fontFamily:'Roboto-Light',fontSize:16,maxWidth:180,textAlign:'center'}}>{HardText.choose_tags}</Text>
                 </View>
                 <ScrollView style={MainStyles.tagsContent} contentContainerStyle={{
                     justifyContent:"center",
@@ -141,7 +142,7 @@ class Interests extends Component{
                                 fontSize:18,
                                 color:'#FFF',
                                 fontFamily:'Roboto-Regular'
-                            }}>SAVE</Text>
+                            }}>{HardText.save}</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

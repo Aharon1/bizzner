@@ -684,7 +684,7 @@ class ProfileScreen extends Component{
                               fontSize:18,
                               color:'#FFF',
                               fontFamily:'Roboto-Regular'
-                          }}>ADD</Text>
+                          }}>{HardText.add}</Text>
                       </TouchableOpacity>
                   </View>
               </ScrollView>

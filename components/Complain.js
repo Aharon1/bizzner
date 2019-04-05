@@ -9,6 +9,7 @@ import { HeaderButton } from './Navigation/HeaderButton';
 import MainStyles from './StyleSheet';
 import Loader from './Loader';
 import Toast from 'react-native-simple-toast';
+import HardText from '../HardText';
 class ComplainPageScreen extends Component{
     constructor(props){
         super(props);
@@ -48,7 +49,7 @@ class ComplainPageScreen extends Component{
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={{ alignItems:'center',paddingLeft: 12,flexDirection:'row' }} onPress={() => this.props.navigation.goBack() }>
                         <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
-                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>COMPLAIN</Text>
+                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>{HardText.complain}</Text>
                     </TouchableOpacity>
                 </View>
                 {/*Body Section*/}
@@ -66,7 +67,7 @@ class ComplainPageScreen extends Component{
                         </View>
                         <View style={[MainStyles.btnWrapper,{flex:1,justifyContent:'flex-end',flexDirection: 'row'}]}>
                             <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.sendComplain();}}>
-                                <Text style={MainStyles.btnSaveText}>SEND</Text>
+                                <Text style={MainStyles.btnSaveText}>{HardText.send_btn}</Text>
                             </TouchableOpacity>
                         </View>
                     </ScrollView>

@@ -10,6 +10,7 @@ import { SERVER_URL } from '../../Constants';
 import ChatItem from './ChatItem';
 import Dialog, { SlideAnimation } from "react-native-popup-dialog";
 import ProgressiveImage from '../AsyncModules/ImageComponent';
+import HardText from '../../HardText';
 var clearTime = ''
 class EventChatScreen extends Component{
     _isMounted = false;clearTimeR = '';
@@ -190,11 +191,11 @@ class EventChatScreen extends Component{
                     <View style={[MainStyles.eventsHeader,{justifyContent:'center'}]}>
                         <TouchableOpacity style={{alignItems:'center',flexDirection:'row', paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
                             <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
-                            <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>EVENT CHAT</Text>
+                            <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>{HardText.event_chat}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={[MainStyles.tabContainer,{justifyContent:'flex-start',paddingHorizontal:15,paddingVertical:15}]}>
-                        <Text style={{fontSize:14,fontFamily:'Roboto-Medium',color:'#05296d'}}>Subject: {this.state.event_subject}</Text>
+                        <Text style={{fontSize:14,fontFamily:'Roboto-Medium',color:'#05296d'}}>{HardText.event_chat_subject} {this.state.event_subject}</Text>
                     </View>
                 </View>
                 <View style={{
@@ -277,7 +278,7 @@ class EventChatScreen extends Component{
                             marginLeft: 20
                         }}
                         >
-                        PROFILE DETAILS
+                        {HardText.profile_details}
                         </Text>
                     </View>
                     <View

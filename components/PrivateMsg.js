@@ -10,6 +10,7 @@ import Loader from './Loader';
 import { HeaderButton } from './Navigation/HeaderButton';
 import {SERVER_URL} from '../Constants';
 import ProgressiveImage from './AsyncModules/ImageComponent';
+import HardText from '../HardText';
 var clearTime = '';
 class PrivatMsgScreen extends Component{
     _isMounted = false;
@@ -101,7 +102,7 @@ class PrivatMsgScreen extends Component{
                 <View style={[MainStyles.eventsHeader,{justifyContent:'center'}]}>
                     <TouchableOpacity style={{alignItems:'center',flexDirection:'row', paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
                         <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
-                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>CHAT LIST</Text>
+                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>{HardText.chat_list}</Text>
                     </TouchableOpacity>
                 </View>
                 {

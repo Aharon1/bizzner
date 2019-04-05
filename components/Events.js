@@ -19,6 +19,7 @@ import TabContainer from './TabContainer';
 import Permissions from 'react-native-permissions'
 import Toast from 'react-native-simple-toast';
 import Geolocation from 'react-native-geolocation-service';
+import HardText from '../HardText';
 class EventsScreen extends Component{
     constructor(props){
         super(props);
@@ -491,7 +492,7 @@ class EventsScreen extends Component{
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row',justifyContent:'space-between'}]}>
                     <View style={{alignItems:'center',flexDirection:'row'}}>
                         <HeaderButton onPress={() => {this.props.navigation.dispatch(DrawerActions.toggleDrawer())} } />
-                        <Text style={{fontSize:14,color:'#8da6d5',marginLeft:18}}>EVENTS</Text>
+                        <Text style={{fontSize:14,color:'#8da6d5',marginLeft:18}}>{HardText.events}</Text>
                     </View>
                     <View style={{marginRight:15}}>
                         <Image source={require('../assets/bizzner-white-icon.png')} style={{width:30,height:33}}/>
@@ -500,14 +501,14 @@ class EventsScreen extends Component{
                 <View style={[MainStyles.tabContainer,{justifyContent:'space-around',alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={[{width:'48%'},MainStyles.tabItem,(this.state.TabComponent == '') ? MainStyles.tabItemActive : null]} onPress={()=>this.gotEventsList()}>
                         <Icon name="ellipsis-v" style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveIcon : null]}/>
-                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveText : null]}>List</Text>
+                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == '') ? MainStyles.tabItemActiveText : null]}>{HardText.list}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[{width:'48%'},
                         MainStyles.tabItem,
                         (this.state.TabComponent == 'map') ? MainStyles.tabItemActive : null
                         ]} onPress={()=>this.changeTab('map')}>
                         <Icon name="globe" style={[MainStyles.tabItemIcon,(this.state.TabComponent == 'map') ? MainStyles.tabItemActiveIcon : null]}/>
-                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == 'map') ? MainStyles.tabItemActiveText : null]}>Map</Text>
+                        <Text style={[MainStyles.tabItemIcon,(this.state.TabComponent == 'map') ? MainStyles.tabItemActiveText : null]}>{HardText.map}</Text>
                     </TouchableOpacity>
                     
                     {/* <TouchableOpacity style={MainStyles.tabItem} onPress={()=>{
@@ -584,10 +585,10 @@ class EventsScreen extends Component{
                 }
                 <View style={[MainStyles.EventScreenTabWrapper,{paddingVertical:10}]}>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('all-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#2f4d85'}:{color:'#8da6d5'}]}>Near events</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#2f4d85'}:{color:'#8da6d5'}]}>{HardText.near_events}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('my-events')}>
-                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#2f4d85'}:{color:'#8da6d5'}]}>My events</Text>
+                        <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'my-events')?{color:'#2f4d85'}:{color:'#8da6d5'}]}>{HardText.my_events}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[MainStyles.ESTWItem,{borderColor:'#39b54a'}]} onPress={()=>{this.setState({CreateEventVisible:true});
                         if(this.state.isGPSGranted){
@@ -602,7 +603,7 @@ class EventsScreen extends Component{
                             });
                         }
                     }}>
-                        <Text style={[MainStyles.ESTWIText,{color:'#39b54a'}]}>Create event</Text>
+                        <Text style={[MainStyles.ESTWIText,{color:'#39b54a'}]}>{HardText.create_event}</Text>
                     </TouchableOpacity>
                 </View>
                 {
@@ -623,7 +624,7 @@ class EventsScreen extends Component{
                             paddingHorizontal:15,
                             borderRadius:50,
                             elevation:0
-                        }}>NO DATA</Text>
+                        }}>{HardText.no_data}</Text>
                     </View>
                 }
                 { 
@@ -674,13 +675,13 @@ class EventsScreen extends Component{
                     this.state.locationList.length == 0 && !this.state.isRefreshing &&
                     this.state.isCurrentTab == 'all-events' && 
                     <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                        <Text style={{fontFamily:'Roboto-Medium',color:'#2e4d85',fontSize:18}}>Be the first one to create an event!</Text>
+                        <Text style={{fontFamily:'Roboto-Medium',color:'#2e4d85',fontSize:18}}>{HardText.blank_create_event}</Text>
                         <TouchableOpacity 
                         onPress={()=>{this.setState({CreateEventVisible:true})}}
                         style={{flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'#2e4d85',paddingHorizontal:15,marginTop:10,paddingVertical:5,borderRadius:50}}
                         >
                             <Icon name="repeat" style={{marginRight:10,color:'#FFF'}} size={16}/>
-                            <Text style={{fontFamily:'Roboto-Regular',color:'#FFF',fontSize:16}}>Create Event</Text>
+                            <Text style={{fontFamily:'Roboto-Regular',color:'#FFF',fontSize:16}}>{HardText.create_event}</Text>
                         </TouchableOpacity>
                     </View> 
                 }
@@ -695,7 +696,7 @@ class EventsScreen extends Component{
                         <TouchableOpacity onPress={()=>{this.setState({CreateEventVisible:false,isLocationSet:false,curLocation:{}})}}>
                             <Icon name="times" style={{fontSize:20,color:'#FFF'}}/>
                         </TouchableOpacity>
-                        <Text style={{color:'#FFF',fontFamily: 'Roboto-Medium',fontSize:17,marginLeft:20}}>CREATE NEW EVENT</Text>
+                        <Text style={{color:'#FFF',fontFamily: 'Roboto-Medium',fontSize:17,marginLeft:20}}>{HardText.create_new_event}</Text>
                     </View>
                     <View style={{padding:0,borderWidth: 0,backgroundColor:'#FFF',overflow:'visible'}} 
                     onStartShouldSetResponderCapture={() => {
@@ -773,7 +774,7 @@ class EventsScreen extends Component{
                                             </View>
                                         }
                                         <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
-                                            <Text style={{color:'#0947b9',fontFamily:'Roboto-Medium'}}>Add location</Text>
+                                            <Text style={{color:'#0947b9',fontFamily:'Roboto-Medium'}}>{HardText.add_location}</Text>
                                         </View>
                                     </View>
                                 }
@@ -924,7 +925,7 @@ class EventsScreen extends Component{
                                     </View>
                                     <View style={[MainStyles.btnWrapper,{marginBottom:20}]}>
                                         <TouchableOpacity style={[MainStyles.btnSave]} onPress={this.createNewEvent}>
-                                            <Text style={MainStyles.btnSaveText}>Create Event</Text>
+                                            <Text style={MainStyles.btnSaveText}>{HardText.create_event}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>

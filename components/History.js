@@ -11,6 +11,7 @@ import {SERVER_URL} from '../Constants';
 import Loader from './Loader';
 import ProgressiveImage from './AsyncModules/ImageComponent';
 import _ from 'lodash';
+import HardText from '../HardText';
 class HistoryPageScreen extends Component{
     constructor(props){
         super(props);
@@ -115,7 +116,7 @@ class HistoryPageScreen extends Component{
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={{ alignItems:'center',paddingLeft: 12,flexDirection:'row' }} onPress={() => this.props.navigation.goBack() }>
                         <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
-                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>EVENTS HISTORY</Text>
+                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>{HardText.events_history}</Text>
                     </TouchableOpacity>
                 </View>
                 {
@@ -168,7 +169,7 @@ class HistoryPageScreen extends Component{
                                             <View style={MainStyles.EITWAction}>
                                                 <Image source={require('../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
                                                 <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({item.usersCount}) </Text>
-                                                <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>Info</Text>
+                                                <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>{HardText.h_info}</Text>
                                             </View>
                                         </View>
                                     </TouchableOpacity>
@@ -191,13 +192,13 @@ class HistoryPageScreen extends Component{
                 {
                     this.state.locationList.length == 0 && 
                     <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                        <Text style={{fontFamily:'Roboto-Medium',color:'#2e4d85',fontSize:18}}>No events!</Text>
+                        <Text style={{fontFamily:'Roboto-Medium',color:'#2e4d85',fontSize:18}}>{HardText.no_events}</Text>
                         <TouchableOpacity 
                         onPress={this.refreshList}
                         style={{flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'#2e4d85',paddingHorizontal:15,marginTop:10,paddingVertical:5,borderRadius:50}}
                         >
                             <Icon name="repeat" style={{marginRight:10,color:'#FFF'}} size={16}/>
-                            <Text style={{fontFamily:'Roboto-Regular',color:'#FFF',fontSize:16}}>Retry</Text>
+                            <Text style={{fontFamily:'Roboto-Regular',color:'#FFF',fontSize:16}}>{HardText.h_retry}</Text>
                         </TouchableOpacity>
                     </View> 
                 }
