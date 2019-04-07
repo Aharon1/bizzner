@@ -47,6 +47,9 @@ const HardText = {
   'blank_create_event':'Be the first one to create an event!',
   'create_new_event':'CREATE NEW EVENT',
   'add_location':'Add location',
+  'list_chat_now':'Chat Now',
+  'event_search':'Search event/city/place...',
+
   /* Complain Screen */
   'complain':'COMPLAIN',
   'send_btn':'SEND',
@@ -57,12 +60,13 @@ const HardText = {
   'h_retry':'Retry',
   /*Private Message Screen */
   'chat_list':'CHAT LIST',
+  'chat_private_chat':'PRIVATE CHAT',
   /*Interests Screen */
   'skip_fill_later':'SKIP AND FILL LATER',
   'select_your_interests':'SELECT YOUR INTERESTS',
   'choose_tags':'Click on tags that define what you like',
   /*Event Chat Screen */
-  'event_chat':'EVENT CHAT',
+  //'event_chat':'EVENT CHAT',
   'event_chat_subject':'Subject:',
   'profile_details':'PROFILE DETAILS',
   /*Event Details Screen */

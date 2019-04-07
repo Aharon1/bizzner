@@ -20,16 +20,39 @@ class ComplainPageScreen extends Component{
             message:'',
         }
     }
-    async setUserId(){
-        var userID =  await AsyncStorage.getItem('userID');
-        this.setState({userID});
-    }
+    
+
+    get_usersDetails = async ()=>{
+        var UserID = await AsyncStorage.getItem('userID');
+        this.setState({UserID});
+        setTimeout(()=>{
+          fetch(SERVER_URL+'?action=get_user_data&user_id='+UserID)
+          .then(res=>res.json())
+          .then(response=>{
+            if(response.code == 200){
+              var body = response.body;
+              console.log(body);
+              this.setState({
+                loading:false,
+                emailAddress : body.user_email
+             });
+            }
+          })
+        },200)
+      }
+
+
+
+
+
+
+
     componentDidMount(){
-        this.setUserId();
+        this.get_usersDetails();
     }
     sendComplain(){
         this.setState({loading:true});
-        fetch(SERVER_URL+'?action=send_complain&name='+this.state.name+'&subject='+this.state.subject+'&message='+this.state.message)
+        fetch(SERVER_URL+'?action=send_complain&name='+this.state.name+'&subject='+this.state.subject+'&message='+this.state.message + '&useremail='+this.state.emailAddress)
         .then(res=>{console.log(res);return res.json()})
         .then(response=>{
             console.log(response);
@@ -49,7 +72,7 @@ class ComplainPageScreen extends Component{
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                     <TouchableOpacity style={{ alignItems:'center',paddingLeft: 12,flexDirection:'row' }} onPress={() => this.props.navigation.goBack() }>
                         <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
-                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>{HardText.complain}</Text>
+                        <Text style={{fontSize:14,color:'#8da6d5',marginLeft:20}}>{HardText.complain}</Text>
                     </TouchableOpacity>
                 </View>
                 {/*Body Section*/}
@@ -65,6 +88,7 @@ class ComplainPageScreen extends Component{
                         <View style={MainStyles.inputFieldWithIcon}>
                             <TextInput style={MainStyles.ifWITI} placeholder="Message" multiline={true} placeholderTextColor="#03163a" underlineColorAndroid="transparent" value={this.state.message} numberOfLines = {6} onChangeText={(text)=>{this.setState({message:text})}}/>
                         </View>
+                        
                         <View style={[MainStyles.btnWrapper,{flex:1,justifyContent:'flex-end',flexDirection: 'row'}]}>
                             <TouchableOpacity style={MainStyles.btnSave} onPress={() => {this.sendComplain();}}>
                                 <Text style={MainStyles.btnSaveText}>{HardText.send_btn}</Text>

@@ -201,7 +201,7 @@ const MainStyles = StyleSheet.create({
         //paddingBottom: 10,
         textAlign:'left',
         paddingLeft: 0,
-        fontSize:18,
+        fontSize:15,
         fontFamily:'Roboto-Light'
     },
     iFWIPlus:{

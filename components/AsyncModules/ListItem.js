@@ -8,6 +8,8 @@ import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
 import * as AddCalendarEvent from 'react-native-add-calendar-event';
 import moment from 'moment';
+import HardText from '../../HardText';
+
 let userStatus = '';
  class ListItem extends Component{
     constructor(props){
@@ -201,7 +203,7 @@ let userStatus = '';
                                     subject: this.state.curItem.event_subject
                                   })
                             }} style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',marginLeft:8,borderRadius:15}}>
-                                <Text style={{fontFamily:'Roboto-Medium',color:'#FFF'}}>Chat now</Text>
+                                <Text style={{fontFamily:'Roboto-Medium',color:'#FFF'}}>{HardText.list_chat_now}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

@@ -349,7 +349,7 @@ export default class EventDetail extends Component {
               name="chevron-left"
               style={{ fontSize: 24, color: "#8da6d5" }}
             />
-            <Text style={{ fontSize: 16, color: "#8da6d5", marginLeft: 20 }}>
+            <Text style={{ fontSize: 14, color: "#8da6d5", marginLeft: 20 }}>
               {HardText.event_details}
             </Text>
           </TouchableOpacity>

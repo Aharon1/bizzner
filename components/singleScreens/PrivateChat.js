@@ -10,6 +10,7 @@ import { SERVER_URL } from '../../Constants';
 import ChatItem from './ChatItem';
 import Dialog, { SlideAnimation } from "react-native-popup-dialog";
 import ProgressiveImage from '../AsyncModules/ImageComponent';
+
 class PrivateChatScreen extends Component{
     _isMounted = false;
     clearTimeR = '';
@@ -191,7 +192,7 @@ class PrivateChatScreen extends Component{
                     <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
                         <TouchableOpacity style={{alignItems:'center',flexDirection:'row', paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
                             <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
-                            <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>PRIVATE CHAT</Text>
+                            <Text style={{fontSize:14,color:'#8da6d5',marginLeft:20}}>{HardText.chat_private_chat}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

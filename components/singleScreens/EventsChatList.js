@@ -103,7 +103,7 @@ class EventChatListScreen extends Component{
                 <View style={[MainStyles.eventsHeader,{justifyContent:'center'}]}>
                     <TouchableOpacity style={{ alignItems:'center',paddingLeft: 12,flexDirection:'row' }} onPress={() => this.props.navigation.goBack() }>
                         <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
-                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>{HardText.event_chat_list}</Text>
+                        <Text style={{fontSize:14,color:'#8da6d5',marginLeft:20}}>{HardText.event_chat_list}</Text>
                     </TouchableOpacity>
                 </View>
                 {

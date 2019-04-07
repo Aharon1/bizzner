@@ -547,14 +547,15 @@ class EventsScreen extends Component{
                                     style={{
                                         fontFamily:'Roboto-Regular',
                                         color:'#8da6d4',
-                                        fontSize:17,
+                                        fontSize:15,
                                         flex:1,
                                         width:'100%',
                                         justifyContent:'flex-start',
-                                        height:50,
-                                        paddingHorizontal:15
+                                        height:40,
+                                        paddingHorizontal:5,
+                                        borderRadius:50
                                     }}
-                                    placeholder="Search event/city/place..."
+                                    placeholder={HardText.event_search}
                                     placeholderTextColor="#8da6d4"
                                     keyboardType="web-search"
                                     ref={input=>this.searchInput = input}
