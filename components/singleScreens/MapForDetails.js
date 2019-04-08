@@ -118,7 +118,6 @@ export class MapForEventDetail extends React.Component {
   };
 
   render() {
-    console.log(this.props);
     const {
       polylineCoords,
       myLocation: { latitude, longitude }

@@ -22,7 +22,6 @@ class SplashScreen extends Component{
           });*/
         if (Platform.OS == 'android') {
             this.backButtonListener = BackHandler.addEventListener('hardwareBackPress', (event) => {
-                console.log(event);
                 /*if (this.currentRouteName !== 'Splash') {
                     return false;
                 }
@@ -38,21 +37,9 @@ class SplashScreen extends Component{
             if(!linkingListner.context){
                 this.authenticateSession()
             }
-            console.log(linkingListner);
         }
     }
-    componentWillUnmount() { // C
-        /*if (Platform.OS == 'android') {
-            //this.backButtonListener.remove();
-            BackHandler.removeEventListener('hardwareBackPress', ()=>{
-                console.log(this.currentRouteName);
-                if (this.currentRouteName !== 'Splash') {
-                    return false;
-                }
-                BackHandler.exitApp();
-                return true;
-            });
-        }*/
+    componentWillUnmount() {
         Linking.removeEventListener('url', this.handleOpenURL);
     }
     handleOpenURL = (event) => { // D
@@ -60,10 +47,8 @@ class SplashScreen extends Component{
     }
     checkToken = (url)=>{
         if(url){
-            console.log(url);
             var fullUrl = url.split('/');
             var tokenString = fullUrl[fullUrl.length - 2];
-            console.log(tokenString);
             if(tokenString == 'token'){
                 var token = fullUrl[fullUrl.length - 1];
                 fetch(SERVER_URL+'?action=check-token&token='+token)
@@ -86,7 +71,22 @@ class SplashScreen extends Component{
             }
             else if(tokenString == 'event'){
                 var eventId = fullUrl[fullUrl.length - 1];
-                this.props.navigation.navigate('EventDetail',{event_id:eventId,});
+                fetch(
+                    SERVER_URL +
+                      "?action=event_details&event_id=" + eventId
+                  )
+                    .then(response => response.json())
+                    .then(res => {
+                        if(res.code == 200){
+                            const location = [+res.body.group_lat, +res.body.group_lng];
+                            this.props.navigation.navigate('EventDetail',{event_id:eventId,location});
+                        }
+                        else if(res.code == 404){
+                            Toast.show(res.message, Toast.SHORT);
+                            this.props.navigation.navigate('Current Events');
+                        }
+                    });
+                
             }
             else{
                 this.authenticateSession()   
@@ -100,51 +100,6 @@ class SplashScreen extends Component{
         const { navigation } = this.props;
         let isUserLoggedIn = await AsyncStorage.getItem('isUserLoggedin');
         if(isUserLoggedIn == 'true'){
-          /*this.setState({
-            loading: true
-          });
-          navigator.geolocation.getCurrentPosition(positions=>{
-            let Latitude = positions.coords.latitude;
-            let Longitude = positions.coords.longitude;
-            var fetchData = 'http://bizzner.com/app?action=search_location_db&latitude='+Latitude+'&longitude='+Longitude;
-            fetch(fetchData,{
-                method:'POST',
-                body:JSON.stringify({
-                    action:'search_location_db',
-                    latitude:Latitude,//22.7150822,
-                    longitude:Longitude//75.8707448
-                })
-            })
-            .then(response=>{
-                var bodyText = JSON.parse(response._bodyText);
-                var results = bodyText.results
-                const placesArray = [];
-                for (const bodyKey in results){
-                    placesArray.push({
-                        name:results[bodyKey].group_name,
-                        address:results[bodyKey].group_address,
-                        isStarted:results[bodyKey].group_status,
-                        photoUrl:results[bodyKey].photoUrl,
-                        key:results[bodyKey].place_id,
-                        event_date:results[bodyKey].event_date,
-                        event_time:results[bodyKey].event_time,
-                        event_subject:results[bodyKey].event_subject,
-                        event_note:results[bodyKey].event_note,
-                        latitude:results[bodyKey].latitude,
-                        longitude:results[bodyKey].longitude,
-                        place_id:results[bodyKey].place_id,
-                        group_id:results[bodyKey].group_id
-                    });
-                }
-                this.setState({loading:false});
-                navigation.navigate('Home',{locationList:placesArray,nextPageToken:bodyText.next_page_token});
-            }).catch(err => {
-                console.log('Error What is this',err);
-            })
-            
-          },error=>{
-            console.log('Error',error);
-          })*/
           navigation.navigate('Home');
         }
         else{

@@ -77,7 +77,6 @@ export default class EventDetail extends Component {
     )
       .then(response => response.json())
       .then(res => {
-        console.log(res);
         this.setState({
           loading: false,
           isRefreshing: false,
@@ -192,7 +191,6 @@ export default class EventDetail extends Component {
     .then(response=>{
         this.fetchNewDetails();
         curStatus = statusValue;
-        console.log(statusValue);
         this.setState({curStatus:statusValue});
         if(statusValue == 1){
             Toast.show('You are interested to this event',Toast.SHORT);
@@ -256,7 +254,6 @@ export default class EventDetail extends Component {
         },{
             dialogTitle: 'Share '+this.state.eventData.event_subject,
         })
-        console.log(result);
         if (result.action === Share.sharedAction) {
           if (result.activityType) {
             // shared with activity type of result.activityType
@@ -285,9 +282,8 @@ export default class EventDetail extends Component {
                 text: 'Yes',
                 onPress: () => {
                     fetch(SERVER_URL+'?action=cancel_event&event_id='+curEvent)
-                    .then(res=>{console.log(res);return res.json()})
+                    .then(res=>{return res.json()})
                     .then(response=>{
-                        console.log(response);
                         this.props.navigation.navigate('Current Events');
                     })
                     .catch(err=>{
@@ -302,9 +298,8 @@ export default class EventDetail extends Component {
   updateEvent = ()=>{
       this.setState({loading:true});
       fetch(SERVER_URL+'?action=edit_event&event_id='+this.state.event_id+'&event_subject='+this.state.NES+'&event_note='+this.state.NEN+'&user_place='+this.state.NEUsersCount+'&event_date='+this.state.NED+'&event_time='+this.state.NET)
-      .then(res=>{console.log(res);return res.json()})
+      .then(res=>{return res.json()})
       .then(response=>{
-          console.log(response);
           Toast.show(response.message,Toast.SHORT);
           this.setState({eventData:response.event_data,EditEventVisible:false,loading:false});
       })
@@ -343,7 +338,7 @@ export default class EventDetail extends Component {
               paddingLeft: 12,
               flexDirection: "row"
             }}
-            onPress={() => this.props.navigation.goBack()}
+            onPress={() => this.props.navigation.navigate('Current Events')}
           >
             <Icon
               name="chevron-left"

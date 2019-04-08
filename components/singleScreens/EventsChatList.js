@@ -84,7 +84,7 @@ class EventChatListScreen extends Component{
     }
     async _hideChat(chatId){
         await fetch(SERVER_URL+'?action=hide_user_chat&chat_id='+chatId+'&isgrp=1&user_id='+this.state.userID)
-        .then(res=>{console.log(res);return res.json()})
+        .then(res=>{return res.json()})
         .then(response=>{
             if(response.code ==200){
                 Toast.show("Chat hidden successfully",Toast.SHORT);
