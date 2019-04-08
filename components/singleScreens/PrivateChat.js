@@ -10,6 +10,7 @@ import { SERVER_URL } from '../../Constants';
 import ChatItem from './ChatItem';
 import Dialog, { SlideAnimation } from "react-native-popup-dialog";
 import ProgressiveImage from '../AsyncModules/ImageComponent';
+import HardText from '../../HardText';
 
 class PrivateChatScreen extends Component{
     _isMounted = false;

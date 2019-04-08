@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View,Text,TouchableOpacity, Image,
+import { View,Text,TouchableOpacity, Image,ImageBackground,
     Platform,FlatList,ActivityIndicator,AsyncStorage,
     RefreshControl,SafeAreaView
 } from 'react-native';
@@ -136,8 +136,7 @@ class HistoryPageScreen extends Component{
                             <View
                                 style={[
                                     (this.state.userStatus == 3)?{opacity:0.5}:'',
-                                    {borderBottomColor:'#8da6d4',borderBottomWidth:1},
-                                    (item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
+                                    //(item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
                                     (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#FFFFFF'}:'']}>
                                     <TouchableOpacity style={[
                                         MainStyles.EventItem,
@@ -148,28 +147,39 @@ class HistoryPageScreen extends Component{
                                         })
                                       }>
                                         <View style={MainStyles.EventItemImageWrapper}>
-                                            <ProgressiveImage source={{uri:item.photoUrl}} style={{ width: 70, height: 70 }} resizeMode="cover"/>
+                                            <ProgressiveImage source={{uri:item.photoUrl}} style={{ width: '100%', height: 170 }} resizeMode="cover"/>
+                                            <ImageBackground source={require('../assets/box-shadow.png')} style={{
+                                                position:'absolute',
+                                                height:'100%',
+                                                width:'100%',
+                                            }}>
+                                                <View style={{
+                                                    flex:1,
+                                                    paddingBottom: 30,
+                                                    paddingHorizontal:20,
+                                                    justifyContent:'flex-end',
+                                                }}>
+                                                    <Text style={{fontFamily:'Roboto-Regular',fontSize:16,color:'#FFFFFF'}}>{item.name}</Text>
+                                                    <Text style={{fontFamily:'Roboto-Light',fontSize:14,color:'#FFFFFF',textAlign:'left'}}>{Address}</Text>
+                                                </View>
+                                            </ImageBackground>
                                         </View>
                                         <View style={MainStyles.EventItemTextWrapper}>
-                                            <View style={{flexDirection:'row', alignItems:'center'}}>
-                                                <Icon name="thumb-tack" style={{color:'#8da6d4',marginRight:5}} size={13} />
-                                                <Text style={[MainStyles.EITWName,
-                                                    (item.isStarted === true)?{color:'#39b549'}:''
-                                                ]}>{item.event_subject}</Text>
+                                            <View>
+                                                <View style={{flexDirection:'row', alignItems:'center',justifyContent:'flex-start'}}>
+                                                    <Icon name="thumb-tack" style={{color:'#8da6d4',marginRight:5}} size={17} />
+                                                    <Text style={[MainStyles.EITWName,
+                                                    ]}>{item.event_subject}</Text>
+                                                </View>
+                                                <View style={{flexDirection:'row', alignItems:'center'}}>
+                                                    <Icon name="clock-o" style={{color:'#8da6d4',marginRight:5}} size={13} />
+                                                    <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.formatDate(eventDate)}, {eventTime}</Text>
+                                                </View>
                                             </View>
-                                            <View style={{flexDirection:'row', alignItems:'center'}}>
-                                                <Icon name="map-marker" style={{color:'#8da6d4',marginRight:5}} size={13} />
-                                                <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{item.name}</Text>
-                                            </View>
-                                            <Text style={[MainStyles.EITWAddress,{marginLeft:14}]}>{Address}</Text>
-                                            <View style={{flexDirection:'row', alignItems:'center'}}>
-                                                <Icon name="clock-o" style={{color:'#8da6d4',marginRight:5}} size={13} />
-                                                <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.formatDate(eventDate)}, {eventTime}</Text>
-                                            </View>
-                                            <View style={MainStyles.EITWAction}>
+                                            <View style={[MainStyles.EITWAction]}>
                                                 <Image source={require('../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
                                                 <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({item.usersCount}) </Text>
-                                                <Text style={{paddingHorizontal:15,paddingVertical:3,backgroundColor:'#8da6d4',fontFamily:'Roboto-Medium',color:'#FFF',borderRadius:15,marginLeft:8}}>{HardText.h_info}</Text>
+                                                
                                             </View>
                                         </View>
                                     </TouchableOpacity>
