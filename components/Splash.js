@@ -16,6 +16,10 @@ class SplashScreen extends Component{
         await AsyncStorage.setItem(key,value);
     }
     componentDidMount() { // B
+        Linking.getInitialURL().then(url => {
+            this.checkToken(url)
+          });
+          return true;
         /*this.backHandler = BackAndroid.addEventListener('hardwareBackPress', () => {
             BackHandler.exitApp(); // works best when the goBack is async
             return true;
@@ -34,6 +38,7 @@ class SplashScreen extends Component{
         } 
         else {
             var linkingListner=Linking.addListener('url', this.handleOpenURL);
+            console.log(linkingListner);
             if(!linkingListner.context){
                 this.authenticateSession()
             }
@@ -43,9 +48,11 @@ class SplashScreen extends Component{
         Linking.removeEventListener('url', this.handleOpenURL);
     }
     handleOpenURL = (event) => { // D
+        console.log(event);
         this.checkToken(event.url);
     }
     checkToken = (url)=>{
+        console.log(url);
         if(url){
             var fullUrl = url.split('/');
             var tokenString = fullUrl[fullUrl.length - 2];
