@@ -467,7 +467,7 @@ class ProfileScreen extends Component{
                   flexDirection:'row',
                   flexWrap:'wrap',
                   alignItems:'center',
-                  justifyContent:'flex-start'
+                  justifyContent:'flex-start',
                   }}>
                     {
                       this.state.interests.map((item,key)=>(
@@ -600,12 +600,10 @@ class ProfileScreen extends Component{
             </View>
             <DialogContent style={{padding:0,borderWidth: 0,backgroundColor:'#d1dbed'}}>
               <View style={MainStyles.confirmPopupContent}>
-              <ScrollView style={MainStyles.tagsContent} 
-              keyboardShouldPersistTaps={'handled'} 
-               contentContainerStyle={{
+              <View style={[MainStyles.tagsContent,{
                   justifyContent:"center",
                   alignItems:'center',
-              }}>
+              }]} >
                   <TextInput style={{
                     height:40,
                     width:'100%',
@@ -621,7 +619,8 @@ class ProfileScreen extends Component{
                   }} placeholder="Search Interests..." placeholderTextColor="#0846b8" keyboardType="web-search"
                   ref={input=>this.searchInput = input}
                   onChangeText={text=>{this.searchInterest(text)}}/>
-                  <View style={{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'center'}}>
+                  <View style={{maxHeight:250}}>
+                    <ScrollView keyboardShouldPersistTaps={'handled'} contentContainerStyle={{flexDirection:'row',flexWrap:'wrap',alignItems:'center',justifyContent:'center'}}>
                       {
                         this.state.renderedListData.length < 1 && 
                           this.state.InterestsTags.map(( item, key ) =>
@@ -658,6 +657,7 @@ class ProfileScreen extends Component{
                         )}
                         )
                       }
+                  </ScrollView>
                   </View>
                   {/* <TouchableOpacity style={{
                       backgroundColor:'#3a6cc7',
@@ -687,7 +687,7 @@ class ProfileScreen extends Component{
                           }}>{HardText.add}</Text>
                       </TouchableOpacity>
                   </View>
-              </ScrollView>
+              </View>
               </View>
             </DialogContent>
         </Dialog>

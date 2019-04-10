@@ -328,6 +328,7 @@ export default class EventDetail extends Component {
   render() {
     var behavior = (Platform.OS == 'ios')?'padding':'';
     const { location } = this.props.navigation.state.params;
+    console.log(location);
     return (
       <SafeAreaView style={MainStyles.normalContainer}>
         <Loader loading={this.state.loading} />

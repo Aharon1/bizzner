@@ -78,7 +78,7 @@ class SplashScreen extends Component{
                     .then(response => response.json())
                     .then(res => {
                         if(res.code == 200){
-                            const location = [+res.body.group_lat, +res.body.group_lng];
+                            const location = [+res.body.group_lng, +res.body.group_lat];
                             this.props.navigation.navigate('EventDetail',{event_id:eventId,location});
                         }
                         else if(res.code == 404){
