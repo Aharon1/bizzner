@@ -603,6 +603,35 @@ class EventsScreen extends Component{
                                 console.log(err);
                             });
                         }
+                        else{
+                            Permissions.request('location', { type: 'always' }).then(response => {
+                                if(response == 'authorized'){
+                                    this.setState({isGPSGranted:true});
+                                    Geolocation.getCurrentPosition(
+                                        (position) => {
+                                            let Latitude = position.coords.latitude;
+                                            let Longitude = position.coords.longitude;
+                                            this.setState({curLat:Latitude,curLng:Longitude});
+                                            fetch("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+Latitude+","+Longitude+"&rankby=distance&type=food&key="+MAPKEY)
+                                            .then(res=>res.json())
+                                            .then(response=>{
+                                                var getCity = response.results[0].vicinity.split(', ');
+                                                this.setState({isSelectedCity:getCity[getCity.length-1]})
+                                            })
+                                            .catch(err=>{
+                                                console.log(err);
+                                            });
+                                        },
+                                        (error) => {
+                                        },
+                                        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                                    );
+                                }
+                                else{
+                                    this.setState({isGPSGranted:false});
+                                }
+                            });
+                        }
                     }}>
                         <Text style={[MainStyles.ESTWIText,{color:'#39b54a'}]}>{HardText.create_event}</Text>
                     </TouchableOpacity>
