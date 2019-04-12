@@ -141,7 +141,7 @@ class HistoryPageScreen extends Component{
                                     <TouchableOpacity style={[
                                         MainStyles.EventItem,
                                     ]} onPress={() =>
-                                        this.props.navigation.navigate("Event Chat", {
+                                        this.props.navigation.navigate("HistoryEventDetails", {
                                           event_id: item.group_id,
                                           note: item.event_note
                                         })
