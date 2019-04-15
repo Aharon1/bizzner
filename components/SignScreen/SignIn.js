@@ -23,11 +23,11 @@ class SignIn extends Component{
         await AsyncStorage.setItem(key,value);
       }
     getToken = (onToken)=>{
-        if(Platform.OS == 'ios'){
+        /*if(Platform.OS == 'ios'){
             //console.log(PushNotificationIOS);
             this.sendDataToServer({token:''});
         }
-        else{
+        else{*/
             PushNotification.configure({
                 onRegister: onToken,
                 onNotification: function(notification) {
@@ -43,7 +43,7 @@ class SignIn extends Component{
                 popInitialNotification: true,
                 requestPermissions: true,
             });
-        }
+        //}
     }
     _signIn = ()=>{
         var deviceToken = '';
