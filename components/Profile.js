@@ -316,7 +316,7 @@ class ProfileScreen extends Component{
       });
   }
   searchInterest = (keyword)=>{
-    if(keyword.length>1){
+    if(keyword.length>0){
       let text = keyword.toLowerCase()
       let fullList = this.state.InterestsTags;
       let filteredList = fullList.filter((item) => { // search from a full list, and not from a previous search results list

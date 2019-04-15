@@ -720,19 +720,18 @@ class EventsScreen extends Component{
                 <Dialog
                     visible={this.state.CreateEventVisible}
                     width={0.95}
-                    height={0.9}
-                    dialogStyle={[MainStyles.confirmPopup,{padding:0}]}
+                    dialogStyle={[MainStyles.confirmPopup,{padding:0,maxHeight:"95%"}]}
                     dialogAnimation={new SlideAnimation()}
                     containerStyle={{zIndex: 10,flex:1,justifyContent: 'space-between'}}
                     rounded={false}
                     >
-                    <View style={[MainStyles.confirmPopupHeader,{alignItems:'center',justifyContent:'flex-start',flexDirection:'row',backgroundColor:'#416bb9'}]}>
+                    <SafeAreaView style={[MainStyles.confirmPopupHeader,{alignItems:'center',justifyContent:'flex-start',flexDirection:'row',backgroundColor:'#416bb9'}]}>
                         <TouchableOpacity onPress={()=>{this.setState({CreateEventVisible:false,isLocationSet:false,curLocation:{}})}}>
                             <Icon name="times" style={{fontSize:20,color:'#FFF'}}/>
                         </TouchableOpacity>
                         <Text style={{color:'#FFF',fontFamily: 'Roboto-Medium',fontSize:17,marginLeft:20}}>{HardText.create_new_event}</Text>
-                    </View>
-                    <View style={{padding:0,borderWidth: 0,backgroundColor:'#FFF',overflow:'visible'}} 
+                    </SafeAreaView>
+                    <SafeAreaView style={{padding:0,borderWidth: 0,backgroundColor:'#FFF',overflow:'visible'}} 
                     onStartShouldSetResponderCapture={() => {
                         this.setState({ enableScrollViewScroll: true });
                     }}
@@ -965,7 +964,7 @@ class EventsScreen extends Component{
                                 </View>
                             </ScrollView>
                         </KeyboardAvoidingView>
-                    </View>
+                    </SafeAreaView>
                 </Dialog>
                 <Footer showSearch={this.showSearchOption}/>
             </SafeAreaView>
