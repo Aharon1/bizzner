@@ -24,10 +24,12 @@ class EventsScreen extends Component{
     constructor(props){
         super(props);
         var curDate = new Date();
-        var day = (curDate.getDate() >=10)?curDate.getDate():'0'+curDate.getDate();
-        var month = ((curDate.getMonth()+1) >=10)?(curDate.getMonth()+1):'0'+(curDate.getMonth()+1);
-        var newDate = day+'/'+month+'/'+curDate.getFullYear();
-        var newTime = curDate.getHours()+':'+curDate.getMinutes()+':00'
+        curDate.setMinutes(curDate.getMinutes() + 30); // timestamp
+        now = new Date(curDate); // Date object
+        var day = (now.getDate() >=10)?now.getDate():'0'+now.getDate();
+        var month = ((now.getMonth()+1) >=10)?(now.getMonth()+1):'0'+(now.getMonth()+1);
+        var newDate = day+'/'+month+'/'+now.getFullYear();
+        var newTime = now.getHours()+':'+now.getMinutes()+':00'
         this.state = {
             loading:true,
             TabComponent : '',
@@ -803,9 +805,9 @@ class EventsScreen extends Component{
                                                 />
                                             </View>
                                         }
-                                        <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
+                                        {/* <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',marginTop:10,}}>
                                             <Text style={{color:'#0947b9',fontFamily:'Roboto-Medium'}}>{HardText.add_location}</Text>
-                                        </View>
+                                        </View> */}
                                     </View>
                                 }
                                 {

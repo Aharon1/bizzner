@@ -37,46 +37,52 @@ let userStatus = '';
         var curItem = await this.props.item;
         if(this.state.userStatus != statusValue){
             if(statusValue != 3){
-            Alert.alert(
-                'Add to Calendar?',
-                'It will remind you',
-                [
-                    {
-                        text: 'No',
-                        onPress: () => {
-                            this.setEventStatusOnServer(statusValue);
+                Alert.alert(
+                    'Add to Calendar?',
+                    'It will remind you',
+                    [
+                        {
+                            text: 'No',
+                            onPress: () => {
+                                this.setEventStatusOnServer(statusValue);
+                            },
+                            style: 'cancel',
                         },
-                        style: 'cancel',
-                    },
-                    {text: 'Yes', onPress: () => {
-                    var m = moment(new Date(curItem.event_date_formated));
-                    var mUTC = m.utc();
-                    const eventConfig = {
-                        title:curItem.event_subject,
-                        startDate: this.utcDateToString(mUTC),
-                        endDate: this.utcDateToString(moment.utc(mUTC).add(2, 'hours')),
-                        notes: curItem.event_note,//'tasty!',
-                        navigationBarIOS: {
-                        tintColor: '#416bb9',
-                        backgroundColor: '#8da6d5',
-                        titleColor: '#2e4d85',
-                        },
-                    };
-                    AddCalendarEvent.presentEventCreatingDialog(eventConfig)
-                    .then((eventInfo) => {this.setEventStatusOnServer(statusValue)})
-                    .catch((error) => {console.warn(error);});
-                }}],
-                {cancelable: true},
-            );
-        }
-        else
-        {
-            if(this.state.userStatus == statusValue)
+                        {text: 'Yes', onPress: () => {
+                        var m = moment(new Date(curItem.event_date_formated));
+                        var mUTC = m.utc();
+                        const eventConfig = {
+                            title:curItem.event_subject,
+                            startDate: this.utcDateToString(mUTC),
+                            endDate: this.utcDateToString(moment.utc(mUTC).add(2, 'hours')),
+                            notes: curItem.event_note,//'tasty!',
+                            navigationBarIOS: {
+                            tintColor: '#416bb9',
+                            backgroundColor: '#8da6d5',
+                            titleColor: '#2e4d85',
+                            },
+                        };
+                        AddCalendarEvent.presentEventCreatingDialog(eventConfig)
+                        .then((eventInfo) => {this.setEventStatusOnServer(statusValue)})
+                        .catch((error) => {console.warn(error);});
+                    }}],
+                    {cancelable: true},
+                );
+            }
+            else
             {
+                if(this.state.userStatus == statusValue)
+                {
+                    statusValue = 0;
+                }
+                this.setEventStatusOnServer(statusValue);
+            }
+        }
+        else{
+            if(this.state.userStatus == statusValue){
                 statusValue = 0;
             }
-                this.setEventStatusOnServer(statusValue);
-         }
+            this.setEventStatusOnServer(statusValue);
         } 
     }
     setEventStatusOnServer = async (statusValue) => {
@@ -84,6 +90,7 @@ let userStatus = '';
         var user_id = this.props.userID;
         fetch(SERVER_URL+'?action=changeUserEventStatus&user_id='+user_id+'&event_id='+curItem.group_id+'&status='+statusValue)
         .then(response=>{
+            console.log(response);
             userStatus = statusValue;
             
             if(this.state.userStatus != 2 && this.state.userStatus != 1){
