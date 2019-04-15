@@ -55,7 +55,10 @@ class Footer extends Component {
                 flexDirection:'row',
                 backgroundColor:'#e8edf6',
                 paddingTop:5,
-                paddingBottom:5
+                paddingBottom:5,
+                position: 'absolute',
+                bottom: 0,
+                width: '100%', 
             }}>
                 <TouchableOpacity style={{alignItems:'center',width:widthShow,
                 paddingTop:5,

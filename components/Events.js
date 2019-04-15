@@ -587,7 +587,7 @@ class EventsScreen extends Component{
                     />
                 }
                 <View style={[MainStyles.EventScreenTabWrapper,{paddingVertical:10}]}>
-                    <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('all-events')}>
+                    <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>{this.switchEventTabs('all-events');this.refreshList()}}>
                         <Text style={[MainStyles.ESTWIText,(this.state.isCurrentTab == 'all-events')?{color:'#2f4d85'}:{color:'#8da6d5'}]}>{HardText.near_events}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={MainStyles.ESTWItem} onPress={()=>this.switchEventTabs('my-events')}>
@@ -719,9 +719,11 @@ class EventsScreen extends Component{
                 }
                 <Dialog
                     visible={this.state.CreateEventVisible}
-                    dialogStyle={[MainStyles.confirmPopup,{width:'95%',padding:0,maxHeight:'95%'}]}
+                    width={0.95}
+                    height={0.9}
+                    dialogStyle={[MainStyles.confirmPopup,{padding:0}]}
                     dialogAnimation={new SlideAnimation()}
-                    containerStyle={{zIndex: 10,flex:1,justifyContent: 'space-between',}}
+                    containerStyle={{zIndex: 10,flex:1,justifyContent: 'space-between'}}
                     rounded={false}
                     >
                     <View style={[MainStyles.confirmPopupHeader,{alignItems:'center',justifyContent:'flex-start',flexDirection:'row',backgroundColor:'#416bb9'}]}>
