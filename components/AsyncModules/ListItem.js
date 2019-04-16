@@ -189,10 +189,10 @@ let userStatus = '';
                         </ImageBackground>
                     </View>
                     <View style={MainStyles.EventItemTextWrapper}>
-                        <View>
-                            <View style={{flexDirection:'row', alignItems:'center',justifyContent:'flex-start'}}>
-                                <Icon name="thumb-tack" style={{color:'#8da6d4',marginRight:5}} size={17} />
-                                <Text style={[MainStyles.EITWName,
+                        <View style={{flexDirection:'column'}}>
+                            <View style={{flexDirection:'row', alignItems:'center',justifyContent:'flex-start',flexWrap:'wrap'}}>
+                                <Icon name="thumb-tack" style={{color:'#8da6d4',marginRight:5}} size={16} />
+                                <Text style={[MainStyles.EITWName,{flexWrap:'wrap'}
                                 ]}>{this.state.curItem.event_subject}</Text>
                             </View>
                             <View style={{flexDirection:'row', alignItems:'center'}}>
