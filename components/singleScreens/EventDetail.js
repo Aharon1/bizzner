@@ -329,7 +329,7 @@ export default class EventDetail extends Component {
     var behavior = (Platform.OS == 'ios')?'padding':'';
     const { location } = this.props.navigation.state.params;
     return (
-      <SafeAreaView style={MainStyles.normalContainer}>
+      <SafeAreaView style={[MainStyles.normalContainer,{paddingBottom:47}]}>
         <Loader loading={this.state.loading} />
         <View style={[MainStyles.eventsHeader, { justifyContent: "center" }]}>
           <TouchableOpacity

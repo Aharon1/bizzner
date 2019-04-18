@@ -489,7 +489,7 @@ class EventsScreen extends Component{
     render(){
         var behavior = (Platform.OS == 'ios')?'padding':'';
         return (
-            <SafeAreaView style={MainStyles.normalContainer}>
+            <SafeAreaView style={[MainStyles.normalContainer,{paddingBottom:47}]}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row',justifyContent:'space-between'}]}>
                     <View style={{alignItems:'center',flexDirection:'row'}}>
