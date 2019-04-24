@@ -15,6 +15,7 @@ import Toast from "react-native-simple-toast";
 import { SERVER_URL } from "../Constants";
 import LinkedInModal from "react-native-linkedin";
 import HardText from '../HardText';
+import PushNotification from 'react-native-push-notification';
 class MainScreen extends Component {
   constructor(props) {
     super(props);
@@ -80,27 +81,8 @@ class MainScreen extends Component {
     params += "location=" + encodeURIComponent(name) + "&";
     params += "position=" + encodeURIComponent(positions.values[0].title) + "&";
     params += "profilePicture=" + encodeURIComponent(pictureUrls.values[0]);
-    fetch(SERVER_URL + "?action=check_user_details&" + params)
-      .then(res => {
-        return res.json();
-      })
-      .then(res => {
-        if (res.code == 200) {
-          this.setState({
-            loading: false
-          });
-          this.saveDetails("isUserLoggedin", "true");
-          this.saveDetails("userID", res.body.ID);
-          Toast.show(res.message, Toast.SHORT);
-          setTimeout(() => {
-            this.setState({ loading: false });
-            this.props.navigation.navigate("Profile");
-          }, 200);
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    this.setState({parameters:params});
+    this.getToken(this.sendDataToServer.bind(this));
   }
   componentDidMount() {
     // B
@@ -153,6 +135,46 @@ class MainScreen extends Component {
       />
     );
   };
+  getToken = (onToken)=>{
+    PushNotification.configure({
+        onRegister: onToken,
+        onNotification: function(notification) {
+            console.log('NOTIFICATION:', notification );
+        },
+        senderID: "71450108131",
+        permissions: {
+            alert: true,
+            badge: true,
+            sound: true
+        },
+        popInitialNotification: true,
+        requestPermissions: true,
+    });
+  }
+  sendDataToServer(token){
+    console.log('token',token);
+    fetch(SERVER_URL + "?action=check_user_details&" + this.state.parameters+'&device_token='+token.token+'&platform='+Platform.OS)
+    .then(res => {
+      return res.json();
+    })
+    .then(res => {
+      if (res.code == 200) {
+        this.setState({
+          loading: false
+        });
+        this.saveDetails("isUserLoggedin", "true");
+        this.saveDetails("userID", res.body.ID);
+        Toast.show(res.message, Toast.SHORT);
+        /*setTimeout(() => {
+          this.setState({ loading: false });
+          this.props.navigation.navigate("Profile");
+        }, 200);*/
+      }
+    })
+    .catch(err => {
+      console.error(err);
+    });
+}
   render() {
     const clientID = "81fcixszrwwavz";
     const redirectUri = "http://bizzner.com/app/linkedin-auth.php";
