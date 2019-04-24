@@ -165,10 +165,10 @@ class MainScreen extends Component {
         this.saveDetails("isUserLoggedin", "true");
         this.saveDetails("userID", res.body.ID);
         Toast.show(res.message, Toast.SHORT);
-        /*setTimeout(() => {
+        setTimeout(() => {
           this.setState({ loading: false });
           this.props.navigation.navigate("Profile");
-        }, 200);*/
+        }, 200);
       }
     })
     .catch(err => {
