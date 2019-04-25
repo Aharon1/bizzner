@@ -3,6 +3,7 @@ import { View,TouchableOpacity,Text,AsyncStorage } from 'react-native';
 import { NavigationActions,withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {SERVER_URL} from '../../Constants';
+import PushNotification from 'react-native-push-notification';
 class Footer extends Component {
     _isMounted = false;
     clearTime = '';
@@ -34,6 +35,8 @@ class Footer extends Component {
         .then(response=>{
             if (this._isMounted) {
                 this.setState({pcCount:response.pcCount,ecCount:response.ecCount});
+                var totalCount = parseInt(response.pcCount)+parseInt(response.ecCount);
+                PushNotification.setApplicationIconBadgeNumber(totalCount);
             }
         })
         .catch(err=>{
