@@ -22,6 +22,7 @@ import ForgotPassword from '../SignScreen/ForgotPassword';
 import Interests from '../Interests';
 import EventChatListScreen from '../singleScreens/EventsChatList';
 import HistoryEventDetails from '../singleScreens/HistoryEventDetails';
+import CreateEvent from '../CreateEvent';
 const drawerItemStyle = { 
     borderBottomWidth: 1, 
     borderBottomColor: '#8da6d5', 
@@ -128,6 +129,9 @@ const Navigation = createStackNavigator({
     },
     EventChatList:{
         screen:EventChatListScreen
+    },
+    CreateEvent:{
+        screen:CreateEvent
     }
 }, {
     headerMode: 'none',
