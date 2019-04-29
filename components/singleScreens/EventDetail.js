@@ -328,8 +328,9 @@ export default class EventDetail extends Component {
   render() {
     var behavior = (Platform.OS == 'ios')?'padding':'';
     const { location } = this.props.navigation.state.params;
+    var bottomPadding = (Platform.OS == 'ios')?47:47;
     return (
-      <SafeAreaView style={[MainStyles.normalContainer,{paddingBottom:47}]}>
+      <SafeAreaView style={[MainStyles.normalContainer]}>
         <Loader loading={this.state.loading} />
         <View style={[MainStyles.eventsHeader, { justifyContent: "center" }]}>
           <TouchableOpacity
@@ -595,6 +596,7 @@ export default class EventDetail extends Component {
         }
         {this.state && this.state.userList && this.state.userList.length > 0 && (
           <FlatList
+            contentContainerStyle={{paddingBottom:bottomPadding}}
             data={this.state.userList}
             renderItem={({ item }) => (
               <View

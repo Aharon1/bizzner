@@ -489,7 +489,7 @@ class EventsScreen extends Component{
     render(){
         var behavior = (Platform.OS == 'ios')?'padding':'';
         return (
-            <SafeAreaView style={[MainStyles.normalContainer,{paddingBottom:47}]}>
+            <SafeAreaView style={[MainStyles.normalContainer]}>
                 <Loader loading={this.state.loading} />
                 <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row',justifyContent:'space-between'}]}>
                     <View style={{alignItems:'center',flexDirection:'row'}}>
@@ -628,6 +628,9 @@ class EventsScreen extends Component{
                     this.state.locationList.length > 0 &&  
                     this.state.noFilterData==false && 
                     <FlatList data={this.state.locationList}
+                        contentContainerStyle={{
+                            paddingBottom:47
+                        }}
                         renderItem={({item}) => (
                             <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID} refresh={this.refreshList}/>
                             )}
@@ -649,6 +652,9 @@ class EventsScreen extends Component{
                     this.state.MyEvents &&
                     this.state.MyEvents.length > 0 && 
                     <FlatList data={this.state.MyEvents}
+                        contentContainerStyle={{
+                            paddingBottom:47
+                        }}
                         renderItem={({item}) => (
                             <ListItem item={item} fetchDetails={this.fetchDetails} userID={this.state.userID} refresh={this.refreshList}/>
                             )}
@@ -699,7 +705,7 @@ class EventsScreen extends Component{
                         this.setState({ enableScrollViewScroll: true });
                     }}
                     >
-                        <KeyboardAvoidingView enabled behavior={behavior}>
+                        <KeyboardAvoidingView enabled behavior={behavior} keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}>
                             <ScrollView 
                             keyboardShouldPersistTaps={'handled'}
                             contentContainerStyle={{
