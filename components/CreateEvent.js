@@ -270,7 +270,6 @@ class CreateEvent extends Component{
     render(){
         
         const RemoveHiehgt = height - 50;
-        console.log(height,RemoveHiehgt);
         var behavior = (Platform.OS == 'ios')?'padding':'';
         return (
             <SafeAreaView contentContainerStyle={{flex:1}}>
@@ -282,12 +281,15 @@ class CreateEvent extends Component{
                     <Text style={{color:'#FFF',fontFamily: 'Roboto-Medium',fontSize:17,marginLeft:20}}>{HardText.create_new_event}</Text>
                 </View>
                 <View style={{
+                    height:RemoveHiehgt
                 }} 
                 onStartShouldSetResponderCapture={() => {
                     this.setState({ enableScrollViewScroll: true });
                 }}
                 >
-                    <ScrollView 
+                    <KeyboardAvoidingView enabled behavior={behavior} style={{flex:1}}>
+                        <ScrollView 
+                        style={{flex:1}}
                         keyboardShouldPersistTaps={'handled'}
                         contentContainerStyle={{
                             paddingHorizontal:0,
@@ -295,7 +297,7 @@ class CreateEvent extends Component{
                         scrollEnabled={this.state.enableScrollViewScroll} 
                         ref={myScroll => (this._myScroll = myScroll)}
                         >
-                        <KeyboardAvoidingView enabled behavior={behavior}  style={{flex: 1}}>
+                        
                             {
                                 this.state.isLocationSet == true &&
                                 <View style={{width:'100%',marginTop:0,marginBottom:0, height:150,}}>
@@ -509,14 +511,14 @@ class CreateEvent extends Component{
                                         />
                                     </View>
                                 </View>
-                                <View style={[MainStyles.btnWrapper,{marginBottom:20}]}>
+                                <View style={[MainStyles.btnWrapper,{marginBottom:60,flex:1,flexDirection: 'row'}]}>
                                     <TouchableOpacity style={[MainStyles.btnSave]} onPress={this.createNewEvent}>
                                         <Text style={MainStyles.btnSaveText}>{HardText.create_event}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                            </KeyboardAvoidingView>
-                    </ScrollView>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 </View>
             </SafeAreaView>
         );
