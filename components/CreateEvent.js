@@ -280,16 +280,15 @@ class CreateEvent extends Component{
                     </TouchableOpacity>
                     <Text style={{color:'#FFF',fontFamily: 'Roboto-Medium',fontSize:17,marginLeft:20}}>{HardText.create_new_event}</Text>
                 </View>
-                <View style={{
+                {/* <View style={{
                     height:RemoveHiehgt
                 }} 
                 onStartShouldSetResponderCapture={() => {
                     this.setState({ enableScrollViewScroll: true });
                 }}
-                >
-                    <KeyboardAvoidingView enabled behavior={behavior} style={{flex:1}}>
+                > */}
+                    <KeyboardAvoidingView enabled behavior={behavior}>
                         <ScrollView 
-                        style={{flex:1}}
                         keyboardShouldPersistTaps={'handled'}
                         contentContainerStyle={{
                             paddingHorizontal:0,
@@ -519,7 +518,7 @@ class CreateEvent extends Component{
                             </View>
                         </ScrollView>
                     </KeyboardAvoidingView>
-                </View>
+                {/* </View> */}
             </SafeAreaView>
         );
     }

@@ -205,7 +205,9 @@ class EventsScreen extends Component{
             }
         })
         setTimeout(()=>{
-            this.refreshList();
+            this.props.navigation.addListener('didFocus', () =>{
+                this.refreshList();
+            })
         },200);
         /*if (Platform.OS == 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => {

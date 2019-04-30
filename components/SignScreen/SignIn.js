@@ -43,7 +43,7 @@ class SignIn extends Component{
                 popInitialNotification: true,
                 requestPermissions: true,
             });
-            PushNotification.setApplicationIconBadgeNumber(4)
+            //PushNotification.setApplicationIconBadgeNumber(4)
         //}
     }
     _signIn = ()=>{
