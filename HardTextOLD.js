@@ -2,7 +2,7 @@ const HardText = {
     /*
     Auth Screen
     */
-   'auth_heading':'Your daily opportunity in meeting inspiring people',
+   'auth_heading':'Your daily dose of inspiring people to meet',
     /*
     Signin Screen
     */
@@ -14,7 +14,7 @@ const HardText = {
     Register Screen
     */
    'r_take_photo' :'Take a Photo',
-   'r_pick_photo' :'Pick a Photo',
+   'r_pick_photo' :'Pick Photo',
    'r_signup_text':'SIGN UP',
    /*
     Forgot Screen 
@@ -26,8 +26,8 @@ const HardText = {
    */
   'm_curr_events'       :'Event list',
   'm_edit_profile'      :'Edit profile',
-  'm_events_history'    :'Event history',
-  'm_complain'          :'Complaints',
+  'm_events_history'    :'Events history',
+  'm_complain'          :'Complain',
   'm_logout'            :'Logout',
   
   /* Profile Screen */
@@ -46,7 +46,7 @@ const HardText = {
   'map'         :'Map',
   'near_events' :'Near events',
   'my_events'   :'My events',
-  'create_event':'Create an event',
+  'create_event':'Create event',
   'no_data'     :'NO DATA',
   'blank_create_event':'Be the first one to create an event!',
   'create_new_event'  :'CREATE NEW EVENT',
@@ -61,7 +61,7 @@ const HardText = {
 
   /* Events History */
 
-  'events_history':'EVENT HISTORY',
+  'events_history':'EVENTS HISTORY',
   'h_info'        :'Info',
   'no_events'     :'No events!',
   'h_retry'       :'Retry',
