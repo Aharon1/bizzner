@@ -3,7 +3,7 @@ package com.linkedin.platform.internals;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;//android.support.annotation.NonNull;
 
 public class LIAppVersion {
 

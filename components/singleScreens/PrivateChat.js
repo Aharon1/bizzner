@@ -170,8 +170,9 @@ class PrivateChatScreen extends Component{
                 this.scrollToTheBottom();
             }
             fetch( SERVER_URL + '?action=msgSend&user_id='+this.state.userID+'&grp_id='+this.state.event_id+'&is_grp_msg=0&msg_text=' + message)
-            .then((response) => response.json())
+            .then((response) => {console.log(response);})
             .then((responseData) => {
+                console.log(responseData);
             })
             .done();
         }

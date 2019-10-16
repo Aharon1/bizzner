@@ -15,7 +15,7 @@ import PushNotification from 'react-native-push-notification';
 const AppContainer = createAppContainer(Navigation);
 class BizznerApp extends Component {
   componentWillMount(){
-      PushNotification.configure({
+      /*PushNotification.configure({
         onNotification: function(notification) {
             console.log('NOTIFICATION:', notification );
             //notification.finish(PushNotificationIOS.FetchResult.NoData);
@@ -29,7 +29,7 @@ class BizznerApp extends Component {
         },
         popInitialNotification: true,
         requestPermissions: true,
-    });
+    });*/
     //PushNotification.setApplicationIconBadgeNumber(4);
   }
   render() {

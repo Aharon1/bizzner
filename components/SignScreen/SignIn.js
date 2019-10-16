@@ -30,10 +30,6 @@ class SignIn extends Component{
         else{*/
             PushNotification.configure({
                 onRegister: onToken,
-                onNotification: function(notification) {
-                    console.log('NOTIFICATION:', notification );
-                    //notification.finish(PushNotificationIOS.FetchResult.NoData);
-                },
                 senderID: "71450108131",
                 permissions: {
                     alert: true,

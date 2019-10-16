@@ -16,7 +16,7 @@
 
 package com.linkedin.platform.errors;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;//android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.json.JSONException;

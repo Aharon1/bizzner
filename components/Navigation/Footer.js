@@ -40,7 +40,7 @@ class Footer extends Component {
             }
         })
         .catch(err=>{
-            console.log(err);
+            console.log('Privat MSG COunter err : ',err);
         })
     }
     componentWillUnmount(){

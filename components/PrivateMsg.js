@@ -52,7 +52,10 @@ class PrivatMsgScreen extends Component{
                 this.setState({loading:false,isRefreshing:false})
             }
         })
-        .catch()
+        .catch(err=>{
+            console.log('private chat list Error : ',err);
+            this.setState({loading:false,isRefreshing:false})
+        })
     }
     _refreshList(){
         this.fetchList()
@@ -115,7 +118,6 @@ class PrivatMsgScreen extends Component{
                         var chatDate = new Date(item.send_on);
                         var chatDateFormated = chatDate.getDate()+'/'+(chatDate.getMonth()+1)+'/'+chatDate.getFullYear();
                         var dateFormated = (todaysFormated != chatDateFormated)?this.formatDate(item.send_on)+' '+this.formatAMPM(item.send_on):"Today "+this.formatAMPM(item.send_on);
-                        console.log(item);
                         return (
                             <View>
                                 { !item.isHidden && 

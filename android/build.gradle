@@ -6,7 +6,7 @@ buildscript {
         firebaseVersion = "+" // default: "+"
         buildToolsVersion = "28.0.3"
         minSdkVersion = 16
-        compileSdkVersion = 27
+        compileSdkVersion = 28
         targetSdkVersion = 26
         supportLibVersion = "27.1.1"
     }

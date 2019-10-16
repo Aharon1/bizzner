@@ -213,7 +213,7 @@ class CreateEvent extends Component{
             .then(response=>response.json())
             .then(res=>{
                 if(res.status == 'OK'){
-                    this.setState({SLItems:res.results})
+                    this.setState({SLItems:res.results.slice(0, 10)})
                     
                 }
                 else{
@@ -405,9 +405,10 @@ class CreateEvent extends Component{
                                         <FlatList data={this.state.SLItems}
                                             keyboardShouldPersistTaps={'handled'}
                                             viewabilityConfig={this.viewabilityConfig}
-                                            renderItem={({item}) => (
+                                            renderItem={({item,index}) => (
                                                 <LocationItem
                                                     {...item}
+                                                    indexing={index}
                                                     fecthDetails={this.fetchDetails}
                                                 />
                                             )}

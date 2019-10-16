@@ -211,7 +211,6 @@ class EventsScreen extends Component{
         },200);
         /*if (Platform.OS == 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => {
-                console.log(this.currentRouteName);
                 if (this.currentRouteName !== 'Splash') {
                     return false;
                 }
@@ -252,7 +251,6 @@ class EventsScreen extends Component{
                         },
                         (error) => {
                             // See error code charts below.
-                            console.log(error.code, error.message);
                             this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
                         },
                         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
@@ -270,7 +268,6 @@ class EventsScreen extends Component{
                                 },
                                 (error) => {
                                     // See error code charts below.
-                                    console.log(error.code, error.message);
                                     this._fetchLists('getFromCountry=1&user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
                                 },
                                 { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
@@ -302,7 +299,7 @@ class EventsScreen extends Component{
                         this.setState({isSelectedCity:getCity[getCity.length-1]})
                     })
                     .catch(err=>{
-                        console.log(err);
+                        console.log('JSON API ERROR',err);
                     });
                     this._fetchLists('getFromCountry=0&user_id='+this.state.userID+'&latitude='+Latitude+'&longitude='+Longitude+'&curDate='+curDate+'&curTime='+curTime);
                 },
@@ -328,7 +325,6 @@ class EventsScreen extends Component{
         })
         .then(res=>res.json())
         .then(response=>{
-           // console.log(response.locationQuery);
             var results = response.results;
             var myEvResults = response.myEvents;
             const placesArray = [];
@@ -382,7 +378,7 @@ class EventsScreen extends Component{
             this.setState({loading:false,locationList:placesArray,MyEvents:myPlacesArray,isRefreshing:false,isFiltering:false});
         }).catch(err => {
             this.setState({loading:false,locationList:{},MyEvents:{},isRefreshing:false,isFiltering:false});
-            console.log('Error What is this',err);
+            console.log('Events Fetch List Error',err);
         }).done()
     }
     handleSL(text){
@@ -479,7 +475,6 @@ class EventsScreen extends Component{
         /*if (Platform.OS == 'android') {
             //this.backButtonListener.remove();
             BackHandler.removeEventListener('hardwareBackPress', ()=>{
-                console.log(this.currentRouteName);
                 if (this.currentRouteName !== 'Splash') {
                     return false;
                 }

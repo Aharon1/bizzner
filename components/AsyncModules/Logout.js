@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,AsyncStorage,Image} from 'react-native';
+import {View,AsyncStorage,Image,Platform} from 'react-native';
 import Loader from '../Loader';
 import { SERVER_URL } from '../../Constants';
 import PushNotification from 'react-native-push-notification';
@@ -19,6 +19,7 @@ class Logout extends Component{
         this.setState({userID});
     }
     getToken = (onToken)=>{
+        if(Platform.OS == 'android'){
             PushNotification.configure({
                 onRegister: onToken,
                 onNotification: function(notification) {
@@ -33,12 +34,17 @@ class Logout extends Component{
                 popInitialNotification: true,
                 requestPermissions: true,
             });
+        }
+        else{
+            onToken();
+        }
     }
     authenticateSession(){
         this.getToken(this.logoutFromServer.bind(this));
     }
     logoutFromServer(token){
-        fetch(SERVER_URL+'?action=logout&user_id='+this.state.userID+'&deviceToken='+token)
+        let tokenGenerated = (typeof(token) != "undefined")?token.token:'';
+        fetch(SERVER_URL+'?action=logout&user_id='+this.state.userID+'&device_token='+tokenGenerated)
         .then(res=>res.json())
         .then(response=>{
             console.log(response);
@@ -47,6 +53,8 @@ class Logout extends Component{
                 this.setState({loading:false});
                 this.props.navigation.navigate('Auth');
             },1000);
+        }).catch(err=>{
+            console.log('Logout Err:',err);
         });
     }
     

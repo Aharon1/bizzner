@@ -1,6 +1,6 @@
 import React from "react";
 import MapView, { Polyline, Marker } from "react-native-maps";
-import { TouchableHighlight,TouchableOpacity, Text, StyleSheet, View, Image } from "react-native";
+import { TouchableHighlight,TouchableOpacity, Text, StyleSheet, View, Image,ImageBackground } from "react-native";
 import axios from "axios";
 import Icon from "react-native-vector-icons/FontAwesome";
 import getDirections from "react-native-google-maps-directions";
@@ -125,7 +125,8 @@ export class MapForEventDetail extends React.Component {
     const { location } = this.props;
     return polylineCoords.length ? (
       <View style={{ position: "relative", width: "100%", height: 175,paddingHorizontal: 10,paddingVertical: 10, }}>
-        <MapView
+        <Image source={{uri:'https://maps.googleapis.com/maps/api/staticmap?center='+location[1]+','+location[0]+'&size=200x155&key=AIzaSyCJRgtLQrTsiDSPvz0hzKlEXisjf2UsBbM&zoom=15&scale=2&markers=color:0x0947b9|label:B|size:mid|'+location[1]+','+location[0]}} style={{ width: "100%", height: 155 }} width={'100%'} height={155} />
+        {/*<MapView
           style={{ width: "100%", height: 155 }}
           initialRegion={{
             latitude: location[1],
@@ -134,11 +135,11 @@ export class MapForEventDetail extends React.Component {
             longitudeDelta: 0.00421
           }}
         >
-          {/* <Polyline
+           <Polyline
             coordinates={polylineCoords}
             strokeColor="#0066ff"
             strokeWidth={2}
-          /> */}
+          /> 
           <Marker
             coordinate={{
               latitude: location[1],
@@ -146,7 +147,7 @@ export class MapForEventDetail extends React.Component {
             }}
           >
             <Icon name="map-marker" size={40} color="#0947b9" />
-          </Marker>
+          </Marker>*/}
         {/* <Marker
           coordinate={{
             latitude: latitude,
@@ -154,8 +155,8 @@ export class MapForEventDetail extends React.Component {
           }}
         >
           <Icon name="bullseye" size={40} color="grey" />
-        </Marker> */}
-        </MapView>
+        </Marker> 
+        </MapView>*/}
         {/* <TouchableHighlight
           onPress={this.props.closeMap}
           style={styles.closeButton}
