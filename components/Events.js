@@ -323,7 +323,10 @@ class EventsScreen extends Component{
                 'Cache-Control': 'no-cache'
             }*/
         })
-        .then(res=>res.json())
+        .then(res=>{
+            console.log('EventList Headers Response ',res);
+            return res.json()
+        })
         .then(response=>{
             var results = response.results;
             var myEvResults = response.myEvents;

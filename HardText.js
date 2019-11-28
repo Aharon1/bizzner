@@ -3,6 +3,7 @@ const HardText = {
     Auth Screen
     */
    'auth_heading':'Your daily opportunity in meeting inspiring people',
+   'auth_terms':'Terms and conditions',
     /*
     Signin Screen
     */

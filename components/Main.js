@@ -193,6 +193,8 @@ class MainScreen extends Component {
             {HardText.auth_heading}
             {" "}
           </Text>
+
+
         </View>
         <View style={[MainStyles.btn, MainStyles.linBtn]}>
           <LinkedInModal
@@ -240,8 +242,25 @@ class MainScreen extends Component {
             style={{ width: "100%" }}
             resizeMode={"contain"}
           />
+          
         </TouchableOpacity>
+
+        
+          <Text style={ MainStyles.mPHeading}
+            onPress={() => Linking.openURL(`${SERVER_URL}/termsfeed-terms-conditions-pdf-english.pdf`)}>
+           {"Terms and conditions"}
+        </Text>
+
       </View>
+
+      
+
+        
+      
+   
+
+       
+      
     );
   }
 }

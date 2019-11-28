@@ -44,6 +44,9 @@ target 'bizzner' do
 
   pod 'react-native-add-calendar-event', :path => '../node_modules/react-native-add-calendar-event'
 
+
+  pod 'RNBackgroundFetch', :path => '../node_modules/react-native-background-fetch'
+
 end
 
 post_install do |installer|

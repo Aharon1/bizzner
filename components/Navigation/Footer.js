@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import { View,TouchableOpacity,Text,AsyncStorage } from 'react-native';
+import { View,TouchableOpacity,Text,AsyncStorage,Alert,Platform } from 'react-native';
 import { NavigationActions,withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {SERVER_URL} from '../../Constants';
@@ -15,27 +15,27 @@ class Footer extends Component {
         }
     }
     async setUserId(){
-        var userID =  await AsyncStorage.getItem('userID');
-        this.setState({userID});
-    }
-    componentDidMount(){
-        this._isMounted = true;
-        this.setUserId();
-        setTimeout(()=>{
+        await AsyncStorage.getItem('userID').then(userID=>{
+            console.log(userID);
+            this.setState({userID});
             this.getPrivatChatCount();
             this.clearTime = setInterval(()=>{
                 this.getPrivatChatCount();
             },4000);
-        },200);
+        });
+    }
+    componentDidMount(){
+        this._isMounted = true;
+        this.setUserId();
     }
     async getPrivatChatCount(){
-        var userID =  await AsyncStorage.getItem('userID');
+        let userID =  await AsyncStorage.getItem('userID');
         await fetch(SERVER_URL+'?action=privatMsgsCount&user_id='+userID)
         .then(res=>res.json())
         .then(response=>{
             if (this._isMounted) {
                 this.setState({pcCount:response.pcCount,ecCount:response.ecCount});
-                var totalCount = parseInt(response.pcCount)+parseInt(response.ecCount);
+                let totalCount = parseInt(response.pcCount)+parseInt(response.ecCount);
                 PushNotification.setApplicationIconBadgeNumber(totalCount);
             }
         })

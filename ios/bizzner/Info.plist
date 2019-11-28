@@ -70,7 +70,7 @@
 	<key>NSLocationUsageDescription</key>
 	<string>Will fetch events</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Need to Upload</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -113,5 +113,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
 </dict>
 </plist>
