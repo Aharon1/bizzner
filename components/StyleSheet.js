@@ -221,17 +221,15 @@ const MainStyles = StyleSheet.create({
     },
     btnSave:{
         backgroundColor:'#0947b9',
-        paddingTop:16,
-        paddingBottom:16,
-        paddingLeft:32,
-        paddingRight:32,
-        borderRadius:80,
+        paddingVertical:15,
+        paddingHorizontal:20,
+        borderRadius:5,
         marginBottom:16
     },
     btnSaveText:{
         color:'#FFF',
         fontFamily:'Roboto-Regular',
-        fontSize:20
+        fontSize:17
     },
     confirmPopup:{
         padding:0,

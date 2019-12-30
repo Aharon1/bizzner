@@ -1,5 +1,4 @@
 apply plugin: "com.android.application"
-
 import com.android.build.OutputFile
 
 /**
@@ -103,9 +102,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 4
         versionName "1.0.1"
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
+        multiDexEnabled true
         packagingOptions {
             exclude "lib/arm64-v8a/librealm-jni.so"
         }
@@ -129,43 +126,53 @@ android {
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
-            // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2]
+            // https://developer.android.com/studio/build/configure-apk-splits.html
+            def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             }
+
         }
     }
 }
 
 dependencies {
-    implementation project(':react-native-background-fetch')
-    implementation project(':react-native-add-calendar-event')
+    implementation project(':@react-native-community_datetimepicker')
+    implementation project(':react-native-webview')
+    implementation project(':react-native-firebase')
     implementation project(':react-native-geolocation-service')
+    implementation project(':react-native-add-calendar-event')
+    implementation project(':@react-native-community_async-storage')
+    implementation project(':react-native-permissions')
     implementation project(':react-native-image-picker')
-    implementation project(':react-native-push-notification')
+    implementation project(':react-native-screens')
+    implementation project(':react-native-reanimated')
+    implementation project(':react-native-gesture-handler')
+    implementation "org.webkit:android-jsc:r241213"
     implementation "com.android.support:exifinterface:+"
     implementation "com.android.support:support-annotations:+"
     implementation "com.android.support:support-v4:+"
-    implementation project(':linkedin-sdk')
     implementation project(':react-native-vector-icons')
-    implementation project(':react-native-linkedin-sdk')
-    implementation project(':react-native-gesture-handler')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation "com.google.android.gms:play-services-gcm:+"
-    implementation 'me.leolin:ShortcutBadger:1.1.8@aar'
-    implementation "com.google.firebase:firebase-messaging:+"
-    implementation(project(':react-native-maps')) {
-      exclude group: 'com.android.support'
-      exclude module: 'appcompat-v7'
-      exclude module: 'support-v4'
-    }
-    implementation 'com.google.android.gms:play-services-base:+'
+    implementation 'androidx.appcompat:appcompat:1.2.0-alpha01'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03'
+    implementation 'com.android.support:multidex:1.0.3'
+//    implementation(project(':react-native-maps')) {
+//      exclude group: 'com.android.support'
+//      exclude module: 'appcompat-v7'
+//      exclude module: 'support-v4'
+//    }
+    //implementation 'com.google.android.gms:play-services-base:+'
     implementation 'com.google.android.gms:play-services-maps:+'
+    implementation "com.google.android.gms:play-services-base:17.1.0"
+    implementation "com.google.firebase:firebase-core:17.2.1"
+    implementation "com.google.firebase:firebase-messaging:20.1.0"
+    implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
 }
 configurations.all {
     resolutionStrategy {
@@ -178,3 +185,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+apply plugin: 'com.google.gms.google-services'

@@ -1,24 +1,28 @@
 import React, { Component } from 'react';
-import { View,Text,TouchableOpacity, TextInput,Image,
-    Platform,FlatList,ActivityIndicator,AsyncStorage,
-    RefreshControl,SafeAreaView,StyleSheet,Alert
+import {
+    View, Text, TouchableOpacity, TextInput, Image,
+    Platform, FlatList,
+    RefreshControl, StyleSheet, Alert
 } from 'react-native';
-import {SERVER_URL} from '../../Constants';
+import { SERVER_URL } from '../../Constants';
 import MainStyles from '../StyleSheet';
-import Loader from '../Loader';
 import Toast from 'react-native-simple-toast';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ProgressiveImage from '../AsyncModules/ImageComponent';
 import HardText from '../../HardText';
-class EventChatListScreen extends Component{
+import Axios from 'axios';
+import { loadingChange } from '../../Actions';
+import { connect } from 'react-redux';
+
+class EventChatListScreen extends Component {
     _isMounted = false;
     clearTime = '';
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
-            loading:true,
-            isRefreshing:false,
-            chatList:{}
+        this.state = {
+            loading: true,
+            isRefreshing: false,
+            chatList: {}
         }
         this.viewabilityConfig = {
             waitForInteraction: true,
@@ -28,24 +32,20 @@ class EventChatListScreen extends Component{
         this.refreshList = this._refreshList.bind(this);
         this.hideChat = this._hideChat.bind(this);
     }
-    async setUserId(){
-        var userID =  await AsyncStorage.getItem('userID');
-        this.setState({userID});
-    }
-    componentDidMount(){
+    componentDidMount() {
         this._isMounted = true;
-        this.setUserId();
-        setTimeout(()=>{
+        this.props.loadingChangeAction(true);
+        setTimeout(() => {
             this.fetchList();
-            clearTime = setInterval(()=>{this.fetchList();},4000)
-        },200)
-        
+            clearTime = setInterval(() => { this.fetchList(); }, 4000)
+        }, 200)
+
     }
-    componentWillUnmount(){
+    componentWillUnmount() {
         this._isMounted = false;
         clearTimeout(this.clearTime);
     }
-    _refreshList(){
+    _refreshList() {
         this.fetchList()
     }
     formatAMPM(date) {
@@ -55,185 +55,182 @@ class EventChatListScreen extends Component{
         var ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0'+minutes : minutes;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
         var strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
     }
-    formatDate(date){
+    formatDate(date) {
         var date = new Date(date);
         var dateStr = '';
-        dateStr += (date.getDate() < 10)?'0'+date.getDate()+' ':date.getDate()+' ';
-        var monthArray = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        dateStr += (date.getDate() < 10) ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
+        var monthArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         var month = monthArray[date.getMonth()];
-        dateStr += month+' ';
+        dateStr += month + ' ';
         dateStr += date.getFullYear();
         return dateStr;
     }
-    _fetchList= async ()=>{ 
-        await fetch(SERVER_URL+'?action=EventMsgsList&user_id='+this.state.userID)
-        .then(res=>res.json())
-        .then(response=>{
-            if (this._isMounted) {
-                if(response.code == 200){
-                    this.setState({chatList:response.body.results});
-                }
-                this.setState({loading:false,isRefreshing:false});
-            }
-        })
-        .catch()
-    }
-    async _hideChat(chatId){
-        await fetch(SERVER_URL+'?action=hide_user_chat&chat_id='+chatId+'&isgrp=1&user_id='+this.state.userID)
-        .then(res=>{return res.json()})
-        .then(response=>{
-            if(response.code ==200){
-                Toast.show("Chat hidden successfully",Toast.SHORT);
-            }
-            this.fetchList();
-        })
-        .catch(err=>{
-
-        });
-    }
-    render(){
-        
-        return(
-            <SafeAreaView style={MainStyles.normalContainer}>
-                <Loader loading={this.state.loading} />
-                <View style={[MainStyles.eventsHeader,{justifyContent:'center'}]}>
-                    <TouchableOpacity style={{ alignItems:'center',paddingLeft: 12,flexDirection:'row' }} onPress={() => this.props.navigation.goBack() }>
-                        <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
-                        <Text style={{fontSize:14,color:'#8da6d5',marginLeft:20}}>{HardText.event_chat_list}</Text>
-                    </TouchableOpacity>
-                </View>
-                {
-                    this.state.chatList.length > 0 && 
-                    <FlatList 
-                   
-                    data={this.state.chatList} 
-                    renderItem={({item})=>{ 
-                        var todaysDate = new Date();
-                        var todaysFormated = todaysDate.getDate()+'/'+(todaysDate.getMonth()+1)+'/'+todaysDate.getFullYear();
-                        var chatDate = new Date(item.send_on);
-                        var chatDateFormated = chatDate.getDate()+'/'+(chatDate.getMonth()+1)+'/'+chatDate.getFullYear();
-                        var dateFormated = (todaysFormated != chatDateFormated)?this.formatDate(item.send_on)+' '+this.formatAMPM(item.send_on):"Today "+this.formatAMPM(item.send_on);
-                        return(
-                            <View>
-                            { !item.isHidden && 
-                                <TouchableOpacity style={[
-                                curStyle.UserListItem,
-                                (item.unread_count > 0)?{backgroundColor:'rgba(209, 219, 237, 0.4)'}:''
-                                ]} onPress={()=>{this.props.navigation.navigate('Event Chat',{event_id:item.chat_id,note:item.event_note,subject:item.event_name})}}>
-                                    <View style={{overflow:'hidden',width:60,height:60,borderWidth: 2,borderColor: '#FFF'}}>
-                                        <ProgressiveImage source={{uri:item.event_pic}} style={{
-                                            width: 60, 
-                                            height: 60,
-                                        }} resizeMode="cover"/>
-                                    </View>
-                                    <View style={MainStyles.userListItemTextWrapper}>
-                                        <Text style={[MainStyles.ULITWName,{fontFamily:'Roboto-Medium',color:'#416bb9'}]}>{item.event_name}</Text>
-                                        <Text 
-                                        style={{
-                                            color:'#999',
-                                            fontFamily:'Roboto-Regular',
-                                            fontSize:8,
-                                            marginBottom:3,
-                                        }}>{dateFormated}</Text>
-                                        <Text style={[MainStyles.ULITWTitle,{color:'#03163a'}]}>{item.msg_text.split(" ").splice(0,4).join(" ")}</Text>
-                                    </View>
-                                    <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                                        {
-                                            item.unread_count > 0 && 
-                                            <View
-                                            style={[curStyle.IconStyle,{backgroundColor:'#5cc06c'}]}
-                                            >
-                                                <Text style={curStyle.IconTextStyle}>{item.unread_count}</Text>
-                                            </View>
-                                        }
-                                        {
-                                            item.unread_count == 0 && 
-                                            <View
-                                            style={[curStyle.IconStyle,{backgroundColor:'#416bb9'}]}
-                                            >
-                                                <Icon name="check" style={curStyle.IconTextStyle} />
-                                            </View>
-                                        }
-                                        <TouchableOpacity
-                                        onPress={()=>{
-                                        Alert.alert(
-                                            'Hide this chat',
-                                            'Temporarily hide this chat',
-                                            [
-                                                {
-                                                    text: 'No',
-                                                    onPress: () => console.log('Cancel Pressed'),
-                                                    style: 'cancel',
-                                                },
-                                                {
-                                                    text: 'Yes',
-                                                    onPress: () => {
-                                                        this.hideChat(item.chat_id);
-                                                    }
-                                                }
-                                            ],
-                                            {cancelable: true},
-                                            );
-                                        }}
-                                        style={[curStyle.IconStyle,{marginLeft:5}]}>
-                                            {/* <Text style={curStyle.IconTextStyle}>
-                                                <Icon name="times" />
-                                            </Text> */}
-                                            <Image
-                                                source={require("../../assets/close-button-large.png")}
-                                                style={{ width: 25, height: 25 }}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
-                                </TouchableOpacity> 
-                            }
-                            </View>
-                        )}}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={this.state.isRefreshing}
-                            onRefresh={()=>{this.setState({isRefreshing:true}),this.refreshList()}}
-                            title="Pull to refresh"
-                            colors={["#2e4d85","red", "green", "blue"]}
-                        />
+    _fetchList = async () => {
+        await Axios.get(`${SERVER_URL}?action=EventMsgsList&user_id=${this.props.reducer.userData}`)
+            .then(res => {
+                let {code,body,message} = res.data;
+                if (this._isMounted) {
+                    if (code == 200) {
+                        this.setState({ chatList: body.results });
                     }
-                    keyExtractor={(item) => 'key-'+item.chat_id}
-                    viewabilityConfig={this.viewabilityConfig}
+                    this.setState({ isRefreshing: false });
+                }
+                this.props.loadingChangeAction(false);
+            })
+            .catch(err=>{
+                setTimeout(()=>{Toast.show(err.message,Toast.SHORT)},200);
+                this.props.loadingChangeAction(false);
+            })
+    }
+    async _hideChat(chatId) {
+        await Axios.get(`${SERVER_URL}?action=hide_user_chat&chat_id=${chatId}&isgrp=1&user_id=${this.state.userID}`)
+            .then(res => {
+                let {code,message} = res.data;
+                if (code == 200) {
+                    Toast.show("Chat hidden successfully", Toast.SHORT);
+                }
+                this.fetchList();
+            })
+            .catch(err => {
+                setTimeout(()=>{Toast.show(err.message,Toast.SHORT)},200);
+            });
+    }
+    render() {
+
+        return (
+            <View style={MainStyles.normalContainer}>
+                {
+                    this.state.chatList.length > 0 &&
+                    <FlatList
+                        data={this.state.chatList}
+                        renderItem={({ item }) => {
+                            var todaysDate = new Date();
+                            var todaysFormated = todaysDate.getDate() + '/' + (todaysDate.getMonth() + 1) + '/' + todaysDate.getFullYear();
+                            var chatDate = new Date(item.send_on);
+                            var chatDateFormated = chatDate.getDate() + '/' + (chatDate.getMonth() + 1) + '/' + chatDate.getFullYear();
+                            var dateFormated = (todaysFormated != chatDateFormated) ? this.formatDate(item.send_on) + ' ' + this.formatAMPM(item.send_on) : "Today " + this.formatAMPM(item.send_on);
+                            return (
+                                <View>
+                                    {!item.isHidden &&
+                                        <TouchableOpacity style={[
+                                            curStyle.UserListItem,
+                                            (item.unread_count > 0) ? { backgroundColor: 'rgba(209, 219, 237, 0.4)' } : ''
+                                        ]} onPress={() => { this.props.navigation.navigate('Event Chat', { event_id: item.chat_id, note: item.event_note, subject: item.event_name }) }}>
+                                            <View style={{ overflow: 'hidden', width: 60, height: 60, borderWidth: 2, borderColor: '#FFF' }}>
+                                                <ProgressiveImage source={{ uri: item.event_pic }} style={{
+                                                    width: 60,
+                                                    height: 60,
+                                                }} resizeMode="cover" />
+                                            </View>
+                                            <View style={MainStyles.userListItemTextWrapper}>
+                                                <Text style={[MainStyles.ULITWName, { fontFamily: 'Roboto-Medium', color: '#416bb9' }]}>{item.event_name}</Text>
+                                                <Text
+                                                    style={{
+                                                        color: '#999',
+                                                        fontFamily: 'Roboto-Regular',
+                                                        fontSize: 8,
+                                                        marginBottom: 3,
+                                                    }}>{dateFormated}</Text>
+                                                <Text style={[MainStyles.ULITWTitle, { color: '#03163a' }]}>{item.msg_text.split(" ").splice(0, 4).join(" ")}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                                {
+                                                    item.unread_count > 0 &&
+                                                    <View style={[curStyle.IconStyle, { backgroundColor: '#5cc06c' }]} >
+                                                        <Text style={curStyle.IconTextStyle}>{item.unread_count}</Text>
+                                                    </View>
+                                                }
+                                                {
+                                                    item.unread_count == 0 &&
+                                                    <View style={[curStyle.IconStyle, { backgroundColor: '#416bb9' }]} >
+                                                        <Icon name="check" style={curStyle.IconTextStyle} />
+                                                    </View>
+                                                }
+                                                <TouchableOpacity
+                                                    onPress={() => {
+                                                        Alert.alert(
+                                                            'Hide this chat',
+                                                            'Temporarily hide this chat',
+                                                            [
+                                                                {
+                                                                    text: 'No',
+                                                                    onPress: () => console.log('Cancel Pressed'),
+                                                                    style: 'cancel',
+                                                                },
+                                                                {
+                                                                    text: 'Yes',
+                                                                    onPress: () => {
+                                                                        this.hideChat(item.chat_id);
+                                                                    }
+                                                                }
+                                                            ],
+                                                            { cancelable: true },
+                                                        );
+                                                    }}
+                                                    style={[curStyle.IconStyle, { marginLeft: 5 }]}>
+                                                    <Image
+                                                        source={require("../../assets/close-button-large.png")}
+                                                        style={{ width: 25, height: 25 }}
+                                                    />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </TouchableOpacity>
+                                    }
+                                </View>
+                            )
+                        }}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.isRefreshing}
+                                onRefresh={() => { this.setState({ isRefreshing: true }), this.refreshList() }}
+                                title="Pull to refresh"
+                                colors={["#2e4d85", "red", "green", "blue"]}
+                            />
+                        }
+                        keyExtractor={(item) => 'key-' + item.chat_id}
+                        viewabilityConfig={this.viewabilityConfig}
                     />
                 }
                 {
                     this.state.chatList.length == 0 &&
                     <Text>No Data Found</Text>
                 }
-            </SafeAreaView>
+            </View>
         );
     }
 }
 const curStyle = StyleSheet.create({
-    UserListItem:{
-        paddingHorizontal:15,
+    UserListItem: {
+        paddingHorizontal: 15,
         paddingVertical: 10,
-        borderBottomColor:'#8da6d4',
-        borderBottomWidth:1,
-        flexDirection:'row',
+        borderBottomColor: '#8da6d4',
+        borderBottomWidth: 1,
+        flexDirection: 'row',
     },
-    IconStyle:{
-        width:20,
-        height:20,
-        justifyContent:'center',
-        alignItems:'center',
-        borderRadius:100,
+    IconStyle: {
+        width: 20,
+        height: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 100,
     },
-    IconTextStyle:{
-        color:'#FFF',
-        fontFamily:'Roboto-Medium',
-        fontSize:10,
-        textAlign:'center',
-        textAlignVertical:'center'
+    IconTextStyle: {
+        color: '#FFF',
+        fontFamily: 'Roboto-Medium',
+        fontSize: 10,
+        textAlign: 'center',
+        textAlignVertical: 'center'
     }
 });
-export default EventChatListScreen;
+const mapStateToProps = (state) => {
+    const { reducer } = state
+    return { reducer }
+};
+const mapDispatchToProps = dispatch => ({
+    loadingChangeAction: (dataSet) => dispatch(loadingChange(dataSet))
+});
+export default connect(mapStateToProps, mapDispatchToProps)(EventChatListScreen);

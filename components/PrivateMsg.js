@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import { View,Text,TouchableOpacity, 
-    Platform,FlatList,AsyncStorage,Image,
-    RefreshControl,SafeAreaView,StyleSheet,Alert
+    Platform,FlatList,Image,
+    RefreshControl,StyleSheet,Alert
 } from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
-import Loader from './Loader';
 import { HeaderButton } from './Navigation/HeaderButton';
 import {SERVER_URL} from '../Constants';
 import ProgressiveImage from './AsyncModules/ImageComponent';
 import HardText from '../HardText';
+import Axios from 'axios';
+import { loadingChange } from '../Actions';
+import { connect } from 'react-redux';
+import Toast from 'react-native-simple-toast';
 var clearTime = '';
 class PrivatMsgScreen extends Component{
     _isMounted = false;
@@ -20,6 +23,7 @@ class PrivatMsgScreen extends Component{
             loading:true,
             chatList:{},
             isRefreshing:false,
+            userID:this.props.reducer.userData
         }
         this.viewabilityConfig = {
             waitForInteraction: true,
@@ -29,32 +33,29 @@ class PrivatMsgScreen extends Component{
         this.refreshList = this._refreshList.bind(this);
         this.hideChat = this._hideChat.bind(this);
     }
-    async setUserId(){
-        var userID =  await AsyncStorage.getItem('userID');
-        this.setState({userID});
-    }
     componentDidMount(){
         this._isMounted = true;
-        this.setUserId();
+        this.props.loadingChangeAction(true);
         setTimeout(()=>{
             this.fetchList();
             clearTime = setInterval(()=>{this.fetchList();},4000)
         },200)
     }
     _fetchList= async ()=>{
-        await fetch(SERVER_URL+'?action=getPrivateList&user_id='+this.state.userID)
-        .then(res=>res.json())
-        .then(response=>{
+        await Axios.get(`${SERVER_URL}?action=getPrivateList&user_id=${this.state.userID}`)
+        .then(res=>{
+            let {code, message,body} = res.data;
             if (this._isMounted) {
-                if(response.code != 404){
-                    this.setState({chatList:response.body.results});
+                if(code != 404){
+                    this.setState({chatList:body.results});
                 }
-                this.setState({loading:false,isRefreshing:false})
+                this.setState({isRefreshing:false},()=>{
+                    this.props.loadingChangeAction(false);
+                });
             }
         })
         .catch(err=>{
-            console.log('private chat list Error : ',err);
-            this.setState({loading:false,isRefreshing:false})
+            this.props.loadingChangeAction(false);
         })
     }
     _refreshList(){
@@ -86,28 +87,21 @@ class PrivatMsgScreen extends Component{
         clearTimeout(clearTime);
     }
     async _hideChat(chatId){
-        await fetch(SERVER_URL+'?action=hide_user_chat&chat_id='+chatId+'&isgrp=0&user_id='+this.state.userID)
-        .then(res=>res.json())
-        .then(response=>{
-            if(response.code ==200){
+        await Axios.get(`${SERVER_URL}?action=hide_user_chat&chat_id=${chatId}&isgrp=0&user_id=${this.state.userID}`)
+        .then(res=>{
+            let {code} = res.data;
+            if(code ==200){
                 Toast.show("Chat hidden successfully",Toast.SHORT);
             }
             this.fetchList();
         })
         .catch(err=>{
-
+            Toast.show(err.message,Toast.SHORT);
         });
     }
     render(){
         return(
-            <SafeAreaView style={MainStyles.normalContainer}>
-                <Loader loading={this.state.loading} />
-                <View style={[MainStyles.eventsHeader,{justifyContent:'center'}]}>
-                    <TouchableOpacity style={{alignItems:'center',flexDirection:'row', paddingLeft: 12 }} onPress={() => this.props.navigation.goBack() }>
-                        <Icon name="chevron-left" style={{ fontSize: 20, color: '#8da6d5' }} />
-                        <Text style={{fontSize:14,color:'#8da6d5',marginLeft:20}}>{HardText.chat_list}</Text>
-                    </TouchableOpacity>
-                </View>
+            <View style={MainStyles.normalContainer}>
                 {
                     this.state && this.state.chatList && this.state.chatList.length > 0 && 
                     <FlatList 
@@ -207,7 +201,7 @@ class PrivatMsgScreen extends Component{
                     viewabilityConfig={this.viewabilityConfig}
                     />
                 }
-            </SafeAreaView>
+            </View>
         );
     }
 }
@@ -234,4 +228,11 @@ const curStyle = StyleSheet.create({
         textAlignVertical:'center'
     }
 });
-export default PrivatMsgScreen;
+const mapStateToProps = (state) => {
+    const { reducer } = state
+    return { reducer }
+};
+const mapDispatchToProps = dispatch => ({
+    loadingChangeAction: (dataSet) => dispatch(loadingChange(dataSet))
+});
+export default connect(mapStateToProps, mapDispatchToProps)(PrivatMsgScreen);

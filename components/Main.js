@@ -15,13 +15,17 @@ import Toast from "react-native-simple-toast";
 import { SERVER_URL } from "../Constants";
 import LinkedInModal from "react-native-linkedin";
 import HardText from '../HardText';
-import PushNotification from 'react-native-push-notification';
+import { loadingChange, actionUserSignIn } from '../Actions';
+import { connect } from 'react-redux';
+import Axios from "axios";
+import firebase from 'react-native-firebase';
+//import PushNotification from 'react-native-push-notification';
 class MainScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
-      token: ""
+      access_token: ""
     };
   }
   static navigationOptions = {
@@ -31,58 +35,62 @@ class MainScreen extends Component {
     await AsyncStorage.setItem(key, value);
   }
   async Login() {
-    this.setState({
-      loading: true
-    });
-    const access_token = this.state.token.access_token;
+    this.props.loadingChangeAction(true);
+    const access_token = this.state.access_token;
     if (!access_token) {
       Toast.show("Linkedin is temporarily disabled", Toast.SHORT);
-      this.setState({
-        loading: false
-      });
+      this.props.loadingChangeAction(false);
       return false;
     }
-    const baseApi = "https://api.linkedin.com/v1/people/";
+    const baseApi = "https://api.linkedin.com/v2/me/";
     const options = [
-      "first-name",
-      "last-name",
-      "email-address",
-      "headline",
-      "summary",
-      "location:(name)",
-      "picture-urls::(original)",
-      "positions"
+      // "first-name",
+      // "last-name",
+      // "email-address",
+      // "headline",
+      // "summary",
+      // "location:(name)",
+      // "picture-urls::(original)",
+      // "positions"
+      //'r_liteprofile', 'r_emailaddress','r_basicprofile','r_fullprofile'
+      'id','firstName','lastName','profilePicture(displayImage~:playableStreams)'
     ];
-
-    const profile = await fetch(
-      `${baseApi}~:(${options.join(",")})?format=json`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + access_token
-        }
+    console.log(`${baseApi}~:(${options.join(",")})?format=json`);
+    Axios.get(`${baseApi}?projection=(${options.join(",")})`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: "Bearer " + access_token
       }
-    );
-    const payload = await profile.json();
-    const {
-      emailAddress,
-      firstName,
-      headline,
-      lastName,
-      location: { name },
-      pictureUrls,
-      positions
-    } = payload;
-    
-    var params = "firstName=" + encodeURIComponent(firstName) + "&";
-    params += "lastName=" + encodeURIComponent(lastName) + "&";
-    params += "emailAddress=" + encodeURIComponent(emailAddress) + "&";
-    params += "headline=" + encodeURIComponent(headline) + "&";
-    params += "location=" + encodeURIComponent(name) + "&";
-    params += "position=" + encodeURIComponent(positions.values[0].title) + "&";
-    params += "profilePicture=" + encodeURIComponent(pictureUrls.values[0]);
-    this.setState({parameters:params});
-    this.getToken(this.sendDataToServer.bind(this));
+    }).then(res => {
+      console.log(res.data);
+      Axios.get(`https://api.linkedin.com/v2/people/(id:${res.data.id})`)
+      .then(res=>{
+        console.log(res.data);
+      }).catch(err=>{
+        console.log('Profile Error',err.message);
+      this.props.loadingChangeAction(false);
+      })
+      const {
+        emailAddress,
+        firstName,
+        headline,
+        lastName,
+        location: { name },
+        pictureUrls,
+        positions
+      } = res.data;
+      let params = "firstName=" + encodeURIComponent(firstName) + "&";
+      params += "lastName=" + encodeURIComponent(lastName) + "&";
+      params += "emailAddress=" + encodeURIComponent(emailAddress) + "&";
+      params += "headline=" + encodeURIComponent(headline) + "&";
+      params += "location=" + encodeURIComponent(name) + "&";
+      params += "position=" + encodeURIComponent(positions.values[0].title) + "&";
+      params += "profilePicture=" + encodeURIComponent(pictureUrls.values[0]);
+      this.setState({ parameters: params }, this.getToken);
+    }).catch(err => {
+      console.log(err.message);
+      this.props.loadingChangeAction(false);
+    });
   }
   componentDidMount() {
     // B
@@ -128,58 +136,51 @@ class MainScreen extends Component {
   };
   renderButton = () => {
     return (
-      <Image
-        source={require("../assets/l-btn.png")}
-        style={[{ width: "100%" }]}
-        resizeMode={"contain"}
-      />
+      <TouchableOpacity>
+        <Image
+          source={require("../assets/l-btn.png")}
+          style={[{ width: "100%" }]}
+          resizeMode={"contain"}
+        />
+      </TouchableOpacity>
     );
   };
-  getToken = (onToken)=>{
-    PushNotification.configure({
-        onRegister: onToken,
-        onNotification: function(notification) {
-            console.log('NOTIFICATION:', notification );
-        },
-        senderID: "71450108131",
-        permissions: {
-            alert: true,
-            badge: true,
-            sound: true
-        },
-        popInitialNotification: true,
-        requestPermissions: true,
+  async getToken() {
+    await firebase.messaging().getToken().then(async fcmToken => {
+      if (fcmToken) {
+        this.sendDataToServer(fcmToken);
+      }
+      else {
+        this.sendDataToServer('');
+      }
+    }).catch(err => {
+      this.props.loadingChangeAction(false);
     });
   }
-  sendDataToServer(token){
-    console.log('token',token);
-    fetch(SERVER_URL + "?action=check_user_details&" + this.state.parameters+'&device_token='+token.token+'&platform='+Platform.OS)
-    .then(res => {
-      return res.json();
-    })
-    .then(res => {
-      if (res.code == 200) {
-        this.setState({
-          loading: false
-        });
-        this.saveDetails("isUserLoggedin", "true");
-        this.saveDetails("userID", res.body.ID);
-        Toast.show(res.message, Toast.SHORT);
-        setTimeout(() => {
-          this.setState({ loading: false });
-          this.props.navigation.navigate("Profile");
-        }, 200);
-      }
-    })
-    .catch(err => {
-      console.error(err);
-    });
-}
+  sendDataToServer(token) {
+    Axios.get(`${SERVER_URL}?action=check_user_details&${this.state.parameters}&device_token=${token}&platform=${Platform.OS}`)
+      .then(res => {
+        let { code, message, body } = res.data;
+        if (code == 200) {
+          this.saveDetails("isUserLoggedin", "true");
+          this.saveDetails("userID", body.ID);
+          Toast.show(message, Toast.SHORT);
+          setTimeout(() => {
+            this.props.loadingChangeAction(false);
+            this.props.navigation.navigate("Profile");
+          }, 200);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        this.props.loadingChangeAction(false);
+      });
+  }
+  linkedRef = React.createRef(LinkedInModal)
   render() {
-    const clientID = "81fcixszrwwavz";
-    const redirectUri = "http://bizzner.com/app/linkedin-auth.php";
-    const secret = "m3sWUS3DpPoHZdZk";
-
+    // const clientID = "81fcixszrwwavz";
+    // const redirectUri = "http://bizzner.com/app/linkedin-auth.php";
+    // const secret = "m3sWUS3DpPoHZdZk";
     return (
       <View style={MainStyles.container}>
         <Loader loading={this.state.loading} />
@@ -188,29 +189,37 @@ class MainScreen extends Component {
             source={require("../assets/bizzner-logo.png")}
             style={{ width: 213, height: 55 }}
           />
-          <Text style={MainStyles.mPHeading}>
-            {" "}
-            {HardText.auth_heading}
-            {" "}
-          </Text>
-
-
+          <Text style={MainStyles.mPHeading}>{HardText.auth_heading}</Text>
         </View>
         <View style={[MainStyles.btn, MainStyles.linBtn]}>
-          <LinkedInModal
+          {/* <LinkedInModal
+            ref={this.linkedRef}
             clientID={clientID}
             clientSecret={secret}
+            shouldGetAccessToken={true}
             redirectUri={redirectUri}
-            onSuccess={token => {
-              this.setState(
-                {
-                  token
-                },
-                this.Login
-              );
+            permissions={['r_liteprofile', 'r_emailaddress']}
+            onSuccess={({ access_token, expires_in }) => {
+              console.log(access_token,expires_in);
+              this.setState({ access_token }, this.Login);
             }}
-            renderButton={this.renderButton}
-          />
+            linkText="Sign in with Linkedin"
+            wrapperStyle={{ padding: 15, backgroundColor: '#0077b5' }}
+            areaTouchText={{ top: 20, bottom: 20, left: 150, right: 150 }}
+            onError={(err) => {
+              console.log(err);
+            }}
+            renderButton={(props) => (
+              <TouchableOpacity onPress={() => { this.linkedRef.current.open() }}>
+                <Image
+
+                  source={require("../assets/l-btn.png")}
+                  style={{ width: "100%" }}
+                  resizeMode={"contain"}
+                />
+              </TouchableOpacity>
+            )}
+          /> */}
         </View>
         <TouchableOpacity
           style={[MainStyles.btn]}
@@ -242,30 +251,24 @@ class MainScreen extends Component {
             style={{ width: "100%" }}
             resizeMode={"contain"}
           />
-          
         </TouchableOpacity>
-
-        
-          <Text style={ MainStyles.mPHeading}
-            onPress={() => Linking.openURL(`${SERVER_URL}/termsfeed-terms-conditions-pdf-english.pdf`)}>
-           {"Terms and conditions"}
+        <Text style={MainStyles.mPHeading}
+          onPress={() => Linking.openURL(`${SERVER_URL}/termsfeed-terms-conditions-pdf-english.pdf`)}>
+          {"Terms and conditions"}
         </Text>
-
       </View>
-
-      
-
-        
-      
-   
-
-       
-      
     );
   }
 }
-export default MainScreen;
-
+const mapStateToProps = (state) => {
+  const { reducer } = state
+  return { reducer }
+};
+const mapDispatchToProps = dispatch => ({
+  loadingChangeAction: (dataSet) => dispatch(loadingChange(dataSet)),
+  LoginUserAction: (userData) => dispatch(actionUserSignIn(userData)),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(MainScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,

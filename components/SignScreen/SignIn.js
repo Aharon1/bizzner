@@ -1,195 +1,209 @@
-import React, {Component} from 'react';
-import {Text, View, TouchableOpacity,Image,ScrollView,PushNotificationIOS,
-    TextInput,KeyboardAvoidingView,Platform,Alert,SafeAreaView,
-    AsyncStorage } from 'react-native';
+import React, { Component } from 'react';
+import {
+    Text, View, TouchableOpacity, Image, ScrollView,
+    TextInput, KeyboardAvoidingView, Platform, StyleSheet
+} from 'react-native';
+import { connect } from 'react-redux';
+import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Loader from '../Loader';
 import MainStyles from '../StyleSheet';
 import Toast from 'react-native-simple-toast';
-import { SERVER_URL } from '../../Constants';
-import PushNotification from 'react-native-push-notification';
+import { SERVER_URL, COLORS,btnShadow } from '../../Constants';
+import { actionUserSignIn,loadingChange } from '../../Actions';
+import Axios from 'axios';
+import firebase from 'react-native-firebase';
 import HardText from '../../HardText';
-class SignIn extends Component{
-    constructor(props){
+class SignIn extends Component {
+    constructor(props) {
         super(props);
-        this.state={
-            loading:false,
-            emailAddress:'',
-            password:'',
+        this.state = {
+            loading: false,
+            emailAddress: '',
+            password: '',
         }
         this.signIn = this._signIn.bind(this);
     }
-    async saveDetails(key,value){
-        await AsyncStorage.setItem(key,value);
-      }
-    getToken = (onToken)=>{
-        /*if(Platform.OS == 'ios'){
-            //console.log(PushNotificationIOS);
-            this.sendDataToServer({token:''});
+    async checkPermission() {
+        const enabled = await firebase.messaging().hasPermission();
+        if (enabled) {
+            this.getToken();
+        } else {
+            this.requestPermission();
         }
-        else{*/
-            PushNotification.configure({
-                onRegister: onToken,
-                senderID: "71450108131",
-                permissions: {
-                    alert: true,
-                    badge: true,
-                    sound: true
-                },
-                popInitialNotification: true,
-                requestPermissions: true,
-            });
-            //PushNotification.setApplicationIconBadgeNumber(4)
-        //}
     }
-    _signIn = ()=>{
-        var deviceToken = '';
-        if(this.state.emailAddress == ''){
-            Toast.show('Email address should not be blank',Toast.SHORT)
-            return false;
+    async requestPermission() {
+        try {
+            await firebase.messaging().requestPermission();
+            // User has authorised
+            this.getToken();
+        } catch (error) {
+            // User has rejected permissions
+            Alert.alert('Please give permission for notifications');
+            this.props.loadingChangeAction(false);
         }
-        if(this.state.password == ''){
-            Toast.show('Password should not be blank',Toast.SHORT)
-            return false;
-        }
-        this.setState({loading:true});
-        this.getToken(this.sendDataToServer.bind(this));
     }
-    sendDataToServer(token){
-        console.log('token',token);
-        fetch(SERVER_URL+'?action=login_user&lg_email='+this.state.emailAddress+'&lg_pass='+this.state.password+'&device_token='+token.token+'&platform='+Platform.OS)
-        .then(res=>res.json())
-        .then(response=>{
-            console.log(response);
-            if(response.code == 200){
-                this.saveDetails('isUserLoggedin','true');
-                this.saveDetails('userID',response.body.ID);
-                Toast.show('LoggedIn successfully', Toast.SHORT);
-                setTimeout(()=>{
-                    this.setState({loading:false});
-                    this.props.navigation.navigate('Current Events');
-                },1500)
+    async saveDetails(key, value) {
+        await AsyncStorage.setItem(key, value);
+    }
+    async getToken(){
+        await firebase.messaging().getToken().then(async fcmToken => {
+            if (fcmToken) {
+                this.sendDataToServer(fcmToken);
             }
             else{
-                Toast.show(response.message, Toast.SHORT);
-                this.setState({loading:false});
+                this.sendDataToServer('');
             }
-        })
-        .catch(err=>{
-            console.log(err);
+        }).catch(err=>{
+            this.props.loadingChangeAction(false);
         });
     }
-    render(){
-        return(
-            <SafeAreaView style={{backgroundColor:'#FFF',flex:1}}>
-                <Loader loading={this.state.loading} />
-                <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                    <TouchableOpacity style={{ paddingLeft: 12,flexDirection:'row' }} onPress={() => this.props.navigation.goBack() }>
-                        <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
-                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>{HardText.s_signin_title}</Text>
-                    </TouchableOpacity>
-                </View>
-                <KeyboardAvoidingView style={{
-                    flex:1,
-                    justifyContent:'center',
-                    alignItems:'center'
-                }}>
-                    <ScrollView keyboardShouldPersistTaps={'handled'} style={{width:'75%',flex:1,marginTop:15}}>
-                        <Text style={{
-                            marginBottom:30,
-                            fontFamily:'Roboto-Light',
-                            fontSize:21,
-                            color:'#0947b9',
-                            textAlign:'center'
-                        }}>{HardText.s_signin_text}</Text>
-                        <View style={{
-                            borderBottomColor:'#8da6d4',
-                            borderBottomWidth: 1,
-                            overflow:'visible',
-                            flexDirection:'row',
-                            justifyContent: 'flex-start',
-                            alignItems: 'center',
-                            alignContent:'flex-start',
-                            marginBottom:20,
-                            paddingBottom:5,
-                        }}>
-                            <Icon name="envelope" style={{
-                                color:'#6789c6',
-                                fontSize:18,
-                                width:35,
-                                height:40,
-                                paddingTop: 10,
-                            }}/>
-                            <TextInput 
-                                style={{flex:1,textAlign:'left',alignItems:'center',paddingRight: 10,height:40,fontSize:18,fontFamily:'Roboto-Light'}} 
-                                placeholder="Email *" 
-                                returnKeyType={"next"} 
-                                ref={(input) => { this.emailAddress = input; }} 
-                                onSubmitEditing={() => { this.password.focus(); }} 
-                                blurOnSubmit={false}
-                                onChangeText={(text)=>this.setState({emailAddress:text})} 
-                                keyboardType="email-address" 
-                                autoCapitalize='none' 
-                                placeholderTextColor="#03163a" 
-                                underlineColorAndroid="transparent" 
-                                value={this.state.emailAddress}
-                            />
-                        </View>
-                        <View style={{
-                            borderBottomColor:'#8da6d4',
-                            borderBottomWidth: 1,
-                            overflow:'visible',
-                            flexDirection:'row',
-                            justifyContent: 'flex-start',
-                            alignItems: 'center',
-                            alignContent:'flex-start',
-                            marginBottom:20,
-                            paddingBottom:5,
-                        }}>
-                            <Image source={require('../../assets/key-icon.png')} width={6} height={7} style={{paddingTop: 10,marginRight:10}}/>
-                            <TextInput 
-                                style={{flex:1,textAlign:'left',alignItems:'center',paddingRight: 10,height:40,fontSize:18,fontFamily:'Roboto-Light'}} 
-                                placeholder="Password *" 
-                                returnKeyType={"go"} 
-                                secureTextEntry={true} 
-                                ref={(input) => { this.password = input; }} 
-                                blurOnSubmit={false}
-                                onChangeText={(text)=>this.setState({password:text})} 
-                                placeholderTextColor="#03163a" 
-                                underlineColorAndroid="transparent" 
-                                value={this.state.password}
-                            />
-                        </View>
-                        <View style={{
-                            justifyContent:'flex-end',
-                            alignItems:'flex-end',
-                            marginBottom:20
-                        }}>
-                            <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ForgotPassword')}}>
-                                <Text style={{
-                                    fontFamily:'Roboto-Medium',
-                                    fontSize:14,
-                                    color:'#0947b9',
-                                }}>
-                                    {HardText.s_forgot_pass}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{
-                            flexDirection:'column',
-                            justifyContent:'center',
-                            alignItems:'center'
-                        }}>
-                            <TouchableOpacity style={MainStyles.btnSave} onPress={this.signIn}>
-                                <Text style={MainStyles.btnSaveText}>
-                                    {HardText.s_login}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </ScrollView>
-                </KeyboardAvoidingView>
-            </SafeAreaView>
+    _signIn = () => {
+        var deviceToken = '';
+        if (this.state.emailAddress == '') {
+            Toast.show('Email address should not be blank', Toast.SHORT)
+            return false;
+        }
+        if (this.state.password == '') {
+            Toast.show('Password should not be blank', Toast.SHORT)
+            return false;
+        }
+        this.props.loadingChangeAction(true);
+        this.getToken(this.sendDataToServer.bind(this));
+    }
+    async sendDataToServer(token) {
+        let {emailAddress, password} = this.state;
+        await Axios.get(`${SERVER_URL}?action=login_user&lg_email=${emailAddress}&lg_pass=${password}&device_token=${token}&platform=${Platform.OS}`)
+            .then(async res => {
+                let { code, message, body } = res.data;
+                if (code == 200) {
+                    try {
+                        setTimeout(() => { Toast.show(message, Toast.SHORT); }, 200);
+                        this.props.LoginUserAction(body.ID,token);
+                        await AsyncStorage.multiSet([['isUserLoggedIn', "true"], ["userData", body.ID],["userToken",token]]).then(() => {
+                            this.props.navigation.navigate('Current Events');
+                            this.props.loadingChangeAction(false);
+                        });
+                    }
+                    catch (e) {
+                        setTimeout(() => { Toast.show("Asyncstorage Reducer Saving Time", Toast.LONG); }, 200);
+                        this.props.loadingChangeAction(false);
+                    }
+                    this.saveDetails('isUserLoggedin', 'true');
+                    this.saveDetails('userID', body.ID);
+                    Toast.show('LoggedIn successfully', Toast.SHORT);
+                    setTimeout(() => {
+                        this.props.loadingChangeAction(false);
+                        this.props.navigation.navigate('Current Events');
+                    }, 1500)
+                }
+                else {
+                    Toast.show(message, Toast.SHORT);
+                    this.props.loadingChangeAction(false);
+                }
+            })
+            .catch(err => {
+                setTimeout(() => { Toast.show(err.message, Toast.SHORT); }, 300);
+                this.props.loadingChangeAction(false);
+            });
+    }
+    render() {
+        return (
+            <KeyboardAvoidingView contentContainerStyle={{ flex: 1 }}>
+                <ScrollView keyboardShouldPersistTaps="always" contentContainerStyle={{ marginVertical: 15, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{marginBottom: 30,fontFamily: 'Roboto-Light',fontSize: 21,color: '#0947b9',textAlign: 'center'}}>{HardText.s_signin_text}</Text>
+                    <View style={styles.InputWrapper}>
+                        <Icon name="envelope" style={{
+                            color: COLORS.Secondary,
+                            fontSize: 18,
+                            width: 35,
+                            height: 40,
+                            paddingTop: 10,
+                        }} />
+                        <TextInput
+                            style={styles.InputStyle}
+                            placeholder="Email *"
+                            returnKeyType={"next"}
+                            ref={(input) => { this.emailAddress = input; }}
+                            onSubmitEditing={() => { this.password.focus(); }}
+                            blurOnSubmit={false}
+                            onChangeText={(text) => this.setState({ emailAddress: text })}
+                            keyboardType="email-address"
+                            autoCapitalize='none'
+                            placeholderTextColor="#03163a"
+                            underlineColorAndroid="transparent"
+                            value={this.state.emailAddress}
+                        />
+                    </View>
+                    <View style={styles.InputWrapper}>
+                        <Image source={require('../../assets/key-icon.png')} width={6} height={7} style={{ paddingTop: 10, marginRight: 10 }} />
+                        <TextInput
+                            style={styles.InputStyle}
+                            placeholder="Password *"
+                            returnKeyType={"go"}
+                            secureTextEntry={true}
+                            ref={(input) => { this.password = input; }}
+                            blurOnSubmit={false}
+                            onChangeText={(text) => this.setState({ password: text })}
+                            placeholderTextColor="#03163a"
+                            underlineColorAndroid="transparent"
+                            value={this.state.password}
+                        />
+                    </View>
+                    <View style={{
+                        justifyContent: 'flex-end',
+                        alignItems: 'flex-end',
+                        marginBottom: 20
+                    }}>
+                        <TouchableOpacity onPress={() => { this.props.navigation.navigate('ForgotPassword') }}>
+                            <Text style={{
+                                fontFamily: 'Roboto-Medium',
+                                fontSize: 14,
+                                color: '#0947b9',
+                            }}>
+                                {HardText.s_forgot_pass}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        <TouchableOpacity style={[MainStyles.btnSave,{...btnShadow}]} onPress={this.signIn}>
+                            <Text style={MainStyles.btnSaveText}>
+                                {HardText.s_login}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         );
     }
 }
-export default SignIn
+const styles = StyleSheet.create({
+    InputWrapper: {
+        borderBottomColor: '#8da6d4',
+        borderBottomWidth: 1,
+        alignItems:'center',
+        justifyContent:'center',
+        flexDirection: 'row',
+        marginBottom: 20,
+        width: '75%'
+    },
+    InputStyle:{
+        textAlign: 'left', 
+        alignItems: 'center', 
+        paddingRight: 10,
+        fontSize: 18, 
+        fontFamily: 'Roboto-Light',
+        flex:1
+    }
+});
+const mapStateToProps = (state) => {
+    const { reducer } = state
+    return { reducer }
+};
+const mapDispatchToProps = dispatch => ({
+    LoginUserAction: (userData) => dispatch(actionUserSignIn(userData)),
+    loadingChangeAction: (dataSet) => dispatch(loadingChange(dataSet)),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

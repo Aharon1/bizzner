@@ -1,74 +1,57 @@
-import React, {Component} from 'react';
-import {View,AsyncStorage,Image,Platform} from 'react-native';
-import Loader from '../Loader';
+import React, { Component } from 'react';
+import { View, Image, Platform } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { SERVER_URL } from '../../Constants';
-import PushNotification from 'react-native-push-notification';
-class Logout extends Component{
+import { loadingChange, LogoutAction } from '../../Actions';
+import { connect } from 'react-redux';
+import Toast from "react-native-simple-toast";
+import Axios from 'axios';
+class Logout extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            loading:true,
-        }
-        //this.authenticateSession = this._authenticateSession.bind(this);
     }
-    async saveDetails(key,value){
-        await AsyncStorage.setItem(key,value);
+    async saveDetails(key, value) {
+        await AsyncStorage.setItem(key, value);
     }
-    async setUserId(){
-        var userID =  await AsyncStorage.getItem('userID');
-        this.setState({userID});
+    getToken = (onToken) => {
+        this.logoutFromServer();
     }
-    getToken = (onToken)=>{
-        //if(Platform.OS == 'android'){
-            PushNotification.configure({
-                onRegister: onToken,
-                onNotification: function(notification) {
-                    console.log('NOTIFICATION:', notification );
-                },
-                senderID: "71450108131",
-                permissions: {
-                    alert: true,
-                    badge: true,
-                    sound: true
-                },
-                popInitialNotification: true,
-                requestPermissions: true,
+    authenticateSession() {
+        this.getToken();
+    }
+    logoutFromServer(token) {
+        Axios(`${SERVER_URL}?action=logout&user_id=${this.props.reducer.userID}&device_token=`)
+            .then(res => {
+                setTimeout(async () => {
+                    await AsyncStorage.multiSet([['isUserLoggedIn', ""], ['userData', ""]]).then(async () => {
+                        this.props.loadingChangeAction(false);
+                        this.props.LogoutUser();
+                        this.props.navigation.navigate('Auth');
+                    });
+                }, 1000);
+            }).catch(err => {
+                Toast.show(err.message,Toast.SHORT);
+                this.props.loadingChangeAction(false);
             });
-        /*}
-        else{
-            onToken();
-        }*/
     }
-    authenticateSession(){
-        this.getToken(this.logoutFromServer.bind(this));
-    }
-    logoutFromServer(token){
-        let tokenGenerated = (typeof(token) != "undefined")?token.token:'';
-        fetch(SERVER_URL+'?action=logout&user_id='+this.state.userID+'&device_token='+tokenGenerated)
-        .then(res=>res.json())
-        .then(response=>{
-            console.log(response);
-            this.saveDetails('isUserLoggedin','false');
-            setTimeout(()=>{
-                this.setState({loading:false});
-                this.props.navigation.navigate('Auth');
-            },1000);
-        }).catch(err=>{
-            console.log('Logout Err:',err);
-        });
-    }
-    
-    componentDidMount(){
-        this.setUserId();
+    componentDidMount() {
+        this.props.loadingChangeAction(true);
         this.authenticateSession();
     }
-    render(){
-        return(
-            <View style={{flex:1,justifyContent: 'center',alignItems:'center'}}>
-                <Loader loading={this.state.loading} />
-                <Image source={require('../../assets/bizzner-logo.png')} style={{height:72}}/>
+    render() {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Image source={require('../../assets/bizzner-logo.png')} style={{ height: 72 }} />
             </View>
         );
     }
 }
-export default Logout;
+const mapStateToProps = (state) => {
+    const { reducer } = state
+    return { reducer }
+};
+const mapDispatchToProps = dispatch => ({
+    loadingChangeAction: (dataSet) => dispatch(loadingChange(dataSet)),
+    LogoutUser: () => dispatch(LogoutAction()),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Logout);

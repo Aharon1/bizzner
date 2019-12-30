@@ -1,27 +1,31 @@
 import React, { Component } from 'react';
-import { View,Text,TouchableOpacity, Image,ImageBackground,
-    Platform,FlatList,ActivityIndicator,AsyncStorage,
-    RefreshControl,SafeAreaView
+import {
+    View, Text, TouchableOpacity, Image, ImageBackground,
+    Platform, FlatList, ActivityIndicator, AsyncStorage,
+    RefreshControl, SafeAreaView
 } from 'react-native';
 import { DrawerActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
 import { HeaderButton } from './Navigation/HeaderButton';
-import {SERVER_URL} from '../Constants';
-import Loader from './Loader';
+import { SERVER_URL } from '../Constants';
 import ProgressiveImage from './AsyncModules/ImageComponent';
 import _ from 'lodash';
 import HardText from '../HardText';
-class HistoryPageScreen extends Component{
-    constructor(props){
+import { loadingChange } from '../Actions';
+import { connect } from 'react-redux';
+import Axios from 'axios';
+class HistoryPageScreen extends Component {
+    constructor(props) {
         super(props);
         this.state = {
-            loading:true,
-            locationList:{},
-            isLocationSet:false,
-            isLoading:false,
+            loading: true,
+            locationList: {},
+            isLocationSet: false,
+            isLoading: false,
             enableScrollViewScroll: true,
-            isRefreshing:false,
+            isRefreshing: false,
+            userID: this.props.reducer.userData
         }
         this.viewabilityConfig = {
             waitForInteraction: true,
@@ -29,66 +33,61 @@ class HistoryPageScreen extends Component{
         }
         this.refreshList = this._refreshList.bind(this);
     }
-    async setUserId(){
-        var userID =  await AsyncStorage.getItem('userID');
-        this.setState({userID});
+    componentDidMount() {
+        this.refreshList();
     }
-    componentDidMount(){
-        this.setUserId();
-        setTimeout(()=>{
-            this.refreshList();
-        },200);
-    }
-    _refreshList(){
+    _refreshList() {
+        this.props.loadingChangeAction(true);
         var dateNow = new Date();
-        var curMonth = ((dateNow.getMonth()+1) >= 10)?(dateNow.getMonth()+1):'0'+(dateNow.getMonth()+1);
-        var curDate = (dateNow.getDate() >= 10)?dateNow.getDate():'0'+dateNow.getDate();
-        var curDate = dateNow.getFullYear()+'-'+curMonth+'-'+curDate;
-        var curMinute = (dateNow.getMinutes() >= 10)?dateNow.getMinutes():'0'+dateNow.getMinutes();
-        var curSeconds = (dateNow.getSeconds() >= 10)?dateNow.getSeconds():'0'+dateNow.getSeconds();
-        var curHours = (dateNow.getHours() >= 10)?dateNow.getHours():'0'+dateNow.getHours();
-        var curTime = curHours+':'+curMinute+':'+curSeconds;
-        this._fetchLists('user_id='+this.state.userID+'&curDate='+curDate+'&curTime='+curTime);
+        var curMonth = ((dateNow.getMonth() + 1) >= 10) ? (dateNow.getMonth() + 1) : '0' + (dateNow.getMonth() + 1);
+        var curDate = (dateNow.getDate() >= 10) ? dateNow.getDate() : '0' + dateNow.getDate();
+        var curDate = dateNow.getFullYear() + '-' + curMonth + '-' + curDate;
+        var curMinute = (dateNow.getMinutes() >= 10) ? dateNow.getMinutes() : '0' + dateNow.getMinutes();
+        var curSeconds = (dateNow.getSeconds() >= 10) ? dateNow.getSeconds() : '0' + dateNow.getSeconds();
+        var curHours = (dateNow.getHours() >= 10) ? dateNow.getHours() : '0' + dateNow.getHours();
+        var curTime = curHours + ':' + curMinute + ':' + curSeconds;
+        this._fetchLists('user_id=' + this.state.userID + '&curDate=' + curDate + '&curTime=' + curTime);
     }
-    _fetchLists(params){
-        var fetchData = SERVER_URL+'?action=events_history&'+params;
-        fetch(fetchData,{
-            method:'POST',
-            headers:{
-                'Content-Type':'application/json',
-                'Accept':'application/json',
+    _fetchLists(params) {
+        let fetchData = `${SERVER_URL}?action=events_history&${params}`;
+        Axios.post(fetchData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'Cache-Control': 'no-cache'
             }
         })
-        .then(res=>res.json())
-        .then(response=>{
-            var results = response.results
-            const placesArray = [];
-            for (const bodyKey in results){
-                placesArray.push({
-                    name:results[bodyKey].group_name,
-                    address:results[bodyKey].group_address,
-                    isStarted:results[bodyKey].group_status,
-                    photoUrl:results[bodyKey].photoUrl,
-                    key:results[bodyKey].key,
-                    event_date:results[bodyKey].event_date,
-                    event_time:results[bodyKey].event_time,
-                    event_subject:results[bodyKey].event_subject,
-                    event_note:results[bodyKey].event_note,
-                    latitude:results[bodyKey].latitude,
-                    longitude:results[bodyKey].longitude,
-                    place_id:results[bodyKey].place_id,
-                    group_id:results[bodyKey].group_id,
-                    usersPlace:results[bodyKey].usersPlace,
-                    usersCount:results[bodyKey].usersCount,
-                    userIds:results[bodyKey].usersIds,
+            .then(res => {
+                let { results } = res.data;
+                const placesArray = [];
+                for (const bodyKey in results) {
+                    placesArray.push({
+                        name: results[bodyKey].group_name,
+                        address: results[bodyKey].group_address,
+                        isStarted: results[bodyKey].group_status,
+                        photoUrl: results[bodyKey].photoUrl,
+                        key: results[bodyKey].key,
+                        event_date: results[bodyKey].event_date,
+                        event_time: results[bodyKey].event_time,
+                        event_subject: results[bodyKey].event_subject,
+                        event_note: results[bodyKey].event_note,
+                        latitude: results[bodyKey].latitude,
+                        longitude: results[bodyKey].longitude,
+                        place_id: results[bodyKey].place_id,
+                        group_id: results[bodyKey].group_id,
+                        usersPlace: results[bodyKey].usersPlace,
+                        usersCount: results[bodyKey].usersCount,
+                        userIds: results[bodyKey].usersIds,
+                    });
+                }
+                this.setState({ locationList: placesArray, isRefreshing: false },()=>{
+                    this.props.loadingChangeAction(false);
                 });
-            }
-            this.setState({loading:false,locationList:placesArray,isRefreshing:false});
-        }).catch(err => {
-            this.setState({loading:false,locationList:{},isRefreshing:false});
-            console.log('Error What is this',err);
-        }).done()
+            }).catch(err => {
+                this.setState({locationList: {}, isRefreshing: false },()=>{
+                    this.props.loadingChangeAction(false);
+                });
+            })
     }
     formatAMPM(date) {
         var hours = date.getHours();
@@ -96,124 +95,124 @@ class HistoryPageScreen extends Component{
         var ampm = hours >= 12 ? 'pm' : 'am';
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0'+minutes : minutes;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
         var strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
     }
-    formatDate(date){
+    formatDate(date) {
         var dateStr = '';
-        dateStr += (date.getDate() < 10)?'0'+date.getDate()+' ':date.getDate()+' ';
-        var monthArray = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        dateStr += (date.getDate() < 10) ? '0' + date.getDate() + ' ' : date.getDate() + ' ';
+        var monthArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         var month = monthArray[date.getMonth()];
-        dateStr += month+' ';
+        dateStr += month + ' ';
         dateStr += date.getFullYear();
         return dateStr;
     }
-    render(){
+    render() {
         return (
-            <SafeAreaView style={MainStyles.normalContainer}>
-                <Loader loading={this.state.loading} />
-                <View style={[MainStyles.eventsHeader,{alignItems:'center',flexDirection:'row'}]}>
-                    <TouchableOpacity style={{ alignItems:'center',paddingLeft: 12,flexDirection:'row' }} onPress={() => this.props.navigation.goBack() }>
-                        <Icon name="chevron-left" style={{ fontSize: 24, color: '#8da6d5' }} />
-                        <Text style={{fontSize:16,color:'#8da6d5',marginLeft:20}}>{HardText.events_history}</Text>
-                    </TouchableOpacity>
-                </View>
+            <View style={MainStyles.normalContainer}>
                 {
-                    this.state.locationList && 
-                    this.state.locationList.length > 0 &&  
+                    this.state.locationList &&
+                    this.state.locationList.length > 0 &&
                     <FlatList data={this.state.locationList}
-                        renderItem={({item}) => { 
-                            var d1 = new Date ();
-                            var d2 = new Date ( d1 );
-                            d2.setHours ( d1.getHours() + 24 );
-                            var date = item.event_date+' '+item.event_time;
+                        renderItem={({ item }) => {
+                            var d1 = new Date();
+                            var d2 = new Date(d1);
+                            d2.setHours(d1.getHours() + 24);
+                            var date = item.event_date + ' ' + item.event_time;
                             var eventDate = new Date(date);
                             var N = 7;
                             var Address = item.address;//.split(" ").splice(0,N).join(" ");
                             var eventTime = this.formatAMPM(eventDate);
                             return (
-                            <View
-                                style={[
-                                    (this.state.userStatus == 3)?{opacity:0.5}:'',
-                                    //(item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
-                                    (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime())?{backgroundColor:'#FFFFFF'}:'']}>
+                                <View
+                                    style={[
+                                        (this.state.userStatus == 3) ? { opacity: 0.5 } : '',
+                                        //(item.isStarted === true)?MainStyles.EIOnline:MainStyles.EIOffline,
+                                        (eventDate.getTime() < d2.getTime() && eventDate.getTime() > d1.getTime()) ? { backgroundColor: '#FFFFFF' } : '']}>
                                     <TouchableOpacity style={[
                                         MainStyles.EventItem,
                                     ]} onPress={() =>
                                         this.props.navigation.navigate("HistoryEventDetails", {
-                                          event_id: item.group_id,
-                                          note: item.event_note
+                                            event_id: item.group_id,
+                                            note: item.event_note
                                         })
-                                      }>
+                                    }>
                                         <View style={MainStyles.EventItemImageWrapper}>
-                                            <ProgressiveImage source={{uri:item.photoUrl}} style={{ width: '100%', height: 170 }} resizeMode="cover"/>
+                                            <ProgressiveImage source={{ uri: item.photoUrl }} style={{ width: '100%', height: 170 }} resizeMode="cover" />
                                             <ImageBackground source={require('../assets/box-shadow.png')} style={{
-                                                position:'absolute',
-                                                height:'100%',
-                                                width:'100%',
+                                                position: 'absolute',
+                                                height: '100%',
+                                                width: '100%',
                                             }}>
                                                 <View style={{
-                                                    flex:1,
+                                                    flex: 1,
                                                     paddingBottom: 30,
-                                                    paddingHorizontal:20,
-                                                    justifyContent:'flex-end',
+                                                    paddingHorizontal: 20,
+                                                    justifyContent: 'flex-end',
                                                 }}>
-                                                    <Text style={{fontFamily:'Roboto-Regular',fontSize:16,color:'#FFFFFF'}}>{item.name}</Text>
-                                                    <Text style={{fontFamily:'Roboto-Light',fontSize:14,color:'#FFFFFF',textAlign:'left'}}>{Address}</Text>
+                                                    <Text style={{ fontFamily: 'Roboto-Regular', fontSize: 16, color: '#FFFFFF' }}>{item.name}</Text>
+                                                    <Text style={{ fontFamily: 'Roboto-Light', fontSize: 14, color: '#FFFFFF', textAlign: 'left' }}>{Address}</Text>
                                                 </View>
                                             </ImageBackground>
                                         </View>
                                         <View style={MainStyles.EventItemTextWrapper}>
                                             <View>
-                                                <View style={{flexDirection:'row', alignItems:'center',justifyContent:'flex-start'}}>
-                                                    <Icon name="thumb-tack" style={{color:'#8da6d4',marginRight:5}} size={17} />
+                                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
+                                                    <Icon name="thumb-tack" style={{ color: '#8da6d4', marginRight: 5 }} size={17} />
                                                     <Text style={[MainStyles.EITWName,
                                                     ]}>{item.event_subject}</Text>
                                                 </View>
-                                                <View style={{flexDirection:'row', alignItems:'center'}}>
-                                                    <Icon name="clock-o" style={{color:'#8da6d4',marginRight:5}} size={13} />
-                                                    <Text style={[MainStyles.EITWAddress,{fontFamily:'Roboto-Light'}]}>{this.formatDate(eventDate)}, {eventTime}</Text>
+                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                    <Icon name="clock-o" style={{ color: '#8da6d4', marginRight: 5 }} size={13} />
+                                                    <Text style={[MainStyles.EITWAddress, { fontFamily: 'Roboto-Light' }]}>{this.formatDate(eventDate)}, {eventTime}</Text>
                                                 </View>
                                             </View>
                                             <View style={[MainStyles.EITWAction]}>
-                                                <Image source={require('../assets/u-icon.png')} style={{marginRight:5,width:20,height:15}}/>
-                                                <Text style={[MainStyles.EITWActionText,MainStyles.EITWATOnline]}>({item.usersCount}) </Text>
-                                                
+                                                <Image source={require('../assets/u-icon.png')} style={{ marginRight: 5, width: 20, height: 15 }} />
+                                                <Text style={[MainStyles.EITWActionText, MainStyles.EITWATOnline]}>({item.usersCount}) </Text>
+
                                             </View>
                                         </View>
                                     </TouchableOpacity>
                                 </View>
                             )
-                            }
+                        }
                         }
                         keyExtractor={(item) => item.key}
                         refreshControl={
                             <RefreshControl
                                 refreshing={this.state.isRefreshing}
-                                onRefresh={()=>{this.setState({isRefreshing:true}),this.refreshList()}}
+                                onRefresh={() => { this.setState({ isRefreshing: true }), this.refreshList() }}
                                 title="Pull to refresh"
-                                colors={["#2e4d85","red", "green", "blue"]}
+                                colors={["#2e4d85", "red", "green", "blue"]}
                             />
                         }
                         viewabilityConfig={this.viewabilityConfig}
                     />
                 }
                 {
-                    this.state.locationList.length == 0 && 
-                    <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-                        <Text style={{fontFamily:'Roboto-Medium',color:'#2e4d85',fontSize:18}}>{HardText.no_events}</Text>
-                        <TouchableOpacity 
-                        onPress={this.refreshList}
-                        style={{flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'#2e4d85',paddingHorizontal:15,marginTop:10,paddingVertical:5,borderRadius:50}}
+                    this.state.locationList.length == 0 &&
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontFamily: 'Roboto-Medium', color: '#2e4d85', fontSize: 18 }}>{HardText.no_events}</Text>
+                        <TouchableOpacity
+                            onPress={this.refreshList}
+                            style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: '#2e4d85', paddingHorizontal: 15, marginTop: 10, paddingVertical: 5, borderRadius: 50 }}
                         >
-                            <Icon name="repeat" style={{marginRight:10,color:'#FFF'}} size={16}/>
-                            <Text style={{fontFamily:'Roboto-Regular',color:'#FFF',fontSize:16}}>{HardText.h_retry}</Text>
+                            <Icon name="repeat" style={{ marginRight: 10, color: '#FFF' }} size={16} />
+                            <Text style={{ fontFamily: 'Roboto-Regular', color: '#FFF', fontSize: 16 }}>{HardText.h_retry}</Text>
                         </TouchableOpacity>
-                    </View> 
+                    </View>
                 }
-            </SafeAreaView>
+            </View>
         )
     }
 }
-export default HistoryPageScreen
+const mapStateToProps = (state) => {
+    const { reducer } = state
+    return { reducer }
+};
+const mapDispatchToProps = dispatch => ({
+    loadingChangeAction: (dataSet) => dispatch(loadingChange(dataSet))
+});
+export default connect(mapStateToProps, mapDispatchToProps)(HistoryPageScreen);

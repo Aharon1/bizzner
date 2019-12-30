@@ -31,11 +31,13 @@ function createEmptyScreen(label, icon) {
     }
 }
 
-function createScreen(label, icon, Component) {    
+function createScreen(label, icon, Component,title) {    
     return class extends React.Component {
         static navigationOptions = ({ navigation }) =>  {
             const { params } = navigation.state;
             return {
+                title:title,
+                headerTitle:title,
                 drawerLabel: ()=>{
                     if(label == 'Private Messages'){
                         return (<SafeAreaView style={{
@@ -81,10 +83,10 @@ function createScreen(label, icon, Component) {
 }
 
 export const SettingsScreen = createEmptyScreen('Settings', 'cog');
-export const ComplainScreen = createScreen(HardText.m_complain, 'pen',ComplainPageScreen);
-export const HistoryScreen = createScreen(HardText.m_events_history, 'history',HistoryPageScreen);
+export const ComplainScreen = createScreen(HardText.m_complain, 'pen',ComplainPageScreen,HardText.complain);
+export const HistoryScreen = createScreen(HardText.m_events_history, 'history',HistoryPageScreen,HardText.events_history);
 export const EditProfileScreen = createScreen(HardText.m_edit_profile, 'user', ProfileScreen);
 export const MessagesScreen = createScreen('Private Messages', 'comment',PrivateMsgScreen);
-export const CurrentEventsScreen = createScreen(HardText.m_curr_events, 'calendar-check', EventsScreen);
+export const CurrentEventsScreen = createScreen(HardText.m_curr_events, 'calendar-check', EventsScreen,HardText.events);
 export const LogoutScreen = createScreen(HardText.m_logout, 'sign-out-alt', Logout);
 

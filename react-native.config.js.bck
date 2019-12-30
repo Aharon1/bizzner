@@ -1,0 +1,117 @@
+// module.exports = {
+//   project: {
+//     ios: {},
+//     android: {}, // grouped into "project"
+//   },
+//   dependencies: {
+//     '@react-native-community/async-storage': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'axios': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'react-dom': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'react-native-add-calendar-event': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'react-native-geolocation-service': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'react-native-google-maps-directions': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'react-native-image-picker': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'react-native-linkedin': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'react-native-maps': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'react-native-permissions': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'react-native-popup-dialog': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'react-native-screens': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'react-native-simple-toast': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'react-navigation': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'react-select-country-list': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'redux': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'supercluster': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//     'toggle-switch-react-native': {
+//       platforms: {
+//         android: null,
+//         // ios: null,
+//       },
+//     },
+//   }
+//     assets: ["./assets/fonts/"],
+// };

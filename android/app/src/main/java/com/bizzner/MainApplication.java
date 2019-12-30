@@ -3,19 +3,25 @@ package com.bizzner;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
-import com.vonovak.AddCalendarEventPackage;
+import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
+import io.invertase.firebase.RNFirebasePackage;
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
+import com.vonovak.AddCalendarEventPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import com.imagepicker.ImagePickerPackage;
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
-import com.reactlibrary.linkedinsdk.RNLinkedInSessionManagerPackage;
+import com.swmansion.rnscreens.RNScreensPackage;
+import com.swmansion.reanimated.ReanimatedPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+
+import com.oblador.vectoricons.VectorIconsPackage;
+
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.airbnb.android.react.maps.MapsPackage;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,15 +37,19 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNBackgroundFetchPackage(),
-            new AddCalendarEventPackage(),
+            new RNDateTimePickerPackage(),
+            new RNCWebViewPackage(),
+            new RNFirebasePackage(),
             new RNFusedLocationPackage(),
+            new AddCalendarEventPackage(),
+            new AsyncStoragePackage(),
+            new RNPermissionsPackage(),
             new ImagePickerPackage(),
-            new ReactNativePushNotificationPackage(),
-            new VectorIconsPackage(),
-            new RNLinkedInSessionManagerPackage(),
+            new RNScreensPackage(),
+            new ReanimatedPackage(),
             new RNGestureHandlerPackage(),
-            new MapsPackage()
+            new VectorIconsPackage(),
+            new RNFirebaseMessagingPackage()
       );
     }
 

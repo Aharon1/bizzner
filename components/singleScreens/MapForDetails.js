@@ -1,6 +1,6 @@
 import React from "react";
 import MapView, { Polyline, Marker } from "react-native-maps";
-import { TouchableHighlight,TouchableOpacity, Text, StyleSheet, View, Image,ImageBackground } from "react-native";
+import { TouchableHighlight, TouchableOpacity, Text, StyleSheet, View, Image, ImageBackground } from "react-native";
 import axios from "axios";
 import Icon from "react-native-vector-icons/FontAwesome";
 import getDirections from "react-native-google-maps-directions";
@@ -66,38 +66,36 @@ export class MapForEventDetail extends React.Component {
   getCurrentPosition = () => {
     Geolocation.getCurrentPosition(
       (position) => {
-          let Latitude = position.coords.latitude;
-          let Longitude = position.coords.longitude;
-          this.setState(
-            {
-              myLocation: {
-                latitude: Latitude,
-                longitude: Longitude
-              }
-            },
-            this.getPolyline
-          );
+        let Latitude = position.coords.latitude;
+        let Longitude = position.coords.longitude;
+        this.setState(
+          {
+            myLocation: {
+              latitude: Latitude,
+              longitude: Longitude
+            }
+          },
+          this.getPolyline
+        );
       },
       (error) => {
-          // See error code charts below.
-          console.log(error.code, error.message);
-          
+        console.log(error.code, error.message);
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-  );
+    );
   };
   decode = (t, e) => {
     for (
       var n,
-        o,
-        u = 0,
-        l = 0,
-        r = 0,
-        d = [],
-        h = 0,
-        i = 0,
-        a = null,
-        c = Math.pow(10, e || 5);
+      o,
+      u = 0,
+      l = 0,
+      r = 0,
+      d = [],
+      h = 0,
+      i = 0,
+      a = null,
+      c = Math.pow(10, e || 5);
       u < t.length;
 
     ) {
@@ -112,7 +110,7 @@ export class MapForEventDetail extends React.Component {
         (r += o),
         d.push([l / c, r / c]);
     }
-    return (d = d.map(function(t) {
+    return (d = d.map(function (t) {
       return { latitude: t[0], longitude: t[1] };
     }));
   };
@@ -122,52 +120,14 @@ export class MapForEventDetail extends React.Component {
       polylineCoords,
       myLocation: { latitude, longitude }
     } = this.state;
+    //AIzaSyCJRgtLQrTsiDSPvz0hzKlEXisjf2UsBbM
     const { location } = this.props;
     return polylineCoords.length ? (
-      <View style={{ position: "relative", width: "100%", height: 175,paddingHorizontal: 10,paddingVertical: 10, }}>
-        <Image source={{uri:'https://maps.googleapis.com/maps/api/staticmap?center='+location[1]+','+location[0]+'&size=200x155&key=AIzaSyCJRgtLQrTsiDSPvz0hzKlEXisjf2UsBbM&zoom=15&scale=2&markers=color:0x0947b9|label:B|size:mid|'+location[1]+','+location[0]}} style={{ width: "100%", height: 155 }} width={'100%'} height={155} />
-        {/*<MapView
-          style={{ width: "100%", height: 155 }}
-          initialRegion={{
-            latitude: location[1],
-            longitude: location[0],
-            latitudeDelta: 0.00922,
-            longitudeDelta: 0.00421
-          }}
-        >
-           <Polyline
-            coordinates={polylineCoords}
-            strokeColor="#0066ff"
-            strokeWidth={2}
-          /> 
-          <Marker
-            coordinate={{
-              latitude: location[1],
-              longitude: location[0]
-            }}
-          >
-            <Icon name="map-marker" size={40} color="#0947b9" />
-          </Marker>*/}
-        {/* <Marker
-          coordinate={{
-            latitude: latitude,
-            longitude: longitude
-          }}
-        >
-          <Icon name="bullseye" size={40} color="grey" />
-        </Marker> 
-        </MapView>*/}
-        {/* <TouchableHighlight
-          onPress={this.props.closeMap}
-          style={styles.closeButton}
-        >
-          <Icon name="close" size={15} color="#2e4d85" />
-        </TouchableHighlight> */}
-      
-          <TouchableOpacity onPress={this.handleGetDirections} style={[{width:41,height:42,justifyContent:'center',alignItems:'center',zIndex:50, position: "absolute",right: 20,bottom: 20}]}>
-            <Image source={require('../../assets/dir-icon.png')} style={[{width:41,height:42 }]}/>
-          </TouchableOpacity>       
-           
+      <View style={{ position: "relative", width: "100%", height: 175, paddingHorizontal: 10, paddingVertical: 10, }}>
+        <Image source={{ uri: `https://maps.googleapis.com/maps/api/staticmap?center=${location[1]},${location[0]}&size=200x155&key=${MAPKEY}&zoom=15&scale=2&markers=color:0x0947b9|label:B|size:mid|${location[1]},${location[0]}` }} style={{ width: "100%", height: 155 }} width={'100%'} height={155} />
+        <TouchableOpacity onPress={this.handleGetDirections} style={[{ width: 41, height: 42, justifyContent: 'center', alignItems: 'center', zIndex: 50, position: "absolute", right: 20, bottom: 20 }]}>
+          <Image source={require('../../assets/dir-icon.png')} style={[{ width: 41, height: 42 }]} />
+        </TouchableOpacity>
       </View>
     ) : null;
   }

@@ -47,6 +47,26 @@ target 'bizzner' do
 
   pod 'RNBackgroundFetch', :path => '../node_modules/react-native-background-fetch'
 
+
+
+
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
+  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
+
+  pod 'RNScreens', :path => '../node_modules/react-native-screens'
+
+  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+
+  pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
+
+
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
+  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
+
 end
 
 post_install do |installer|
