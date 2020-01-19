@@ -29,7 +29,7 @@ export default class GoogleMapView extends PureComponent {
           region={this.props.currentPosition}
           onClusterPress={this.onModalClusterOpen}
         >
-          {this.props.events.map((marker, id) => (
+          {typeof(this.props.events) != "undefined" && this.props.events.length > 0 && this.props.events.map((marker, id) => (
             <MarkerItem
               {...marker}
               key={id}
@@ -154,11 +154,11 @@ export default class GoogleMapView extends PureComponent {
       clusterEvents
     });
   };
-onModalClusterClose = () =>{
-  this.setState({
+  onModalClusterClose = () => {
+    this.setState({
       isModalClusterOpen: false
-  })
-}
+    })
+  }
 }
 
 const styles = StyleSheet.create({

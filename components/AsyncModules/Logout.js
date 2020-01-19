@@ -34,7 +34,7 @@ class Logout extends Component {
                 this.props.loadingChangeAction(false);
             });
     }
-    componentDidMount() {
+    async componentDidMount() {
         this.props.loadingChangeAction(true);
         this.authenticateSession();
     }

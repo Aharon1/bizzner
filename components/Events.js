@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import {
-    View, Text, TouchableOpacity, TextInput, ImageBackground, Image,
-    Platform, FlatList, ActivityIndicator, AsyncStorage, AlertIOS, KeyboardAvoidingView,
-    RefreshControl, Picker, ScrollView, SafeAreaView, ActionSheetIOS, BackHandler
+    View, Text, TouchableOpacity, TextInput, ImageBackground,
+    Platform, FlatList, ActivityIndicator, AlertIOS, KeyboardAvoidingView,
+    RefreshControl, Picker, ScrollView, SafeAreaView, ActionSheetIOS
 } from 'react-native';
-import { DrawerActions, NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainStyles from './StyleSheet';
 import Dialog, { SlideAnimation } from 'react-native-popup-dialog';
 import DatePicker from 'react-native-datepicker';
-import { HeaderButton } from './Navigation/HeaderButton';
 import Footer from './Navigation/Footer';
 import { SERVER_URL, MAPKEY } from '../Constants';
 import ListItem from './AsyncModules/ListItem';

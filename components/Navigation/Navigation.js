@@ -120,6 +120,9 @@ const Navigation = createStackNavigator({
     },
     Profile: {
         screen: EditProfileScreen,
+        navigationOptions: {
+            header: null
+        },
     },
     Splash: {
         screen: SplashScreen,

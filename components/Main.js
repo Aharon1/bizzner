@@ -10,7 +10,6 @@ import {
   StyleSheet
 } from "react-native";
 import MainStyles from "./StyleSheet";
-import Loader from "./Loader";
 import Toast from "react-native-simple-toast";
 import { SERVER_URL } from "../Constants";
 import LinkedInModal from "react-native-linkedin";
@@ -20,13 +19,19 @@ import { connect } from 'react-redux';
 import Axios from "axios";
 import firebase from 'react-native-firebase';
 //import PushNotification from 'react-native-push-notification';
+const clientID = "81fcixszrwwavz";
+const redirectUri = "http://bizzner.com/app/linkedin-auth.php";
+const secret = "m3sWUS3DpPoHZdZk";
 class MainScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
-      access_token: ""
+      access_token: "",
+      authentication_code: ''
     };
+    this.Login = this._Login.bind(this);
+    this.getLinkedinAccessToken = this._getLinkedinAccessToken.bind(this);
   }
   static navigationOptions = {
     header: null
@@ -34,8 +39,8 @@ class MainScreen extends Component {
   async saveDetails(key, value) {
     await AsyncStorage.setItem(key, value);
   }
-  async Login() {
-    this.props.loadingChangeAction(true);
+  async _Login() {
+
     const access_token = this.state.access_token;
     if (!access_token) {
       Toast.show("Linkedin is temporarily disabled", Toast.SHORT);
@@ -43,54 +48,45 @@ class MainScreen extends Component {
       return false;
     }
     const baseApi = "https://api.linkedin.com/v2/me/";
-    const options = [
-      // "first-name",
-      // "last-name",
-      // "email-address",
-      // "headline",
-      // "summary",
-      // "location:(name)",
-      // "picture-urls::(original)",
-      // "positions"
-      //'r_liteprofile', 'r_emailaddress','r_basicprofile','r_fullprofile'
-      'id','firstName','lastName','profilePicture(displayImage~:playableStreams)'
-    ];
-    console.log(`${baseApi}~:(${options.join(",")})?format=json`);
-    Axios.get(`${baseApi}?projection=(${options.join(",")})`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: "Bearer " + access_token
-      }
-    }).then(res => {
-      console.log(res.data);
-      Axios.get(`https://api.linkedin.com/v2/people/(id:${res.data.id})`)
-      .then(res=>{
-        console.log(res.data);
-      }).catch(err=>{
-        console.log('Profile Error',err.message);
-      this.props.loadingChangeAction(false);
+    Axios.all([
+      Axios.get(`${baseApi}?projection=(id,localizedFirstName,localizedLastName,profilePicture(displayImage~:playableStreams))`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: "Bearer " + access_token
+        }
+      }),
+      Axios.get(`https://api.linkedin.com/v2/clientAwareMemberHandles?q=members&projection=(elements*(primary,type,handle~))`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: "Bearer " + access_token
+        }
       })
-      const {
-        emailAddress,
-        firstName,
-        headline,
-        lastName,
-        location: { name },
-        pictureUrls,
-        positions
-      } = res.data;
-      let params = "firstName=" + encodeURIComponent(firstName) + "&";
-      params += "lastName=" + encodeURIComponent(lastName) + "&";
-      params += "emailAddress=" + encodeURIComponent(emailAddress) + "&";
-      params += "headline=" + encodeURIComponent(headline) + "&";
-      params += "location=" + encodeURIComponent(name) + "&";
-      params += "position=" + encodeURIComponent(positions.values[0].title) + "&";
-      params += "profilePicture=" + encodeURIComponent(pictureUrls.values[0]);
-      this.setState({ parameters: params }, this.getToken);
-    }).catch(err => {
-      console.log(err.message);
-      this.props.loadingChangeAction(false);
-    });
+    ])
+      .then(Axios.spread((ProfileRes, emailRes) => {
+        let profile = ProfileRes.data;
+        let profilePictureElements = profile.profilePicture['displayImage~'].elements;
+        let identifieresPicture = profilePictureElements[profilePictureElements.length - 1].identifiers[0].identifier;
+        let emailElements = emailRes.data.elements;
+        let emailAddress = '';
+        for (let i = 0; i < emailElements.length; i++) {
+          if (emailElements[i].type == 'EMAIL') {
+            emailAddress = emailElements[i]['handle~'].emailAddress;
+            break;
+          }
+        }
+        let params = "firstName=" + encodeURIComponent(profile.localizedFirstName) + "&";
+        params += "lastName=" + encodeURIComponent(profile.localizedLastName) + "&";
+        params += "emailAddress=" + encodeURIComponent(emailAddress) + "&";
+        params += "headline=&";
+        params += "location=&";
+        params += "position=&";
+        params += "profilePicture=" + encodeURIComponent(identifieresPicture);
+        this.setState({ parameters: params }, this.getToken);
+      }))
+      .catch(error => {
+        setTimeout(() => { Toast.show(error.message, Toast.SHORT); }, 200);
+        this.props.loadingChangeAction(false);
+      });
   }
   componentDidMount() {
     // B
@@ -118,18 +114,20 @@ class MainScreen extends Component {
         var token = fullUrl[fullUrl.length - 1];
         fetch(SERVER_URL + "?action=check-token&token=" + token)
           .then(res => res.json())
-          .then(response => {
+          .then(async response => {
             if (response.code == 200) {
-              this.saveDetails("isUserLoggedin", "true");
-              this.saveDetails("userID", response.body.ID);
-              Toast.show(response.message, Toast.SHORT);
-              this.props.navigation.navigate("ConfirmScreen");
+              this.props.LoginUserAction(response.body.ID, '');
+              setTimeout(() => { Toast.show(message, Toast.SHORT); }, 200);
+              await AsyncStorage.multiSet([['isUserLoggedIn', "true"], ["userData", body.ID], ["userToken", '']]).then(() => {
+                this.props.navigation.navigate("ConfirmScreen");
+                this.props.loadingChangeAction(false);
+              });
             } else {
               Toast.show(response.message, Toast.SHORT);
             }
           })
           .catch(err => {
-            console.log(err);
+            setTimeout(() => { Toast.show(err.message, Toast.SHORT); }, 200);
           });
       }
     }
@@ -159,31 +157,45 @@ class MainScreen extends Component {
   }
   sendDataToServer(token) {
     Axios.get(`${SERVER_URL}?action=check_user_details&${this.state.parameters}&device_token=${token}&platform=${Platform.OS}`)
-      .then(res => {
+      .then(async res => {
         let { code, message, body } = res.data;
         if (code == 200) {
-          this.saveDetails("isUserLoggedin", "true");
-          this.saveDetails("userID", body.ID);
-          Toast.show(message, Toast.SHORT);
-          setTimeout(() => {
-            this.props.loadingChangeAction(false);
+          this.props.LoginUserAction(body.ID, token);
+          setTimeout(() => { Toast.show(message, Toast.SHORT); }, 200);
+          await AsyncStorage.multiSet([['isUserLoggedIn', "true"], ["userData", body.ID], ["userToken", token]]).then(() => {
             this.props.navigation.navigate("Profile");
-          }, 200);
+            this.props.loadingChangeAction(false);
+          });
         }
       })
       .catch(err => {
-        console.error(err);
+        setTimeout(() => { Toast.show(err.message, Toast.SHORT); }, 200);
+        this.props.loadingChangeAction(false);
+      });
+  }
+  async _getLinkedinAccessToken() {
+    let linkedinAccessTokenHeaders = new Headers();
+    linkedinAccessTokenHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+    var requestOptions = {
+      method: 'POST',
+      headers: linkedinAccessTokenHeaders,
+      redirect: 'follow'
+    };
+    fetch(`https://www.linkedin.com/oauth/v2/accessToken?grant_type=authorization_code&code=${this.state.authentication_code}&redirect_uri=${redirectUri}&client_id=${clientID}&client_secret=${secret}`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        this.setState({ access_token: result.access_token }, this.Login);
+      })
+      .catch(error => {
+        setTimeout(() => { Toast.show(error.message, Toast.LONG) }, 500);
         this.props.loadingChangeAction(false);
       });
   }
   linkedRef = React.createRef(LinkedInModal)
   render() {
-    // const clientID = "81fcixszrwwavz";
-    // const redirectUri = "http://bizzner.com/app/linkedin-auth.php";
-    // const secret = "m3sWUS3DpPoHZdZk";
+
     return (
       <View style={MainStyles.container}>
-        <Loader loading={this.state.loading} />
         <View style={[MainStyles.minContainer, { width: 250 }]}>
           <Image
             source={require("../assets/bizzner-logo.png")}
@@ -192,22 +204,23 @@ class MainScreen extends Component {
           <Text style={MainStyles.mPHeading}>{HardText.auth_heading}</Text>
         </View>
         <View style={[MainStyles.btn, MainStyles.linBtn]}>
-          {/* <LinkedInModal
+          <LinkedInModal
             ref={this.linkedRef}
             clientID={clientID}
-            clientSecret={secret}
-            shouldGetAccessToken={true}
+            clientSecret={null}
+            shouldGetAccessToken={false}
             redirectUri={redirectUri}
             permissions={['r_liteprofile', 'r_emailaddress']}
-            onSuccess={({ access_token, expires_in }) => {
-              console.log(access_token,expires_in);
-              this.setState({ access_token }, this.Login);
+            onSuccess={({ authentication_code }) => {
+              this.props.loadingChangeAction(true);
+              this.setState({ authentication_code }, this.getLinkedinAccessToken);
             }}
             linkText="Sign in with Linkedin"
             wrapperStyle={{ padding: 15, backgroundColor: '#0077b5' }}
             areaTouchText={{ top: 20, bottom: 20, left: 150, right: 150 }}
             onError={(err) => {
-              console.log(err);
+              setTimeout(() => { Toast.show(err.message, Toast.SHORT); }, 200);
+              this.props.loadingChangeAction(false);
             }}
             renderButton={(props) => (
               <TouchableOpacity onPress={() => { this.linkedRef.current.open() }}>
@@ -219,7 +232,7 @@ class MainScreen extends Component {
                 />
               </TouchableOpacity>
             )}
-          /> */}
+          />
         </View>
         <TouchableOpacity
           style={[MainStyles.btn]}

@@ -88,8 +88,8 @@ class SignIn extends Component {
                         setTimeout(() => { Toast.show("Asyncstorage Reducer Saving Time", Toast.LONG); }, 200);
                         this.props.loadingChangeAction(false);
                     }
-                    this.saveDetails('isUserLoggedin', 'true');
-                    this.saveDetails('userID', body.ID);
+                    // this.saveDetails('isUserLoggedin', 'true');
+                    // this.saveDetails('userID', body.ID);
                     Toast.show('LoggedIn successfully', Toast.SHORT);
                     setTimeout(() => {
                         this.props.loadingChangeAction(false);
@@ -97,12 +97,12 @@ class SignIn extends Component {
                     }, 1500)
                 }
                 else {
-                    Toast.show(message, Toast.SHORT);
+                    Toast.show(message, Toast.LONG);
                     this.props.loadingChangeAction(false);
                 }
             })
             .catch(err => {
-                setTimeout(() => { Toast.show(err.message, Toast.SHORT); }, 300);
+                setTimeout(() => { Toast.show(err.message, Toast.LONG); }, 300);
                 this.props.loadingChangeAction(false);
             });
     }

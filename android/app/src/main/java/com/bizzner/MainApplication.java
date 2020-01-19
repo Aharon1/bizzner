@@ -15,7 +15,7 @@ import com.swmansion.rnscreens.RNScreensPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
-
+import com.airbnb.android.react.maps.MapsPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 
 import com.facebook.react.ReactNativeHost;
@@ -49,7 +49,8 @@ public class MainApplication extends Application implements ReactApplication {
             new ReanimatedPackage(),
             new RNGestureHandlerPackage(),
             new VectorIconsPackage(),
-            new RNFirebaseMessagingPackage()
+            new RNFirebaseMessagingPackage(),
+              new MapsPackage()
       );
     }
 

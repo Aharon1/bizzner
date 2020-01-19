@@ -168,11 +168,12 @@ dependencies {
 //      exclude module: 'support-v4'
 //    }
     //implementation 'com.google.android.gms:play-services-base:+'
+    implementation project(':react-native-maps')
     implementation 'com.google.android.gms:play-services-maps:+'
     implementation "com.google.android.gms:play-services-base:17.1.0"
-    implementation "com.google.firebase:firebase-core:17.2.1"
+    implementation "com.google.firebase:firebase-core:17.2.2"
     implementation "com.google.firebase:firebase-messaging:20.1.0"
-    implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
+    implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
 }
 configurations.all {
     resolutionStrategy {
