@@ -100,8 +100,8 @@ android {
         applicationId "com.bizzner"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "1.0.1"
+        versionCode 7
+        versionName "1.0.3"
         multiDexEnabled true
         packagingOptions {
             exclude "lib/arm64-v8a/librealm-jni.so"
