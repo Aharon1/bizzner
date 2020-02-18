@@ -13,13 +13,13 @@ class Logout extends Component {
     async saveDetails(key, value) {
         await AsyncStorage.setItem(key, value);
     }
-    getToken = (onToken) => {
+    getToken = () => {
         this.logoutFromServer();
     }
     authenticateSession() {
         this.getToken();
     }
-    logoutFromServer(token) {
+    logoutFromServer() {
         Axios(`${SERVER_URL}?action=logout&user_id=${this.props.reducer.userID}&device_token=`)
             .then(res => {
                 setTimeout(async () => {
@@ -34,7 +34,7 @@ class Logout extends Component {
                 this.props.loadingChangeAction(false);
             });
     }
-    async componentDidMount() {
+    componentDidMount() {
         this.props.loadingChangeAction(true);
         this.authenticateSession();
     }

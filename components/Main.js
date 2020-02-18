@@ -4,11 +4,12 @@ import {
   View,
   Image,
   TouchableOpacity,
-  AsyncStorage,
   Platform,
   Linking,
   StyleSheet
 } from "react-native";
+import { check, PERMISSIONS, RESULTS, request } from 'react-native-permissions';
+import AsyncStorage from '@react-native-community/async-storage';
 import MainStyles from "./StyleSheet";
 import Toast from "react-native-simple-toast";
 import { SERVER_URL } from "../Constants";
@@ -97,6 +98,49 @@ class MainScreen extends Component {
     } else {
       Linking.addListener("url", this.handleOpenURL);
     }
+    check(Platform.select({
+      android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+    }))
+      .then(result => {
+        switch (result) {
+          case RESULTS.UNAVAILABLE:
+            console.log(
+              'This feature is not available (on this device / in this context)',
+            );
+            break;
+          case RESULTS.DENIED:
+            this.requestLocationPermission();
+            console.log(
+              'The permission has not been requested / is denied but requestable',
+            );
+            break;
+          case RESULTS.GRANTED:
+            this.setState({ isGPSGranted: true });
+            break;
+          case RESULTS.BLOCKED:
+            this.requestLocationPermission();
+            console.log('The permission is denied and not requestable anymore');
+            break;
+        }
+      })
+      .catch(error => {
+        console.log('Toast',error);
+        // …
+      });
+  }
+  requestLocationPermission() {
+    request(Platform.select({
+        android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+        ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+    })).then(result => {
+        if (result == 'granted') {
+            this.setState({ isGPSGranted: true });
+        }
+        else {
+            this.setState({ isGPSGranted: false });
+        }
+    });
   }
   componentWillUnmount() {
     // C
@@ -158,6 +202,7 @@ class MainScreen extends Component {
   sendDataToServer(token) {
     Axios.get(`${SERVER_URL}?action=check_user_details&${this.state.parameters}&device_token=${token}&platform=${Platform.OS}`)
       .then(async res => {
+        console.log(res.data);
         let { code, message, body } = res.data;
         if (code == 200) {
           this.props.LoginUserAction(body.ID, token);

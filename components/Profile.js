@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { SERVER_URL, btnShadow } from '../Constants';
 import {
   Text, View, Image, TouchableOpacity, ScrollView,
-  TextInput, KeyboardAvoidingView, Animated, DeviceEventEmitter,
+  TextInput, KeyboardAvoidingView, Animated,
   ActionSheetIOS, Picker, Platform
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';

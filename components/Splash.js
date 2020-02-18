@@ -94,7 +94,7 @@ class SplashScreen extends Component {
     }
     authenticateSession = async () => {
         const { navigation } = this.props;
-        await AsyncStorage.multiGet(['isUserLoggedIn', 'userID']).then(async (res) => {
+        await AsyncStorage.multiGet(['isUserLoggedIn', 'userData']).then(async (res) => {
             if (res[0][1] == "true") {
                 if (res[1][1] != "") {
                     let uD = JSON.parse(res[1][1]);

@@ -50,7 +50,8 @@ class CreateEvent extends Component {
             isSelectedCity: '',
             no_Attendees: 'No. of Attendees',
             keyword: '',
-            isGPSGranted: ''
+            isGPSGranted: '',
+            isRunningAxios:false
         }
         this.viewabilityConfig = {
             waitForInteraction: true,
@@ -236,20 +237,25 @@ class CreateEvent extends Component {
     }
     handleSL(text) {
         if (text.length > 2) {
-            this.setState({ isLoading: true, SLValue: true, SLItems: {} });
-            let fetchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${text} ${this.state.isSelectedCity}&fields=photos,formatted_address,name,rating,place_id,geometry&key=${MAPKEY}`;
-            Axios.get(fetchUrl)
-                .then(res => {
-                    let { status, results } = res.data;
-                    if (status == 'OK') {
-                        this.setState({ SLItems: results.slice(0, 10) })
-
-                    }
-                    else {
-                        this.setState({ SLItems: {} })
-                    }
-                    this.setState({ isLoading: false })
-                })
+            if(!this.state.isRunningAxios){
+                this.setState({ isLoading: true, SLValue: true, SLItems: {}, isRunningAxios:true });
+                let fetchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${text} ${this.state.isSelectedCity}&fields=photos,formatted_address,name,rating,place_id,geometry&key=${MAPKEY}`;
+                Axios.get(fetchUrl)
+                    .then(res => {
+                        let { status, results } = res.data;
+                        if (status == 'OK') {
+                            this.setState({ SLItems: results.slice(0, 10) })
+    
+                        }
+                        else {
+                            this.setState({ SLItems: {} })
+                        }
+                        this.setState({ isLoading: false, isRunningAxios:false });
+                    })
+                .catch(err=>{
+                    this.setState({ isLoading: false, isRunningAxios:false });
+                });
+            }
         }
         else {
             this.setState({ SLValue: false })
@@ -257,19 +263,26 @@ class CreateEvent extends Component {
     }
     handleSC(text) {
         if (text.length > 2) {
-            this.setState({ isLoadingSC: true, SCValue: true, SCItems: {} });
-            var fetchUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${text}&types=(cities)&key=${MAPKEY}`;
-            Axios.get(fetchUrl)
-                .then(res => {
-                    let { status, predictions } = res.data;
-                    if (status == 'OK') {
-                        this.setState({ SCItems: predictions })
-                    }
-                    else {
-                        this.setState({ SCItems: {} })
-                    }
-                    this.setState({ isLoadingSC: false })
+            if(!this.state.isRunningAxios){
+                this.setState({ isLoadingSC: true, SCValue: true, SCItems: {}, isRunningAxios:true });
+                var fetchUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${text}&types=(cities)&key=${MAPKEY}`;
+                Axios.get(fetchUrl)
+                    .then(res => {
+                        console.log(res.data);
+                        let { status, predictions } = res.data;
+                        if (status == 'OK') {
+                            this.setState({ SCItems: predictions })
+                        }
+                        else {
+                            this.setState({ SCItems: {} })
+                        }
+                        this.setState({ isLoadingSC: false, isRunningAxios:false })
+                    })
+                .catch(err=>{
+                    
+                    this.setState({ isLoadingSC: false, isRunningAxios:false });
                 })
+            }
         }
         else {
             this.setState({ SCValue: false })
