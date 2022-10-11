@@ -12,7 +12,7 @@
     "react": "^16.6.1",
     "react-dom": "^16.6.3",
     "react-lifecycles-compat": "^3.0.4",
-    "react-native": "0.57.7",
+    "react-native": "0.70.2",
     "react-native-add-calendar-event": "^2.3.0",
     "react-native-background-fetch": "^2.7.1",
     "react-native-datepicker": "^1.7.2",
